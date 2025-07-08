@@ -1,0 +1,33 @@
+{
+  "openai_api_key": null,
+  "anthropic_api_key": null,
+  "docs_directory": ".",
+  "versions_directory": "versions",
+  "check_urls": [
+    "https://platform.openai.com/docs/models",
+    "https://docs.anthropic.com/claude/docs",
+    "https://github.com/openai/openai-cookbook"
+  ],
+  "documents": [
+    "ChatGPT-Models-Prompting-Guide.md",
+    "Anthropic-Claude-Models-Guide.md", 
+    "AI-Platform-Comparison-Guide.md",
+    "AI-Terminal-CLI-Guide.md",
+    "ChatGPT-Complete-Reference-Guide.md"
+  ],
+  "check_schedule": {
+    "enabled": true,
+    "time": "09:00",
+    "timezone": "UTC"
+  },
+  "notification_settings": {
+    "email_enabled": false,
+    "email_address": "",
+    "slack_webhook": ""
+  },
+  "update_settings": {
+    "auto_update_originals": false,
+    "backup_originals": true,
+    "min_days_between_updates": 1
+  }
+}
