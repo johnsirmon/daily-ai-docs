@@ -16,6 +16,8 @@ from anthropic import Anthropic
 import argparse
 import logging
 
+from feedback_collector import FeedbackCollector
+
 class AIDocumentationUpdater:
     def __init__(self, config_path: str = "config.json"):
         """Initialize the updater with configuration."""
@@ -25,6 +27,13 @@ class AIDocumentationUpdater:
         self.docs_dir = Path(self.config.get("docs_directory", "."))
         self.versions_dir = Path(self.config.get("versions_directory", "versions"))
         self.versions_dir.mkdir(exist_ok=True)
+        # Human-in-the-loop feedback integration
+        human_review_cfg = self.config.get("human_review", {})
+        feedback_file = human_review_cfg.get("feedback_file", "feedback/feedback_log.json")
+        self.feedback = FeedbackCollector(
+            feedback_file=feedback_file,
+            versions_dir=str(self.versions_dir),
+        )
         
     def load_config(self, config_path: str) -> Dict:
         """Load configuration from JSON file."""
@@ -146,6 +155,9 @@ class AIDocumentationUpdater:
         elif "claude" in doc_path.name.lower() or "anthropic" in doc_path.name.lower():
             platform = "anthropic"
         
+        # Inject previous human feedback so the AI can self-tune
+        feedback_context = self.feedback.get_feedback_summary(doc_path.name)
+
         # Create analysis prompt
         analysis_prompt = f"""
         CURRENT DOCUMENT:
@@ -153,6 +165,8 @@ class AIDocumentationUpdater:
         
         LATEST INFORMATION ({platform.upper()}):
         {latest_info.get(platform, "No specific updates")}
+        
+        {feedback_context}
         
         ANALYSIS TASK:
         1. Compare the current document with the latest information
@@ -198,6 +212,9 @@ class AIDocumentationUpdater:
         elif "claude" in doc_path.name.lower() or "anthropic" in doc_path.name.lower():
             platform = "anthropic"
         
+        # Inject previous human feedback for self-tuning
+        feedback_context = self.feedback.get_feedback_summary(doc_path.name)
+
         update_prompt = f"""
         CURRENT DOCUMENT:
         {current_content}
@@ -207,6 +224,8 @@ class AIDocumentationUpdater:
         
         ANALYSIS RESULTS:
         {analysis}
+        
+        {feedback_context}
         
         UPDATE TASK:
         Create an updated version of this document that:
@@ -274,216 +293,34 @@ class AIDocumentationUpdater:
         
         self.logger.info(f"Updated {doc_path}, backup saved as {backup_path}")
     
-    def generate_daily_workflow(self, section: str = "both") -> str:
-        """Generate a dual-section daily briefing.
-
-        Parameters
-        ----------
-        section : str
-            Which sections to generate: ``"general"``, ``"personalized"``, or
-            ``"both"`` (default).
-
-        Returns
-        -------
-        str
-            Markdown-formatted daily briefing.
-        """
-        today = datetime.now().strftime("%Y-%m-%d")
-        output_parts: List[str] = []
-
-        profile = self.config.get("user_profile", {})
-        domains: List[str] = profile.get("domains", [])
-        sources: List[str] = profile.get("research_sources", [])
-        threshold: int = profile.get("relevance_threshold", 7)
-
-        # ------------------------------------------------------------------ #
-        # Part 1 — General AI Updates                                         #
-        # ------------------------------------------------------------------ #
-        if section in ("general", "both"):
-            general_prompt = f"""
-You are an expert AI research analyst producing a concise daily briefing dated {today}.
-
-Generate **Part 1 — General AI Updates** covering topics relevant to ANY AI/software practitioner.
-Focus on:
-- New model releases, API changes, SDK updates (OpenAI, Anthropic, Google, Mistral, Meta)
-- Security CVEs in AI/ML dependencies
-- Developer tooling updates (LangChain, LlamaIndex, Hugging Face, vLLM, etc.)
-- Release-engineering and supply-chain best practices
-- AI agent / MCP ecosystem news
-
-Output format (Markdown):
-
-# Part 1 — General AI Updates — {today}
-
-## 1) Critical Changes (must-read, 3-7 items)
-For each item:
-- **What changed** (1 sentence)
-- **Why it matters** (1 sentence)
-- Action: Monitor / Experiment / Adopt / Ignore
-- Confidence: High/Med/Low
-- Source: [title](url)
-
-## 2) Security & CVE Watch
-(CVEs, exploit signals, practical impact)
-
-## 3) Tooling & Automation Watch
-(SDK/framework changes, deprecations, migration risks)
-
-## 4) Release Engineering & Supply Chain Watch
-(SBOM, provenance, CI/CD policy gates)
-
-## 5) AI Workflow Upgrades (general)
-- Quick win (<30 min)
-- Medium (half-day)
-- Strategic (multi-week)
-
-## 6) Noise Filter — what NOT to chase today
-(3-5 low-signal items)
-
-## Recommended Focus for Today (General)
-1. [title](url)
-2. [title](url)
-3. [title](url)
-Top experiment: description
-
-Rules:
-- Be concise, specific, action-oriented; no fluff.
-- Include a source link for every claim.
-- State uncertainty explicitly.
-"""
-            try:
-                self.logger.info("Generating general AI updates section...")
-                response = self.openai_client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": (
-                                "You are an expert AI research analyst. "
-                                "Produce accurate, concise, source-linked daily briefings."
-                            ),
-                        },
-                        {"role": "user", "content": general_prompt},
-                    ],
-                    temperature=0.1,
-                )
-                output_parts.append(response.choices[0].message.content)
-            except Exception as e:
-                self.logger.error(f"Error generating general section: {e}")
-                output_parts.append(
-                    f"# Part 1 — General AI Updates — {today}\n\n"
-                    f"*Error generating section: {e}*\n"
-                )
-
-        # ------------------------------------------------------------------ #
-        # Part 2 — Personalized Domain Updates                                #
-        # ------------------------------------------------------------------ #
-        if section in ("personalized", "both"):
-            domains_text = "\n".join(f"  {i + 1}. {d}" for i, d in enumerate(domains))
-            sources_text = "\n".join(f"  - {s}" for s in sources)
-
-            personalized_prompt = f"""
-You are an expert technical analyst producing a personalized daily briefing dated {today}.
-
-The user's specific work domains are:
-{domains_text}
-
-Research sources to scan:
-{sources_text}
-
-Time horizon: prioritize last 24 h; include last 7 days if high-impact.
-
-Generate **Part 2 — Personalized Domain Updates** strictly filtered to those domains.
-
-Output format (Markdown):
-
-# Part 2 — Personalized Domain Updates — {today}
-
-## 1) Critical Changes (must-read, 3-7 items)
-For each item:
-- **What changed** (1 sentence)
-- **Why it matters to my workflows** (1 sentence)
-- Action: Monitor / Experiment / Adopt / Ignore
-- Confidence: High/Med/Low
-- Relevance: n/10
-- Source: [title](url)
-
-## 2) Security & CVE Watch
-(CVEs affecting AMA-like agent stacks or the listed dependencies; exploit maturity; practical impact)
-
-## 3) Tooling & Automation Watch
-(Edge CDP, Playwright, auth automation, MCP/agent tooling changes and risks)
-
-## 4) Release Engineering & Supply Chain Watch
-(SBOM, SLSA/provenance, artifact integrity, policy gates portable to CI/CD)
-
-## 5) AI Workflow Upgrades (for my daily process)
-- Quick win (<30 min)
-- Medium (half-day)
-- Strategic (multi-week)
-
-## 6) Noise Filter — what NOT to chase today
-(3-5 low-signal items in these domains)
-
-## Recommended Focus for Today (Personalized)
-1. [title](url)
-2. [title](url)
-3. [title](url)
-Top experiment: description
-
-Scoring rules:
-- Relevance-score each finding 1-10 based on fit to the listed domains.
-- Only include items with relevance >= {threshold} unless it is a critical security item.
-- Prefer concrete changes (release note, patch, advisory, API change) over opinion posts.
-- Be concise, specific, action-oriented; no generic AI news unless directly actionable.
-- Include links for every claim; state uncertainty explicitly.
-"""
-            # Build a dynamic system prompt from the configured domains so the
-            # persona matches whatever the user has defined, not hard-coded values.
-            domain_summary = "; ".join(d.split("(")[0].strip() for d in domains) if domains else "technical operations"
-            personalized_system_prompt = (
-                f"You are an expert technical analyst specializing in {domain_summary}. "
-                "Produce accurate, concise, source-linked daily briefings."
-            )
-            try:
-                self.logger.info("Generating personalized domain updates section...")
-                response = self.openai_client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": personalized_system_prompt,
-                        },
-                        {"role": "user", "content": personalized_prompt},
-                    ],
-                    temperature=0.1,
-                )
-                output_parts.append(response.choices[0].message.content)
-            except Exception as e:
-                self.logger.error(f"Error generating personalized section: {e}")
-                output_parts.append(
-                    f"# Part 2 — Personalized Domain Updates — {today}\n\n"
-                    f"*Error generating section: {e}*\n"
-                )
-
-        separator = "\n\n---\n\n"
-        return separator.join(output_parts)
-
-    def save_daily_workflow(self, content: str) -> Path:
-        """Save the generated daily workflow to the configured output directory."""
-        wf_config = self.config.get("daily_workflow", {})
-        output_dir = Path(wf_config.get("output_directory", "daily-updates"))
-        output_dir.mkdir(exist_ok=True)
-
-        pattern = wf_config.get("output_filename_pattern", "daily-workflow-{date}.md")
-        filename = pattern.replace("{date}", datetime.now().strftime("%Y-%m-%d"))
-        output_path = output_dir / filename
-
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(content)
-
-        self.logger.info(f"Daily workflow saved to {output_path}")
-        return output_path
+    def generate_review_request(self, run_id: str, results: Dict[str, Dict]):
+        """Write a review_request JSON file so humans know which updates need review."""
+        docs_needing_review = []
+        for doc_name, info in results.items():
+            if info.get("needs_update") and info.get("version_created"):
+                docs_needing_review.append({
+                    "doc_name": doc_name,
+                    "version_file": info.get("version_created", ""),
+                    "analysis": info.get("analysis", "")[:500],
+                    "timestamp": info.get("timestamp", ""),
+                })
+        if not docs_needing_review:
+            return None
+        review_request = {
+            "run_id": run_id,
+            "generated_at": datetime.now().isoformat(),
+            "documents": docs_needing_review,
+            "review_instructions": (
+                "Run 'python feedback_collector.py review' to start an interactive review, "
+                "or 'python feedback_collector.py add --doc <name> --run-id <id> "
+                "--accuracy <1-5> --usefulness <1-5>' to add feedback non-interactively."
+            ),
+        }
+        review_path = self.versions_dir / f"review_request_{run_id}.json"
+        with open(review_path, "w", encoding="utf-8") as f:
+            json.dump(review_request, f, indent=2)
+        self.logger.info(f"Review request saved: {review_path}")
+        return review_path
 
     def run_daily_check(self, update_originals: bool = False) -> Dict[str, Dict]:
         """Run the daily documentation check."""
@@ -535,10 +372,18 @@ Scoring rules:
                 self.logger.info(f"No updates needed for {doc_name}")
         
         # Save check results
-        results_path = self.versions_dir / f"check_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+        results_path = self.versions_dir / f"check_results_{run_id}.json"
         with open(results_path, 'w') as f:
             json.dump(results, f, indent=2)
-        
+
+        # Generate a review request file so humans know what to review
+        review_path = self.generate_review_request(run_id, results)
+        if review_path:
+            self.logger.info(
+                f"Human review requested. Run: python feedback_collector.py review"
+            )
+
         return results
     
     def generate_change_summary(self, results: Dict[str, Dict]) -> str:
@@ -571,26 +416,22 @@ Scoring rules:
 def main():
     parser = argparse.ArgumentParser(description="AI Documentation Auto-Updater")
     parser.add_argument("--config", default="config.json", help="Configuration file path")
-    parser.add_argument("--update-originals", action="store_true", help="Update original files (not just create versions)")
-    parser.add_argument("--summary-only", action="store_true", help="Generate summary of last check results")
-    parser.add_argument("--daily-workflow", action="store_true", help="Generate dual-section daily workflow briefing")
-    parser.add_argument(
-        "--section",
-        choices=["general", "personalized", "both"],
-        default="both",
-        help="Which section(s) to include in the daily workflow (default: both)",
-    )
+    parser.add_argument("--update-originals", action="store_true",
+                        help="Update original files (not just create versions)")
+    parser.add_argument("--summary-only", action="store_true",
+                        help="Generate summary of last check results")
+    parser.add_argument("--review", action="store_true",
+                        help="Launch interactive human review session for pending doc updates")
 
     args = parser.parse_args()
 
     updater = AIDocumentationUpdater(args.config)
 
-    if args.daily_workflow:
-        content = updater.generate_daily_workflow(section=args.section)
-        output_path = updater.save_daily_workflow(content)
-        print(content)
-        print(f"\n✅ Daily workflow saved to {output_path}")
-    elif args.summary_only:
+    if args.review:
+        updater.feedback.interactive_review()
+        return
+
+    if args.summary_only:
         # Find latest results file
         results_files = list(updater.versions_dir.glob("check_results_*.json"))
         if results_files:
