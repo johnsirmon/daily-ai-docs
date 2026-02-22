@@ -16,6 +16,8 @@ from anthropic import Anthropic
 import argparse
 import logging
 
+from feedback_collector import FeedbackCollector
+
 class AIDocumentationUpdater:
     def __init__(self, config_path: str = "config.json"):
         """Initialize the updater with configuration."""
@@ -25,6 +27,13 @@ class AIDocumentationUpdater:
         self.docs_dir = Path(self.config.get("docs_directory", "."))
         self.versions_dir = Path(self.config.get("versions_directory", "versions"))
         self.versions_dir.mkdir(exist_ok=True)
+        # Human-in-the-loop feedback integration
+        human_review_cfg = self.config.get("human_review", {})
+        feedback_file = human_review_cfg.get("feedback_file", "feedback/feedback_log.json")
+        self.feedback = FeedbackCollector(
+            feedback_file=feedback_file,
+            versions_dir=str(self.versions_dir),
+        )
         
     def load_config(self, config_path: str) -> Dict:
         """Load configuration from JSON file."""
@@ -146,6 +155,9 @@ class AIDocumentationUpdater:
         elif "claude" in doc_path.name.lower() or "anthropic" in doc_path.name.lower():
             platform = "anthropic"
         
+        # Inject previous human feedback so the AI can self-tune
+        feedback_context = self.feedback.get_feedback_summary(doc_path.name)
+
         # Create analysis prompt
         analysis_prompt = f"""
         CURRENT DOCUMENT:
@@ -153,6 +165,8 @@ class AIDocumentationUpdater:
         
         LATEST INFORMATION ({platform.upper()}):
         {latest_info.get(platform, "No specific updates")}
+        
+        {feedback_context}
         
         ANALYSIS TASK:
         1. Compare the current document with the latest information
@@ -198,6 +212,9 @@ class AIDocumentationUpdater:
         elif "claude" in doc_path.name.lower() or "anthropic" in doc_path.name.lower():
             platform = "anthropic"
         
+        # Inject previous human feedback for self-tuning
+        feedback_context = self.feedback.get_feedback_summary(doc_path.name)
+
         update_prompt = f"""
         CURRENT DOCUMENT:
         {current_content}
@@ -207,6 +224,8 @@ class AIDocumentationUpdater:
         
         ANALYSIS RESULTS:
         {analysis}
+        
+        {feedback_context}
         
         UPDATE TASK:
         Create an updated version of this document that:
@@ -274,6 +293,35 @@ class AIDocumentationUpdater:
         
         self.logger.info(f"Updated {doc_path}, backup saved as {backup_path}")
     
+    def generate_review_request(self, run_id: str, results: Dict[str, Dict]):
+        """Write a review_request JSON file so humans know which updates need review."""
+        docs_needing_review = []
+        for doc_name, info in results.items():
+            if info.get("needs_update") and info.get("version_created"):
+                docs_needing_review.append({
+                    "doc_name": doc_name,
+                    "version_file": info.get("version_created", ""),
+                    "analysis": info.get("analysis", "")[:500],
+                    "timestamp": info.get("timestamp", ""),
+                })
+        if not docs_needing_review:
+            return None
+        review_request = {
+            "run_id": run_id,
+            "generated_at": datetime.now().isoformat(),
+            "documents": docs_needing_review,
+            "review_instructions": (
+                "Run 'python feedback_collector.py review' to start an interactive review, "
+                "or 'python feedback_collector.py add --doc <name> --run-id <id> "
+                "--accuracy <1-5> --usefulness <1-5>' to add feedback non-interactively."
+            ),
+        }
+        review_path = self.versions_dir / f"review_request_{run_id}.json"
+        with open(review_path, "w", encoding="utf-8") as f:
+            json.dump(review_request, f, indent=2)
+        self.logger.info(f"Review request saved: {review_path}")
+        return review_path
+
     def run_daily_check(self, update_originals: bool = False) -> Dict[str, Dict]:
         """Run the daily documentation check."""
         self.logger.info("Starting daily documentation check...")
@@ -324,10 +372,18 @@ class AIDocumentationUpdater:
                 self.logger.info(f"No updates needed for {doc_name}")
         
         # Save check results
-        results_path = self.versions_dir / f"check_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        run_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+        results_path = self.versions_dir / f"check_results_{run_id}.json"
         with open(results_path, 'w') as f:
             json.dump(results, f, indent=2)
-        
+
+        # Generate a review request file so humans know what to review
+        review_path = self.generate_review_request(run_id, results)
+        if review_path:
+            self.logger.info(
+                f"Human review requested. Run: python feedback_collector.py review"
+            )
+
         return results
     
     def generate_change_summary(self, results: Dict[str, Dict]) -> str:
@@ -360,13 +416,21 @@ class AIDocumentationUpdater:
 def main():
     parser = argparse.ArgumentParser(description="AI Documentation Auto-Updater")
     parser.add_argument("--config", default="config.json", help="Configuration file path")
-    parser.add_argument("--update-originals", action="store_true", help="Update original files (not just create versions)")
-    parser.add_argument("--summary-only", action="store_true", help="Generate summary of last check results")
-    
+    parser.add_argument("--update-originals", action="store_true",
+                        help="Update original files (not just create versions)")
+    parser.add_argument("--summary-only", action="store_true",
+                        help="Generate summary of last check results")
+    parser.add_argument("--review", action="store_true",
+                        help="Launch interactive human review session for pending doc updates")
+
     args = parser.parse_args()
-    
+
     updater = AIDocumentationUpdater(args.config)
-    
+
+    if args.review:
+        updater.feedback.interactive_review()
+        return
+
     if args.summary_only:
         # Find latest results file
         results_files = list(updater.versions_dir.glob("check_results_*.json"))

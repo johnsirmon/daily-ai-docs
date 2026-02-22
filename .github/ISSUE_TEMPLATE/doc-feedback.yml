@@ -1,0 +1,81 @@
+name: 📝 Document Feedback
+description: Rate and correct an AI-generated documentation update so the system can self-tune
+labels: ["documentation-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to provide feedback on a recent AI-generated documentation update.
+        Your ratings and corrections are stored in `feedback/feedback_log.json` and are
+        automatically injected into the next AI run so the system learns from your input.
+
+  - type: dropdown
+    id: document
+    attributes:
+      label: Document
+      description: Which document are you reviewing?
+      options:
+        - ChatGPT-Models-Prompting-Guide.md
+        - Anthropic-Claude-Models-Guide.md
+        - AI-Platform-Comparison-Guide.md
+        - AI-Terminal-CLI-Guide.md
+        - ChatGPT-Complete-Reference-Guide.md
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: run_id
+    attributes:
+      label: Run ID
+      description: >
+        The run ID is shown in the review request file (`versions/review_request_<run_id>.json`)
+        and in the daily check summary. Leave blank if unknown.
+      placeholder: "e.g. 20250222_090012"
+
+  - type: dropdown
+    id: accuracy
+    attributes:
+      label: Accuracy Rating
+      description: How factually accurate is the updated document?
+      options:
+        - "5 – Perfectly accurate"
+        - "4 – Mostly accurate, minor issues"
+        - "3 – Neutral / unsure"
+        - "2 – Some inaccuracies"
+        - "1 – Significantly inaccurate"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: usefulness
+    attributes:
+      label: Usefulness Rating
+      description: How useful and relevant is the updated content?
+      options:
+        - "5 – Very useful"
+        - "4 – Useful"
+        - "3 – Neutral"
+        - "2 – Not very useful"
+        - "1 – Not useful at all"
+    validations:
+      required: true
+
+  - type: textarea
+    id: comments
+    attributes:
+      label: General Comments
+      description: >
+        What did the AI do well? What should it do differently next time?
+      placeholder: "e.g. Good coverage of new models, but the pricing section is outdated."
+
+  - type: textarea
+    id: corrections
+    attributes:
+      label: Specific Corrections Needed
+      description: >
+        List any factual errors or missing information that should be corrected.
+        Be as specific as possible – the AI will use this to improve future updates.
+      placeholder: |
+        - GPT-4o mini pricing is $0.15/1M input tokens, not $0.20
+        - Claude 3.7 Sonnet was released in February 2025 – please add it

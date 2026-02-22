@@ -10,7 +10,7 @@
   ],
   "documents": [
     "ChatGPT-Models-Prompting-Guide.md",
-    "Anthropic-Claude-Models-Guide.md", 
+    "Anthropic-Claude-Models-Guide.md",
     "AI-Platform-Comparison-Guide.md",
     "AI-Terminal-CLI-Guide.md",
     "ChatGPT-Complete-Reference-Guide.md"
@@ -29,5 +29,10 @@
     "auto_update_originals": false,
     "backup_originals": true,
     "min_days_between_updates": 1
+  },
+  "human_review": {
+    "enabled": true,
+    "feedback_file": "feedback/feedback_log.json",
+    "require_review_before_publish": false
   }
 }

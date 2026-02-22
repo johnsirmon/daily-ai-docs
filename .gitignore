@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs and runtime output
+doc_updater.log
+*.log
+*.backup_*.md
+
+# Local environment
+.env
+.env.*

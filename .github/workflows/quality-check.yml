@@ -81,36 +81,84 @@ jobs:
         python -c "
         import sys
         sys.path.append('.')
-        
+
         # Mock test of the updater system
         try:
             with open('doc_updater.py', 'r') as f:
                 content = f.read()
-                
+
             # Check for required classes and methods
             required_elements = [
                 'class AIDocumentationUpdater',
                 'def fetch_latest_info',
-                'def analyze_changes', 
+                'def analyze_changes',
                 'def create_updated_document',
-                'def run_daily_check'
+                'def run_daily_check',
+                'def generate_review_request',
+                'FeedbackCollector',
             ]
-            
+
             missing = []
             for element in required_elements:
                 if element not in content:
                     missing.append(element)
-                    
+
             if missing:
                 print(f'❌ Missing required elements: {missing}')
                 exit(1)
             else:
                 print('✅ Auto-updater structure is valid')
-                
+
         except Exception as e:
             print(f'❌ Error testing auto-updater: {e}')
             exit(1)
         "
+
+    - name: Test feedback collector
+      run: |
+        python -c "
+        import sys
+        sys.path.append('.')
+
+        try:
+            with open('feedback_collector.py', 'r') as f:
+                content = f.read()
+
+            required_elements = [
+                'class FeedbackCollector',
+                'def add_feedback',
+                'def get_feedback_summary',
+                'def list_pending_reviews',
+                'def interactive_review',
+            ]
+
+            missing = [e for e in required_elements if e not in content]
+            if missing:
+                print(f'❌ Missing elements in feedback_collector.py: {missing}')
+                exit(1)
+            else:
+                print('✅ Feedback collector structure is valid')
+
+        except Exception as e:
+            print(f'❌ Error testing feedback collector: {e}')
+            exit(1)
+        "
+
+    - name: Validate human review guide
+      run: |
+        if [ ! -f "HUMAN-REVIEW-GUIDE.md" ]; then
+          echo "❌ HUMAN-REVIEW-GUIDE.md is missing"
+          exit 1
+        fi
+        echo "✅ HUMAN-REVIEW-GUIDE.md is present"
+
+    - name: Validate GitHub issue template for feedback
+      run: |
+        if [ ! -f ".github/ISSUE_TEMPLATE/doc-feedback.yml" ]; then
+          echo "❌ doc-feedback.yml issue template is missing"
+          exit 1
+        fi
+        echo "✅ doc-feedback.yml issue template is present"
 
   check-links:
     runs-on: ubuntu-latest
