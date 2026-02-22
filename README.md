@@ -5,15 +5,15 @@
 [![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Daily Updates](https://img.shields.io/badge/updated-daily-brightgreen.svg)](CHANGELOG.md)
 [![Source Verified](https://img.shields.io/badge/source-official%20docs-blue.svg)](AUTO-UPDATER-README.md)
-[![Multi Platform](https://img.shields.io/badge/platforms-OpenAI%20%7C%20Anthropic-orange.svg)](#-what-sources-we-monitor)
+[![Multi Platform](https://img.shields.io/badge/platforms-OpenAI%20%7C%20Anthropic%20%7C%20More-orange.svg)](#-what-sources-we-monitor)
 
 ## 🎯 What's Included
 
 ### 📚 Core Documentation
-- **[ChatGPT Prompt Engineering Guide](Quick-Reference-Print.md)** - Complete reference with rating system
-- **[ChatGPT Complete Reference](ChatGPT-Complete-Reference-Guide.md)** - Comprehensive model guide
-- **[Anthropic Claude Guide](Anthropic-Claude-Models-Guide.md)** - Claude-specific strategies
 - **[AI Platform Comparison](AI-Platform-Comparison-Guide.md)** - When to use which platform
+- **[Claude Models Guide](Anthropic-Claude-Models-Guide.md)** - Claude model lineup and strategies
+- **[ChatGPT Prompt Engineering Guide](Quick-Reference-Print.md)** - ChatGPT reference with rating system
+- **[ChatGPT Complete Reference](ChatGPT-Complete-Reference-Guide.md)** - Full OpenAI model guide
 - **[Terminal & CLI Guide](AI-Terminal-CLI-Guide.md)** - Command-line AI tools
 - **[Daily Workflow Template](Daily-Workflow-Template.md)** - Dual-section daily briefing (general + personalized)
 
@@ -58,10 +58,11 @@ AI systems have evolved beyond prompt engineering alone. Use this library as a s
 | Production systems | Multi-agent orchestration | [Platform Comparison](AI-Platform-Comparison-Guide.md#️-modern-ai-architecture-patterns) |
 
 ### For Prompt Engineering
-1. **Print Reference**: Use [ChatGPT Prompt Guide](Quick-Reference-Print.md) for daily reference
-2. **Rate Your Prompts**: Follow the [rating system](#-prompt-rating-system) 
-3. **Define Your Architecture**: Identify workflow type before model selection
-4. **Compare Platforms**: Check [platform comparison](AI-Platform-Comparison-Guide.md)
+1. **Platform Comparison**: Start with [AI Platform Comparison](AI-Platform-Comparison-Guide.md) to pick the right tool
+2. **ChatGPT Reference**: Use [ChatGPT Prompt Guide](Quick-Reference-Print.md) for OpenAI models
+3. **Claude Reference**: Use [Claude Models Guide](Anthropic-Claude-Models-Guide.md) for Anthropic models
+4. **Rate Your Prompts**: Follow the [rating system](#-prompt-rating-system) 
+5. **Define Your Architecture**: Identify workflow type before model selection
 
 ### For Automated Maintenance
 1. **Setup**: Run `setup.bat` for one-click installation
@@ -232,7 +233,7 @@ Topic requests and source suggestions are welcome — just edit `topics/topics.y
 ## 📖 GETTING STARTED
 
 1. **Read:** [AI Platform Comparison Guide](AI-Platform-Comparison-Guide.md) first
-2. **Print:** [ChatGPT Models & Prompting Guide](ChatGPT-Models-Prompting-Guide.md) for desk reference
+2. **Reference:** [Claude Models Guide](Anthropic-Claude-Models-Guide.md) for Anthropic • [ChatGPT Models & Prompting Guide](ChatGPT-Models-Prompting-Guide.md) for OpenAI
 3. **Bookmark:** This index for quick navigation
 4. **Setup:** [AI Terminal & CLI Guide](AI-Terminal-CLI-Guide.md) for development workflow
 
