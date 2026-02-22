@@ -22,6 +22,9 @@ You are [role]. [Rules/style/constraints]
 | Single chat | First message with ### delimiters | One-time use |
 
 ## 🤖 MODEL SELECTION
+
+> **⚠️ Architecture First:** Prompting alone doesn't scale to production. Define your workflow—single turn, multi-step, persistent, or agentic—before optimizing for a specific model. See [Advanced Techniques](#-advanced-techniques) for orchestration patterns.
+
 | **Model**         | **Best For**                  | **Prompt Tip**                                      |
 |-------------------|-------------------------------|---------------------------------------------------|
 | **GPT-4o**        | Multimodal tasks, vision, reasoning | Use "step-by-step" for complex reasoning. Supports multimodal inputs. |
@@ -47,21 +50,30 @@ You are [role]. [Rules/style/constraints]
 - 1-2 quality examples > many mediocre ones
 
 ## 🧠 ADVANCED TECHNIQUES
+
+### Prompt-Level Techniques
 - **Few-shot prompting:** Show 2-3 input→output examples to guide the model.
 - **Chain-of-thought:** Use "Let's think step by step" for reasoning tasks.
 - **Tool-calling:** Pass tools via the API's `tools` field for better accuracy.
 - **Planning prompts:** Induce explicit step-by-step plans for complex workflows.
-- **Agentic workflows:** Use persistence, tool-calling, and planning reminders for autonomous tasks.
+
+### Agent & Orchestration Patterns (Modern Approach)
+- **Persistent memory:** Maintain state across sessions using memory tools or vector stores—not just prompt context.
+- **Multi-step agent loops:** Plan → execute → verify → retry without human intervention.
+- **Context engineering:** Dynamically assemble context (retrieval, summaries, tool outputs) rather than relying on static prompt templates.
+- **Agentic workflows:** Combine persistence, tool-calling, memory, and execution loops for autonomous, production-grade tasks.
 
 ## ✅ QUICK CHECKLIST
 - [ ] SYSTEM block first with clear delimiters.
 - [ ] Context = only essential info.
 - [ ] Explicit output format specified.
 - [ ] Descriptive file names used.
-- [ ] Right model for the task.
+- [ ] Workflow requirements defined (single-turn, multi-step, persistent, agentic?).
+- [ ] Right model for the task (after workflow is defined).
 - [ ] Unnecessary words removed.
 - [ ] Step-by-step only when needed.
 - [ ] Use tools via API for better accuracy.
+- [ ] For multi-step or persistent tasks, consider an agent/orchestration layer.
 
 ## 🎯 COMMON PATTERNS
 
