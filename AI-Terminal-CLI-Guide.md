@@ -88,21 +88,24 @@ gh copilot suggest "undo last commit but keep changes"
 
 ## 🔧 COMPARISON TABLE
 
-| **Tool** | **Best For** | **Pricing** | **Offline** | **File Access** |
-|----------|--------------|-------------|-------------|-----------------|
-| **Claude Code** | Development, debugging | Free tier + paid | ❌ | ✅ Direct |
-| **OpenAI CLI** | API automation, scripting | Pay-per-use | ❌ | ⚠️ Via upload |
-| **GitHub Copilot CLI** | Git workflows, commands | $10/month | ❌ | ✅ Repo context |
-| **Cursor IDE** | AI-powered coding | Free + Pro | ✅ | ✅ Full IDE |
+| **Tool** | **Best For** | **Pricing** | **Offline** | **File Access** | **Agentic / Multi-file** |
+|----------|--------------|-------------|-------------|-----------------|--------------------------|
+| **Claude Code** | Development, debugging, agentic coding | Free tier + paid | ❌ | ✅ Direct | ✅ Full codebase, test execution |
+| **OpenAI CLI** | API automation, scripting | Pay-per-use | ❌ | ⚠️ Via upload | ⚠️ Manual chaining |
+| **GitHub Copilot CLI** | Git workflows, commands, repo-aware suggestions | $10/month | ❌ | ✅ Repo context | ✅ Multi-file reasoning |
+| **Cursor IDE** | AI-powered coding with integrated agent | Free + Pro | ✅ | ✅ Full IDE | ✅ Multi-file, CI/CD hooks |
 
 ## 🚀 ADVANCED WORKFLOWS
 
-### **Automated Code Review**
+> **Agentic Coding Note:** Modern AI coding tools go beyond single-shot command suggestions. Claude Code, GitHub Copilot, and similar tools can operate in agentic loops—reading and writing files, running tests, refactoring across multiple files, and iterating until a goal is met. Design your workflows to leverage this capability rather than treating them as one-shot autocomplete.
+
+### **Automated Code Review (CI/CD Integration)**
 ```bash
 #!/bin/bash
-# review-pr.sh
+# review-pr.sh — Run in CI pipeline (e.g., GitHub Actions)
 git diff main..HEAD > changes.diff
 claude-code review --file changes.diff --output review.md
+# Optionally post review.md as a PR comment via gh CLI
 ```
 
 ### **Batch Documentation**
@@ -116,6 +119,13 @@ find . -name "*.py" -exec claude-code document {} \;
 # Capture error and analyze
 npm test 2>&1 | tee error.log
 claude-code debug --log error.log --suggest-fix
+```
+
+### **Multi-File Refactoring (Agentic Loop)**
+```bash
+# Let Claude Code reason across the codebase, run tests, and iterate
+claude-code refactor --goal "migrate deprecated API calls to v2" \
+  --run-tests --max-iterations 5
 ```
 
 ## ⚡ PRODUCTIVITY TIPS

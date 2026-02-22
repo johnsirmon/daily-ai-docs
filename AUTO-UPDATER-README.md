@@ -90,9 +90,48 @@ Edit `config.json` to customize:
 }
 ```
 
+## 👤 Human-in-the-Loop Review & Self-Tuning
+
+The system learns from your feedback. After each update run a review request file is
+generated automatically. Rate the output and your corrections are injected into the
+next AI run — making documentation progressively more accurate and useful.
+
+### Quick Review (< 2 minutes)
+
+```powershell
+# See what needs review
+python feedback_collector.py list
+
+# Start interactive review session
+python feedback_collector.py review
+# or use the shortcut:
+python doc_updater.py --review
+```
+
+### Feedback via GitHub Issue
+
+Open a **📝 Document Feedback** issue using the template in
+`.github/ISSUE_TEMPLATE/doc-feedback.yml` to leave async feedback without a local setup.
+
+### Non-interactive feedback
+
+```powershell
+python feedback_collector.py add `
+  --doc "ChatGPT-Models-Prompting-Guide.md" `
+  --run-id "20250222_090012" `
+  --accuracy 4 --usefulness 5 `
+  --comments "Good depth" `
+  --corrections "GPT-4o mini price is $0.15/1M tokens"
+```
+
+See **[HUMAN-REVIEW-GUIDE.md](HUMAN-REVIEW-GUIDE.md)** for the complete workflow.
+
+---
+
 ## 🔄 Automation Options
 
 ### Windows Task Scheduler (Daily Auto-Run)
+
 1. Open **Task Scheduler** (`taskschd.msc`)
 2. Create **Basic Task**
 3. **Name**: "AI Doc Updates"
