@@ -15,11 +15,12 @@
 - **[Anthropic Claude Guide](Anthropic-Claude-Models-Guide.md)** - Claude-specific strategies
 - **[AI Platform Comparison](AI-Platform-Comparison-Guide.md)** - When to use which platform
 - **[Terminal & CLI Guide](AI-Terminal-CLI-Guide.md)** - Command-line AI tools
+- **[Daily Workflow Template](Daily-Workflow-Template.md)** - Dual-section daily briefing (general + personalized)
 
 ### 🔧 Automation System
 - **[Auto-Updater](AUTO-UPDATER-README.md)** - Daily documentation maintenance
 - **[Batch Scripts](setup.bat)** - One-click setup and execution
-- **[Python Updater](doc_updater.py)** - AI-powered change detection
+- **[Python Updater](doc_updater.py)** - AI-powered change detection and daily workflow generation
 
 ### 📊 What Sources We Monitor
 - **OpenAI Documentation**: API docs, model guides, best practices
@@ -41,6 +42,12 @@
 2. **Configure**: Add API keys to `config.json`
 3. **Run Daily**: Use `run_updater.bat` for automatic updates
 4. **Stay Current**: System monitors AI platform changes automatically
+
+### For Daily Workflow Briefings
+1. **Template**: Review [Daily-Workflow-Template.md](Daily-Workflow-Template.md) for the dual-section format
+2. **Customize**: Edit `user_profile` in `config.json` with your specific domains and sources
+3. **Generate**: Run `python doc_updater.py --daily-workflow` for a full general + personalized briefing
+4. **Scope**: Use `--section general` or `--section personalized` to generate individual sections
 
 ## 🌟 Key Features
 

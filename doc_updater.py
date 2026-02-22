@@ -447,7 +447,7 @@ def main():
         results = updater.run_daily_check(update_originals=args.update_originals)
         summary = updater.generate_change_summary(results)
         print(summary)
-        
+
         # Save summary
         summary_path = updater.versions_dir / f"summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
         with open(summary_path, 'w') as f:
