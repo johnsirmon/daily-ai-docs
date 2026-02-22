@@ -1,13 +1,39 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
 
-# Logs and runtime output
-doc_updater.log
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
 *.log
-*.backup_*.md
+doc_updater.log
 
-# Local environment
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+
+# Secrets / environment
 .env
-.env.*
+*.env
+
+# Versioned docs (runtime artifacts)
+versions/

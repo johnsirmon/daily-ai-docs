@@ -1,0 +1,54 @@
+name: Pipeline CI
+
+on:
+  push:
+    paths:
+      - 'pipeline/**'
+      - 'topics/**'
+      - 'tests/**'
+      - 'requirements.txt'
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: python -m pytest tests/ -v --tb=short
+
+      - name: Dry-run pipeline (schema validation)
+        run: python -m pipeline.main --dry-run
+
+      - name: Validate output schema
+        run: |
+          python -c "
+          import json, sys
+          from pathlib import Path
+
+          trends = Path('data/trends.json')
+          if not trends.exists():
+              print('SKIP: data/trends.json not generated yet')
+              sys.exit(0)
+
+          data = json.loads(trends.read_text())
+          assert 'last_updated' in data, 'Missing last_updated'
+          assert 'topics' in data, 'Missing topics'
+          assert 'schema_version' in data, 'Missing schema_version'
+          print('data/trends.json schema OK')
+          "

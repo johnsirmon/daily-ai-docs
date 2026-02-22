@@ -17,16 +17,31 @@
 - **[Terminal & CLI Guide](AI-Terminal-CLI-Guide.md)** - Command-line AI tools
 - **[Daily Workflow Template](Daily-Workflow-Template.md)** - Dual-section daily briefing (general + personalized)
 
-### 🔧 Automation System
+#### 🔧 Automation System
 - **[Auto-Updater](AUTO-UPDATER-README.md)** - Daily documentation maintenance
 - **[Batch Scripts](setup.bat)** - One-click setup and execution
 - **[Python Updater](doc_updater.py)** - AI-powered change detection and daily workflow generation
 
+### 🤖 Daily AI Intelligence Pipeline
+
+Automated pipeline that ingests, ranks, deduplicates, and publishes operator-relevant AI updates every day.
+
+| Output | Description |
+|--------|-------------|
+| `reports/daily/YYYY-MM-DD.md` | Top-ranked items for the day |
+| `reports/weekly/YYYY-WW.md` | Weekly summary grouped by topic |
+| `reports/watchlist.md` | High-signal items (score ≥ 0.70) |
+| `data/trends.json` | Rolling topic-frequency time series |
+
+**Tracked topics:** OpenClaw · VS Code Insiders · GitHub Copilot Chat/Agent ·
+MCP Ecosystem · Agentic Workflows · Self-Improving Agent Patterns ·
+Agent Evals & Reliability · Azure AI Foundry / Azure OpenAI
+
 ### 📊 What Sources We Monitor
 - **OpenAI Documentation**: API docs, model guides, best practices
 - **Anthropic Documentation**: Claude guides, API updates, capabilities
-- **GitHub Repositories**: openai-cookbook, anthropic-sdk-python
-- **Official Blogs**: Release announcements, feature updates
+- **GitHub Repositories**: openai-cookbook, anthropic-sdk-python, modelcontextprotocol/servers, microsoft/vscode
+- **Official Blogs**: VS Code Blog, Azure AI Blog, GitHub Blog, Semantic Kernel Blog
 - **Community Resources**: Verified techniques and patterns
 
 ## 🚀 Quick Start
@@ -104,6 +119,109 @@ AI systems have evolved beyond prompt engineering alone. Use this library as a s
 3. **Outline** → ChatGPT GPT-4.5 (brainstorming)
 4. **Writing** → Claude Sonnet
 5. **Editing** → Both platforms for comparison
+
+## 🤖 AI Intelligence Pipeline — Runbook
+
+### Architecture
+
+The pipeline follows clear module boundaries inside `pipeline/`:
+
+| Module | Responsibility |
+|--------|---------------|
+| `ingest.py` | Fetch from GitHub releases and RSS/Atom feeds |
+| `normalize.py` | Map raw items to a common JSON schema |
+| `dedupe.py` | Remove duplicates by URL and title |
+| `rank.py` | Score items (recency × source quality × topic relevance) |
+| `publish.py` | Write daily/weekly/watchlist/trends outputs |
+| `main.py` | CLI orchestrator |
+
+### Running Manually
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Dry-run (no network calls, uses sample data)
+python -m pipeline.main --dry-run
+
+# Live run (requires GITHUB_TOKEN env var for higher rate limits)
+export GITHUB_TOKEN=ghp_...
+python -m pipeline.main
+
+# Override the date / week
+python -m pipeline.main --date 2026-02-22 --week 2026-08
+
+# Run tests
+python -m pytest tests/ -v
+```
+
+### Adding Topics
+
+Edit `topics/topics.yaml` — add an entry to the `topics` list:
+
+```yaml
+- id: my-new-topic
+  display: "My New Topic"
+  keywords: ["keyword one", "keyword two"]
+  why_matters_template: "Short note on why this topic matters."
+  action_template: "What the operator should do when this fires."
+```
+
+### Adding Sources
+
+Edit `topics/topics.yaml` — add an entry to the appropriate source list:
+
+```yaml
+sources:
+  github_releases:
+    - owner: some-org
+      repo: some-repo
+      topics: [my-new-topic]
+
+  rss_feeds:
+    - url: "https://example.com/feed.xml"
+      name: "Example Blog"
+      quality: 0.80
+      topics: [my-new-topic]
+```
+
+### Scoring Tuning
+
+Adjust weights, half-life, and thresholds under `ranking:` in `topics/topics.yaml`:
+
+```yaml
+ranking:
+  weights:
+    recency: 0.40        # 0-1: higher = prefer newer items
+    source_quality: 0.40 # 0-1: higher = prefer high-quality sources
+    topic_relevance: 0.20
+  recency_half_life_days: 3   # items halve in score every N days
+  watchlist_threshold: 0.70   # minimum score to appear in watchlist
+```
+
+### GitHub Actions Schedules
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `daily-pipeline.yml` | 06:00 UTC daily + `workflow_dispatch` | Daily report |
+| `weekly-pipeline.yml` | 07:00 UTC Mondays + `workflow_dispatch` | Weekly summary |
+| `pipeline-ci.yml` | Push/PR to `pipeline/`, `topics/`, `tests/` | Unit tests + dry-run |
+
+### CI / Quality Gates
+
+- All unit tests cover ranking, deduplication, schema, and output formats
+- `--dry-run` validates the full pipeline without network access
+- `data/trends.json` schema is validated in CI after every run
+
+## 👥 Contributing to the Pipeline
+
+1. Fork and create a feature branch.
+2. Add/update tests in `tests/` for any logic change.
+3. Run `python -m pytest tests/ -v` — all tests must pass.
+4. Run `python -m pipeline.main --dry-run` — pipeline must produce valid output.
+5. Open a PR; the `pipeline-ci.yml` workflow runs automatically.
+
+Topic requests and source suggestions are welcome — just edit `topics/topics.yaml`.
 
 ## 🔄 MAINTENANCE SCHEDULE
 

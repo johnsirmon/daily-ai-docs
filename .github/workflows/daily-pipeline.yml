@@ -1,0 +1,58 @@
+name: Daily AI Intelligence Pipeline
+
+on:
+  schedule:
+    # Run every day at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Use sample data (no network calls)'
+        required: false
+        default: 'false'
+        type: boolean
+      date_override:
+        description: 'Override report date (YYYY-MM-DD)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily pipeline
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FLAGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            FLAGS="--dry-run"
+          fi
+          if [ -n "${{ github.event.inputs.date_override }}" ]; then
+            FLAGS="$FLAGS --date ${{ github.event.inputs.date_override }}"
+          fi
+          python -m pipeline.main $FLAGS
+
+      - name: Commit and push reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/ data/
+          git diff --cached --quiet || git commit -m "chore: daily AI pipeline run $(date -u +%Y-%m-%d)"
+          git push

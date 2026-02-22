@@ -1,0 +1,50 @@
+name: Weekly AI Intelligence Pipeline
+
+on:
+  schedule:
+    # Run every Monday at 07:00 UTC
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+    inputs:
+      week_override:
+        description: 'Override report week (YYYY-WW)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  run-weekly:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run weekly pipeline
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FLAGS=""
+          if [ -n "${{ github.event.inputs.week_override }}" ]; then
+            FLAGS="$FLAGS --week ${{ github.event.inputs.week_override }}"
+          fi
+          python -m pipeline.main $FLAGS
+
+      - name: Commit and push weekly report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/ data/
+          git diff --cached --quiet || git commit -m "chore: weekly AI pipeline run $(date -u +%Y-%W)"
+          git push
