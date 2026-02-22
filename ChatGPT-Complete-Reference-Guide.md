@@ -64,12 +64,15 @@
 | Mixed content | `.zip` + manifest file | Include a README describing contents. |
 
 ## 5️⃣ Model-Specific Hints
+
+> **⚠️ Architecture First:** Model selection is a downstream decision. Identify your workflow requirements—memory, tool use, multi-step execution, verification—before choosing a model. Orchestration and context engineering are the durable differentiators, not model choice alone.
+
 | Model | Extra prompt tip |
 |-------|------------------|
-| **GPT-4o/4o-mini** | Add explicit "Think step-by-step" for complex reasoning. Supports 128k context window. |
-| **o1/o1-mini** | They reason internally; state "give me your final answer" to avoid showing reasoning steps. |
-| **GPT-4 Turbo** | Excellent for analysis tasks. Use system messages for consistent behavior. |
-| **GPT-3.5 Turbo** | Keep prompts < 16k tokens, add 1–2 few-shot examples for consistency. |
+| **GPT-4o** | Add explicit "Think step-by-step" for complex reasoning. Supports multimodal input. 128k context window. |
+| **o3 / o4-mini** | Extended internal reasoning; state desired output format clearly. Best for hard logic and planning tasks. |
+| **GPT-4.1 / GPT-4.1-mini** | Strong for long-context coding and analysis. Use structured system prompts with concrete examples. |
+| **GPT-4.5** | Optimized for writing, brainstorming, and exploration. Use open-ended, generative prompts. |
 
 ## 6️⃣ Token Optimization
 - **Remove redundant words**: "Please analyze" → "Analyze"
@@ -79,11 +82,22 @@
 - **Abbreviate when clear**: "documentation" → "docs", "application" → "app"
 
 ## 7️⃣ Advanced Techniques
+
+> **Beyond Prompts:** For production workflows, prompting is the entry point—not the architecture. Persistent state, memory layers, tool use, and agent orchestration are now the primary design concerns.
+
+### Prompt-Level Techniques
 - **Few-shot prompting**: 2-3 input→output examples for consistency
 - **Chain-of-thought**: Add "Let's think step by step" for complex reasoning
 - **Tree of thoughts**: "Consider 3 different approaches, then choose the best"
 - **Self-consistency**: "Give me 3 solutions, then pick the most reliable one"
-- **Prompt chaining**: Break complex tasks into sequential steps
+- **Prompt chaining**: Break complex tasks into sequential prompt steps
+
+### Agent & Orchestration Patterns (Modern Approach)
+- **Persistent memory**: Maintain state across sessions using vector stores or structured memory tools
+- **Tool/function calling**: Connect models to APIs, databases, code execution, and external systems
+- **Multi-step agent loops**: Plan → execute → verify → retry cycles without human intervention
+- **Context engineering**: Dynamically assemble the right context (RAG, summaries, tool results) rather than static prompt templates
+- **Multi-agent systems**: Coordinate specialized agents (planner, executor, critic) for complex workflows
 
 ## 8️⃣ Research-Backed Tips
 - Putting SYSTEM at the very top and delimiting sections boosts accuracy and lowers hallucinations (OpenAI API guide, 2025).  
@@ -98,7 +112,8 @@
 - [ ] Context = only what the model *must* know to complete the task.  
 - [ ] Explicit output format and constraints.  
 - [ ] Descriptive file names & specific references (page/cell/region).  
-- [ ] Choose appropriate model: o1 for reasoning, GPT-4o for general tasks.
+- [ ] Define workflow requirements (memory? tools? multi-step?) before selecting a model.
 - [ ] Remove unnecessary words to optimize tokens.
 - [ ] Use step-by-step only when you need visible reasoning process.  
 - [ ] Prefer structured formats (CSV/JSON) over unstructured (PDF scans).
+- [ ] For persistent or multi-step tasks, consider an agent/orchestration layer.

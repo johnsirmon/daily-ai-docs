@@ -2,6 +2,8 @@
 
 ## 🤖 WHEN TO USE: CHATGPT VS CLAUDE
 
+> **⚠️ Modern Framing:** Platform and model selection are downstream of architecture. Start by defining your workflow: is it a single prompt, a multi-step pipeline, an agentic loop, or a system requiring persistent memory and external tool integration? Then match the platform and model to that architecture.
+
 ### **ChatGPT (OpenAI)**
 | **Strength** | **Use Case** | **Best Model** |
 |--------------|--------------|----------------|
@@ -51,10 +53,35 @@
 | **API Access** | ❌ | ❌ | ❌ | ❌ | ✅ Direct |
 | **Tool Integration** | ✅ Via web | ❌ | ✅ Via web | ❌ | ✅ Terminal tools |
 
+## 🏗️ MODERN AI ARCHITECTURE PATTERNS
+
+Prompt engineering is a starting point, not a complete architecture. As workflows become more complex, the durable advantages come from orchestration, context management, and system design—not model choice.
+
+| **Pattern** | **When to Use** | **Key Components** |
+|-------------|-----------------|-------------------|
+| **Single-turn prompt** | Simple, one-off tasks | Clear prompt + right model |
+| **Prompt chaining** | Multi-step workflows with defined stages | Sequential prompts, output routing |
+| **RAG (Retrieval-Augmented Generation)** | Tasks requiring up-to-date or domain-specific knowledge | Vector store, retrieval, dynamic context |
+| **Agentic loop** | Autonomous tasks: code, research, data processing | Tool calling, execution, verification, retry |
+| **Multi-agent system** | Complex workflows needing specialization | Planner agent, executor agent, critic agent |
+| **Persistent memory** | Long-running or user-specific workflows | Memory store, summarization, session management |
+
+### Architecture-First Decision Flow
+```text
+What does the task require?
+├── Single answer / one-off → Single-turn prompt
+├── Sequential steps → Prompt chaining
+├── External knowledge → RAG / context engineering
+├── Autonomous execution → Agentic loop (tools + memory + verification)
+└── Multiple specializations → Multi-agent orchestration
+                    ↓
+          Then choose platform + model
+```
+
 ## 🎯 QUICK DECISION MATRIX
 
 **Choose ChatGPT when:**
-- Need advanced reasoning (o1 models)
+- Need advanced reasoning (o3 models)
 - Working with images/vision tasks
 - Building applications with tool calling
 - Want the largest ecosystem of integrations
@@ -64,15 +91,16 @@
 - Need careful, nuanced responses
 - Prioritize safety and ethics
 - Working on creative writing projects
+- Need agentic coding with whole-codebase awareness (Claude Code)
 
 **Choose Terminal/CLI when:**
 - Automating repetitive tasks
 - Working with local files
 - Need script integration
-- Building development workflows
+- Building agentic development workflows (multi-file reasoning, test execution, CI/CD integration)
 
 ---
-**💡 Pro Tip:** Use both! Many developers use ChatGPT for reasoning/logic and Claude for writing/analysis, depending on the specific task.
+**💡 Pro Tip:** Use both! Many developers use ChatGPT for reasoning/logic and Claude for writing/analysis, depending on the specific task. For production workflows, layer in orchestration, memory, and tools—model choice matters less than system design.
 
 **🔄 Stay Updated:** Both platforms release new models frequently. Check model pages for latest capabilities.
 

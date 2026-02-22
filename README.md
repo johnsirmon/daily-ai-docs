@@ -31,10 +31,21 @@
 
 ## 🚀 Quick Start
 
+### Modern AI Architecture Approach
+AI systems have evolved beyond prompt engineering alone. Use this library as a starting point—then layer in the architecture that matches your workflow:
+
+| **Workflow Type** | **Architecture Pattern** | **Starting Point** |
+|------------------|--------------------------|-------------------|
+| One-off tasks | Single-turn prompt | [Prompt Guide](Quick-Reference-Print.md) |
+| Multi-step pipelines | Prompt chaining | [Advanced Techniques](Quick-Reference-Print.md#-advanced-techniques) |
+| Knowledge-intensive | RAG + context engineering | [Platform Comparison](AI-Platform-Comparison-Guide.md) |
+| Autonomous execution | Agentic loop (tools + memory + verification) | [Terminal & CLI Guide](AI-Terminal-CLI-Guide.md) |
+| Production systems | Multi-agent orchestration | [Platform Comparison](AI-Platform-Comparison-Guide.md#️-modern-ai-architecture-patterns) |
+
 ### For Prompt Engineering
 1. **Print Reference**: Use [ChatGPT Prompt Guide](Quick-Reference-Print.md) for daily reference
 2. **Rate Your Prompts**: Follow the [rating system](#-prompt-rating-system) 
-3. **Choose Your Model**: Use the [decision trees](#-model-selection) 
+3. **Define Your Architecture**: Identify workflow type before model selection
 4. **Compare Platforms**: Check [platform comparison](AI-Platform-Comparison-Guide.md)
 
 ### For Automated Maintenance
@@ -71,23 +82,28 @@
 
 ## 🎯 USE CASE EXAMPLES
 
+> **Architecture-First:** Each example below starts with the workflow pattern, then maps to tools and models. This reflects the modern direction: orchestration and context engineering first, model selection second.
+
 ### **Data Analysis Project**
-1. **Upload data** → Claude Web (200k context)
-2. **Generate insights** → Claude Sonnet
-3. **Create visualizations** → ChatGPT GPT-4o (if images needed)
-4. **Automate reports** → OpenAI CLI scripts
+1. **Define workflow**: Multi-step pipeline with persistent context
+2. **Ingest & analyze** → Claude Web (200k context for long documents)
+3. **Generate insights** → Claude Sonnet
+4. **Create visualizations** → ChatGPT GPT-4o (if images needed)
+5. **Automate reports** → OpenAI CLI scripts or agentic pipeline
 
 ### **Software Development**
-1. **Planning** → ChatGPT o1 (reasoning)
-2. **Coding** → Claude Code (terminal) or GPT-4.1 (web)
-3. **Review** → GitHub Copilot CLI
-4. **Documentation** → Claude Sonnet
+1. **Define workflow**: Agentic loop with codebase awareness
+2. **Planning** → ChatGPT o3 (deep reasoning)
+3. **Coding + refactoring** → Claude Code (multi-file, test-aware) or GPT-4.1 (web)
+4. **Review + CI/CD integration** → GitHub Copilot CLI
+5. **Documentation** → Claude Sonnet
 
 ### **Content Creation**
-1. **Research** → Claude Opus (long context)
-2. **Outline** → ChatGPT GPT-4.5 (brainstorming)
-3. **Writing** → Claude Sonnet
-4. **Editing** → Both platforms for comparison
+1. **Define workflow**: Sequential stages with handoffs
+2. **Research** → Claude Opus (long context, nuanced analysis)
+3. **Outline** → ChatGPT GPT-4.5 (brainstorming)
+4. **Writing** → Claude Sonnet
+5. **Editing** → Both platforms for comparison
 
 ## 🔄 MAINTENANCE SCHEDULE
 

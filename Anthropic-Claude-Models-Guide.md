@@ -30,12 +30,15 @@ You are [role]. [Rules/style/constraints]
 | **Anthropic API** | Custom integrations | Full programmatic control, enterprise features |
 
 ## 🤖 MODEL SELECTION
+
+> **⚠️ Architecture First:** Model selection is a downstream decision. Define your workflow requirements—single-turn, multi-step, persistent state, tool use—before picking a model. Orchestration and context engineering deliver more durable value than model swapping alone.
+
 | **Model**         | **Best For**                  | **Prompt Tip**                                      |
 |-------------------|-------------------------------|---------------------------------------------------|
 | **Claude 4 Opus** | Complex reasoning, analysis   | Use detailed prompts. Excellent for nuanced tasks. |
 | **Claude 3.7 Sonnet** | Balanced performance, coding | Great all-rounder. Include examples for consistency. |
 | **Claude 3.5 Haiku** | Fast responses, simple tasks | Keep prompts concise. Ideal for quick iterations. |
-| **Claude Code** | Software development, debugging | Provide full context, file structures, error logs. |
+| **Claude Code** | Software development, debugging | Provide full context, file structures, error logs. Supports multi-file reasoning and agentic coding workflows. |
 
 ## 📁 FILE FORMATS (Best → Worst)
 - **Text/Code:** `.txt` `.md` `.csv` `.json` 
@@ -52,21 +55,31 @@ You are [role]. [Rules/style/constraints]
 - 1-2 quality examples > many mediocre ones
 
 ## 🧠 ADVANCED TECHNIQUES
+
+### Prompt-Level Techniques
 - **Few-shot prompting:** Show 2-3 input→output examples to guide the model.
 - **Chain-of-thought:** Use "Let's think step by step" for reasoning tasks.
 - **Tool-calling:** Pass tools via the API's `tools` field for better accuracy.
 - **Planning prompts:** Induce explicit step-by-step plans for complex workflows.
-- **Agentic workflows:** Use persistence, tool-calling, and planning reminders for autonomous tasks.
+
+### Agent & Orchestration Patterns (Modern Approach)
+- **Persistent memory:** Maintain state across sessions using memory tools or vector stores—not just prompt context.
+- **Multi-step agent loops:** Plan → execute → verify → retry without human intervention.
+- **Context engineering:** Dynamically assemble context (retrieval, summaries, tool outputs) rather than relying on static prompt templates.
+- **Agentic workflows:** Combine persistence, tool-calling, memory, and execution loops for autonomous, production-grade tasks.
+- **Claude Code for agentic coding:** Claude Code goes beyond single-shot completion—it can read/write files, run tests, refactor across a codebase, and iterate in an execution loop.
 
 ## ✅ QUICK CHECKLIST
 - [ ] SYSTEM block first with clear delimiters.
 - [ ] Context = only essential info.
 - [ ] Explicit output format specified.
 - [ ] Descriptive file names used.
-- [ ] Right model for the task.
+- [ ] Workflow requirements defined (single-turn, multi-step, persistent, agentic?).
+- [ ] Right model for the task (after workflow is defined).
 - [ ] Unnecessary words removed.
 - [ ] Step-by-step only when needed.
 - [ ] Use tools via API for better accuracy.
+- [ ] For multi-step or persistent tasks, consider an agent/orchestration layer.
 
 ## 🎯 COMMON PATTERNS
 

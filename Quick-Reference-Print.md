@@ -51,7 +51,9 @@ You are [role]. [Rules/style/constraints]
 
 ## 🤖 MODEL SELECTION
 
-> **💡 Pro Tip**: Model capabilities change frequently. Use the [Prompt Rating System](#-prompt-rating-system) to optimize for your chosen model.
+> **⚠️ Architecture First:** Prompt optimization is a starting point, not a complete architecture. Define your workflow (single-turn, multi-step, agentic, persistent?) before selecting a model. For production systems, orchestration, memory, and tooling are the durable differentiators—not model choice alone.
+
+> **💡 Pro Tip**: Model capabilities change frequently. Use the [Prompt Rating System](#-prompt-rating-system) to optimize for your chosen model. For complex workflows, evaluate your orchestration layer alongside your model choice.
 
 | **Model**         | **Best For**                  | **Prompt Strategy**                                      | **Rating Weight** |
 |-------------------|-------------------------------|-----------------------------------------------------|------------------|
@@ -64,7 +66,13 @@ You are [role]. [Rules/style/constraints]
 | **GPT-4.1-mini**  | Everyday tasks                | Simple, direct instructions for efficiency.        | General purpose  |
 
 ### Model Selection Decision Tree
-```
+```text
+What does the workflow require?
+├── Single answer → choose model by capability (below)
+├── Multi-step or stateful → add orchestration + memory layer
+└── Autonomous execution → agentic loop (tools + verification)
+
+Then by model capability:
 Complex reasoning? → o3/GPT-4o
 Quick task? → o4-mini/GPT-4.1-mini  
 Coding focus? → o4-mini-high/GPT-4.1
@@ -157,6 +165,8 @@ Please help me understand my sales data and maybe make it look better or somethi
 
 ## 🧠 ADVANCED TECHNIQUES
 
+> **Beyond Prompts:** For production workflows, prompting is the entry point—not the complete architecture. Persistent state, memory layers, tool use, and agent orchestration are the primary design concerns for scalable systems.
+
 ### Core Techniques
 | **Technique** | **When to Use** | **Example** | **Model Fit** |
 |---------------|-----------------|-------------|---------------|
@@ -164,7 +174,14 @@ Please help me understand my sales data and maybe make it look better or somethi
 | **Chain-of-thought** | Complex reasoning | "Let's think step by step" | o3, GPT-4o |
 | **Tool-calling** | API integrations | Use API `tools` field | GPT-4.1, 4o |
 | **Planning prompts** | Multi-step workflows | "Create a plan, then execute" | o3, GPT-4.1 |
-| **Agentic workflows** | Autonomous tasks | Persistence + tools + planning | GPT-4o, 4.1 |
+
+### Agent & Orchestration Patterns (Modern Approach)
+| **Pattern** | **When to Use** | **Key Components** |
+|-------------|-----------------|-------------------|
+| **Persistent memory** | Long-running, user-specific tasks | Vector stores, memory tools, session summaries |
+| **Agentic loop** | Autonomous execution (code, research) | Tools + verification + retry |
+| **Context engineering** | Knowledge-intensive tasks | RAG, dynamic context assembly |
+| **Multi-agent** | Tasks needing specialization | Planner + executor + critic agents |
 
 ### Advanced Prompt Patterns
 
@@ -196,10 +213,12 @@ E - Example: Format like this: [sample]
 - [ ] Context = only essential info.
 - [ ] Explicit output format specified.
 - [ ] Descriptive file names used.
+- [ ] Workflow requirements defined (single-turn, multi-step, agentic?) before model selection.
 - [ ] Right model for the task.
 - [ ] Unnecessary words removed.
 - [ ] Step-by-step only when needed.
 - [ ] Use tools via API for better accuracy.
+- [ ] For persistent or multi-step tasks, design an agent/orchestration layer.
 
 ## 🎯 COMMON PATTERNS & TEMPLATES
 
@@ -297,16 +316,19 @@ Format: side-by-side table + recommendation with reasoning.
 
 > **Last Updated:** July 7, 2025 | **Review Frequency:** Monthly
 
-### 🔴 Likely to Become Obsolete (6-12 months)
+### 🔴 Obsolete / Actively Misleading — Remove or Rewrite
+- **Prompt-only workflows:** Treating prompts as the complete architecture. Modern systems require orchestration, memory, and tool integration for anything beyond one-off tasks.
+- **Model-centric decision-making:** "Pick the best model and optimize around it." Orchestration, context engineering, and governance are the durable differentiators—not model choice.
+- **Single-shot coding assistants:** Framing AI code tools as standalone autocomplete. Current direction: agentic systems with whole-codebase reasoning, test execution, and CI/CD integration.
+- **GPT-3.5 Turbo / GPT-4 Turbo / o1/o1-mini guidance:** These models are superseded; references should use current model lineup.
+
+### 🟡 Aging / Likely to Change (6-18 months)
 - **Token counting strategies** - Models becoming more efficient
 - **Specific model version recommendations** - Rapid model evolution  
 - **Chain-of-thought necessity** - Built-in reasoning improvements
 - **Manual file format optimization** - Better parsing capabilities
-
-### 🟡 May Change (12-18 months)  
 - **App vs Web feature differences** - Platform convergence
 - **Basic prompt structure templates** - AI getting better at understanding intent
-- **Model selection decision trees** - Fewer specialized models needed
 - **Manual prompt rating** - Automated prompt optimization tools
 
 ### 🟢 Likely to Remain Relevant (18+ months)
@@ -315,6 +337,7 @@ Format: side-by-side table + recommendation with reasoning.
 - **Output format specification** - Structure requirements persist
 - **Iterative improvement methodology** - Core learning approach
 - **Role-based prompting** - Context setting remains important
+- **Architecture-first thinking** - Orchestration > model choice is a durable principle
 
 ### 📅 Obsolescence Check Schedule
 - **Monthly:** Model capability changes, new features
