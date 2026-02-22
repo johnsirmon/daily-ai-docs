@@ -10,7 +10,7 @@
   ],
   "documents": [
     "ChatGPT-Models-Prompting-Guide.md",
-    "Anthropic-Claude-Models-Guide.md", 
+    "Anthropic-Claude-Models-Guide.md",
     "AI-Platform-Comparison-Guide.md",
     "AI-Terminal-CLI-Guide.md",
     "ChatGPT-Complete-Reference-Guide.md"
@@ -29,5 +29,33 @@
     "auto_update_originals": false,
     "backup_originals": true,
     "min_days_between_updates": 1
+  },
+  "user_profile": {
+    "domains": [
+      "Azure Monitor Agent (AMA) Windows/Linux operations and release engineering",
+      "CVE/security response for dependencies (especially OpenSSL, Fluent Bit, Go/runtime libs)",
+      "Supply chain security and release gates (SBOM, SLSA, provenance, artifact scanning, policy-as-gate)",
+      "Incident operations (IcM-style workflows, triage automation, on-call productivity)",
+      "Browser and auth automation (Edge CDP, Playwright connectOverCDP, enterprise auth-safe automation)",
+      "AI agent tooling and workflows (MCP ecosystem, agent orchestration, prompt/runtime reliability)"
+    ],
+    "research_sources": [
+      "Microsoft Learn, Azure updates, OpenSSL, Fluent Bit, Chromium/Edge, Playwright official docs and changelogs",
+      "GitHub: trending repos, release notes, security advisories, issues/PR discussions in relevant projects",
+      "Reddit: r/azure, r/devops, r/cybersecurity, r/netsec, r/programming, r/selfhosted, r/MachineLearning, r/LocalLLaMA",
+      "Hacker News and engineering blogs from major cloud/security providers",
+      "CVE/NVD + vendor advisories with practical exploitability context"
+    ],
+    "time_horizon_hours": 24,
+    "relevance_threshold": 7
+  },
+  "daily_workflow": {
+    "enabled": true,
+    "output_directory": "daily-updates",
+    "output_filename_pattern": "daily-workflow-{date}.md",
+    "sections": {
+      "general": true,
+      "personalized": true
+    }
   }
 }

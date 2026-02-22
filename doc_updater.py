@@ -274,6 +274,217 @@ class AIDocumentationUpdater:
         
         self.logger.info(f"Updated {doc_path}, backup saved as {backup_path}")
     
+    def generate_daily_workflow(self, section: str = "both") -> str:
+        """Generate a dual-section daily briefing.
+
+        Parameters
+        ----------
+        section : str
+            Which sections to generate: ``"general"``, ``"personalized"``, or
+            ``"both"`` (default).
+
+        Returns
+        -------
+        str
+            Markdown-formatted daily briefing.
+        """
+        today = datetime.now().strftime("%Y-%m-%d")
+        output_parts: List[str] = []
+
+        profile = self.config.get("user_profile", {})
+        domains: List[str] = profile.get("domains", [])
+        sources: List[str] = profile.get("research_sources", [])
+        threshold: int = profile.get("relevance_threshold", 7)
+
+        # ------------------------------------------------------------------ #
+        # Part 1 — General AI Updates                                         #
+        # ------------------------------------------------------------------ #
+        if section in ("general", "both"):
+            general_prompt = f"""
+You are an expert AI research analyst producing a concise daily briefing dated {today}.
+
+Generate **Part 1 — General AI Updates** covering topics relevant to ANY AI/software practitioner.
+Focus on:
+- New model releases, API changes, SDK updates (OpenAI, Anthropic, Google, Mistral, Meta)
+- Security CVEs in AI/ML dependencies
+- Developer tooling updates (LangChain, LlamaIndex, Hugging Face, vLLM, etc.)
+- Release-engineering and supply-chain best practices
+- AI agent / MCP ecosystem news
+
+Output format (Markdown):
+
+# Part 1 — General AI Updates — {today}
+
+## 1) Critical Changes (must-read, 3-7 items)
+For each item:
+- **What changed** (1 sentence)
+- **Why it matters** (1 sentence)
+- Action: Monitor / Experiment / Adopt / Ignore
+- Confidence: High/Med/Low
+- Source: [title](url)
+
+## 2) Security & CVE Watch
+(CVEs, exploit signals, practical impact)
+
+## 3) Tooling & Automation Watch
+(SDK/framework changes, deprecations, migration risks)
+
+## 4) Release Engineering & Supply Chain Watch
+(SBOM, provenance, CI/CD policy gates)
+
+## 5) AI Workflow Upgrades (general)
+- Quick win (<30 min)
+- Medium (half-day)
+- Strategic (multi-week)
+
+## 6) Noise Filter — what NOT to chase today
+(3-5 low-signal items)
+
+## Recommended Focus for Today (General)
+1. [title](url)
+2. [title](url)
+3. [title](url)
+Top experiment: description
+
+Rules:
+- Be concise, specific, action-oriented; no fluff.
+- Include a source link for every claim.
+- State uncertainty explicitly.
+"""
+            try:
+                self.logger.info("Generating general AI updates section...")
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are an expert AI research analyst. "
+                                "Produce accurate, concise, source-linked daily briefings."
+                            ),
+                        },
+                        {"role": "user", "content": general_prompt},
+                    ],
+                    temperature=0.1,
+                )
+                output_parts.append(response.choices[0].message.content)
+            except Exception as e:
+                self.logger.error(f"Error generating general section: {e}")
+                output_parts.append(
+                    f"# Part 1 — General AI Updates — {today}\n\n"
+                    f"*Error generating section: {e}*\n"
+                )
+
+        # ------------------------------------------------------------------ #
+        # Part 2 — Personalized Domain Updates                                #
+        # ------------------------------------------------------------------ #
+        if section in ("personalized", "both"):
+            domains_text = "\n".join(f"  {i + 1}. {d}" for i, d in enumerate(domains))
+            sources_text = "\n".join(f"  - {s}" for s in sources)
+
+            personalized_prompt = f"""
+You are an expert technical analyst producing a personalized daily briefing dated {today}.
+
+The user's specific work domains are:
+{domains_text}
+
+Research sources to scan:
+{sources_text}
+
+Time horizon: prioritize last 24 h; include last 7 days if high-impact.
+
+Generate **Part 2 — Personalized Domain Updates** strictly filtered to those domains.
+
+Output format (Markdown):
+
+# Part 2 — Personalized Domain Updates — {today}
+
+## 1) Critical Changes (must-read, 3-7 items)
+For each item:
+- **What changed** (1 sentence)
+- **Why it matters to my workflows** (1 sentence)
+- Action: Monitor / Experiment / Adopt / Ignore
+- Confidence: High/Med/Low
+- Relevance: n/10
+- Source: [title](url)
+
+## 2) Security & CVE Watch
+(CVEs affecting AMA-like agent stacks or the listed dependencies; exploit maturity; practical impact)
+
+## 3) Tooling & Automation Watch
+(Edge CDP, Playwright, auth automation, MCP/agent tooling changes and risks)
+
+## 4) Release Engineering & Supply Chain Watch
+(SBOM, SLSA/provenance, artifact integrity, policy gates portable to CI/CD)
+
+## 5) AI Workflow Upgrades (for my daily process)
+- Quick win (<30 min)
+- Medium (half-day)
+- Strategic (multi-week)
+
+## 6) Noise Filter — what NOT to chase today
+(3-5 low-signal items in these domains)
+
+## Recommended Focus for Today (Personalized)
+1. [title](url)
+2. [title](url)
+3. [title](url)
+Top experiment: description
+
+Scoring rules:
+- Relevance-score each finding 1-10 based on fit to the listed domains.
+- Only include items with relevance >= {threshold} unless it is a critical security item.
+- Prefer concrete changes (release note, patch, advisory, API change) over opinion posts.
+- Be concise, specific, action-oriented; no generic AI news unless directly actionable.
+- Include links for every claim; state uncertainty explicitly.
+"""
+            # Build a dynamic system prompt from the configured domains so the
+            # persona matches whatever the user has defined, not hard-coded values.
+            domain_summary = "; ".join(d.split("(")[0].strip() for d in domains) if domains else "technical operations"
+            personalized_system_prompt = (
+                f"You are an expert technical analyst specializing in {domain_summary}. "
+                "Produce accurate, concise, source-linked daily briefings."
+            )
+            try:
+                self.logger.info("Generating personalized domain updates section...")
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": personalized_system_prompt,
+                        },
+                        {"role": "user", "content": personalized_prompt},
+                    ],
+                    temperature=0.1,
+                )
+                output_parts.append(response.choices[0].message.content)
+            except Exception as e:
+                self.logger.error(f"Error generating personalized section: {e}")
+                output_parts.append(
+                    f"# Part 2 — Personalized Domain Updates — {today}\n\n"
+                    f"*Error generating section: {e}*\n"
+                )
+
+        separator = "\n\n---\n\n"
+        return separator.join(output_parts)
+
+    def save_daily_workflow(self, content: str) -> Path:
+        """Save the generated daily workflow to the configured output directory."""
+        wf_config = self.config.get("daily_workflow", {})
+        output_dir = Path(wf_config.get("output_directory", "daily-updates"))
+        output_dir.mkdir(exist_ok=True)
+
+        pattern = wf_config.get("output_filename_pattern", "daily-workflow-{date}.md")
+        filename = pattern.replace("{date}", datetime.now().strftime("%Y-%m-%d"))
+        output_path = output_dir / filename
+
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        self.logger.info(f"Daily workflow saved to {output_path}")
+        return output_path
+
     def run_daily_check(self, update_originals: bool = False) -> Dict[str, Dict]:
         """Run the daily documentation check."""
         self.logger.info("Starting daily documentation check...")
@@ -362,12 +573,24 @@ def main():
     parser.add_argument("--config", default="config.json", help="Configuration file path")
     parser.add_argument("--update-originals", action="store_true", help="Update original files (not just create versions)")
     parser.add_argument("--summary-only", action="store_true", help="Generate summary of last check results")
-    
+    parser.add_argument("--daily-workflow", action="store_true", help="Generate dual-section daily workflow briefing")
+    parser.add_argument(
+        "--section",
+        choices=["general", "personalized", "both"],
+        default="both",
+        help="Which section(s) to include in the daily workflow (default: both)",
+    )
+
     args = parser.parse_args()
-    
+
     updater = AIDocumentationUpdater(args.config)
-    
-    if args.summary_only:
+
+    if args.daily_workflow:
+        content = updater.generate_daily_workflow(section=args.section)
+        output_path = updater.save_daily_workflow(content)
+        print(content)
+        print(f"\n✅ Daily workflow saved to {output_path}")
+    elif args.summary_only:
         # Find latest results file
         results_files = list(updater.versions_dir.glob("check_results_*.json"))
         if results_files:
@@ -383,7 +606,7 @@ def main():
         results = updater.run_daily_check(update_originals=args.update_originals)
         summary = updater.generate_change_summary(results)
         print(summary)
-        
+
         # Save summary
         summary_path = updater.versions_dir / f"summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
         with open(summary_path, 'w') as f:
