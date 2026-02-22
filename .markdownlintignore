@@ -1,0 +1,3 @@
+# Generated pipeline outputs — excluded from markdownlint
+reports/
+data/

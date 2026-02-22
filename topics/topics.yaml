@@ -1,0 +1,111 @@
+# Daily AI Intelligence Pipeline — Topics & Sources Configuration
+# Edit this file to add/remove topics and sources.
+
+topics:
+  - id: openclaw
+    display: "OpenClaw"
+    keywords: ["openclaw", "open claw", "open-claw"]
+    why_matters_template: "OpenClaw update detected — review for breaking changes or new capabilities."
+    action_template: "Check the OpenClaw changelog and update your integration if needed."
+
+  - id: vscode-insiders
+    display: "VS Code Insiders"
+    keywords: ["vscode insiders", "vs code insiders", "insiders build", "visual studio code insiders"]
+    why_matters_template: "VS Code Insiders ships new AI/developer features ahead of stable."
+    action_template: "Install the latest Insiders build; validate AI extension compatibility."
+
+  - id: github-copilot-chat
+    display: "GitHub Copilot Chat / Agent"
+    keywords: ["copilot chat", "copilot agent", "github copilot", "copilot extension"]
+    why_matters_template: "Copilot Chat/Agent update may change AI-assisted coding behavior."
+    action_template: "Update the Copilot extension and test agent mode in your workspace."
+
+  - id: mcp
+    display: "MCP Ecosystem"
+    keywords: ["mcp", "model context protocol", "mcp server", "mcp client"]
+    why_matters_template: "MCP protocol or server update affects tool integrations."
+    action_template: "Audit your MCP server list; update or pin versions as needed."
+
+  - id: agentic-workflows
+    display: "Agentic Workflows"
+    keywords: ["agentic", "agent workflow", "multi-agent", "agent loop", "agent orchestration"]
+    why_matters_template: "New agentic workflow pattern or framework released."
+    action_template: "Evaluate for adoption in current agent projects."
+
+  - id: self-improving-agents
+    display: "Self-Improving Agent Patterns"
+    keywords: ["self-improving", "self improvement", "recursive agent", "agent self-play", "agent self-reflect"]
+    why_matters_template: "Self-improvement technique may enhance agent reliability or capability."
+    action_template: "Review the technique for applicability to your agent stack."
+
+  - id: agent-evals
+    display: "Agent Evals & Reliability"
+    keywords: ["agent eval", "agent evaluation", "benchmark", "reliability", "evals framework", "agent testing"]
+    why_matters_template: "New eval framework or benchmark available for agent reliability testing."
+    action_template: "Add to eval suite or use to measure current agent performance."
+
+  - id: azure-ai
+    display: "Azure AI Foundry / Azure OpenAI"
+    keywords: ["azure ai", "azure openai", "ai foundry", "azure ml", "azure ai foundry"]
+    why_matters_template: "Azure AI platform update may affect hosted model access or pricing."
+    action_template: "Review Azure AI changelog; update SDK and test in staging."
+
+sources:
+  github_releases:
+    - owner: microsoft
+      repo: vscode
+      topics: [vscode-insiders]
+    - owner: microsoft
+      repo: vscode-copilot-release
+      topics: [github-copilot-chat]
+    - owner: modelcontextprotocol
+      repo: specification
+      topics: [mcp]
+    - owner: modelcontextprotocol
+      repo: servers
+      topics: [mcp]
+    - owner: microsoft
+      repo: promptflow
+      topics: [agentic-workflows, azure-ai]
+    - owner: microsoft
+      repo: semantic-kernel
+      topics: [agentic-workflows, azure-ai]
+    - owner: BerriAI
+      repo: litellm
+      topics: [agentic-workflows, mcp]
+
+  rss_feeds:
+    - url: "https://code.visualstudio.com/feed.xml"
+      name: "VS Code Blog"
+      quality: 0.90
+      topics: [vscode-insiders, github-copilot-chat]
+    - url: "https://devblogs.microsoft.com/azure-ai/feed/"
+      name: "Azure AI Blog"
+      quality: 0.90
+      topics: [azure-ai]
+    - url: "https://github.blog/feed/"
+      name: "GitHub Blog"
+      quality: 0.85
+      topics: [github-copilot-chat]
+    - url: "https://devblogs.microsoft.com/semantic-kernel/feed/"
+      name: "Semantic Kernel Blog"
+      quality: 0.80
+      topics: [agentic-workflows, azure-ai]
+
+source_quality:
+  github_release: 0.90
+  github_issue: 0.60
+  github_commit: 0.55
+  rss_official: 0.85
+  rss: 0.75
+  reddit: 0.50
+
+ranking:
+  weights:
+    recency: 0.40
+    source_quality: 0.40
+    topic_relevance: 0.20
+  recency_half_life_days: 3
+  top_n_daily: 20
+  top_n_weekly: 50
+  watchlist_threshold: 0.70
