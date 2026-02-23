@@ -20,6 +20,20 @@ topics:
     why_matters_template: "Copilot Chat/Agent update may change AI-assisted coding behavior."
     action_template: "Update the Copilot extension and test agent mode in your workspace."
 
+  - id: copilot-coding-agent
+    display: "Copilot Coding Agent"
+    keywords: ["copilot coding agent", "coding agent", "copilot agent mode", "agent mode",
+               "copilot skills", "agent skills", "skill.md", ".github/skills"]
+    why_matters_template: "Copilot Coding Agent or Agent Skills update — new autonomous capabilities."
+    action_template: "Review release notes; update .github/skills/ and agent definitions as needed."
+
+  - id: copilot-instructions
+    display: "Copilot Custom Instructions"
+    keywords: ["copilot-instructions", "copilot instructions", "copilot context",
+               "custom instructions", ".github/copilot-instructions"]
+    why_matters_template: "Custom instructions feature update may change how repo-level context is loaded."
+    action_template: "Review and refresh .github/copilot-instructions.md for this repo."
+
   - id: mcp
     display: "MCP Ecosystem"
     keywords: ["mcp", "model context protocol", "mcp server", "mcp client"]
@@ -57,7 +71,10 @@ sources:
       topics: [vscode-insiders]
     - owner: microsoft
       repo: vscode-copilot-release
-      topics: [github-copilot-chat]
+      topics: [github-copilot-chat, copilot-coding-agent, copilot-instructions]
+    - owner: github
+      repo: github-mcp-server
+      topics: [mcp, github-copilot-chat]
     - owner: modelcontextprotocol
       repo: specification
       topics: [mcp]
@@ -78,7 +95,7 @@ sources:
     - url: "https://code.visualstudio.com/feed.xml"
       name: "VS Code Blog"
       quality: 0.90
-      topics: [vscode-insiders, github-copilot-chat]
+      topics: [vscode-insiders, github-copilot-chat, copilot-coding-agent]
     - url: "https://devblogs.microsoft.com/azure-ai/feed/"
       name: "Azure AI Blog"
       quality: 0.90
@@ -86,7 +103,7 @@ sources:
     - url: "https://github.blog/feed/"
       name: "GitHub Blog"
       quality: 0.85
-      topics: [github-copilot-chat]
+      topics: [github-copilot-chat, copilot-coding-agent, copilot-instructions]
     - url: "https://devblogs.microsoft.com/semantic-kernel/feed/"
       name: "Semantic Kernel Blog"
       quality: 0.80

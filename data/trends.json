@@ -22,6 +22,18 @@
       },
       "total_items": 31
     },
+    "copilot-coding-agent": {
+      "daily": {
+        "2026-02-22": 1
+      },
+      "total_items": 1
+    },
+    "copilot-instructions": {
+      "daily": {
+        "2026-02-22": 1
+      },
+      "total_items": 1
+    },
     "github-copilot-chat": {
       "daily": {
         "2026-02-22": 1,

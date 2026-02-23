@@ -9,6 +9,13 @@
 
 ## 🎯 What's Included
 
+### 🚀 Primary Guide (Start Here)
+
+- **[GitHub Copilot Methodology Guide](GitHub-Copilot-Methodology-Guide.md)** — the
+  2025–2026 feature hierarchy, gap analysis, adoption path, and governance implications
+  for VS Code Insiders users. Covers Agent Mode, MCP, Agent Skills, and the Copilot
+  Coding Agent.
+
 ### 📚 Core Documentation
 - **[AI Platform Comparison](AI-Platform-Comparison-Guide.md)** - When to use which platform
 - **[Claude Models Guide](Anthropic-Claude-Models-Guide.md)** - Claude model lineup and strategies
@@ -16,6 +23,7 @@
 - **[ChatGPT Complete Reference](ChatGPT-Complete-Reference-Guide.md)** - Full OpenAI model guide
 - **[Terminal & CLI Guide](AI-Terminal-CLI-Guide.md)** - Command-line AI tools
 - **[Daily Workflow Template](Daily-Workflow-Template.md)** - Dual-section daily briefing (general + personalized)
+- **[AI Governance](AI_GOVERNANCE.md)** - Policies for AI tooling, Copilot workflow, and drift management
 
 #### 🔧 Automation System
 - **[Auto-Updater](AUTO-UPDATER-README.md)** - Daily documentation maintenance
@@ -34,6 +42,7 @@ Automated pipeline that ingests, ranks, deduplicates, and publishes operator-rel
 | `data/trends.json` | Rolling topic-frequency time series |
 
 **Tracked topics:** OpenClaw · VS Code Insiders · GitHub Copilot Chat/Agent ·
+Copilot Coding Agent · Copilot Agent Skills · Copilot Custom Instructions ·
 MCP Ecosystem · Agentic Workflows · Self-Improving Agent Patterns ·
 Agent Evals & Reliability · Azure AI Foundry / Azure OpenAI
 
