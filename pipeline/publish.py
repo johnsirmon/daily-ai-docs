@@ -5,6 +5,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
+# Emoji labels by source type for narrative output
+_SOURCE_EMOJI = {
+    "github_release": "🚀",
+    "rss": "📰",
+}
+_DEFAULT_EMOJI = "📌"
+
 
 # ---------------------------------------------------------------------------
 # Enrichment helpers
@@ -192,6 +199,91 @@ def write_watchlist(
         "---",
         "",
         "_Threshold and scoring weights are configurable in `topics/topics.yaml`._",
+    ])
+
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
+# ---------------------------------------------------------------------------
+# Narrative report
+# ---------------------------------------------------------------------------
+
+def _fmt_item_narrative(item: Dict, idx: int, collapse: bool = True) -> str:
+    """Format a single item as a narrative block, optionally collapsible."""
+    emoji = _SOURCE_EMOJI.get(item.get("source_type", ""), _DEFAULT_EMOJI)
+    title = item["title"]
+    url = item["url"]
+    date = item["published_at"][:10]
+    snippet = (item.get("snippet") or "").strip()
+    snippet_text = f"\n\n> {snippet[:300]}" if snippet else ""
+    why = item.get("why_it_matters", "")
+    action = item.get("action", "")
+    topics_str = ", ".join(item.get("topics", [])) or "—"
+
+    detail_body = (
+        f"{emoji} **[{title}]({url})**  \n"
+        f"_{date} · {item['source']} · Topics: {topics_str}_"
+        f"{snippet_text}\n\n"
+        f"**Why it matters:** {why}\n\n"
+        f"**Action:** {action}\n"
+    )
+
+    if not collapse:
+        return detail_body + "\n---\n\n"
+
+    # Wrap secondary items in a collapsible <details> block for mobile-friendly reading.
+    summary_line = f"{emoji} {title} _{date}_"
+    return (
+        f"<details>\n<summary>{summary_line}</summary>\n\n"
+        f"{detail_body}\n"
+        "</details>\n\n"
+    )
+
+
+def write_narrative(
+    items: List[Dict],
+    date: str,
+    out_dir: str = "reports/narrative",
+) -> Path:
+    """Write a human-readable narrative report optimised for mobile viewing.
+
+    The first item is shown fully expanded; subsequent items are wrapped in
+    HTML ``<details>`` collapsible blocks so the page stays short on small
+    screens.
+    """
+    Path(out_dir).mkdir(parents=True, exist_ok=True)
+    path = Path(out_dir) / f"{date}.md"
+
+    generated = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    lines: List[str] = [
+        f"# AI Updates — {date}\n",
+        f"_Generated: {generated} | {len(items)} item(s)_\n",
+        (
+            "Tap any item below to expand. "
+            "Top story is shown in full; the rest are collapsible.\n"
+        ),
+        "---\n",
+    ]
+
+    if not items:
+        lines.append("_No updates to report for this date._\n")
+    else:
+        # First item: fully visible (no collapse)
+        lines.append("## 🌟 Top Story\n")
+        lines.append(_fmt_item_narrative(items[0], 1, collapse=False))
+
+        if len(items) > 1:
+            lines.append("## More Updates\n")
+            for idx, item in enumerate(items[1:], 2):
+                lines.append(_fmt_item_narrative(item, idx, collapse=True))
+
+    lines.extend([
+        "---\n",
+        "_[View full daily report](../daily/) · "
+        "[View watchlist](../watchlist.md) · "
+        "[Pipeline config](../../topics/topics.yaml)_\n",
     ])
 
     path.write_text("\n".join(lines), encoding="utf-8")

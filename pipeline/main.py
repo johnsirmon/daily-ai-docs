@@ -22,7 +22,7 @@ import yaml
 from .dedupe import dedupe
 from .ingest import ingest_all
 from .normalize import normalize_all
-from .publish import enrich, write_daily, write_trends, write_watchlist, write_weekly
+from .publish import enrich, write_daily, write_narrative, write_trends, write_watchlist, write_weekly
 from .rank import rank
 
 logging.basicConfig(
@@ -87,6 +87,7 @@ def run(config: dict, date: str, week: str, dry_run: bool = False) -> dict:
     weekly_path = write_weekly(enriched[:top_n_weekly], week)
     trends_path = write_trends(enriched)
     watchlist_path = write_watchlist(enriched, threshold=watchlist_threshold)
+    narrative_path = write_narrative(enriched[:top_n_daily], date)
 
     return {
         "date": date,
@@ -98,6 +99,7 @@ def run(config: dict, date: str, week: str, dry_run: bool = False) -> dict:
             "weekly": str(weekly_path),
             "trends": str(trends_path),
             "watchlist": str(watchlist_path),
+            "narrative": str(narrative_path),
         },
     }
 
