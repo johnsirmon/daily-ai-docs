@@ -67,6 +67,12 @@
       },
       "total_items": 342
     },
+    "local-agent-orchestration": {
+      "daily": {
+        "2026-02-28": 1
+      },
+      "total_items": 1
+    },
     "mcp": {
       "daily": {
         "2026-02-22": 1,
@@ -92,6 +98,12 @@
         "2026-02-28": 1
       },
       "total_items": 2
+    },
+    "self-learning-loops": {
+      "daily": {
+        "2026-02-28": 1
+      },
+      "total_items": 1
     },
     "vscode-insiders": {
       "daily": {

@@ -58,6 +58,22 @@ topics:
     why_matters_template: "New eval framework or benchmark available for agent reliability testing."
     action_template: "Add to eval suite or use to measure current agent performance."
 
+  - id: self-learning-loops
+    display: "Self-Learning Loops"
+    keywords: ["self-learning loop", "feedback loop", "rlhf", "reinforcement learning from human feedback",
+               "self-critique", "self-reflection loop", "iterative refinement", "self-play loop",
+               "online learning", "continual learning", "self-improving loop", "reward model"]
+    why_matters_template: "Self-learning loop pattern or framework released — agents can now improve autonomously from feedback."
+    action_template: "Evaluate loop design for your agent stack; consider adding a feedback-collection step to your pipeline."
+
+  - id: local-agent-orchestration
+    display: "Local Agent Orchestration & Handoff"
+    keywords: ["agent orchestration", "agent handoff", "coordinated agents", "multi-agent handoff",
+               "local agent", "agent-to-agent", "langgraph", "autogen", "crewai", "crew ai",
+               "agent router", "swarm agents", "agent supervisor", "agent graph"]
+    why_matters_template: "New orchestration framework or handoff pattern enables coordinated multi-agent workflows locally."
+    action_template: "Review framework for fit with your local agent topology; prototype a handoff scenario against your existing agents."
+
   - id: azure-ai
     display: "Azure AI Foundry / Azure OpenAI"
     keywords: ["azure ai", "azure openai", "ai foundry", "azure ml", "azure ai foundry"]
@@ -90,6 +106,15 @@ sources:
     - owner: BerriAI
       repo: litellm
       topics: [agentic-workflows, mcp]
+    - owner: microsoft
+      repo: autogen
+      topics: [self-learning-loops, local-agent-orchestration, agentic-workflows]
+    - owner: langchain-ai
+      repo: langgraph
+      topics: [self-learning-loops, local-agent-orchestration, agentic-workflows]
+    - owner: crewAIInc
+      repo: crewAI
+      topics: [local-agent-orchestration, agentic-workflows]
 
   rss_feeds:
     - url: "https://code.visualstudio.com/feed.xml"
