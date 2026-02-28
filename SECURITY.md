@@ -65,7 +65,7 @@ export OPENAI_API_KEY="your-key-here"
 export ANTHROPIC_API_KEY="your-key-here"
 
 # Bad: Hardcoding in files
-api_key = "sk-your-actual-key-here"  # DON'T DO THIS
+api_key = "sk-..."  # DON'T DO THIS
 ```
 
 ### Safe Configuration
