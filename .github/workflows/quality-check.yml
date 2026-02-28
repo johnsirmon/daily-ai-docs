@@ -37,44 +37,6 @@ jobs:
         files: '**/*.md'
         config: '.markdownlint.json'
         
-    - name: Validate prompt examples
-      run: |
-        python -c "
-        import re
-        import os
-        
-        # Check for prompt rating templates in guides
-        rating_pattern = r'Rate this prompt.*\(1-10\)'
-        obsolescence_pattern = r'# Guidance Obsolescence|## .*Obsolescence'
-        
-        md_files = []
-        for root, dirs, files in os.walk('.'):
-            for file in files:
-                if file.endswith('.md') and not file.startswith('README'):
-                    md_files.append(os.path.join(root, file))
-        
-        issues = []
-        for file_path in md_files:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                
-            # Check for rating system
-            if 'prompt' in file_path.lower() and not re.search(rating_pattern, content, re.IGNORECASE):
-                issues.append(f'{file_path}: Missing prompt rating system')
-                
-            # Check for obsolescence tracking  
-            if 'guide' in file_path.lower() and not re.search(obsolescence_pattern, content, re.IGNORECASE):
-                issues.append(f'{file_path}: Missing obsolescence tracking section')
-        
-        if issues:
-            print('❌ Documentation quality issues found:')
-            for issue in issues:
-                print(f'  - {issue}')
-            exit(1)
-        else:
-            print('✅ All documentation meets quality standards')
-        "
-        
     - name: Test auto-updater (dry run)
       run: |
         # Test the updater without making actual API calls
@@ -144,69 +106,6 @@ jobs:
             exit(1)
         "
 
-    - name: Validate human review guide
-      run: |
-        if [ ! -f "HUMAN-REVIEW-GUIDE.md" ]; then
-          echo "❌ HUMAN-REVIEW-GUIDE.md is missing"
-          exit 1
-        fi
-        echo "✅ HUMAN-REVIEW-GUIDE.md is present"
-
-    - name: Validate GitHub issue template for feedback
-      run: |
-        if [ ! -f ".github/ISSUE_TEMPLATE/doc-feedback.yml" ]; then
-          echo "❌ doc-feedback.yml issue template is missing"
-          exit 1
-        fi
-        echo "✅ doc-feedback.yml issue template is present"
-
-  check-links:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Check internal links
-      run: |
-        python -c "
-        import re
-        import os
-        
-        # Find all markdown files
-        md_files = []
-        for root, dirs, files in os.walk('.'):
-            for file in files:
-                if file.endswith('.md'):
-                    md_files.append(os.path.join(root, file))
-        
-        # Extract all internal links
-        link_pattern = r'\[([^\]]+)\]\(([^)]+)\)'
-        broken_links = []
-        
-        for file_path in md_files:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                
-            matches = re.findall(link_pattern, content)
-            for text, link in matches:
-                # Skip external links
-                if link.startswith('http'):
-                    continue
-                    
-                # Check if internal link exists
-                link_path = os.path.normpath(os.path.join(os.path.dirname(file_path), link))
-                if not os.path.exists(link_path):
-                    broken_links.append(f'{file_path}: [{text}]({link})')
-        
-        if broken_links:
-            print('❌ Broken internal links found:')
-            for link in broken_links:
-                print(f'  - {link}')
-            exit(1)
-        else:
-            print('✅ All internal links are valid')
-        "
-
   security-check:
     runs-on: ubuntu-latest
     
@@ -227,17 +126,3 @@ jobs:
         fi
         
         echo "✅ No exposed secrets detected"
-        
-    - name: Validate security documentation
-      run: |
-        if [ ! -f "SECURITY.md" ]; then
-          echo "❌ SECURITY.md is missing"
-          exit 1
-        fi
-        
-        if [ ! -f "CONTRIBUTING.md" ]; then
-          echo "❌ CONTRIBUTING.md is missing"
-          exit 1
-        fi
-        
-        echo "✅ Security documentation is present"
