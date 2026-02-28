@@ -102,4 +102,4 @@ You are [role]. [Rules/style/constraints]
 
 **Recommendation:** Use the app for quick tasks and notifications, and the web for detailed workflows and integrations.
 
-*Reference Sheet v2025.07.07 • github.com/YOUR_REPO*
+*Reference Sheet v2025.07.07 • github.com/johnsirmon/daily-ai-docs*

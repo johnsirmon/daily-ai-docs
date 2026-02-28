@@ -251,8 +251,8 @@ Topic requests and source suggestions are welcome — just edit `topics/topics.y
 **💡 Pro Tip:** Keep multiple tools in your toolkit. Each has unique strengths that complement the others.
 
 **🔗 Quick Links:**
-- [ChatGPT Web](https://chat.openai.com) | [Claude Web](https://claude.ai)
-- [OpenAI API Docs](https://platform.openai.com/docs) | [Anthropic API Docs](https://docs.anthropic.com)
-- [GitHub Copilot](https://github.com/features/copilot)
+- [GitHub Copilot Guide](GitHub-Copilot-Methodology-Guide.md) | [Platform Comparison](AI-Platform-Comparison-Guide.md)
+- [ChatGPT Reference](Quick-Reference-Print.md) | [Claude Guide](Anthropic-Claude-Models-Guide.md)
+- [Daily Reports](reports/daily/) | [Weekly Summaries](reports/weekly/)
 
 *AI Prompt Library Index v2025.07.07*

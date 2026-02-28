@@ -54,8 +54,8 @@ Thank you for your interest in contributing! This project helps developers and u
 ### For Code Contributors
 1. **Set up the development environment**:
    ```bash
-   git clone https://github.com/yourusername/prompt-templates.git
-   cd prompt-templates
+   git clone https://github.com/johnsirmon/daily-ai-docs.git
+   cd daily-ai-docs
    python -m venv venv
    venv\Scripts\activate
    pip install -r requirements.txt

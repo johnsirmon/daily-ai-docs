@@ -39,8 +39,7 @@ An automated system that monitors your AI documentation files (ChatGPT and Claud
 │   ├── ChatGPT-Models-Prompting-Guide.md
 │   ├── Anthropic-Claude-Models-Guide.md
 │   ├── AI-Platform-Comparison-Guide.md
-│   ├── AI-Terminal-CLI-Guide.md
-│   └── Documentation-Maintenance-Guide.md
+│   └── AI-Terminal-CLI-Guide.md
 │
 └── 📊 Generated Files (auto-created)
     ├── logs/                   # Update logs and history

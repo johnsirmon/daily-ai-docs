@@ -33,7 +33,7 @@ We actively maintain security updates for the following versions:
 
 ### How to Report
 1. **DO NOT** create a public GitHub issue for security vulnerabilities
-2. **Email**: [your-email@domain.com] with subject "Security Vulnerability - Prompt Templates"
+2. **GitHub**: Use [private vulnerability reporting](https://github.com/johnsirmon/daily-ai-docs/security/advisories/new) with subject "Security Vulnerability - daily-ai-docs"
 3. **Include**: Detailed description, steps to reproduce, potential impact
 4. **Attach**: Any relevant files or screenshots (if safe to do so)
 
@@ -148,9 +148,9 @@ api_key = "sk-your-actual-key-here"  # DON'T DO THIS
 
 ## Contact Information
 
-**Security Team**: [security-email@domain.com]  
-**General Contact**: [general-email@domain.com]  
-**GitHub**: [@yourusername](https://github.com/yourusername)
+**Security Team**: [Open a private vulnerability report](https://github.com/johnsirmon/daily-ai-docs/security/advisories/new)  
+**General Contact**: [Open an issue](https://github.com/johnsirmon/daily-ai-docs/issues)  
+**GitHub**: [@johnsirmon](https://github.com/johnsirmon)
 
 **PGP Key**: [Link to public key if available]
 

@@ -351,7 +351,7 @@ Changes in AI capabilities are automatically detected and flagged for review.
 ---
 
 *ChatGPT Prompt Engineering Guide v2025.07.07*  
-*📍 Repository: [daily-ai-docs](https://github.com/yourusername/daily-ai-docs)*  
+*📍 Repository: [daily-ai-docs](https://github.com/johnsirmon/daily-ai-docs)*  
 *📊 Source: [OpenAI Documentation](https://platform.openai.com/docs) - Verified Daily*  
-*📧 Issues & Suggestions: [Open an Issue](https://github.com/yourusername/daily-ai-docs/issues)*  
+*📧 Issues & Suggestions: [Open an Issue](https://github.com/johnsirmon/daily-ai-docs/issues)*  
 *⭐ Rate this guide: Use the [Prompt Rating System](#-prompt-rating-system)*
