@@ -192,9 +192,18 @@ jobs:
                 # Skip external links
                 if link.startswith('http'):
                     continue
+                
+                # Skip anchor-only links (same-page section references)
+                if link.startswith('#'):
+                    continue
+                
+                # Strip anchor fragment before checking file existence
+                link_file = link.split('#')[0]
+                if not link_file:
+                    continue
                     
                 # Check if internal link exists
-                link_path = os.path.normpath(os.path.join(os.path.dirname(file_path), link))
+                link_path = os.path.normpath(os.path.join(os.path.dirname(file_path), link_file))
                 if not os.path.exists(link_path):
                     broken_links.append(f'{file_path}: [{text}]({link})')
         
