@@ -7,6 +7,23 @@
 [![Source Verified](https://img.shields.io/badge/source-official%20docs-blue.svg)](AUTO-UPDATER-README.md)
 [![Multi Platform](https://img.shields.io/badge/platforms-OpenAI%20%7C%20Anthropic%20%7C%20More-orange.svg)](#-what-sources-we-monitor)
 
+<!-- LATEST-UPDATES-START -->
+## 🆕 Latest AI Updates
+
+> Run `python update_readme.py` locally, or let the daily workflow refresh this automatically.
+
+| Project | Latest Release | Date | Notes |
+|---------|---------------|------|-------|
+| GitHub Copilot | — | — | See [vscode-copilot-release](https://github.com/microsoft/vscode-copilot-release/releases) |
+| GitHub MCP Server | — | — | See [github-mcp-server](https://github.com/github/github-mcp-server/releases) |
+| MCP Servers | — | — | See [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/releases) |
+| MCP Specification | — | — | See [modelcontextprotocol/specification](https://github.com/modelcontextprotocol/specification/releases) |
+| VS Code | — | — | See [vscode](https://github.com/microsoft/vscode/releases) |
+| OpenAI Python SDK | — | — | See [openai-python](https://github.com/openai/openai-python/releases) |
+| Anthropic Python SDK | — | — | See [anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python/releases) |
+| LiteLLM | — | — | See [litellm](https://github.com/BerriAI/litellm/releases) |
+<!-- LATEST-UPDATES-END -->
+
 ## 🎯 What's Included
 
 ### 🚀 Primary Guide (Start Here)
@@ -26,6 +43,7 @@
 - **[AI Governance](AI_GOVERNANCE.md)** - Policies for AI tooling, Copilot workflow, and drift management
 
 #### 🔧 Automation System
+- **[README Updater](update_readme.py)** - Fetches latest AI releases and updates the `Latest AI Updates` table in this README daily
 - **[Auto-Updater](AUTO-UPDATER-README.md)** - Daily documentation maintenance
 - **[Batch Scripts](setup.bat)** - One-click setup and execution
 - **[Python Updater](doc_updater.py)** - AI-powered change detection and daily workflow generation
@@ -73,6 +91,18 @@ AI systems have evolved beyond prompt engineering alone. Use this library as a s
 4. **Rate Your Prompts**: Follow the [rating system](#-prompt-rating-system) 
 5. **Define Your Architecture**: Identify workflow type before model selection
 
+### For README Updates (simplest option)
+
+```bash
+pip install requests
+# optional: export GITHUB_TOKEN=ghp_...  (for higher rate limits)
+python update_readme.py
+```
+
+This fetches the latest release from each tracked repository and updates the
+`Latest AI Updates` table at the top of this file. The GitHub Actions workflow
+`update-readme.yml` runs this automatically every day at 07:00 UTC.
+
 ### For Automated Maintenance
 1. **Setup**: Run `setup.bat` for one-click installation
 2. **Configure**: Add API keys to `config.json`
@@ -94,8 +124,8 @@ AI systems have evolved beyond prompt engineering alone. Use this library as a s
 - **Self-assessment checklist** for rapid iteration
 
 ### 🤖 Multi-Platform Coverage
-- **ChatGPT**: All models from GPT-4o to o3
-- **Claude**: Anthropic's full model lineup
+- **ChatGPT**: GPT-4o, GPT-4o mini, o1, o3
+- **Claude**: Anthropic's full model lineup (Claude 3.5 Sonnet, Claude 3.5 Haiku, Claude 3 Opus)
 - **Comparison matrices**: When to use which platform
 - **Terminal tools**: CLI integration guides
 
@@ -118,15 +148,15 @@ AI systems have evolved beyond prompt engineering alone. Use this library as a s
 
 ### **Software Development**
 1. **Define workflow**: Agentic loop with codebase awareness
-2. **Planning** → ChatGPT o3 (deep reasoning)
-3. **Coding + refactoring** → Claude Code (multi-file, test-aware) or GPT-4.1 (web)
+2. **Planning** → ChatGPT o3 / o1 (deep reasoning)
+3. **Coding + refactoring** → Claude Sonnet (multi-file, test-aware) or GPT-4o (web)
 4. **Review + CI/CD integration** → GitHub Copilot CLI
 5. **Documentation** → Claude Sonnet
 
 ### **Content Creation**
 1. **Define workflow**: Sequential stages with handoffs
-2. **Research** → Claude Opus (long context, nuanced analysis)
-3. **Outline** → ChatGPT GPT-4.5 (brainstorming)
+2. **Research** → Claude 3 Opus (long context, nuanced analysis)
+3. **Outline** → ChatGPT GPT-4o (brainstorming)
 4. **Writing** → Claude Sonnet
 5. **Editing** → Both platforms for comparison
 
@@ -216,6 +246,7 @@ ranking:
 | `daily-pipeline.yml` | 06:00 UTC daily + `workflow_dispatch` | Daily report |
 | `weekly-pipeline.yml` | 07:00 UTC Mondays + `workflow_dispatch` | Weekly summary |
 | `pipeline-ci.yml` | Push/PR to `pipeline/`, `topics/`, `tests/` | Unit tests + dry-run |
+| `update-readme.yml` | 07:00 UTC daily + `workflow_dispatch` | Update README releases table |
 
 ### CI / Quality Gates
 
