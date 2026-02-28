@@ -1,0 +1,70 @@
+name: On-Demand Narrative Report
+
+# Run this workflow on demand — from the GitHub UI Actions tab, the GitHub
+# mobile app, or via the REST API.  No schedule; purely manual.
+on:
+  workflow_dispatch:
+    inputs:
+      date_override:
+        description: 'Report date (YYYY-MM-DD). Leave blank for today (UTC).'
+        required: false
+        default: ''
+        type: string
+      dry_run:
+        description: 'Use sample data (no live network calls)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  generate-narrative:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pipeline (narrative output included)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FLAGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            FLAGS="--dry-run"
+          fi
+          if [ -n "${{ github.event.inputs.date_override }}" ]; then
+            FLAGS="$FLAGS --date ${{ github.event.inputs.date_override }}"
+          fi
+          python -m pipeline.main $FLAGS
+
+      - name: Commit and push narrative report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/ data/
+          git diff --cached --quiet || git commit -m "chore: on-demand narrative report $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Print narrative report path
+        run: |
+          DATE="${{ github.event.inputs.date_override }}"
+          if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
+          NARRATIVE="reports/narrative/${DATE}.md"
+          if [ -f "$NARRATIVE" ]; then
+            echo "## Narrative report generated" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "📄 \`$NARRATIVE\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            cat "$NARRATIVE" >> "$GITHUB_STEP_SUMMARY"
+          fi

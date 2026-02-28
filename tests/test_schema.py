@@ -10,6 +10,7 @@ from pipeline.normalize import canonical_url, item_id, normalize, normalize_all
 from pipeline.publish import (
     enrich,
     write_daily,
+    write_narrative,
     write_trends,
     write_watchlist,
     write_weekly,
@@ -270,3 +271,72 @@ def test_write_watchlist_contains_table_header():
         content = path.read_text()
         assert "| Title |" in content
         assert "| Score |" in content
+
+
+# ---------------------------------------------------------------------------
+# write_narrative
+# ---------------------------------------------------------------------------
+
+def test_write_narrative_creates_file():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = write_narrative(SAMPLE_ITEMS, "2026-02-22", out_dir=tmpdir)
+        assert path.exists()
+
+
+def test_write_narrative_contains_date_and_titles():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = write_narrative(SAMPLE_ITEMS, "2026-02-22", out_dir=tmpdir)
+        content = path.read_text()
+        assert "2026-02-22" in content
+        assert "MCP Server v2.0 Released" in content
+        assert "VS Code Insiders 1.90 Ships AI Features" in content
+
+
+def test_write_narrative_top_story_not_collapsed():
+    """The first item must be fully visible (not inside <details>)."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = write_narrative(SAMPLE_ITEMS, "2026-02-22", out_dir=tmpdir)
+        content = path.read_text()
+        # Top story section appears before any <details> block
+        top_story_pos = content.find("Top Story")
+        first_details_pos = content.find("<details>")
+        assert top_story_pos != -1
+        # The top story heading must come before the first collapsible block
+        assert top_story_pos < first_details_pos
+
+
+def test_write_narrative_secondary_items_collapsed():
+    """Items after the first are wrapped in <details> for mobile-friendly display."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = write_narrative(SAMPLE_ITEMS, "2026-02-22", out_dir=tmpdir)
+        content = path.read_text()
+        assert "<details>" in content
+        assert "</details>" in content
+        # Second item title appears inside a <details> block
+        details_block_start = content.find("<details>")
+        assert "VS Code Insiders" in content[details_block_start:]
+
+
+def test_write_narrative_contains_why_and_action():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = write_narrative(SAMPLE_ITEMS, "2026-02-22", out_dir=tmpdir)
+        content = path.read_text()
+        assert "Why it matters" in content
+        assert "Action" in content
+
+
+def test_write_narrative_empty_items():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = write_narrative([], "2026-02-22", out_dir=tmpdir)
+        assert path.exists()
+        content = path.read_text()
+        assert "2026-02-22" in content
+        assert "No updates" in content
+
+
+def test_write_narrative_single_item_no_details():
+    """A single item should have no collapsible <details> block."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = write_narrative(SAMPLE_ITEMS[:1], "2026-02-22", out_dir=tmpdir)
+        content = path.read_text()
+        assert "<details>" not in content
