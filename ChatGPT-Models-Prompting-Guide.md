@@ -1,5 +1,14 @@
 # ChatGPT Quick Reference (Print Version)
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| Model selection | New OpenAI model release | 2025-07 |
+| Prompt structure | OpenAI API update | 2025-07 |
+| Advanced techniques | New prompting research | 2025-07 |
+| File formats | ChatGPT capability update | 2025-07 |
+
 ## 🏗️ PROMPT STRUCTURE
 ```
 ### SYSTEM
@@ -84,6 +93,18 @@ You are [role]. [Rules/style/constraints]
 **Code:** `Create [language] function that [does X]. Include error handling and comments.`
 
 **Comparison:** `Compare A vs B on [criteria]. Show pros/cons table.`
+
+## 🎯 Prompt Rating System
+
+Rate this prompt (1-10) across these dimensions before submitting:
+
+1. **Clarity** (1-10): How clear and unambiguous is the instruction?
+2. **Specificity** (1-10): How well does it specify the desired output?
+3. **Context** (1-10): Is the right amount of context provided?
+4. **Model Fit** (1-10): How well-suited is this for the chosen model?
+5. **Efficiency** (1-10): How token-efficient is the prompt?
+
+**Score ≥ 8 in all dimensions before using in production.**
 
 ---
 **💡 Pro Tip:** Start broad, then refine. Use "Think step-by-step" only when you need to see the reasoning process.

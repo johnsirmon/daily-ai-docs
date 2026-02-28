@@ -1,5 +1,14 @@
 # AI Models Platform Comparison Guide
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| ChatGPT vs Claude | New model release (either platform) | 2025-07 |
+| Modern architecture patterns | Agent framework update | 2025-07 |
+| Pricing comparison | Platform pricing change | 2025-07 |
+| Model capability table | New flagship model release | 2025-07 |
+
 ## 🤖 WHEN TO USE: CHATGPT VS CLAUDE
 
 > **⚠️ Modern Framing:** Platform and model selection are downstream of architecture. Start by defining your workflow: is it a single prompt, a multi-step pipeline, an agentic loop, or a system requiring persistent memory and external tool integration? Then match the platform and model to that architecture.

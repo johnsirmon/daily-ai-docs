@@ -1,5 +1,14 @@
 # AI Terminal & CLI Tools Guide
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| Claude Code | New Claude Code release | 2025-06 |
+| GitHub Copilot CLI | Copilot CLI feature update | 2025-06 |
+| OpenAI CLI | OpenAI CLI release | 2025-06 |
+| Installation steps | Tooling deprecation or update | 2025-06 |
+
 ## 🖥️ CLAUDE CODE (TERMINAL)
 
 ### **Installation & Setup**

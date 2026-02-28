@@ -64,7 +64,7 @@ AI systems have evolved beyond prompt engineering alone. Use this library as a s
 | Multi-step pipelines | Prompt chaining | [Advanced Techniques](Quick-Reference-Print.md#-advanced-techniques) |
 | Knowledge-intensive | RAG + context engineering | [Platform Comparison](AI-Platform-Comparison-Guide.md) |
 | Autonomous execution | Agentic loop (tools + memory + verification) | [Terminal & CLI Guide](AI-Terminal-CLI-Guide.md) |
-| Production systems | Multi-agent orchestration | [Platform Comparison](AI-Platform-Comparison-Guide.md#️-modern-ai-architecture-patterns) |
+| Production systems | Multi-agent orchestration | [Platform Comparison](AI-Platform-Comparison-Guide.md) |
 
 ### For Prompt Engineering
 1. **Platform Comparison**: Start with [AI Platform Comparison](AI-Platform-Comparison-Guide.md) to pick the right tool

@@ -61,9 +61,9 @@ For each item include:
 
 ## Recommended Focus for Today (General)
 
-1. [Read first — title](link)
-2. [Read second — title](link)
-3. [Read third — title](link)
+1. _Read first — title_
+2. _Read second — title_
+3. _Read third — title_
 
 **Top experiment:** _description_
 
@@ -142,9 +142,9 @@ For each item include:
 
 ## Recommended Focus for Today (Personalized)
 
-1. [Read first — title](link)
-2. [Read second — title](link)
-3. [Read third — title](link)
+1. _Read first — title_
+2. _Read second — title_
+3. _Read third — title_
 
 **Top experiment:** _description_
 

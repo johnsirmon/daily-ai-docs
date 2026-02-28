@@ -1,5 +1,13 @@
 # Auto-Update Options for Your Repo
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| GitHub Actions setup | Actions runner update | 2025-06 |
+| Automation options | New CI/CD tooling available | 2025-06 |
+| API integration steps | OpenAI API change | 2025-06 |
+
 ## Option 1: GitHub Actions with Manual Trigger
 Add this button to your README.md:
 

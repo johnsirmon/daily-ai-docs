@@ -1,5 +1,13 @@
 # 🚀 Quick GitHub Publishing Guide
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| VS Code GitHub extension | VS Code / GitHub extension update | 2025-06 |
+| CLI publishing steps | Git / GitHub CLI update | 2025-06 |
+| Repository naming | Org naming convention change | 2025-06 |
+
 ## Step-by-Step VS Code GitHub Publishing
 
 ### 1. **Initialize Git Repository (if not already done)**

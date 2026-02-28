@@ -1,5 +1,13 @@
 # Human-in-the-Loop Review Guide
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| Review workflow | doc_updater.py changes | 2025-06 |
+| Feedback format | feedback_collector.py changes | 2025-06 |
+| Rating criteria | Team AI policy change | 2025-06 |
+
 This guide explains how to review AI-generated documentation updates and provide feedback
 that the system uses to **self-tune** future runs.
 

@@ -1,5 +1,14 @@
 # ChatGPT Prompt Layers & Placement (Ref Sheet · 2025-07-07)
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| Model selection | New OpenAI model release | 2025-07 |
+| Prompt structure | OpenAI API update | 2025-07 |
+| File format support | ChatGPT capability update | 2025-07 |
+| Token limits | Model context window change | 2025-07 |
+
 > **🔄 DAILY MAINTENANCE PROMPT**  
 > *Copy this prompt and run it daily to keep this document current:*
 > 

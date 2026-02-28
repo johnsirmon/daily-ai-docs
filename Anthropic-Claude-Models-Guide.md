@@ -1,5 +1,14 @@
 # Anthropic Claude Complete Guide (Print Version)
 
+## Guidance Obsolescence
+
+| Section | Review trigger | Last validated |
+|---------|----------------|----------------|
+| Model lineup | New Claude model release | 2025-06 |
+| Prompt structure | Anthropic API update | 2025-06 |
+| Context window limits | Model capability update | 2025-06 |
+| Pricing and tiers | Anthropic pricing change | 2025-06 |
+
 ## 🏗️ PROMPT STRUCTURE
 ```
 ### SYSTEM
