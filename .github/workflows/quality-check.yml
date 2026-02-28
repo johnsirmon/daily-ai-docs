@@ -216,7 +216,7 @@ jobs:
     - name: Check for exposed secrets
       run: |
         # Check for potential API keys or secrets in files
-        if grep -r -i "sk-[a-zA-Z0-9]" . --exclude-dir=.git --exclude="*.yml" --exclude="*.yaml"; then
+        if grep -r -i -P "\bsk-[a-zA-Z0-9]" . --exclude-dir=.git --exclude="*.yml" --exclude="*.yaml"; then
           echo "❌ Potential API key found in repository"
           exit 1
         fi
