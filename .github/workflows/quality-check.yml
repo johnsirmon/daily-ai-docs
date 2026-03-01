@@ -11,11 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: pip install pyyaml --quiet
       - name: Validate topics config
-        run: python -c "import yaml; yaml.safe_load(open('topics/topics.yaml')); print('topics.yaml is valid')"
+        run: python -c "import yaml; yaml.safe_load(open('topics/topics.yaml'))" && echo "topics.yaml is valid"
       - name: Validate requirements
-        run: test -f requirements.txt && echo "requirements.txt present"
+        run: python -c "open('requirements.txt')" && echo "requirements.txt present"

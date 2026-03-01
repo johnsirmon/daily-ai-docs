@@ -196,8 +196,6 @@ All pipeline data flows as plain `dict` lists. Two item types share the same lis
 
 `dedupe.py` deduplicates by `item["repo"]`, keeping highest-starred.
 
-`enrich_items()` processes up to 3 repos concurrently with a 1s sleep between batches. Cache path: `.cache/enrich/{org}__{repo}__{date}.json` (per-repo, per-day). `commit_trend` is `"rising"` when the last 2 weeks of commits exceed the first 2 weeks by > 25%, `"falling"` when the reverse is true, otherwise `"flat"`.
-
 ---
 
 ## render.py section order
@@ -216,8 +214,8 @@ Per-topic section order in README:
 ### 🚀 Recent Releases     ← table with Highlights column (first 120 chars of notes)
 ```
 
-`render_readme(topics_data, lookback_days, research_report=None) -> str` builds the content string (used in tests). Pass `research_report` to include the `## 🗞️ This Week's Story` block.
-`write_readme(topics_data, lookback_days, path="README.md", research_report=None) -> Path` calls `render_readme` and writes to disk.
+`render_readme(topics_data, lookback_days) -> str` builds the content string (used in tests).
+`write_readme(topics_data, lookback_days, path="README.md") -> Path` calls `render_readme` and writes to disk.
 
 TOC anchors use `topic["id"]` (the YAML slug), not `topic["display"]`. Keep `id` values stable.
 
@@ -227,7 +225,7 @@ TOC anchors use `topic["id"]` (the YAML slug), not `topic["display"]`. Keep `id`
 
 Two generation functions replace the old single `generate_blurb()`:
 
-- **`generate_topic_meta(topic_display, repos, releases, context="") -> dict`** — uses `gpt-4o-mini` + `response_format=json_object`; returns `{why, learn, community_pulse, action_items}`. Quality gate: retries once if `why` word count < 40. The optional `context` string (from `research_report["topic_insights"][tid]`) is injected into the prompt.
+- **`generate_topic_meta(topic_display, repos, releases) -> dict`** — uses `gpt-4o-mini` + `response_format=json_object`; returns `{why, learn, community_pulse, action_items}`. Quality gate: retries once if `why` word count < 40.
 - **`generate_repo_deepdive(item, topic_display) -> str`** — uses `gpt-4o`; returns ~200-word Markdown prose (no JSON wrapper). Quality gate: retries once if word count < 150.
 - **`generate_blurb()`** is kept as a backward-compat shim wrapping `generate_topic_meta`.
 
@@ -237,7 +235,7 @@ Both fall back to empty string/dict if the API is unavailable.
 
 ## Podcast modules
 
-`pipeline/narrate.py` — `readme_to_narration(readme_content: str, research_report=None) -> str`: strips markdown tables, links, and TOC; retains topic headings + "Why it matters" / "What to learn" blurbs for speech. When `research_report` is provided, prepends a cold-open from `narrative_hook` and appends a standard closing. Topic transition phrases rotate ("Now let's look at…", "Moving on to…", etc.).
+`pipeline/narrate.py` — `readme_to_narration(readme_content: str) -> str`: strips markdown tables, links, and TOC; retains topic headings + "Why it matters" / "What to learn" blurbs for speech.
 
 `pipeline/tts.py` — `generate_audio(text: str) -> bytes | None`: tries `edge-tts` (Microsoft Edge neural TTS, no API key needed, voice `en-US-AriaNeural`) first; falls back to OpenAI TTS via GitHub Models (`tts-1`, voice `alloy`) if edge-tts fails. `write_audio(text, path)` writes the bytes to disk. Returns `None` and logs a warning if both methods fail.
 
@@ -297,14 +295,6 @@ Edit only `topics/topics.yaml`. Do not hardcode topic IDs anywhere in Python sou
 - Do not commit API keys or secrets — `GITHUB_TOKEN` is the only credential needed
 - Do not manually edit `README.md` — it is pipeline output; run the workflow instead
 - Do not add new output files/directories without updating `.markdownlintignore`
-- **Do not delete or rename a workflow file without checking branch protection rules.**
-  If a required status check (e.g. `Documentation Quality Check / validate-documentation`)
-  is tied to a workflow by its `name:` and `jobs.<id>:`, removing that workflow causes
-  every PR to fail immediately with a non-existent check. Either keep the file with a
-  stub job, or update branch protection rules first.
-- **Do not add `models: read` to workflow `permissions:`** — it is not a valid GitHub
-  Actions permission key and will cause workflow YAML validation to fail on all PRs.
-  `GITHUB_TOKEN` authenticates to the GitHub Models API without any special permission.
 
 ## Agent Skills
 
