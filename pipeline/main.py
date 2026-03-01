@@ -171,10 +171,15 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
     return write_readme(topics_data, lookback_days=lookback, research_report=research_report)
 
 
-def _publish_podcast(readme_path: Path, dry_run: bool, mp3_url_template: str) -> None:
+def _publish_podcast(
+    readme_path: Path,
+    dry_run: bool,
+    mp3_url_template: str,
+    research_report: dict | None = None,
+) -> None:
     """Narrate the README, generate audio, and update podcast.xml."""
     readme_content = readme_path.read_text(encoding="utf-8")
-    script = readme_to_narration(readme_content)
+    script = readme_to_narration(readme_content, research_report=research_report)
 
     today = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d")
     tag = f"radar-{today}"
