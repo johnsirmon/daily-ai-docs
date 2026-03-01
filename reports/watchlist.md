@@ -1,21 +1,14 @@
 # AI Intelligence Watchlist
 
-_Updated: 2026-02-28T21:15:40Z | High-signal items (score ≥ 0.7)_
+_Updated: 2026-03-01T06:31:52Z | High-signal items (score ≥ 0.7)_
 
 Items that warrant immediate attention based on recency, source quality, and topic relevance.
 
 | Title | Source | Topics | Score | Date |
 |-------|--------|--------|-------|------|
-| [[Sample] OpenClaw — update 2026-02-28](https://example.com/openclaw/update-2026-02-28) | sample-source | openclaw | 0.706 | 2026-02-28 |
-| [[Sample] VS Code Insiders — update 2026-02-28](https://example.com/vscode-insiders/update-2026-02-28) | sample-source | vscode-insiders | 0.706 | 2026-02-28 |
-| [[Sample] GitHub Copilot Chat / Agent — update 2026-02-28](https://example.com/github-copilot-chat/update-2026-02-28) | sample-source | github-copilot-chat | 0.706 | 2026-02-28 |
-| [[Sample] Copilot Coding Agent — update 2026-02-28](https://example.com/copilot-coding-agent/update-2026-02-28) | sample-source | copilot-coding-agent | 0.706 | 2026-02-28 |
-| [[Sample] Copilot Custom Instructions — update 2026-02-28](https://example.com/copilot-instructions/update-2026-02-28) | sample-source | copilot-instructions | 0.706 | 2026-02-28 |
-| [[Sample] MCP Ecosystem — update 2026-02-28](https://example.com/mcp/update-2026-02-28) | sample-source | mcp | 0.706 | 2026-02-28 |
-| [[Sample] Agentic Workflows — update 2026-02-28](https://example.com/agentic-workflows/update-2026-02-28) | sample-source | agentic-workflows | 0.706 | 2026-02-28 |
-| [[Sample] Self-Improving Agent Patterns — update 2026-02-28](https://example.com/self-improving-agents/update-2026-02-28) | sample-source | self-improving-agents | 0.706 | 2026-02-28 |
-| [[Sample] Agent Evals & Reliability — update 2026-02-28](https://example.com/agent-evals/update-2026-02-28) | sample-source | agent-evals | 0.706 | 2026-02-28 |
-| [[Sample] Azure AI Foundry / Azure OpenAI — update 2026-02-28](https://example.com/azure-ai/update-2026-02-28) | sample-source | azure-ai | 0.706 | 2026-02-28 |
+| [February 2026 Insiders (version 1.110)](https://code.visualstudio.com/updates/v1_110) | VS Code Blog | vscode-insiders, github-copilot-chat, copilot-coding-agent | 0.760 | 2026-03-04 |
+| [v1.81.12-stable.2](https://github.com/BerriAI/litellm/releases/tag/v1.81.12-stable.2) | BerriAI/litellm | agentic-workflows, mcp | 0.714 | 2026-02-28 |
+| [v1.81.6.rc.6](https://github.com/BerriAI/litellm/releases/tag/v1.81.6.rc.6) | BerriAI/litellm | agentic-workflows, mcp | 0.707 | 2026-02-28 |
 
 ---
 
