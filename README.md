@@ -1,6 +1,6 @@
 # AI Skills Radar — 2026-03-01
 
-_Updated: 2026-03-01T15:35:37Z | Covers last 14 days_
+_Updated: 2026-03-01T15:38:06Z | Covers last 14 days_
 
 > Auto-generated. To refresh, go to **Actions → Update AI Skills Radar → Run workflow**.
 
@@ -16,16 +16,16 @@ _Updated: 2026-03-01T15:35:37Z | Covers last 14 days_
 
 ## GitHub Copilot
 
-> **Why it matters:** GitHub Copilot is revolutionizing the way developers write code by providing AI-assisted suggestions that can significantly speed up the development process. As more developers adopt these tools, understanding how to effectively utilize them becomes essential for staying competitive in the fast-evolving tech landscape.
+> **Why it matters:** GitHub Copilot is transforming the way developers write code by providing AI-powered suggestions that enhance productivity and creativity. As AI continues to evolve, understanding how to effectively leverage tools like Copilot is crucial for staying competitive in the software development landscape.
 >
-> **What to learn:** This week, focus on mastering the use of GitHub Copilot's prompts and configurations by exploring the 'github/awesome-copilot' repository. Learning how to craft effective prompts can enhance your coding efficiency and improve the quality of the generated code.
+> **What to learn:** This week, focus on mastering prompt engineering techniques to optimize the suggestions provided by GitHub Copilot. Learning how to craft effective prompts can significantly improve the quality of the generated code and streamline your development process.
 
 ### 🌱 New & Rising Repos
 
 | Repo | Stars | Description |
 |------|-------|-------------|
 | [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools) | ⭐ 126,737 | FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Junie, Kiro, Leap.new, Lovable, Manus, NotionAI, Orchids.app, Perplexity, Poke, Qoder, Replit, Same.dev, Trae, Traycer AI, V |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | ⭐ 35,849 | An AI SKILL that provide design intelligence for building professional UI/UX multiple platforms |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | ⭐ 35,852 | An AI SKILL that provide design intelligence for building professional UI/UX multiple platforms |
 | [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) | ⭐ 29,104 | The Frontend for Agents & Generative UI. React + Angular |
 | [github/awesome-copilot](https://github.com/github/awesome-copilot) | ⭐ 23,032 | Community-contributed instructions, prompts, and configurations to help you make the most of GitHub Copilot. |
 | [e2b-dev/E2B](https://github.com/e2b-dev/E2B) | ⭐ 11,081 | Open-source, secure environment with real-world tools for enterprise-grade agents. |
@@ -34,9 +34,9 @@ _Updated: 2026-03-01T15:35:37Z | Covers last 14 days_
 
 ## MCP Ecosystem
 
-> **Why it matters:** The MCP ecosystem is rapidly evolving, with numerous repositories gaining traction, indicating a growing interest in Model Context Protocols among developers. Understanding MCP can enhance a developer's ability to work with AI and LLMs, making it a crucial area to explore for those looking to stay relevant in the tech landscape.
+> **Why it matters:** The MCP ecosystem is rapidly evolving, providing developers with innovative tools and frameworks to enhance their applications, particularly in AI and machine learning. Staying updated with the latest repositories and trends can significantly improve a developer's ability to create efficient, context-aware applications.
 >
-> **What to learn:** This week, focus on learning about the integration of MCP servers with AI applications, particularly how to utilize the context management features in tools like Upstash's Context7. Gaining proficiency in these skills can significantly improve the efficiency and effectiveness of AI-driven projects.
+> **What to learn:** This week, focus on understanding the Model Context Protocol (MCP) and how it can be applied to build more responsive and intelligent applications. Exploring the repositories related to MCP servers will give insights into best practices and advanced techniques for integrating context into software solutions.
 
 ### 🌱 New & Rising Repos
 
@@ -45,23 +45,23 @@ _Updated: 2026-03-01T15:35:37Z | Covers last 14 days_
 | [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) | ⭐ 81,872 | A collection of MCP servers. |
 | [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) | ⭐ 79,765 | Model Context Protocol Servers |
 | [upstash/context7](https://github.com/upstash/context7) | ⭐ 47,306 | Context7 MCP Server -- Up-to-date code documentation for LLMs and AI code editors |
-| [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | ⭐ 39,060 | A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows |
+| [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | ⭐ 39,061 | A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows |
 | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) | ⭐ 27,929 | Playwright MCP server |
 
 ---
 
 ## Agentic Workflows
 
-> **Why it matters:** Agentic workflows are increasingly relevant as developers seek to create more autonomous and intelligent systems that can handle complex tasks with minimal human intervention. The recent surge in GitHub activity around tools and frameworks for building AI-powered agents highlights the growing demand for solutions that enhance productivity and collaboration in software development.
+> **Why it matters:** Agentic workflows are increasingly relevant as developers seek to create intelligent systems that can autonomously manage tasks and collaborate effectively. With the rise of AI-powered tools and platforms, understanding how to build and deploy these workflows can enhance productivity and innovation in software development.
 >
-> **What to learn:** This week, focus on learning about the integration of multi-agent systems, particularly how they can collaborate effectively to solve problems. Understanding frameworks like Langflow or CrewAI can provide insights into designing workflows that leverage the strengths of multiple agents.
+> **What to learn:** This week, focus on mastering the integration of multi-agent collaboration frameworks, such as those offered by CrewAI or Langflow. Learning how to orchestrate interactions between autonomous agents will enable you to design more sophisticated and efficient AI solutions.
 
 ### 🌱 New & Rising Repos
 
 | Repo | Stars | Description |
 |------|-------|-------------|
 | [langflow-ai/langflow](https://github.com/langflow-ai/langflow) | ⭐ 145,169 | Langflow is a powerful tool for building and deploying AI-powered agents and workflows. |
-| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 130,776 | Production-ready platform for agentic workflow development. |
+| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 130,777 | Production-ready platform for agentic workflow development. |
 | [lobehub/lobehub](https://github.com/lobehub/lobehub) | ⭐ 72,828 | The ultimate space for work and life — to find, build, and collaborate with agent teammates that grow with you. We are taking agent harness to the next level — enabling multi-agent collaboration, effo |
 | [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | ⭐ 44,887 | Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks. |
 | [zhayujie/chatgpt-on-wechat](https://github.com/zhayujie/chatgpt-on-wechat) | ⭐ 41,669 | CowAgent是基于大模型的超级AI助理，能主动思考和任务规划、访问操作系统和外部资源、创造和执行Skills、拥有长期记忆并不断成长。同时支持飞书、钉钉、企业微信应用、微信公众号、网页等接入，可选择OpenAI/Claude/Gemini/DeepSeek/ Qwen/GLM/Kimi/LinkAI，能处理文本、语音、图片和文件，可快速搭建个人AI助手和企业数字员工。 |
@@ -88,16 +88,16 @@ _Updated: 2026-03-01T15:35:37Z | Covers last 14 days_
 
 ## Azure AI Foundry
 
-> **Why it matters:** Azure AI Foundry is crucial for developers as it provides tools and frameworks to integrate generative AI capabilities into applications, enhancing user experiences and driving innovation. With the rapid advancements in AI technologies, understanding how to leverage Azure's offerings can significantly improve a developer's skill set and marketability.
+> **Why it matters:** Azure AI Foundry is crucial for developers as it provides tools and frameworks to build and deploy generative AI applications efficiently. With the rapid advancements in AI technologies and the increasing demand for AI-driven solutions, understanding Azure's capabilities can significantly enhance a developer's skill set and marketability.
 >
-> **What to learn:** This week, focus on mastering the Retrieval-Augmented Generation (RAG) pattern using Azure AI Search and OpenAI models. This skill will enable you to build advanced applications that combine retrieval and generation, providing more accurate and context-aware responses.
+> **What to learn:** This week, focus on mastering the Retrieval-Augmented Generation (RAG) pattern, particularly how to implement it using Azure AI Search and OpenAI models. This skill is essential for creating sophisticated applications that can retrieve and generate contextually relevant information, improving user interactions.
 
 ### 🌱 New & Rising Repos
 
 | Repo | Stars | Description |
 |------|-------|-------------|
 | [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners) | ⭐ 107,298 | 21 Lessons, Get Started Building with Generative AI |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 37,352 | Python SDK, Proxy Server (AI Gateway) to call 100+ LLM APIs in OpenAI (or native) format, with cost tracking, guardrails, loadbalancing and logging. [Bedrock, Azure, OpenAI, VertexAI, Cohere, Anthropi |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 37,353 | Python SDK, Proxy Server (AI Gateway) to call 100+ LLM APIs in OpenAI (or native) format, with cost tracking, guardrails, loadbalancing and logging. [Bedrock, Azure, OpenAI, VertexAI, Cohere, Anthropi |
 | [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 34,225 | Enhanced ChatGPT Clone: Features Agents, MCP, DeepSeek, Anthropic, AWS, OpenAI, Responses API, Azure, Groq, o1, GPT-5, Mistral, OpenRouter, Vertex AI, Gemini, Artifacts, AI model switching, message se |
 | [Azure-Samples/azure-search-openai-demo](https://github.com/Azure-Samples/azure-search-openai-demo) | ⭐ 7,588 | A sample app for the Retrieval-Augmented Generation pattern running in Azure, using Azure AI Search for retrieval and Azure OpenAI large language models  to power ChatGPT-style and Q&A experiences. |
 | [crmne/ruby_llm](https://github.com/crmne/ruby_llm) | ⭐ 3,664 | One beautiful Ruby API for OpenAI, Anthropic, Gemini, Bedrock, Azure, OpenRouter, DeepSeek, Ollama, VertexAI, Perplexity, Mistral, xAI, GPUStack & OpenAI compatible APIs. Chat, Vision, Audio, PDF, Ima |
@@ -106,9 +106,9 @@ _Updated: 2026-03-01T15:35:37Z | Covers last 14 days_
 
 ## VS Code & AI Extensions
 
-> **Why it matters:** The integration of AI extensions in VS Code is transforming the development landscape by enhancing productivity and streamlining workflows. Developers can leverage these tools to automate mundane tasks, gain insights from AI, and improve their coding efficiency, making it crucial to stay updated on these advancements.
+> **Why it matters:** The integration of AI extensions in VS Code is transforming the development landscape by enhancing productivity and streamlining workflows. Developers can leverage these tools to automate repetitive tasks, gain insights from AI-generated suggestions, and improve code quality, making it essential to stay updated on these advancements.
 >
-> **What to learn:** This week, focus on learning how to implement and utilize AI-powered features in VS Code extensions, such as auto-completion and documentation generation. Understanding how to integrate these tools can significantly enhance your coding experience and project outcomes.
+> **What to learn:** This week, focus on learning how to effectively use the vscode-dbt-power-user extension, which offers powerful features for dbt integration. Understanding its capabilities can significantly improve your data transformation workflows and enhance your overall development efficiency.
 
 ### 🌱 New & Rising Repos
 
