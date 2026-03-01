@@ -39,6 +39,8 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = Path("topics/topics.yaml")
 _CHECKPOINT_PATH = Path(".cache/pipeline_checkpoint.json")
+_NARRATION_RAW_PATH = Path(".cache/narration_script.txt")
+_NARRATION_POLISHED_PATH = Path(".cache/narration_polished.txt")
 
 
 def load_config(path: Path = DEFAULT_CONFIG) -> dict:
@@ -177,10 +179,32 @@ def _publish_podcast(
     dry_run: bool,
     mp3_url_template: str,
     research_report: dict | None = None,
+    narrate_only: bool = False,
 ) -> None:
-    """Narrate the README, generate audio, and update podcast.xml."""
+    """Narrate the README, generate audio, and update podcast.xml.
+
+    When *narrate_only* is True, writes the raw narration script to
+    .cache/narration_script.txt and returns without generating audio or
+    updating podcast.xml.  The user can then invoke the narrator-polish
+    agent to refine the script before running TTS.
+    """
     readme_content = readme_path.read_text(encoding="utf-8")
     script = readme_to_narration(readme_content, research_report=research_report)
+
+    # Always persist the raw narration so the narrator-polish agent can read it.
+    _NARRATION_RAW_PATH.parent.mkdir(parents=True, exist_ok=True)
+    _NARRATION_RAW_PATH.write_text(script, encoding="utf-8")
+    logger.info("Raw narration saved to %s", _NARRATION_RAW_PATH)
+
+    if narrate_only:
+        logger.info("--narrate-only: stopping after narration script. "
+                    "Run the narrator-polish agent, then re-run with --podcast.")
+        return
+
+    # Use the polished narration if the agent has written one; otherwise raw.
+    if _NARRATION_POLISHED_PATH.exists():
+        script = _NARRATION_POLISHED_PATH.read_text(encoding="utf-8")
+        logger.info("Using polished narration from %s", _NARRATION_POLISHED_PATH)
 
     today = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d")
     tag = f"radar-{today}"
@@ -225,6 +249,12 @@ def main() -> None:
         action="store_true",
         help="Regenerate podcast from existing README.md without re-running the full pipeline",
     )
+    parser.add_argument(
+        "--narrate-only",
+        action="store_true",
+        help="Generate narration script (.cache/narration_script.txt) but skip TTS and podcast.xml. "
+             "Use the narrator-polish agent to refine, then re-run with --podcast.",
+    )
     args = parser.parse_args()
 
     repo = os.environ.get("GITHUB_REPOSITORY", "owner/repo")
@@ -235,16 +265,17 @@ def main() -> None:
         if not readme_path.exists():
             logger.error("README.md not found — run the full pipeline first or provide one")
             sys.exit(1)
-        _publish_podcast(readme_path, dry_run=args.dry_run, mp3_url_template=mp3_url_template)
+        _publish_podcast(readme_path, dry_run=args.dry_run, mp3_url_template=mp3_url_template,
+                         narrate_only=args.narrate_only)
         return
 
     config = load_config(Path(args.config))
     readme_path, research_report = run(config, dry_run=args.dry_run)
     logger.info("README written to %s", readme_path)
 
-    if args.podcast:
+    if args.podcast or args.narrate_only:
         _publish_podcast(readme_path, dry_run=args.dry_run, mp3_url_template=mp3_url_template,
-                         research_report=research_report)
+                         research_report=research_report, narrate_only=args.narrate_only)
 
 
 if __name__ == "__main__":

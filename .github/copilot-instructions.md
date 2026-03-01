@@ -33,6 +33,9 @@ python -m pipeline.main --podcast-only
 # Podcast-only dry-run (skips TTS, writes placeholder podcast.xml entry)
 python -m pipeline.main --podcast-only --dry-run
 
+# Generate narration script only (no TTS) — polish with narrator-polish agent, then --podcast
+python -m pipeline.main --narrate-only --dry-run
+
 # Live run (requires GITHUB_TOKEN in environment)
 python -m pipeline.main
 ```
@@ -70,7 +73,16 @@ commit_readme()          →  git commit + push via actions/checkout or gh CLI
 
 # Podcast path (PUBLISH_PODCAST=1 or --podcast flag):
 readme_to_narration()    →  spoken script; prepends cold-open from research_report.narrative_hook
+                            saved to .cache/narration_script.txt
+
+# Optional narrator-polish step (--narrate-only stops here):
+#   Invoke the @narrator-polish VS Code agent to read
+#   .cache/narration_script.txt, rewrite for compelling delivery,
+#   and save .cache/narration_polished.txt.
+#   Then re-run with --podcast — pipeline picks up the polished file.
+
 generate_audio()         →  edge-tts primary → OpenAI TTS fallback → radar.mp3
+                            (uses .cache/narration_polished.txt if present, else raw)
 prepend_episode()        →  update podcast.xml (RSS 2.0 + iTunes namespace)
 gh release create        →  upload radar.mp3 to dated GitHub Release
 commit podcast.xml       →  subscribers auto-get new episodes
@@ -301,3 +313,15 @@ Edit only `topics/topics.yaml`. Do not hardcode topic IDs anywhere in Python sou
 Skills live in `.github/skills/`. Each skill is a directory with a `SKILL.md` file
 containing YAML front matter and Markdown instructions. The agent picks up the
 relevant skill automatically based on the task being performed.
+
+## Custom Agents
+
+Agents live in `.github/agents/`. Current agents:
+
+- **narrator-polish** (`@narrator-polish`) — Podcast scriptwriter agent that
+  rewrites the raw narration script (`.cache/narration_script.txt`) into a more
+  compelling, less repetitive spoken-word script (`.cache/narration_polished.txt`).
+  Uses `gpt-5.3-codex`. Workflow:
+  1. `python -m pipeline.main --narrate-only [--dry-run]`
+  2. Invoke `@narrator-polish` in Copilot Chat
+  3. `python -m pipeline.main --podcast [--podcast-only]` — TTS reads the polished file
