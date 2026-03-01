@@ -170,6 +170,11 @@ def test_narrate_only_cli_triggers_publish_podcast(monkeypatch, tmp_path):
     """The --narrate-only flag triggers _publish_podcast even without --podcast."""
     monkeypatch.chdir(tmp_path)
 
+    # Create a minimal config so load_config doesn't fail
+    cfg_dir = tmp_path / "topics"
+    cfg_dir.mkdir()
+    (cfg_dir / "topics.yaml").write_text("settings: {}\ntopics: []\n", encoding="utf-8")
+
     with patch("pipeline.main._publish_podcast") as mock_pub, \
          patch("pipeline.main.run") as mock_run:
         mock_run.return_value = (tmp_path / "README.md", {"narrative_hook": ""})
