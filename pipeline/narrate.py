@@ -97,7 +97,27 @@ _TABLE_SUBHEADINGS = {"### 🌱 New & Rising Repos", "### 📋 Quick Reference"}
 _STAT_LINE_RE = re.compile(r"^_[⭐📈📉➡️].*_$")
 
 
-def _extract_sections(readme: str) -> List[str]:
+def build_cold_open(research_report: dict | None) -> str:
+    """Return a 1-2 sentence spoken cold-open from the research report's narrative_hook.
+
+    Falls back to a generic opening if the hook is empty or report is None.
+    """
+    hook = (research_report or {}).get("narrative_hook", "").strip()
+    if not hook:
+        hook = "This week in AI, there's a lot to cover across the ecosystem."
+    return _normalise_sentence(hook)
+
+
+def build_closing() -> str:
+    """Return a standard podcast sign-off sentence."""
+    return (
+        "That's your AI Skills Radar for the week. "
+        "Check the README for the full breakdown, links, and this week's action items. "
+        "See you next week."
+    )
+
+
+
     """Return a list of spoken paragraphs from README content.
 
     Keeps:
@@ -226,10 +246,13 @@ def _extract_sections(readme: str) -> List[str]:
     return [p for p in paragraphs if p.strip()]
 
 
-def readme_to_narration(readme_content: str) -> str:
+def readme_to_narration(readme_content: str, research_report: dict | None = None) -> str:
     """Convert README markdown content to a clean spoken-word script.
 
+    If research_report is provided, prepends a cold open and appends a closing.
     Returns a plain string suitable for passing directly to a TTS API.
     """
     sections = _extract_sections(readme_content)
+    if research_report is not None:
+        sections = [build_cold_open(research_report)] + sections + [build_closing()]
     return "\n\n".join(sections)
