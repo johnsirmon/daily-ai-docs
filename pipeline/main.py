@@ -239,11 +239,12 @@ def main() -> None:
         return
 
     config = load_config(Path(args.config))
-    readme_path = run(config, dry_run=args.dry_run)
+    readme_path, research_report = run(config, dry_run=args.dry_run)
     logger.info("README written to %s", readme_path)
 
     if args.podcast:
-        _publish_podcast(readme_path, dry_run=args.dry_run, mp3_url_template=mp3_url_template)
+        _publish_podcast(readme_path, dry_run=args.dry_run, mp3_url_template=mp3_url_template,
+                         research_report=research_report)
 
 
 if __name__ == "__main__":
