@@ -281,7 +281,10 @@ A `.markdownlint.json` config enforces ATX headings, 2-space list indent, and 12
 
 ### GitHub Actions workflow permissions
 
-Workflows that call the GitHub Models API require `models: read` permission in addition to any other permissions. See `update-radar.yml` for the reference configuration.
+`update-radar.yml` only needs `contents: write` (to commit README.md). The GitHub
+Models API is authenticated via `GITHUB_TOKEN` without any additional permission
+declaration — `models: read` is **not** a valid Actions permission key and will
+cause workflow YAML validation to fail.
 
 ## Adding a new topic
 
@@ -292,6 +295,14 @@ Edit only `topics/topics.yaml`. Do not hardcode topic IDs anywhere in Python sou
 - Do not commit API keys or secrets — `GITHUB_TOKEN` is the only credential needed
 - Do not manually edit `README.md` — it is pipeline output; run the workflow instead
 - Do not add new output files/directories without updating `.markdownlintignore`
+- **Do not delete or rename a workflow file without checking branch protection rules.**
+  If a required status check (e.g. `Documentation Quality Check / validate-documentation`)
+  is tied to a workflow by its `name:` and `jobs.<id>:`, removing that workflow causes
+  every PR to fail immediately with a non-existent check. Either keep the file with a
+  stub job, or update branch protection rules first.
+- **Do not add `models: read` to workflow `permissions:`** — it is not a valid GitHub
+  Actions permission key and will cause workflow YAML validation to fail on all PRs.
+  `GITHUB_TOKEN` authenticates to the GitHub Models API without any special permission.
 
 ## Agent Skills
 
