@@ -15,10 +15,15 @@ _TOPIC_TRANSITIONS = [
     "Now let's look at {name}.",
     "Moving on to {name}.",
     "Let's turn to {name}.",
+    "Next up: {name}.",
+    "Time for {name}.",
+    "Let's shift to {name}.",
 ]
 _REPO_INTRODUCTIONS = [
     "Let's dive into {repo}.",
     "Up next is {repo}.",
+    "Here's a closer look at {repo}.",
+    "Now let's talk about {repo}.",
 ]
 
 # Counters for rotation (module-level so they survive within a single run).

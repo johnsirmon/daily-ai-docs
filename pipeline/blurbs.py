@@ -93,8 +93,12 @@ def generate_topic_meta(
         f"{context_section}\n"
         "Reply ONLY with valid JSON. Fill all four fields:\n"
         "{\n"
-        '  "why": "2-3 sentences: why this topic matters right now for a developer",\n'
-        '  "learn": "2-3 sentences: the most important specific skill worth learning this week",\n'
+        '  "why": "2-3 sentences: why this topic matters right now for a developer. '
+        "Do NOT start with 'This topic', 'This week', 'In recent', or 'Currently'. "
+        'Be specific — name tools or trends.",\n'
+        '  "learn": "2-3 sentences: the most important specific skill worth learning this week. '
+        "Do NOT start with 'This week', 'Learning', or 'You should'. "
+        'Name the exact skill, library, or pattern.",\n'
         '  "community_pulse": "2-3 sentences: momentum signals — star growth, commit trends, '
         'notable contributor activity, PR throughput",\n'
         '  "action_items": ["3-5 concrete hands-on things a developer can do this week"]\n'
@@ -144,7 +148,6 @@ def generate_repo_deepdive(item: Dict, topic_display: str) -> str:
     ]
 
     prompt = (
-        f"You are writing a spoken podcast segment about a GitHub repository.\n\n"
         f"Topic area: {topic_display}\n"
         f"Repository: {item['repo']}\n"
         f"Description: {(item.get('description') or '').strip()}\n"
@@ -153,7 +156,15 @@ def generate_repo_deepdive(item: Dict, topic_display: str) -> str:
         "repository. Include: what problem it solves, what the stats tell us about its momentum "
         "and community health, any notable technical aspects, and why a developer should pay "
         "attention to it. Write in second person ('you'). Do NOT use bullet points or headers — "
-        "write flowing paragraphs only. Do not repeat the repo name in the first word."
+        "write flowing paragraphs only.\n"
+        "STRICT RULES:\n"
+        "- Do NOT open with 'This repository', 'This project', 'This framework', 'This library', "
+        "'This tool', or 'This is'.\n"
+        "- Do NOT use introductory phrases like 'Welcome to', 'In this segment', "
+        "'Today we explore', 'Let me introduce', or 'Meet '.\n"
+        "- Do NOT repeat the repo name as the first word.\n"
+        "- Vary sentence structure — avoid starting consecutive sentences with the same word.\n"
+        "- Start with an engaging observation about the problem it solves or a striking fact."
     )
 
     for attempt in range(2):
