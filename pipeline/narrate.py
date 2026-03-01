@@ -9,6 +9,53 @@ prose, Community Pulse, and Action Items — which together form the full
 import re
 from typing import List
 
+# Rotating spoken phrases for topic and repo transitions (deterministic — index
+# is incremented per call so repeated topics don't all sound identical).
+_TOPIC_TRANSITIONS = [
+    "Now let's look at {name}.",
+    "Moving on to {name}.",
+    "Let's turn to {name}.",
+]
+_REPO_INTRODUCTIONS = [
+    "Let's dive into {repo}.",
+    "Up next is {repo}.",
+]
+
+# Counters for rotation (module-level so they survive within a single run).
+_topic_idx = 0
+_repo_idx = 0
+
+
+def _next_topic_phrase(name: str) -> str:
+    global _topic_idx
+    phrase = _TOPIC_TRANSITIONS[_topic_idx % len(_TOPIC_TRANSITIONS)].format(name=name)
+    _topic_idx += 1
+    return phrase
+
+
+def _next_repo_phrase(repo: str) -> str:
+    global _repo_idx
+    # Convert "owner/repo" → "repo by owner" for natural TTS pronunciation.
+    if "/" in repo:
+        owner, _, name = repo.partition("/")
+        spoken = f"{name} by {owner}"
+    else:
+        spoken = repo
+    phrase = _REPO_INTRODUCTIONS[_repo_idx % len(_REPO_INTRODUCTIONS)].format(repo=spoken)
+    _repo_idx += 1
+    return phrase
+
+
+def _normalise_sentence(s: str) -> str:
+    """Capitalise first character and ensure the sentence ends with punctuation."""
+    s = s.strip()
+    if not s:
+        return s
+    s = s[0].upper() + s[1:]
+    if s[-1] not in ".!?":
+        s += "."
+    return s
+
 
 def _strip_markdown(text: str) -> str:
     """Remove markdown syntax that would sound bad when spoken aloud."""
@@ -34,13 +81,13 @@ def _strip_markdown(text: str) -> str:
     return text.strip()
 
 
-# Sub-headings to include as spoken transitions
+# Sub-headings to include as spoken transitions (more conversational phrasing)
 _NARRATED_SUBHEADINGS = {
-    "### Overview": "Overview.",
-    "### 🔍 Repo Deep Dives": "Repository deep dives.",
-    "### 📊 Community Pulse": "Community pulse.",
-    "### ✅ Action Items This Week": "Action items for this week.",
-    "### 🚀 Recent Releases": "Recent releases.",
+    "### Overview": "Here's the overview.",
+    "### 🔍 Repo Deep Dives": "Let's go deeper on a few repositories.",
+    "### 📊 Community Pulse": "Here's what the community has been up to.",
+    "### ✅ Action Items This Week": "Here are your action items for the week.",
+    "### 🚀 Recent Releases": "And here are some notable recent releases.",
 }
 
 # Sub-headings that introduce tables we should skip prose under
@@ -84,7 +131,6 @@ def _extract_sections(readme: str) -> List[str]:
             date_part = stripped.lstrip("# ").strip()
             paragraphs.append(f"AI Skills Radar. {date_part}.")
             continue
-
         # ── TOC block ───────────────────────────────────────────────────────
         if stripped == "## Topics":
             in_toc = True
@@ -98,7 +144,7 @@ def _extract_sections(readme: str) -> List[str]:
         # ── Topic section headings (## …) ───────────────────────────────────
         if stripped.startswith("## ") and not stripped.startswith("## Topics"):
             topic_name = stripped.lstrip("# ").strip()
-            paragraphs.append(f"Next topic: {topic_name}.")
+            paragraphs.append(_next_topic_phrase(topic_name))
             in_table_section = False
             in_narrated_section = False
             current_subheading = ""
@@ -122,7 +168,7 @@ def _extract_sections(readme: str) -> List[str]:
         # ── Per-repo #### heading — announce the repo name ──────────────────
         if stripped.startswith("#### `") and stripped.endswith("`"):
             repo_name = stripped.strip("#### `").strip("`")
-            paragraphs.append(f"Repository: {repo_name}.")
+            paragraphs.append(_next_repo_phrase(repo_name))
             continue
 
         # ── Stat callout lines (_⭐ … _) — skip for audio ───────────────────
@@ -136,6 +182,20 @@ def _extract_sections(readme: str) -> List[str]:
         # ── Blurb lines (Why / What to learn) ───────────────────────────────
         if "Why it matters:" in stripped or "What to learn:" in stripped:
             clean = _strip_markdown(stripped)
+            # Replace written-word labels with conversational spoken bridges.
+            clean = re.sub(
+                r"Why it matters:\s*",
+                "Here's why this matters. ",
+                clean,
+                flags=re.IGNORECASE,
+            )
+            clean = re.sub(
+                r"What to learn:\s*",
+                "Here's what to focus on learning. ",
+                clean,
+                flags=re.IGNORECASE,
+            )
+            clean = _normalise_sentence(clean)
             if clean:
                 paragraphs.append(clean)
             continue
@@ -151,14 +211,14 @@ def _extract_sections(readme: str) -> List[str]:
 
         # ── Prose content in narrated sections ──────────────────────────────
         if in_narrated_section and stripped and not stripped.startswith("#"):
-            clean = _strip_markdown(stripped)
+            clean = _normalise_sentence(_strip_markdown(stripped))
             if clean:
                 paragraphs.append(clean)
             continue
 
         # ── Action items bullet points ───────────────────────────────────────
         if current_subheading == "### ✅ Action Items This Week" and stripped.startswith("- "):
-            clean = _strip_markdown(stripped.lstrip("- ").strip())
+            clean = _normalise_sentence(_strip_markdown(stripped.lstrip("- ").strip()))
             if clean:
                 paragraphs.append(clean)
             continue
