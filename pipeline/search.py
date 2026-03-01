@@ -41,7 +41,7 @@ def search_repos(
         query = f"{kw} pushed:>{since} stars:>={min_stars}"
         url = (
             f"{GITHUB_API}/search/repositories"
-            f"?q={requests.utils.quote(query)}&sort=stars&order=desc&per_page=10"
+            f"?q={requests.utils.quote(query)}&sort=updated&order=desc&per_page=10"
         )
         try:
             resp = requests.get(url, headers=_headers(), timeout=10)

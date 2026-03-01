@@ -76,8 +76,9 @@ def _commit_trend(weekly_commits: List[int]) -> str:
     """Classify trend from last 4 weekly commit counts."""
     if len(weekly_commits) < 2:
         return "flat"
-    recent = sum(weekly_commits[-2:])
-    older = sum(weekly_commits[:2]) if len(weekly_commits) >= 4 else weekly_commits[0]
+    half = len(weekly_commits) // 2
+    recent = sum(weekly_commits[half:])
+    older = sum(weekly_commits[:half])
     if recent > older * 1.25:
         return "rising"
     if recent < older * 0.75:
@@ -115,21 +116,13 @@ def _enrich_one(repo: str, today: str) -> Dict:
     result["weekly_commits"] = weekly_commits
     result["commit_trend"] = _commit_trend(weekly_commits)
 
-    # Contributor count
-    contributors = _get_json(
-        f"{GITHUB_API}/repos/{owner}/{name}/contributors?per_page=1&anon=false"
+    # Contributor count (capped at 100)
+    all_contributors = _get_json(
+        f"{GITHUB_API}/repos/{owner}/{name}/contributors?per_page=100&anon=false"
     )
-    # The endpoint returns a list; use Link header for total, or just count page
-    if contributors and isinstance(contributors, list):
-        # Try a larger page for a real count (capped at 100)
-        all_contributors = _get_json(
-            f"{GITHUB_API}/repos/{owner}/{name}/contributors?per_page=100"
-        )
-        result["contributor_count"] = (
-            len(all_contributors) if isinstance(all_contributors, list) else 0
-        )
-    else:
-        result["contributor_count"] = 0
+    result["contributor_count"] = (
+        len(all_contributors) if isinstance(all_contributors, list) else 0
+    )
 
     # Merged PRs in last 14 days
     cutoff = (datetime.now(tz=timezone.utc) - timedelta(days=14)).strftime(

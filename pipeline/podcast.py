@@ -100,7 +100,7 @@ def load_episodes(path: str = "podcast.xml") -> List[Dict]:
                     "title": title_el.text if title_el is not None else "",
                     "guid": guid_el.text if guid_el is not None else "",
                     "mp3_url": enc.get("url", "") if enc is not None else "",
-                    "file_size_bytes": int(enc.get("length", 0)) if enc is not None else 0,
+                    "file_size_bytes": int(enc.get("length") or 0) if enc is not None else 0,
                     "pub_date": (pub_el.text or "")[:16] if pub_el is not None else "",
                     "duration_secs": 0,
                     "duration_str": dur_el.text if dur_el is not None else "0:00",

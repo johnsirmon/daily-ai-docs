@@ -41,7 +41,7 @@ def fetch_releases(owner_repo: str, lookback_days: int = 14) -> List[Dict]:
                 if dt < cutoff:
                     continue
             except (ValueError, AttributeError):
-                pass
+                continue  # skip releases with unparseable dates
             results.append({
                 "repo": owner_repo,
                 "url": rel.get("html_url", ""),

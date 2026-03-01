@@ -78,8 +78,7 @@ def test_enrich_one_merges_fields(mock_get, tmp_path):
     responses = [
         _make_meta_resp(),
         _make_activity_resp(),
-        _make_contributors_resp(),  # page-1 probe
-        _make_contributors_resp(),  # full page
+        _make_contributors_resp(),  # single contributors call (per_page=100)
         _make_prs_resp(),
     ]
 

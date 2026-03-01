@@ -112,7 +112,6 @@ def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_rep
             for r in repos:
                 trend = r.get("commit_trend", "")
                 trend_icon = _trend_emoji(trend)
-                desc = (r.get("description") or "—").replace("|", "\\|")
                 lines.append(
                     f"| [{r['repo']}]({r['url']}) "
                     f"| ⭐ {r['stars']:,} "
