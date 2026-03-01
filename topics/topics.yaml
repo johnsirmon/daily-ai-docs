@@ -58,6 +58,13 @@ topics:
     why_matters_template: "New eval framework or benchmark available for agent reliability testing."
     action_template: "Add to eval suite or use to measure current agent performance."
 
+  - id: github-copilot-cli
+    display: "GitHub Copilot CLI"
+    keywords: ["copilot cli", "gh copilot", "github copilot cli", "copilot terminal",
+               "copilot command line", "copilot shell"]
+    why_matters_template: "Copilot CLI update may introduce new terminal AI features or command changes."
+    action_template: "Update gh copilot extension; review new commands and test in your terminal."
+
   - id: azure-ai
     display: "Azure AI Foundry / Azure OpenAI"
     keywords: ["azure ai", "azure openai", "ai foundry", "azure ml", "azure ai foundry"]
@@ -71,7 +78,10 @@ sources:
       topics: [vscode-insiders]
     - owner: microsoft
       repo: vscode-copilot-release
-      topics: [github-copilot-chat, copilot-coding-agent, copilot-instructions]
+      topics: [github-copilot-chat, github-copilot-cli, copilot-coding-agent, copilot-instructions]
+    - owner: cli
+      repo: cli
+      topics: [github-copilot-cli]
     - owner: github
       repo: github-mcp-server
       topics: [mcp, github-copilot-chat]
@@ -95,7 +105,7 @@ sources:
     - url: "https://code.visualstudio.com/feed.xml"
       name: "VS Code Blog"
       quality: 0.90
-      topics: [vscode-insiders, github-copilot-chat, copilot-coding-agent]
+      topics: [vscode-insiders, github-copilot-chat, github-copilot-cli, copilot-coding-agent]
     - url: "https://devblogs.microsoft.com/azure-ai/feed/"
       name: "Azure AI Blog"
       quality: 0.90
@@ -103,7 +113,7 @@ sources:
     - url: "https://github.blog/feed/"
       name: "GitHub Blog"
       quality: 0.85
-      topics: [github-copilot-chat, copilot-coding-agent, copilot-instructions]
+      topics: [github-copilot-chat, github-copilot-cli, copilot-coding-agent, copilot-instructions]
     - url: "https://devblogs.microsoft.com/semantic-kernel/feed/"
       name: "Semantic Kernel Blog"
       quality: 0.80
@@ -122,7 +132,7 @@ ranking:
     recency: 0.40
     source_quality: 0.40
     topic_relevance: 0.20
-  recency_half_life_days: 3
-  top_n_daily: 20
+  recency_half_life_days: 7
+  top_n_daily: 30
   top_n_weekly: 50
   watchlist_threshold: 0.70
