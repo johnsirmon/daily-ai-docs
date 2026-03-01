@@ -188,3 +188,43 @@ def test_empty_readme():
     result = readme_to_narration("")
     assert result == ""
 
+
+# ── Cold open / closing ──────────────────────────────────────────────────────
+
+def test_cold_open_prepended_when_report_provided():
+    _reset_counters()
+    report = {
+        "week_story": "Big things happened.",
+        "narrative_hook": "This week in AI, everything changed.",
+        "topic_insights": {},
+    }
+    result = readme_to_narration(_SAMPLE_README, research_report=report)
+    assert result.startswith("This week in AI, everything changed.")
+
+
+def test_closing_appended_when_report_provided():
+    _reset_counters()
+    report = {"week_story": "", "narrative_hook": "", "topic_insights": {}}
+    result = readme_to_narration(_SAMPLE_README, research_report=report)
+    assert "AI Skills Radar for the week" in result
+
+
+def test_no_cold_open_without_report():
+    _reset_counters()
+    result = readme_to_narration(_SAMPLE_README)
+    assert "This week in AI" not in result
+    assert "AI Skills Radar for the week" not in result
+
+
+def test_cold_open_fallback_when_hook_empty():
+    from pipeline.narrate import build_cold_open
+    result = build_cold_open({"narrative_hook": "", "week_story": "", "topic_insights": {}})
+    assert "This week" in result
+
+
+def test_build_closing_is_non_empty():
+    from pipeline.narrate import build_closing
+    closing = build_closing()
+    assert len(closing) > 20
+    assert "week" in closing.lower()
+
