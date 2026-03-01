@@ -9,6 +9,27 @@ learning. Anyone can fork and follow it.
 
 ---
 
+## Commands
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run full test suite
+python -m pytest tests/ -v
+
+# Run a single test
+python -m pytest tests/test_dedupe.py::test_duplicate_keeps_higher_stars -v
+
+# Local dry-run (no network calls, writes placeholder README.md)
+python -m pipeline.main --dry-run
+
+# Live run (requires GITHUB_TOKEN in environment)
+python -m pipeline.main
+```
+
+---
+
 ## Target Architecture
 
 ### Trigger
@@ -79,20 +100,20 @@ _Updated: <ISO datetime> | Covers last 14 days_
 This is the only file you edit to control what the pipeline tracks.
 
 ```yaml
+settings:
+  lookback_days: 14       # how far back to scan
+  min_stars: 10           # ignore repos below this threshold
+  top_n_per_topic: 5      # max repos shown per topic in README
+
 topics:
   - id: mcp               # slug used in code; must be unique, lowercase-kebab
     display: "MCP Ecosystem"
-    keywords:             # used in GitHub search queries
+    keywords:             # used in GitHub search queries (capped at 3 per topic to avoid rate limits)
       - "model context protocol"
       - "mcp server"
     pinned_repos:         # always fetch releases from these
       - modelcontextprotocol/specification
       - modelcontextprotocol/servers
-
-ranking:
-  min_stars: 50           # ignore repos below this threshold
-  lookback_days: 14       # how far back to scan
-  top_n_per_topic: 5      # max repos shown per topic in README
 ```
 
 ---
