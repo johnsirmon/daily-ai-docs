@@ -26,12 +26,26 @@ jobs:
       - name: Run pipeline
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_PODCAST: "1"
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: python -m pipeline.main
 
-      - name: Commit updated README
+      - name: Commit updated README and podcast feed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md
+          git add README.md podcast.xml
           git diff --cached --quiet || git commit -m "chore: update AI Skills Radar [skip ci]"
           git push
+
+      - name: Publish audio to GitHub Release
+        if: hashFiles('radar.mp3') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="radar-$(date +%Y-%m-%d)"
+          gh release create "$TAG" radar.mp3 \
+            --title "AI Skills Radar $(date +%Y-%m-%d)" \
+            --notes "Weekly AI skills audio update" \
+            --repo "$GITHUB_REPOSITORY" 2>/dev/null || \
+          gh release upload "$TAG" radar.mp3 --clobber --repo "$GITHUB_REPOSITORY"

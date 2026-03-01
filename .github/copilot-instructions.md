@@ -46,6 +46,13 @@ dedupe()            →  remove overlap by canonical URL / repo name
 generate_blurbs()   →  call GitHub Models API (GPT-4o-mini via GITHUB_TOKEN) for each item
 render_readme()     →  group by topic, write README.md
 commit_readme()     →  git commit + push via actions/checkout or gh CLI
+
+# Podcast path (PUBLISH_PODCAST=1 or --podcast flag):
+readme_to_narration()  →  strip markdown tables/links; extract blurbs into spoken script
+generate_audio()       →  OpenAI TTS (tts-1) via GitHub Models endpoint → radar.mp3
+prepend_episode()      →  update podcast.xml (RSS 2.0 + iTunes namespace)
+gh release create      →  upload radar.mp3 to dated GitHub Release
+commit podcast.xml     →  subscribers auto-get new episodes
 ```
 
 All stages are pure Python functions in `pipeline/`. The orchestrator is
@@ -144,6 +151,34 @@ All pipeline data flows as plain `dict` lists. Two item types share the same lis
 `write_readme(topics_data, lookback_days, path="README.md") -> Path` calls `render_readme` and writes to disk.
 
 TOC anchors use `topic["id"]` (the YAML slug), not `topic["display"]`. Keep `id` values stable.
+
+---
+
+## Podcast modules
+
+`pipeline/narrate.py` — `readme_to_narration(readme_content: str) -> str`: strips markdown tables, links, and TOC; retains topic headings + "Why it matters" / "What to learn" blurbs for speech.
+
+`pipeline/tts.py` — `generate_audio(text: str) -> bytes | None`: calls `client.audio.speech.create(model="tts-1", voice="alloy")` via GitHub Models endpoint with `GITHUB_TOKEN`. Returns `None` and logs a warning if unavailable.
+
+`pipeline/podcast.py` — `render_feed(episodes) -> str`, `write_feed(...)`, `prepend_episode(episode, path="podcast.xml")`. Feed is RSS 2.0 + iTunes namespace. Episodes are newest-first; deduped by `guid`.
+
+`podcast.xml` in repo root is the subscriber feed. Commit it to keep episode history.
+
+### Enabling the podcast
+- CLI: `python -m pipeline.main --podcast`
+- Env var: `PUBLISH_PODCAST=1 python -m pipeline.main`
+- Dry-run: `python -m pipeline.main --dry-run --podcast` (skips TTS, writes placeholder entry)
+
+### Subscriber URL
+```
+https://raw.githubusercontent.com/{owner}/{repo}/main/podcast.xml
+```
+Paste into Apple Podcasts, Overcast, Pocket Casts, or any app that supports Apple CarPlay.
+
+### Audio file URL pattern
+```
+https://github.com/{owner}/{repo}/releases/download/radar-YYYY-MM-DD/radar.mp3
+```
 
 ---
 

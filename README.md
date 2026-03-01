@@ -1,6 +1,6 @@
 # AI Skills Radar — 2026-03-01
 
-_Updated: 2026-03-01T15:13:34Z | Covers last 14 days_
+_Updated: 2026-03-01T15:29:54Z | Covers last 14 days_
 
 > Auto-generated. To refresh, go to **Actions → Update AI Skills Radar → Run workflow**.
 
