@@ -118,6 +118,35 @@ topics:
 
 ---
 
+## Item schema
+
+All pipeline data flows as plain `dict` lists. Two item types share the same list:
+
+**`trending`** (from `search.py`):
+```python
+{"repo": "org/name", "url": "...", "stars": 123, "description": "...", "pushed_at": "...", "type": "trending"}
+```
+
+**`release`** (from `releases.py`):
+```python
+{"repo": "org/name", "url": "...", "version": "v1.2", "name": "...", "published_at": "2026-01-01", "notes": "...", "type": "release"}
+```
+
+`render.py` splits on `item["type"]` to build the two separate tables. `blurbs.py` uses both types in the prompt.
+
+`dedupe.py` deduplicates by `item["repo"]`, keeping highest-starred. Items with no `repo` key (shouldn't happen normally) are all kept.
+
+---
+
+## render.py split
+
+`render_readme(topics_data, lookback_days) -> str` builds the content string (used in tests).
+`write_readme(topics_data, lookback_days, path="README.md") -> Path` calls `render_readme` and writes to disk.
+
+TOC anchors use `topic["id"]` (the YAML slug), not `topic["display"]`. Keep `id` values stable.
+
+---
+
 ## Coding conventions
 
 - Python 3.9+; follow PEP 8; keep functions small and single-purpose
