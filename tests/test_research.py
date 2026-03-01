@@ -86,8 +86,9 @@ def test_build_item_summary_includes_releases():
 def test_build_item_summary_caps_at_40():
     items = [_repo(f"org/repo-{i}") for i in range(50)]
     text = _build_item_summary(items)
-    count = text.count("org/repo-")
-    assert count <= 40
+    # Count lines, not substring occurrences (name appears in both prefix and description)
+    lines = [l for l in text.splitlines() if l.strip()]
+    assert len(lines) <= 40
 
 
 # ── cache ────────────────────────────────────────────────────────────────────
