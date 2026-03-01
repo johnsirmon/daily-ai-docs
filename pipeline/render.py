@@ -32,6 +32,11 @@ def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_rep
         lines.append(f"- [{t['display']}](#{anchor})")
     lines += ["", "---", ""]
 
+    # This Week's Story — cross-topic narrative from research summariser
+    week_story = (research_report or {}).get("week_story", "")
+    if week_story:
+        lines += ["## 🗞️ This Week's Story", "", week_story, "", "---", ""]
+
     # Per-topic sections
     for t in topics_data:
         lines.append(f"## {t['display']}")
@@ -155,9 +160,10 @@ def write_readme(
     topics_data: List[Dict],
     lookback_days: int = 14,
     path: str = "README.md",
+    research_report: Dict | None = None,
 ) -> Path:
     """Write rendered README.md and return its Path."""
-    content = render_readme(topics_data, lookback_days)
+    content = render_readme(topics_data, lookback_days, research_report=research_report)
     out = Path(path)
     out.write_text(content, encoding="utf-8")
     return out
