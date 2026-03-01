@@ -14,6 +14,20 @@ _Updated: 2026-03-01T16:42:20Z | Covers last 14 days_
 
 ---
 
+## 🎙️ Podcast
+
+Listen to the weekly audio digest — auto-generated from this README.
+
+[▶ Add to Apple Podcasts](podcast://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml)&nbsp;&nbsp;[▶ Open in Overcast](https://overcast.fm/itunes?url=https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml)&nbsp;&nbsp;[▶ Open in Pocket Casts](https://pca.st/itunes?feed=https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml)
+
+**Or paste this feed URL into any podcast app:**
+
+```
+https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
+```
+
+---
+
 ## 🗞️ This Week's Story
 
 This week, the spotlight shines on the integration of GitHub Copilot and the Model Context Protocol (MCP) ecosystem, showcasing a variety of new repositories aimed at enhancing developer workflows. Notable releases include the 'github/copilot-cli', which brings Copilot's capabilities directly to the terminal, and 'idosal/git-mcp', designed to eliminate code hallucinations. The 'langflow-ai/langflow' repository also stands out, providing a robust framework for building AI-powered workflows, emphasizing the growing trend of agentic workflows. As these tools evolve, developers are better equipped to leverage AI in their coding practices, streamlining their processes and improving productivity.

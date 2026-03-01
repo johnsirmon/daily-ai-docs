@@ -32,6 +32,27 @@ def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_rep
         lines.append(f"- [{t['display']}](#{anchor})")
     lines += ["", "---", ""]
 
+    # Podcast subscribe block
+    feed_url = "https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml"
+    lines += [
+        "## 🎙️ Podcast",
+        "",
+        "Listen to the weekly audio digest — auto-generated from this README.",
+        "",
+        f"[▶ Add to Apple Podcasts](podcast://{feed_url.split('://', 1)[1]})&nbsp;&nbsp;"
+        f"[▶ Open in Overcast](https://overcast.fm/itunes?url={feed_url})&nbsp;&nbsp;"
+        f"[▶ Open in Pocket Casts](https://pca.st/itunes?feed={feed_url})",
+        "",
+        "**Or paste this feed URL into any podcast app:**",
+        "",
+        f"```",
+        feed_url,
+        f"```",
+        "",
+        "---",
+        "",
+    ]
+
     # This Week's Story — cross-topic narrative from research summariser
     week_story = (research_report or {}).get("week_story", "")
     if week_story:
