@@ -21,6 +21,7 @@ def test_podcast_only_calls_publish_podcast(monkeypatch, tmp_path):
 
     with patch("pipeline.main._publish_podcast") as mock_pub, \
          patch("pipeline.main.run") as mock_run:
+        mock_run.return_value = (tmp_path / "README.md", {})
         monkeypatch.setattr("sys.argv", ["pipeline.main", "--podcast-only"])
         main()
 
@@ -33,7 +34,8 @@ def test_podcast_only_dry_run_passes_flag(monkeypatch, tmp_path):
     _write_readme(str(tmp_path))
 
     with patch("pipeline.main._publish_podcast") as mock_pub, \
-         patch("pipeline.main.run"):
+         patch("pipeline.main.run") as mock_run:
+        mock_run.return_value = (tmp_path / "README.md", {})
         monkeypatch.setattr("sys.argv", ["pipeline.main", "--podcast-only", "--dry-run"])
         main()
 
@@ -46,7 +48,8 @@ def test_podcast_only_missing_readme_exits(monkeypatch, tmp_path):
     # No README.md created
 
     with patch("pipeline.main._publish_podcast"), \
-         patch("pipeline.main.run"):
+         patch("pipeline.main.run") as mock_run:
+        mock_run.return_value = (tmp_path / "README.md", {})
         monkeypatch.setattr("sys.argv", ["pipeline.main", "--podcast-only"])
         with pytest.raises(SystemExit) as exc_info:
             main()
@@ -62,7 +65,7 @@ def test_podcast_only_skips_run(monkeypatch, tmp_path):
 
     def fake_run(*args, **kwargs):
         run_called.append(True)
-        return tmp_path / "README.md"
+        return tmp_path / "README.md", {}
 
     with patch("pipeline.main._publish_podcast"), \
          patch("pipeline.main.run", side_effect=fake_run):
