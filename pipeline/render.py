@@ -9,7 +9,7 @@ def _trend_emoji(trend: str) -> str:
     return {"rising": "📈", "falling": "📉", "flat": "➡️"}.get(trend, "")
 
 
-def render_readme(topics_data: List[Dict], lookback_days: int = 14) -> str:
+def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_report: Dict | None = None) -> str:
     """Build the full README content string from processed topic data."""
     now = datetime.now(tz=timezone.utc)
     date_str = now.strftime("%Y-%m-%d")

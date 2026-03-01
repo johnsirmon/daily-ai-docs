@@ -26,6 +26,7 @@ from .narrate import readme_to_narration
 from .podcast import prepend_episode
 from .releases import fetch_releases
 from .render import write_readme
+from .research import run_research_summary, dry_run_report
 from .search import search_repos
 from .tts import write_audio
 
@@ -64,11 +65,11 @@ def _dry_run_items(topic_id: str, topic_display: str) -> list:
     ]
 
 
-def _save_checkpoint(topics_data: list) -> None:
-    """Persist enriched topics data so TTS/render can resume without re-fetching."""
+def _save_checkpoint(data: dict | list) -> None:
+    """Persist pipeline data so TTS/render can resume without re-fetching."""
     _CHECKPOINT_PATH.parent.mkdir(parents=True, exist_ok=True)
     _CHECKPOINT_PATH.write_text(
-        json.dumps(topics_data, ensure_ascii=False, indent=2), encoding="utf-8"
+        json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     logger.info("Checkpoint saved to %s", _CHECKPOINT_PATH)
 
@@ -81,7 +82,9 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
     top_n = int(settings.get("top_n_per_topic", 8))
     enrich_stats = bool(settings.get("enrich_stats", True))
 
-    topics_data = []
+    # ── Phase 1: collect raw data for all topics ──────────────────────────────
+    raw_topics = []  # list of {topic, repos, releases}
+    all_items_flat = []  # used by research summariser
 
     for topic in config.get("topics", []):
         tid = topic["id"]
@@ -89,11 +92,46 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
         keywords = topic.get("keywords", [])
         pinned = topic.get("pinned_repos", [])
 
-        logger.info("Processing topic: %s", display)
+        logger.info("Fetching data for topic: %s", display)
 
         if dry_run:
             repos = _dry_run_items(tid, display)
             releases = []
+        else:
+            repos = search_repos(keywords, lookback_days=lookback, min_stars=min_stars, top_n=top_n)
+            releases = []
+            for pinned_repo in pinned:
+                releases.extend(fetch_releases(pinned_repo, lookback_days=lookback))
+
+        raw_topics.append({"topic": topic, "repos": repos, "releases": releases})
+
+        # Tag each item with topic context for the research summariser
+        for item in repos + releases:
+            item["topic_display"] = display
+        all_items_flat.extend(repos + releases)
+
+    # ── Research summary: cross-topic narrative (after fetch, before blurbs) ──
+    topic_ids = [t["topic"]["id"] for t in raw_topics]
+    if dry_run:
+        research_report = dry_run_report(topic_ids)
+    else:
+        research_report = run_research_summary(all_items_flat, topic_ids)
+    logger.info("Research report ready (week_story words: %d)",
+                len(research_report.get("week_story", "").split()))
+
+    # ── Phase 2: enrich, generate blurbs, assemble topics_data ──────────────
+    topics_data = []
+
+    for raw in raw_topics:
+        topic = raw["topic"]
+        repos = raw["repos"]
+        releases = raw["releases"]
+        tid = topic["id"]
+        display = topic["display"]
+
+        logger.info("Enriching and generating blurbs for topic: %s", display)
+
+        if dry_run:
             meta = {
                 "why": f"[dry-run] {display} is actively evolving on GitHub.",
                 "learn": "[dry-run] Review the latest repos and release notes.",
@@ -102,23 +140,18 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
             }
             deep_dives = []
         else:
-            repos = search_repos(keywords, lookback_days=lookback, min_stars=min_stars, top_n=top_n)
-            releases = []
-            for pinned_repo in pinned:
-                releases.extend(fetch_releases(pinned_repo, lookback_days=lookback))
-
-            # Enrich top-4 repos with GitHub stats
             if enrich_stats and repos:
                 enrich_items(repos, top_n=min(4, len(repos)))
 
-            # Generate per-repo deep-dive prose (top 4)
             deep_dives = []
             for repo_item in repos[:4]:
                 prose = generate_repo_deepdive(repo_item, display)
                 if prose:
                     deep_dives.append({"repo": repo_item["repo"], "prose": prose})
 
-            meta = generate_topic_meta(display, repos, releases)
+            # Inject per-topic research insight into blurb prompt
+            topic_context = research_report.get("topic_insights", {}).get(tid, "")
+            meta = generate_topic_meta(display, repos, releases, context=topic_context)
 
         topics_data.append({
             "id": tid,
@@ -133,9 +166,9 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
         })
 
     # Checkpoint enriched data before render/TTS
-    _save_checkpoint(topics_data)
+    _save_checkpoint({"topics": topics_data, "research_report": research_report})
 
-    return write_readme(topics_data, lookback_days=lookback)
+    return write_readme(topics_data, lookback_days=lookback, research_report=research_report)
 
 
 def _publish_podcast(readme_path: Path, dry_run: bool, mp3_url_template: str) -> None:
@@ -181,17 +214,29 @@ def main() -> None:
         default=os.environ.get("PUBLISH_PODCAST", "") == "1",
         help="Generate audio and update podcast.xml (also via PUBLISH_PODCAST=1 env var)",
     )
+    parser.add_argument(
+        "--podcast-only",
+        action="store_true",
+        help="Regenerate podcast from existing README.md without re-running the full pipeline",
+    )
     args = parser.parse_args()
+
+    repo = os.environ.get("GITHUB_REPOSITORY", "owner/repo")
+    mp3_url_template = f"https://github.com/{repo}/releases/download/{{tag}}/radar.mp3"
+
+    if args.podcast_only:
+        readme_path = Path("README.md")
+        if not readme_path.exists():
+            logger.error("README.md not found — run the full pipeline first or provide one")
+            sys.exit(1)
+        _publish_podcast(readme_path, dry_run=args.dry_run, mp3_url_template=mp3_url_template)
+        return
 
     config = load_config(Path(args.config))
     readme_path = run(config, dry_run=args.dry_run)
     logger.info("README written to %s", readme_path)
 
     if args.podcast:
-        repo = os.environ.get("GITHUB_REPOSITORY", "owner/repo")
-        mp3_url_template = (
-            f"https://github.com/{repo}/releases/download/{{tag}}/radar.mp3"
-        )
         _publish_podcast(readme_path, dry_run=args.dry_run, mp3_url_template=mp3_url_template)
 
 

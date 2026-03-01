@@ -61,10 +61,13 @@ def generate_topic_meta(
     topic_display: str,
     repos: List[Dict],
     releases: List[Dict],
+    context: str = "",
 ) -> Dict:
     """Return structured topic metadata as a dict.
 
     Keys: why, learn, community_pulse, action_items.
+    Optional context string (from research summariser) is appended to the prompt
+    when non-empty to provide cross-topic perspective.
     Falls back to empty values if the API is unavailable.
     """
     client = _get_client()
@@ -83,9 +86,11 @@ def generate_topic_meta(
         return {"why": "", "learn": "", "community_pulse": "", "action_items": []}
 
     activity = "\n".join(repo_lines + release_lines)
+    context_section = f"\nBroader context this week:\n{context}\n" if context else ""
     prompt = (
         f"Topic: {topic_display}\n"
-        f"Recent GitHub activity (last 2 weeks):\n{activity}\n\n"
+        f"Recent GitHub activity (last 2 weeks):\n{activity}\n"
+        f"{context_section}\n"
         "Reply ONLY with valid JSON. Fill all four fields:\n"
         "{\n"
         '  "why": "2-3 sentences: why this topic matters right now for a developer",\n'

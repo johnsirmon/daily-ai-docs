@@ -27,6 +27,12 @@ python -m pipeline.main --dry-run
 # Use a custom config file
 python -m pipeline.main --config path/to/topics.yaml
 
+# Regenerate podcast from existing README.md (no pipeline re-run)
+python -m pipeline.main --podcast-only
+
+# Podcast-only dry-run (skips TTS, writes placeholder podcast.xml entry)
+python -m pipeline.main --podcast-only --dry-run
+
 # Live run (requires GITHUB_TOKEN in environment)
 python -m pipeline.main
 ```
