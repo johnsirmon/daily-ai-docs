@@ -1,54 +1,124 @@
 # Copilot Instructions for daily-ai-docs
 
-This repository is an always-current AI documentation resource covering AI platforms,
-models, and developer tooling. The pipeline ingests, deduplicates, ranks, and publishes
-daily/weekly reports from official sources.
+## Purpose
 
-## Repository purpose
+This repo is a **personal AI skills tracker** — a GitHub Actions pipeline that scans
+GitHub for new/trending AI repositories and recent releases, then publishes a single
+`README.md` summarising what changed in the last 2 weeks and what skills are worth
+learning. Anyone can fork and follow it.
 
-- Track and publish AI platform updates (GitHub Copilot, OpenAI, Anthropic, Azure AI,
-  MCP ecosystem, agentic workflows)
-- Provide human-readable guides on prompt engineering, model selection, and AI
-  developer tooling
-- Run a Python pipeline (`pipeline/`) that produces `reports/` and `data/` outputs
+---
 
-## Tech stack
+## Target Architecture
 
-- **Language:** Python 3.9+
-- **Pipeline:** `pipeline/main.py` orchestrates ingest → normalize → dedupe → rank → publish
-- **Config:** `topics/topics.yaml` — edit to add topics and sources
-- **Tests:** `pytest` — run with `python -m pytest tests/ -v`
-- **Docs:** Markdown files at repo root; quality-checked by `.github/workflows/quality-check.yml`
+### Trigger
+
+A `workflow_dispatch` GitHub Actions workflow so the report can be regenerated on
+demand from the GitHub mobile app or web UI. Optionally also runs on a weekly `schedule`.
+
+### Pipeline stages
+
+```
+search_trending()   →  fetch GitHub Search API for new/rising repos matching topic keywords
+fetch_releases()    →  fetch recent releases from pinned repos in topics/topics.yaml
+dedupe()            →  remove overlap by canonical URL / repo name
+generate_blurbs()   →  call GitHub Models API (GPT-4o-mini via GITHUB_TOKEN) for each item
+render_readme()     →  group by topic, write README.md
+commit_readme()     →  git commit + push via actions/checkout or gh CLI
+```
+
+All stages are pure Python functions in `pipeline/`. The orchestrator is
+`pipeline/main.py`. Config lives entirely in `topics/topics.yaml`.
+
+### Authentication
+
+Use the built-in `GITHUB_TOKEN` (automatically available in every GitHub Actions run)
+for **both** the GitHub Search/REST API and the **GitHub Models API**
+(`https://models.inference.ai.azure.com`). No extra secrets or API keys are needed.
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://models.inference.ai.azure.com",
+    api_key=os.environ["GITHUB_TOKEN"],
+)
+```
+
+### Output: README.md
+
+The README is the only output. Structure:
+
+```
+# AI Skills Radar — <date>
+_Updated: <ISO datetime> | Covers last 14 days_
+
+## Topics
+- [Topic Name](#topic-name)
+
+---
+
+## <Topic Name>
+> Why it matters: <AI-generated blurb>
+> What to learn: <AI-generated skill recommendation>
+
+### New & Rising Repos
+| Repo | Stars | Description |
+...
+
+### Recent Releases
+| Repo | Version | Date | Notes |
+...
+```
+
+---
+
+## Config: topics/topics.yaml
+
+This is the only file you edit to control what the pipeline tracks.
+
+```yaml
+topics:
+  - id: mcp               # slug used in code; must be unique, lowercase-kebab
+    display: "MCP Ecosystem"
+    keywords:             # used in GitHub search queries
+      - "model context protocol"
+      - "mcp server"
+    pinned_repos:         # always fetch releases from these
+      - modelcontextprotocol/specification
+      - modelcontextprotocol/servers
+
+ranking:
+  min_stars: 50           # ignore repos below this threshold
+  lookback_days: 14       # how far back to scan
+  top_n_per_topic: 5      # max repos shown per topic in README
+```
+
+---
 
 ## Coding conventions
 
-- Follow PEP 8; keep functions small and single-purpose
-- All public pipeline functions have docstrings
-- Tests live in `tests/`; new logic must have corresponding tests
-- Guide documents must include a `## Guidance Obsolescence` section with a review table
-- Prefer `pathlib.Path` over `os.path` for new code
-- Use `yaml.safe_load` (never `yaml.load`) for YAML parsing
+- Python 3.9+; follow PEP 8; keep functions small and single-purpose
+- All public pipeline functions must have docstrings
+- Use `yaml.safe_load` (never `yaml.load`)
+- Prefer `pathlib.Path` over `os.path`
+- Do not hardcode dates — use `--date` CLI flag or `datetime.date.today()`
+- Pass an explicit `now: datetime` parameter in tests for determinism
+- Use `tempfile.TemporaryDirectory()` for file-output tests
 
-## Preferred patterns
+## Adding a new topic
 
-- When adding a new pipeline stage, model it on existing stages (`ingest.py`,
-  `normalize.py`, etc.)
-- When adding a new topic, edit `topics/topics.yaml` — do not hardcode topic IDs in
-  Python source
-- When writing a new guide document, copy the structure of `GitHub-Copilot-Methodology-Guide.md`
-  (feature hierarchy → comparison → gap analysis → adoption path → governance)
-- MCP is the preferred integration pattern for external tool calls; avoid raw REST
-  calls in prompts
-
-## Agent Skills
-
-Project skills live in `.github/skills/`. Each skill directory contains a `SKILL.md`
-with YAML front matter and Markdown instructions. The agent picks up the relevant skill
-automatically based on task description.
+Edit only `topics/topics.yaml`. Do not hardcode topic IDs anywhere in Python source.
 
 ## What to avoid
 
-- Do not commit API keys, tokens, or secrets
-- Do not hardcode dates — use `--date` CLI flag or `datetime.date.today()`
-- Do not modify files in `reports/` or `data/` directly; they are pipeline outputs
-- Do not change `.markdownlintignore` unless adding a new generated-output directory
+- Do not commit API keys or secrets — `GITHUB_TOKEN` is the only credential needed
+- Do not manually edit `README.md` — it is pipeline output; run the workflow instead
+- Do not add new output files/directories without updating `.markdownlintignore`
+
+## Agent Skills
+
+Skills live in `.github/skills/`. Each skill is a directory with a `SKILL.md` file
+containing YAML front matter and Markdown instructions. The agent picks up the
+relevant skill automatically based on the task being performed.
