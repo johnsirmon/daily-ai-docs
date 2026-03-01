@@ -163,3 +163,32 @@ def test_readme_release_shows_highlights():
     topics = [_topic("mcp", "MCP", releases=[rel])]
     out = render_readme(topics)
     assert "Added new feature X" in out
+
+
+# ── This Week's Story section ────────────────────────────────────────────────
+
+def test_readme_week_story_shown_when_present():
+    report = {"week_story": "Agents dominated the AI landscape this week.", "narrative_hook": "", "topic_insights": {}}
+    out = render_readme([], research_report=report)
+    assert "This Week's Story" in out
+    assert "Agents dominated the AI landscape this week." in out
+
+
+def test_readme_week_story_absent_when_empty():
+    report = {"week_story": "", "narrative_hook": "", "topic_insights": {}}
+    out = render_readme([], research_report=report)
+    assert "This Week's Story" not in out
+
+
+def test_readme_week_story_absent_without_report():
+    out = render_readme([])
+    assert "This Week's Story" not in out
+
+
+def test_readme_week_story_appears_before_first_topic():
+    report = {"week_story": "Big news this week.", "narrative_hook": "", "topic_insights": {}}
+    topics = [_topic("mcp", "MCP Ecosystem", repos=[_repo("org/r")])]
+    out = render_readme(topics, research_report=report)
+    story_pos = out.index("Big news this week.")
+    topic_pos = out.index("## MCP Ecosystem")
+    assert story_pos < topic_pos
