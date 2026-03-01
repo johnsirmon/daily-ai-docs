@@ -74,8 +74,8 @@ def _save_checkpoint(data: dict | list) -> None:
     logger.info("Checkpoint saved to %s", _CHECKPOINT_PATH)
 
 
-def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> Path:
-    """Execute the full pipeline and return the path to the written README."""
+def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> tuple:
+    """Execute the full pipeline and return (readme_path, research_report)."""
     settings = config.get("settings", {})
     lookback = int(settings.get("lookback_days", 14))
     min_stars = int(settings.get("min_stars", 10))
@@ -168,7 +168,8 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
     # Checkpoint enriched data before render/TTS
     _save_checkpoint({"topics": topics_data, "research_report": research_report})
 
-    return write_readme(topics_data, lookback_days=lookback, research_report=research_report)
+    readme_path = write_readme(topics_data, lookback_days=lookback, research_report=research_report)
+    return readme_path, research_report
 
 
 def _publish_podcast(
