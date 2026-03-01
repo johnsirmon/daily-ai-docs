@@ -24,6 +24,9 @@ python -m pytest tests/test_dedupe.py::test_duplicate_keeps_higher_stars -v
 # Local dry-run (no network calls, writes placeholder README.md)
 python -m pipeline.main --dry-run
 
+# Use a custom config file
+python -m pipeline.main --config path/to/topics.yaml
+
 # Live run (requires GITHUB_TOKEN in environment)
 python -m pipeline.main
 ```
@@ -42,7 +45,8 @@ demand from the GitHub mobile app or web UI. Optionally also runs on a weekly `s
 ```
 search_trending()   →  fetch GitHub Search API for new/rising repos matching topic keywords
 fetch_releases()    →  fetch recent releases from pinned repos in topics/topics.yaml
-dedupe()            →  remove overlap by canonical URL / repo name
+                       (dedupe.py exists as a utility but is NOT called in the main pipeline;
+                        repos and releases are kept in per-topic lists and never cross-merged)
 enrich_items()      →  fetch per-repo stats for top-4 repos (forks, commit velocity, PRs, contributors)
                        cached by repo+date in .cache/enrich/; max 3 concurrent requests
 generate_repo_deepdive() → gpt-4o prose per repo (~200 words); one call per repo
@@ -114,7 +118,8 @@ This is the only file you edit to control what the pipeline tracks.
 settings:
   lookback_days: 14       # how far back to scan
   min_stars: 10           # ignore repos below this threshold
-  top_n_per_topic: 5      # max repos shown per topic in README
+  top_n_per_topic: 8      # max repos shown per topic in README
+  enrich_stats: true      # fetch enriched stats (forks, commits, PRs) for top-4 repos
 
 topics:
   - id: mcp               # slug used in code; must be unique, lowercase-kebab
