@@ -117,7 +117,7 @@ def build_closing() -> str:
     )
 
 
-
+def _extract_sections(readme: str) -> List[str]:
     """Return a list of spoken paragraphs from README content.
 
     Keeps:
