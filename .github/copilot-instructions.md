@@ -49,25 +49,45 @@ demand from the GitHub mobile app or web UI. Optionally also runs on a weekly `s
 ### Pipeline stages
 
 ```
-search_trending()   →  fetch GitHub Search API for new/rising repos matching topic keywords
-fetch_releases()    →  fetch recent releases from pinned repos in topics/topics.yaml
-                       (dedupe.py exists as a utility but is NOT called in the main pipeline;
-                        repos and releases are kept in per-topic lists and never cross-merged)
-enrich_items()      →  fetch per-repo stats for top-4 repos (forks, commit velocity, PRs, contributors)
-                       cached by repo+date in .cache/enrich/; max 3 concurrent requests
-generate_repo_deepdive() → gpt-4o prose per repo (~200 words); one call per repo
-generate_topic_meta()    → gpt-4o-mini JSON (why, learn, community_pulse, action_items)
-_save_checkpoint()  →  write .cache/pipeline_checkpoint.json (resume point before TTS)
-render_readme()     →  narrative sections + tables, write README.md
-commit_readme()     →  git commit + push via actions/checkout or gh CLI
+search_trending()        →  fetch GitHub Search API for new/rising repos per topic
+fetch_releases()         →  fetch recent releases from pinned repos in topics/topics.yaml
+                            (dedupe.py exists as a utility but is NOT called in main;
+                             repos and releases stay in per-topic lists)
+enrich_items()           →  per-repo stats for top-4 per topic (forks, commit velocity,
+                            PRs, contributors); cached .cache/enrich/; max 3 concurrent
+
+run_research_summary()   →  NEW — receives ALL collected items across topics; single
+                            gpt-4o-mini call; produces ResearchReport with week_story,
+                            narrative_hook, topic_insights; cached .cache/research_YYYY-MM-DD.json;
+                            fail-open (returns empty report on any API error)
+
+generate_repo_deepdive() →  gpt-4o prose per repo (~200 words)
+generate_topic_meta()    →  gpt-4o-mini JSON (why, learn, community_pulse, action_items)
+                            + optional context= string injected from research report
+_save_checkpoint()       →  write .cache/pipeline_checkpoint.json (dict with topics + research_report)
+render_readme()          →  narrative sections + tables + "## 🗞️ This Week's Story" block
+commit_readme()          →  git commit + push via actions/checkout or gh CLI
 
 # Podcast path (PUBLISH_PODCAST=1 or --podcast flag):
-readme_to_narration()  →  extract prose sections into spoken script (~7,800 words / 1 hr)
-generate_audio()       →  edge-tts primary → OpenAI TTS fallback → radar.mp3
-prepend_episode()      →  update podcast.xml (RSS 2.0 + iTunes namespace)
-gh release create      →  upload radar.mp3 to dated GitHub Release
-commit podcast.xml     →  subscribers auto-get new episodes
+readme_to_narration()    →  spoken script; prepends cold-open from research_report.narrative_hook
+generate_audio()         →  edge-tts primary → OpenAI TTS fallback → radar.mp3
+prepend_episode()        →  update podcast.xml (RSS 2.0 + iTunes namespace)
+gh release create        →  upload radar.mp3 to dated GitHub Release
+commit podcast.xml       →  subscribers auto-get new episodes
 ```
+
+### ResearchReport schema
+
+```python
+{
+  "week_story":     str,   # 100-150 word narrative: the big theme across all topics
+  "narrative_hook": str,   # 1-2 sentence spoken cold-open ("This week in AI…")
+  "topic_insights": dict,  # optional per-topic-id extra context string
+}
+```
+
+All fields default to `""` / `{}` when the API is unavailable — pipeline continues
+unchanged (fail-open). Cache key: `.cache/research_YYYY-MM-DD.json`.
 
 All stages are pure Python functions in `pipeline/`. The orchestrator is
 `pipeline/main.py`. Config lives entirely in `topics/topics.yaml`.
