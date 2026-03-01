@@ -1,0 +1,17 @@
+name: Documentation Quality Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate topics config
+        run: python -c "import yaml; yaml.safe_load(open('topics/topics.yaml'))" && echo "topics.yaml is valid"
+      - name: Validate requirements
+        run: python -c "open('requirements.txt')" && echo "requirements.txt present"
