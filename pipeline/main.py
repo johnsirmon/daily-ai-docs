@@ -1,29 +1,24 @@
-"""Main pipeline orchestrator.
+"""AI Skills Radar — pipeline orchestrator.
 
 Usage:
-    python -m pipeline.main [--dry-run] [--date YYYY-MM-DD] [--week YYYY-WW]
+    python -m pipeline.main [--dry-run] [--config PATH]
 
 Options:
-    --dry-run   Use deterministic sample data; no network calls.
-    --date      Override the report date (default: today UTC).
-    --week      Override the report week (default: current ISO week, YYYY-WW).
+    --dry-run   Skip all network calls; write a placeholder README.
     --config    Path to topics YAML (default: topics/topics.yaml).
 """
 
 import argparse
-import json
 import logging
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
 
-from .dedupe import dedupe
-from .ingest import ingest_all
-from .normalize import normalize_all
-from .publish import enrich, write_daily, write_narrative, write_trends, write_watchlist, write_weekly
-from .rank import rank
+from .blurbs import generate_blurb
+from .releases import fetch_releases
+from .render import write_readme
+from .search import search_repos
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,99 +27,82 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-DEFAULT_TOPICS_PATH = Path("topics/topics.yaml")
+DEFAULT_CONFIG = Path("topics/topics.yaml")
 
 
-def load_config(path: Path = DEFAULT_TOPICS_PATH) -> dict:
-    with open(path, "r", encoding="utf-8") as fh:
+def load_config(path: Path = DEFAULT_CONFIG) -> dict:
+    """Load and return the topics YAML config."""
+    with open(path, encoding="utf-8") as fh:
         return yaml.safe_load(fh)
 
 
-def _sample_items(config: dict, date: str) -> list:
-    """Return deterministic sample items for dry-run / CI mode."""
-    topics = config.get("topics", [])
-    items = []
-    for i, topic in enumerate(topics):
-        items.append({
-            "raw_id": f"sample-{i}",
-            "title": f"[Sample] {topic['display']} — update {date}",
-            "url": f"https://example.com/{topic['id']}/update-{date}",
-            "published_at": f"{date}T00:00:00+00:00",
-            "source": "sample-source",
-            "source_type": "github_release",
-            "topics": [topic["id"]],
-            "snippet": (
-                f"Sample pipeline item for topic '{topic['display']}' generated in dry-run mode. "
-                "No live data was fetched."
-            ),
+def _dry_run_items(topic_id: str, topic_display: str) -> list:
+    """Return deterministic sample items for --dry-run mode."""
+    return [
+        {
+            "repo": f"sample/repo-{topic_id}",
+            "url": "https://github.com",
+            "stars": 42,
+            "description": f"Sample trending repo for {topic_display}",
+            "pushed_at": "",
+            "type": "trending",
+        }
+    ]
+
+
+def run(config: dict, dry_run: bool = False) -> Path:
+    """Execute the full pipeline and return the path to the written README."""
+    settings = config.get("settings", {})
+    lookback = int(settings.get("lookback_days", 14))
+    min_stars = int(settings.get("min_stars", 10))
+    top_n = int(settings.get("top_n_per_topic", 5))
+
+    topics_data = []
+
+    for topic in config.get("topics", []):
+        tid = topic["id"]
+        display = topic["display"]
+        keywords = topic.get("keywords", [])
+        pinned = topic.get("pinned_repos", [])
+
+        logger.info("Processing topic: %s", display)
+
+        if dry_run:
+            repos = _dry_run_items(tid, display)
+            releases = []
+            blurb = {
+                "why": f"[dry-run] {display} is actively evolving on GitHub.",
+                "learn": "[dry-run] Review the latest repos and release notes.",
+            }
+        else:
+            repos = search_repos(keywords, lookback_days=lookback, min_stars=min_stars, top_n=top_n)
+            releases = []
+            for pinned_repo in pinned:
+                releases.extend(fetch_releases(pinned_repo, lookback_days=lookback))
+            blurb = generate_blurb(display, repos, releases)
+
+        topics_data.append({
+            "id": tid,
+            "display": display,
+            "items": repos + releases,
+            "why": blurb.get("why", ""),
+            "learn": blurb.get("learn", ""),
         })
-    return items
 
-
-def run(config: dict, date: str, week: str, dry_run: bool = False) -> dict:
-    """Execute the full pipeline and return a summary dict."""
-    if dry_run:
-        logger.info("Dry-run mode: using sample data")
-        raw = _sample_items(config, date)
-    else:
-        raw = ingest_all(config)
-
-    logger.info("Ingested %d raw items", len(raw))
-
-    normalized = normalize_all(raw)
-    deduped = dedupe(normalized)
-    logger.info("After dedupe: %d items", len(deduped))
-
-    ranked = rank(deduped, config)
-    enriched = enrich(ranked, config.get("topics", []))
-
-    ranking_cfg = config.get("ranking", {})
-    top_n_daily = int(ranking_cfg.get("top_n_daily", 20))
-    top_n_weekly = int(ranking_cfg.get("top_n_weekly", 50))
-    watchlist_threshold = float(ranking_cfg.get("watchlist_threshold", 0.70))
-
-    daily_path = write_daily(enriched[:top_n_daily], date)
-    weekly_path = write_weekly(enriched[:top_n_weekly], week)
-    trends_path = write_trends(enriched)
-    watchlist_path = write_watchlist(enriched, threshold=watchlist_threshold)
-    narrative_path = write_narrative(enriched[:top_n_daily], date)
-
-    return {
-        "date": date,
-        "week": week,
-        "items_ingested": len(raw),
-        "items_after_dedupe": len(deduped),
-        "outputs": {
-            "daily": str(daily_path),
-            "weekly": str(weekly_path),
-            "trends": str(trends_path),
-            "watchlist": str(watchlist_path),
-            "narrative": str(narrative_path),
-        },
-    }
+    return write_readme(topics_data, lookback_days=lookback)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Daily AI Intelligence Pipeline")
-    parser.add_argument(
-        "--config", default=str(DEFAULT_TOPICS_PATH), help="Path to topics YAML config"
-    )
-    parser.add_argument("--date", default=None, help="Report date override (YYYY-MM-DD)")
-    parser.add_argument("--week", default=None, help="Report week override (YYYY-WW)")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Use sample data; no network calls"
-    )
+    parser = argparse.ArgumentParser(description="AI Skills Radar pipeline")
+    parser.add_argument("--config", default=str(DEFAULT_CONFIG), help="Path to topics YAML")
+    parser.add_argument("--dry-run", action="store_true", help="Skip network calls")
     args = parser.parse_args()
 
     config = load_config(Path(args.config))
-
-    now = datetime.now(tz=timezone.utc)
-    date = args.date or now.strftime("%Y-%m-%d")
-    week = args.week or now.strftime("%Y-%W")
-
-    result = run(config, date=date, week=week, dry_run=args.dry_run)
-    print(json.dumps(result, indent=2))
+    path = run(config, dry_run=args.dry_run)
+    logger.info("README written to %s", path)
 
 
 if __name__ == "__main__":
     main()
+
