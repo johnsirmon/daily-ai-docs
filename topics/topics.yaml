@@ -5,7 +5,8 @@
 settings:
   lookback_days: 14
   min_stars: 10
-  top_n_per_topic: 5
+  top_n_per_topic: 8
+  enrich_stats: true
 
 topics:
   - id: github-copilot

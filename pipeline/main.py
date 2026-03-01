@@ -11,6 +11,7 @@ Options:
 """
 
 import argparse
+import json
 import logging
 import os
 import sys
@@ -19,7 +20,8 @@ from pathlib import Path
 
 import yaml
 
-from .blurbs import generate_blurb
+from .blurbs import generate_topic_meta, generate_repo_deepdive
+from .enrich import enrich_items
 from .narrate import readme_to_narration
 from .podcast import prepend_episode
 from .releases import fetch_releases
@@ -35,6 +37,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = Path("topics/topics.yaml")
+_CHECKPOINT_PATH = Path(".cache/pipeline_checkpoint.json")
 
 
 def load_config(path: Path = DEFAULT_CONFIG) -> dict:
@@ -51,10 +54,23 @@ def _dry_run_items(topic_id: str, topic_display: str) -> list:
             "url": "https://github.com",
             "stars": 42,
             "description": f"Sample trending repo for {topic_display}",
+            "language": "Python",
+            "forks": 10,
+            "open_issues": 3,
+            "topics": ["ai"],
             "pushed_at": "",
             "type": "trending",
         }
     ]
+
+
+def _save_checkpoint(topics_data: list) -> None:
+    """Persist enriched topics data so TTS/render can resume without re-fetching."""
+    _CHECKPOINT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    _CHECKPOINT_PATH.write_text(
+        json.dumps(topics_data, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    logger.info("Checkpoint saved to %s", _CHECKPOINT_PATH)
 
 
 def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> Path:
@@ -62,7 +78,8 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
     settings = config.get("settings", {})
     lookback = int(settings.get("lookback_days", 14))
     min_stars = int(settings.get("min_stars", 10))
-    top_n = int(settings.get("top_n_per_topic", 5))
+    top_n = int(settings.get("top_n_per_topic", 8))
+    enrich_stats = bool(settings.get("enrich_stats", True))
 
     topics_data = []
 
@@ -77,24 +94,46 @@ def run(config: dict, dry_run: bool = False, publish_podcast: bool = False) -> P
         if dry_run:
             repos = _dry_run_items(tid, display)
             releases = []
-            blurb = {
+            meta = {
                 "why": f"[dry-run] {display} is actively evolving on GitHub.",
                 "learn": "[dry-run] Review the latest repos and release notes.",
+                "community_pulse": "[dry-run] Strong momentum across the ecosystem.",
+                "action_items": ["[dry-run] Explore the top repos for this topic."],
             }
+            deep_dives = []
         else:
             repos = search_repos(keywords, lookback_days=lookback, min_stars=min_stars, top_n=top_n)
             releases = []
             for pinned_repo in pinned:
                 releases.extend(fetch_releases(pinned_repo, lookback_days=lookback))
-            blurb = generate_blurb(display, repos, releases)
+
+            # Enrich top-4 repos with GitHub stats
+            if enrich_stats and repos:
+                enrich_items(repos, top_n=min(4, len(repos)))
+
+            # Generate per-repo deep-dive prose (top 4)
+            deep_dives = []
+            for repo_item in repos[:4]:
+                prose = generate_repo_deepdive(repo_item, display)
+                if prose:
+                    deep_dives.append({"repo": repo_item["repo"], "prose": prose})
+
+            meta = generate_topic_meta(display, repos, releases)
 
         topics_data.append({
             "id": tid,
             "display": display,
             "items": repos + releases,
-            "why": blurb.get("why", ""),
-            "learn": blurb.get("learn", ""),
+            "why": meta.get("why", ""),
+            "learn": meta.get("learn", ""),
+            "summary": meta.get("why", ""),  # overview uses why as lead paragraph
+            "community_pulse": meta.get("community_pulse", ""),
+            "action_items": meta.get("action_items", []),
+            "deep_dives": deep_dives,
         })
+
+    # Checkpoint enriched data before render/TTS
+    _save_checkpoint(topics_data)
 
     return write_readme(topics_data, lookback_days=lookback)
 

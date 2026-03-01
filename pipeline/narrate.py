@@ -1,7 +1,9 @@
 """Convert a README.md string into a clean spoken-word script for TTS.
 
-Strips markdown tables, link syntax, and decorators; retains topic headings
-and AI-generated blurbs (Why / What to learn) which are the meaningful content.
+Strips markdown tables, link syntax, and decorators; retains topic headings,
+AI-generated blurbs (Why / What to learn), Overview narrative, Repo Deep Dive
+prose, Community Pulse, and Action Items — which together form the full
+~1-hour narration script.
 """
 
 import re
@@ -32,34 +34,58 @@ def _strip_markdown(text: str) -> str:
     return text.strip()
 
 
+# Sub-headings to include as spoken transitions
+_NARRATED_SUBHEADINGS = {
+    "### Overview": "Overview.",
+    "### 🔍 Repo Deep Dives": "Repository deep dives.",
+    "### 📊 Community Pulse": "Community pulse.",
+    "### ✅ Action Items This Week": "Action items for this week.",
+    "### 🚀 Recent Releases": "Recent releases.",
+}
+
+# Sub-headings that introduce tables we should skip prose under
+_TABLE_SUBHEADINGS = {"### 🌱 New & Rising Repos", "### 📋 Quick Reference"}
+
+# Stat callout lines emitted by render.py under each #### repo heading
+_STAT_LINE_RE = re.compile(r"^_[⭐📈📉➡️].*_$")
+
+
 def _extract_sections(readme: str) -> List[str]:
     """Return a list of spoken paragraphs from README content.
 
     Keeps:
-    - The date heading (## AI Skills Radar — YYYY-MM-DD)
-    - Per-topic headings (## Topic Name)
-    - "Why it matters" and "What to learn" blurbs
+    - The date heading
+    - Per-topic headings
+    - Why/Learn blurbs
+    - Overview narrative paragraphs
+    - Repo deep-dive prose (prose paragraphs, skipping stat callout lines)
+    - Community Pulse paragraphs
+    - Action Items bullet text
+    - Recent Releases (notes prose only, not table rows)
 
     Skips:
-    - The Topics TOC list
-    - New & Rising Repos / Recent Releases tables
+    - TOC list
+    - Table rows (lines starting with |)
+    - Stat callout lines (_⭐ 1,234 · Python · ..._)
+    - Repo sub-headings (#### `org/name`) — spoken inline via repo name
     - Footer links
     """
     paragraphs: List[str] = []
-    current_topic: str = ""
     in_toc = False
-    skip_next_table = False
+    in_table_section = False
+    in_narrated_section = False
+    current_subheading = ""
 
     for line in readme.splitlines():
         stripped = line.strip()
 
-        # Top-level date heading
+        # ── Top-level date heading ──────────────────────────────────────────
         if stripped.startswith("# AI Skills Radar"):
             date_part = stripped.lstrip("# ").strip()
             paragraphs.append(f"AI Skills Radar. {date_part}.")
             continue
 
-        # "## Topics" block — skip until we hit a real topic heading
+        # ── TOC block ───────────────────────────────────────────────────────
         if stripped == "## Topics":
             in_toc = True
             continue
@@ -69,40 +95,72 @@ def _extract_sections(readme: str) -> List[str]:
             else:
                 continue
 
-        # Topic section headings
+        # ── Topic section headings (## …) ───────────────────────────────────
         if stripped.startswith("## ") and not stripped.startswith("## Topics"):
-            current_topic = stripped.lstrip("# ").strip()
-            paragraphs.append(current_topic + ".")
-            skip_next_table = False
+            topic_name = stripped.lstrip("# ").strip()
+            paragraphs.append(f"Next topic: {topic_name}.")
+            in_table_section = False
+            in_narrated_section = False
+            current_subheading = ""
             continue
 
-        # Sub-headings like "### New & Rising Repos" — skip, signal table follows
-        if stripped.startswith("### "):
-            skip_next_table = True
+        # ── Sub-heading: narrated transition ────────────────────────────────
+        if stripped in _NARRATED_SUBHEADINGS:
+            paragraphs.append(_NARRATED_SUBHEADINGS[stripped])
+            in_table_section = False
+            in_narrated_section = True
+            current_subheading = stripped
             continue
 
-        # Skip table rows
+        # ── Sub-heading: table section (skip content) ───────────────────────
+        if stripped in _TABLE_SUBHEADINGS:
+            in_table_section = True
+            in_narrated_section = False
+            current_subheading = stripped
+            continue
+
+        # ── Per-repo #### heading — announce the repo name ──────────────────
+        if stripped.startswith("#### `") and stripped.endswith("`"):
+            repo_name = stripped.strip("#### `").strip("`")
+            paragraphs.append(f"Repository: {repo_name}.")
+            continue
+
+        # ── Stat callout lines (_⭐ … _) — skip for audio ───────────────────
+        if _STAT_LINE_RE.match(stripped):
+            continue
+
+        # ── Table rows — always skip ────────────────────────────────────────
         if stripped.startswith("|"):
             continue
 
-        # Blurb lines: "**Why it matters:**" and "**What to learn:**"
+        # ── Blurb lines (Why / What to learn) ───────────────────────────────
         if "Why it matters:" in stripped or "What to learn:" in stripped:
             clean = _strip_markdown(stripped)
             if clean:
                 paragraphs.append(clean)
-            skip_next_table = False
             continue
 
-        # Skip footer / pipeline-source line
-        if "Pipeline source" in stripped or "update-radar.yml" in stripped:
+        # ── Skip footer, auto-generated notice, metadata ────────────────────
+        if (
+            "Pipeline source" in stripped
+            or "update-radar.yml" in stripped
+            or stripped.startswith("> Auto-generated")
+            or stripped.startswith("_Updated:")
+        ):
             continue
 
-        # Skip the auto-generated notice line
-        if stripped.startswith("> Auto-generated"):
+        # ── Prose content in narrated sections ──────────────────────────────
+        if in_narrated_section and stripped and not stripped.startswith("#"):
+            clean = _strip_markdown(stripped)
+            if clean:
+                paragraphs.append(clean)
             continue
 
-        # Skip _Updated:_ metadata line
-        if stripped.startswith("_Updated:"):
+        # ── Action items bullet points ───────────────────────────────────────
+        if current_subheading == "### ✅ Action Items This Week" and stripped.startswith("- "):
+            clean = _strip_markdown(stripped.lstrip("- ").strip())
+            if clean:
+                paragraphs.append(clean)
             continue
 
     return [p for p in paragraphs if p.strip()]

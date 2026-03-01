@@ -48,7 +48,8 @@ def fetch_releases(owner_repo: str, lookback_days: int = 14) -> List[Dict]:
                 "version": rel.get("tag_name", ""),
                 "name": (rel.get("name") or rel.get("tag_name", "")).strip(),
                 "published_at": pub[:10] if pub else "",
-                "notes": (rel.get("body") or "")[:300].strip(),
+                "notes": (rel.get("body") or "")[:3000].strip(),
+                "reactions": (rel.get("reactions") or {}).get("total_count", 0),
                 "type": "release",
             })
         return results

@@ -51,8 +51,12 @@ def search_repos(
                     "repo": item["full_name"],
                     "url": item["html_url"],
                     "stars": item["stargazers_count"],
-                    "description": (item.get("description") or "").strip()[:200],
+                    "description": (item.get("description") or "").strip(),
                     "pushed_at": item.get("pushed_at", ""),
+                    "language": item.get("language") or "",
+                    "forks": item.get("forks_count", 0),
+                    "open_issues": item.get("open_issues_count", 0),
+                    "topics": item.get("topics") or [],
                     "type": "trending",
                 })
         except Exception as exc:  # noqa: BLE001

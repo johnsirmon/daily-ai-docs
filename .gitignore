@@ -37,3 +37,9 @@ Thumbs.db
 
 # Versioned docs (runtime artifacts)
 versions/
+
+# Pipeline cache (enrich stats, checkpoint)
+.cache/
+
+# Pipeline audio artifact (uploaded to GitHub Release)
+radar.mp3

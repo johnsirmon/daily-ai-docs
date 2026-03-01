@@ -43,13 +43,17 @@ demand from the GitHub mobile app or web UI. Optionally also runs on a weekly `s
 search_trending()   →  fetch GitHub Search API for new/rising repos matching topic keywords
 fetch_releases()    →  fetch recent releases from pinned repos in topics/topics.yaml
 dedupe()            →  remove overlap by canonical URL / repo name
-generate_blurbs()   →  call GitHub Models API (GPT-4o-mini via GITHUB_TOKEN) for each item
-render_readme()     →  group by topic, write README.md
+enrich_items()      →  fetch per-repo stats for top-4 repos (forks, commit velocity, PRs, contributors)
+                       cached by repo+date in .cache/enrich/; max 3 concurrent requests
+generate_repo_deepdive() → gpt-4o prose per repo (~200 words); one call per repo
+generate_topic_meta()    → gpt-4o-mini JSON (why, learn, community_pulse, action_items)
+_save_checkpoint()  →  write .cache/pipeline_checkpoint.json (resume point before TTS)
+render_readme()     →  narrative sections + tables, write README.md
 commit_readme()     →  git commit + push via actions/checkout or gh CLI
 
 # Podcast path (PUBLISH_PODCAST=1 or --podcast flag):
-readme_to_narration()  →  strip markdown tables/links; extract blurbs into spoken script
-generate_audio()       →  OpenAI TTS (tts-1) via GitHub Models endpoint → radar.mp3
+readme_to_narration()  →  extract prose sections into spoken script (~7,800 words / 1 hr)
+generate_audio()       →  edge-tts primary → OpenAI TTS fallback → radar.mp3
 prepend_episode()      →  update podcast.xml (RSS 2.0 + iTunes namespace)
 gh release create      →  upload radar.mp3 to dated GitHub Release
 commit podcast.xml     →  subscribers auto-get new episodes
@@ -131,21 +135,53 @@ All pipeline data flows as plain `dict` lists. Two item types share the same lis
 
 **`trending`** (from `search.py`):
 ```python
-{"repo": "org/name", "url": "...", "stars": 123, "description": "...", "pushed_at": "...", "type": "trending"}
+{
+  "repo": "org/name", "url": "...", "stars": 123,
+  "description": "full description (no truncation)",
+  "language": "Python", "forks": 45, "open_issues": 12,
+  "topics": ["ai", "llm"],
+  "pushed_at": "...", "type": "trending",
+  # after enrich_items():
+  "watchers": 89, "created_at": "2023-06-01", "homepage": "...", "license": "MIT",
+  "commit_trend": "rising",          # "rising" | "falling" | "flat"
+  "weekly_commits": [5, 8, 12, 18],  # last 4 weeks
+  "contributor_count": 34,
+  "prs_merged_14d": 8,
+}
 ```
 
 **`release`** (from `releases.py`):
 ```python
-{"repo": "org/name", "url": "...", "version": "v1.2", "name": "...", "published_at": "2026-01-01", "notes": "...", "type": "release"}
+{
+  "repo": "org/name", "url": "...", "version": "v1.2",
+  "name": "...", "published_at": "2026-01-01",
+  "notes": "full release notes up to 3000 chars",
+  "reactions": 42,
+  "type": "release"
+}
 ```
 
 `render.py` splits on `item["type"]` to build the two separate tables. `blurbs.py` uses both types in the prompt.
 
-`dedupe.py` deduplicates by `item["repo"]`, keeping highest-starred. Items with no `repo` key (shouldn't happen normally) are all kept.
+`dedupe.py` deduplicates by `item["repo"]`, keeping highest-starred.
 
 ---
 
-## render.py split
+## render.py section order
+
+Per-topic section order in README:
+
+```
+## <Topic>
+> Why it matters / What to learn blurb
+
+### Overview          ← summary paragraph (from topic_meta "why")
+### 🔍 Repo Deep Dives  ← per-repo #### heading + stat line + 200w prose
+### 📊 Community Pulse  ← community_pulse paragraph
+### ✅ Action Items This Week
+### 🌱 New & Rising Repos  ← quick reference table with forks/issues/language/trend cols
+### 🚀 Recent Releases     ← table with Highlights column (first 120 chars of notes)
+```
 
 `render_readme(topics_data, lookback_days) -> str` builds the content string (used in tests).
 `write_readme(topics_data, lookback_days, path="README.md") -> Path` calls `render_readme` and writes to disk.
@@ -154,11 +190,23 @@ TOC anchors use `topic["id"]` (the YAML slug), not `topic["display"]`. Keep `id`
 
 ---
 
+## blurbs.py functions
+
+Two generation functions replace the old single `generate_blurb()`:
+
+- **`generate_topic_meta(topic_display, repos, releases) -> dict`** — uses `gpt-4o-mini` + `response_format=json_object`; returns `{why, learn, community_pulse, action_items}`. Quality gate: retries once if `why` word count < 40.
+- **`generate_repo_deepdive(item, topic_display) -> str`** — uses `gpt-4o`; returns ~200-word Markdown prose (no JSON wrapper). Quality gate: retries once if word count < 150.
+- **`generate_blurb()`** is kept as a backward-compat shim wrapping `generate_topic_meta`.
+
+Both fall back to empty string/dict if the API is unavailable.
+
+---
+
 ## Podcast modules
 
 `pipeline/narrate.py` — `readme_to_narration(readme_content: str) -> str`: strips markdown tables, links, and TOC; retains topic headings + "Why it matters" / "What to learn" blurbs for speech.
 
-`pipeline/tts.py` — `generate_audio(text: str) -> bytes | None`: calls `client.audio.speech.create(model="tts-1", voice="alloy")` via GitHub Models endpoint with `GITHUB_TOKEN`. Returns `None` and logs a warning if unavailable.
+`pipeline/tts.py` — `generate_audio(text: str) -> bytes | None`: tries `edge-tts` (Microsoft Edge neural TTS, no API key needed, voice `en-US-AriaNeural`) first; falls back to OpenAI TTS via GitHub Models (`tts-1`, voice `alloy`) if edge-tts fails. `write_audio(text, path)` writes the bytes to disk. Returns `None` and logs a warning if both methods fail.
 
 `pipeline/podcast.py` — `render_feed(episodes) -> str`, `write_feed(...)`, `prepend_episode(episode, path="podcast.xml")`. Feed is RSS 2.0 + iTunes namespace. Episodes are newest-first; deduped by `guid`.
 
@@ -191,6 +239,18 @@ https://github.com/{owner}/{repo}/releases/download/radar-YYYY-MM-DD/radar.mp3
 - Do not hardcode dates — use `--date` CLI flag or `datetime.date.today()`
 - Pass an explicit `now: datetime` parameter in tests for determinism
 - Use `tempfile.TemporaryDirectory()` for file-output tests
+
+### Test conventions
+
+Each test file defines its own local factory helpers (e.g., `_repo()`, `_release()`, `_topic()`, `_ep()`) — there are no shared pytest fixtures. Follow this pattern when adding new tests.
+
+### Markdownlint
+
+A `.markdownlint.json` config enforces ATX headings, 2-space list indent, and 120-char line length. `README.md` is excluded via `.markdownlintignore` (it's pipeline output). If you add new generated output files or directories, add them to `.markdownlintignore`.
+
+### GitHub Actions workflow permissions
+
+Workflows that call the GitHub Models API require `models: read` permission in addition to any other permissions. See `update-radar.yml` for the reference configuration.
 
 ## Adding a new topic
 
