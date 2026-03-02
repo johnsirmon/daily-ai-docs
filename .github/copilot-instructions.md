@@ -36,6 +36,12 @@ python -m pipeline.main --podcast-only --dry-run
 # Generate narration script only (no TTS) — polish with narrator-polish agent, then --podcast
 python -m pipeline.main --narrate-only --dry-run
 
+# Generate an ad-hoc podcast episode for a single topic (skips full radar pipeline)
+python -m pipeline.main --adhoc-topic "Model Context Protocol"
+
+# Ad-hoc dry-run (skips TTS and podcast.xml update)
+python -m pipeline.main --adhoc-topic "Model Context Protocol" --dry-run
+
 # Live run (requires GITHUB_TOKEN in environment)
 python -m pipeline.main
 ```
@@ -86,6 +92,12 @@ generate_audio()         →  edge-tts primary → OpenAI TTS fallback → radar
 prepend_episode()        →  update podcast.xml (RSS 2.0 + iTunes namespace)
 gh release create        →  upload radar.mp3 to dated GitHub Release
 commit podcast.xml       →  subscribers auto-get new episodes
+
+# Ad-hoc podcast path (--adhoc-topic "<topic>"):
+run_adhoc()              →  Exa search (optional) + AI research + narration
+                            save .cache/adhoc_narration.txt
+generate_audio()         →  write adhoc-episode.mp3
+prepend_episode()        →  prepend ad-hoc item to podcast.xml with guid=adhoc-<slug>-<date>
 ```
 
 ### ResearchReport schema
@@ -270,6 +282,20 @@ Paste into Apple Podcasts, Overcast, Pocket Casts, or any app that supports Appl
 ```
 https://github.com/{owner}/{repo}/releases/download/radar-YYYY-MM-DD/radar.mp3
 ```
+
+### Ad-hoc podcast feature (add-ad-hoc-podcast-feature)
+
+- Entry point: `python -m pipeline.main --adhoc-topic "<topic>"` in `pipeline/main.py`.
+  When this flag is set, the normal README pipeline is skipped and `run_adhoc(...)` is called.
+- Research stage: `pipeline/adhoc.py` uses Exa only when `EXA_API_KEY` is set; otherwise it
+  falls back to GitHub Models-only research with `GITHUB_TOKEN`.
+- Narration stage: writes script to `.cache/adhoc_narration.txt`, then runs TTS to
+  `adhoc-episode.mp3` (unless `--dry-run`).
+- Feed stage: creates an episode with deterministic GUID `adhoc-<topic-slug>-<YYYY-MM-DD>` and
+  prepends it to `podcast.xml`.
+- Release stage (GitHub Actions): `.github/workflows/adhoc-podcast.yml` runs on
+  `workflow_dispatch`, commits `podcast.xml`, and publishes `adhoc-episode.mp3` to a release tag
+  `adhoc-<slug>-<YYYY-MM-DD>`.
 
 ---
 
