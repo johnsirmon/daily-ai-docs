@@ -38,6 +38,17 @@ topics:
       - microsoft/semantic-kernel
       - BerriAI/litellm
 
+  - id: github-copilot-cli
+    display: "GitHub Copilot CLI"
+    keywords:
+      - "copilot cli"
+      - "gh copilot"
+      - "github copilot cli"
+      - "copilot terminal"
+      - "copilot command line"
+    pinned_repos:
+      - cli/cli
+
   - id: azure-ai
     display: "Azure AI Foundry"
     keywords:
@@ -54,4 +65,3 @@ topics:
       - "visual studio code ai"
     pinned_repos:
       - microsoft/vscode
-
