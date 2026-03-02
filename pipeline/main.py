@@ -2,12 +2,15 @@
 
 Usage:
     python -m pipeline.main [--dry-run] [--podcast] [--config PATH]
+    python -m pipeline.main --adhoc-topic "topic" [--dry-run]
 
 Options:
-    --dry-run   Skip all network calls; write a placeholder README.
-    --podcast   Also generate audio (radar.mp3) and update podcast.xml.
-                Reads PUBLISH_PODCAST=1 env var as an alternative to the flag.
-    --config    Path to topics YAML (default: topics/topics.yaml).
+    --dry-run       Skip all network calls; write a placeholder README.
+    --podcast       Also generate audio (radar.mp3) and update podcast.xml.
+                    Reads PUBLISH_PODCAST=1 env var as an alternative to the flag.
+    --config        Path to topics YAML (default: topics/topics.yaml).
+    --adhoc-topic   Research a topic on demand and publish an ad-hoc podcast episode.
+                    Skips the full pipeline and generates a single episode.
 """
 
 import argparse
@@ -20,6 +23,7 @@ from pathlib import Path
 
 import yaml
 
+from .adhoc import run_adhoc
 from .blurbs import generate_topic_meta, generate_repo_deepdive
 from .enrich import enrich_items
 from .narrate import readme_to_narration
@@ -255,10 +259,27 @@ def main() -> None:
         help="Generate narration script (.cache/narration_script.txt) but skip TTS and podcast.xml. "
              "Use the narrator-polish agent to refine, then re-run with --podcast.",
     )
+    parser.add_argument(
+        "--adhoc-topic",
+        type=str,
+        default=None,
+        help="Research a topic on demand and publish an ad-hoc podcast episode. "
+             "Skips the full pipeline.",
+    )
     args = parser.parse_args()
 
     repo = os.environ.get("GITHUB_REPOSITORY", "owner/repo")
     mp3_url_template = f"https://github.com/{repo}/releases/download/{{tag}}/radar.mp3"
+
+    if args.adhoc_topic:
+        adhoc_mp3_tpl = f"https://github.com/{repo}/releases/download/{{tag}}/adhoc-episode.mp3"
+        result = run_adhoc(
+            topic=args.adhoc_topic,
+            dry_run=args.dry_run,
+            mp3_url_template=adhoc_mp3_tpl,
+        )
+        logger.info("Ad-hoc episode complete: %s", result["episode"]["guid"])
+        return
 
     if args.podcast_only:
         readme_path = Path("README.md")

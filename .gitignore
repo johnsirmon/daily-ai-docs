@@ -43,6 +43,7 @@ versions/
 
 # Pipeline audio artifact (uploaded to GitHub Release)
 radar.mp3
+adhoc-episode.mp3
 
 # Narration script (generated artifact)
 radar-script.txt

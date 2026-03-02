@@ -1,0 +1,67 @@
+name: Ad Hoc Podcast
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'Topic to research and create a podcast episode about'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (skip TTS, write placeholder)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  adhoc-episode:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate ad-hoc episode
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ADHOC_TOPIC: ${{ inputs.topic }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            python -m pipeline.main --adhoc-topic "$ADHOC_TOPIC" --dry-run
+          else
+            python -m pipeline.main --adhoc-topic "$ADHOC_TOPIC"
+          fi
+
+      - name: Commit podcast feed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add podcast.xml
+          git diff --cached --quiet || git commit -m "chore: ad-hoc podcast — ${{ inputs.topic }} [skip ci]"
+          git push
+
+      - name: Publish audio to GitHub Release
+        if: hashFiles('adhoc-episode.mp3') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ADHOC_TOPIC: ${{ inputs.topic }}
+        run: |
+          SLUG=$(echo "$ADHOC_TOPIC" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | head -c 40)
+          TAG="adhoc-${SLUG}-$(date +%Y-%m-%d)"
+          gh release create "$TAG" adhoc-episode.mp3 \
+            --title "AI Skills Radar — $ADHOC_TOPIC" \
+            --notes "Ad-hoc deep dive: $ADHOC_TOPIC" \
+            --repo "$GITHUB_REPOSITORY" 2>/dev/null || \
+          gh release upload "$TAG" adhoc-episode.mp3 --clobber --repo "$GITHUB_REPOSITORY"
