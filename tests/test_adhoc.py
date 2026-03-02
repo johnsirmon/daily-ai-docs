@@ -163,8 +163,12 @@ def test_run_adhoc_live_calls_tts_and_podcast(monkeypatch, tmp_path):
     assert podcast_calls[0]["guid"].startswith("adhoc-test-ai-")
 
 
-def test_run_adhoc_episode_guid_is_deterministic():
-    """Same topic on same day should produce the same guid prefix."""
-    from pipeline.adhoc import _slugify
-    slug = _slugify("Model Context Protocol")
-    assert slug == "model-context-protocol"
+def test_run_adhoc_episode_guid_is_deterministic(monkeypatch, tmp_path):
+    """Same topic on same day should produce the same guid."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+
+    r1 = run_adhoc(topic="Model Context Protocol", dry_run=True, mp3_url_template="")
+    r2 = run_adhoc(topic="Model Context Protocol", dry_run=True, mp3_url_template="")
+    assert r1["episode"]["guid"] == r2["episode"]["guid"]
+    assert r1["episode"]["guid"].startswith("adhoc-model-context-protocol-")

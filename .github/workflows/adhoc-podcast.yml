@@ -58,7 +58,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ADHOC_TOPIC: ${{ inputs.topic }}
         run: |
-          SLUG=$(echo "$ADHOC_TOPIC" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | head -c 40)
+          SLUG=$(echo "$ADHOC_TOPIC" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | head -c 40)
           TAG="adhoc-${SLUG}-$(date +%Y-%m-%d)"
           gh release create "$TAG" adhoc-episode.mp3 \
             --title "AI Skills Radar — $ADHOC_TOPIC" \

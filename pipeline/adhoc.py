@@ -225,8 +225,7 @@ def _slugify(text: str, max_len: int = 40) -> str:
     """Convert text to a URL-safe slug."""
     slug = text.lower().strip()
     slug = re.sub(r"[^a-z0-9]+", "-", slug)
-    slug = slug.strip("-")
-    return slug[:max_len]
+    return slug[:max_len].strip("-")
 
 
 def run_adhoc(
