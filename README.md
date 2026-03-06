@@ -1,6 +1,6 @@
-# AI Skills Radar — 2026-03-02
+# AI Skills Radar — 2026-03-05
 
-_Updated: 2026-03-02T07:05:42Z | Covers last 14 days_
+_Updated: 2026-03-05T02:12:04Z | Covers last 14 days_
 
 > Auto-generated. To refresh, go to **Actions → Update AI Skills Radar → Run workflow**.
 
@@ -9,6 +9,7 @@ _Updated: 2026-03-02T07:05:42Z | Covers last 14 days_
 - [GitHub Copilot](#github-copilot)
 - [MCP Ecosystem](#mcp)
 - [Agentic Workflows](#agentic-workflows)
+- [GitHub Copilot CLI](#github-copilot-cli)
 - [Azure AI Foundry](#azure-ai)
 - [VS Code & AI Extensions](#vscode)
 
@@ -34,14 +35,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | ⭐ 36,008 | 3529 | 60 | Python | ➡️ flat |
-| [github/awesome-copilot](https://github.com/github/awesome-copilot) | ⭐ 23,117 | 2662 | 37 | JavaScript | ➡️ flat |
-| [github/copilot-sdk](https://github.com/github/copilot-sdk) | ⭐ 7,467 | 913 | 130 | TypeScript | ➡️ flat |
-| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 3,699 | 268 | 98 | Go | ➡️ flat |
-| [tech-leads-club/agent-skills](https://github.com/tech-leads-club/agent-skills) | ⭐ 1,586 | 163 | 7 | TypeScript |   |
-| [jlcodes99/cockpit-tools](https://github.com/jlcodes99/cockpit-tools) | ⭐ 876 | 80 | 0 | Rust |   |
-| [runkids/skillshare](https://github.com/runkids/skillshare) | ⭐ 695 | 43 | 3 | Go |   |
-| [ink1ing/anti-api](https://github.com/ink1ing/anti-api) | ⭐ 304 | 20 | 11 | TypeScript |   |
+| [github/awesome-copilot](https://github.com/github/awesome-copilot) | ⭐ 23,609 | 2696 | 31 | Python | ➡️ flat |
+| [github/copilot-sdk](https://github.com/github/copilot-sdk) | ⭐ 7,554 | 927 | 129 | TypeScript | ➡️ flat |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 3,785 | 277 | 150 | Go | ➡️ flat |
+| [tech-leads-club/agent-skills](https://github.com/tech-leads-club/agent-skills) | ⭐ 1,611 | 165 | 6 | TypeScript | 📉 falling |
+| [runkids/skillshare](https://github.com/runkids/skillshare) | ⭐ 746 | 47 | 0 | Go |   |
+| [FrancyJGLisboa/agent-skill-creator](https://github.com/FrancyJGLisboa/agent-skill-creator) | ⭐ 329 | 43 | 0 | Python |   |
+| [Mng-dev-ai/claudex](https://github.com/Mng-dev-ai/claudex) | ⭐ 224 | 43 | 9 | TypeScript |   |
+| [Community-Access/accessibility-agents](https://github.com/Community-Access/accessibility-agents) | ⭐ 159 | 10 | 7 | JavaScript |   |
 
 ---
 
@@ -51,14 +52,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [googleapis/genai-toolbox](https://github.com/googleapis/genai-toolbox) | ⭐ 13,229 | 1240 | 162 | Go | 📉 falling |
-| [iflytek/astron-rpa](https://github.com/iflytek/astron-rpa) | ⭐ 6,489 | 793 | 19 | Java | ➡️ flat |
-| [moltis-org/moltis](https://github.com/moltis-org/moltis) | ⭐ 1,715 | 175 | 90 | Rust | 📉 falling |
-| [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server) | ⭐ 1,222 | 274 | 86 | Go | ➡️ flat |
-| [superiorlu/AITreasureBox](https://github.com/superiorlu/AITreasureBox) | ⭐ 748 | 106 | 6 | Ruby |   |
-| [modelcontextprotocol/ruby-sdk](https://github.com/modelcontextprotocol/ruby-sdk) | ⭐ 739 | 97 | 16 | Ruby |   |
-| [irockel/tda](https://github.com/irockel/tda) | ⭐ 537 | 96 | 1 | Java |   |
-| [harshkedia177/axon](https://github.com/harshkedia177/axon) | ⭐ 423 | 74 | 13 | Python |   |
+| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 21,071 | 3367 | 399 | TypeScript | 📈 rising |
+| [Klavis-AI/klavis](https://github.com/Klavis-AI/klavis) | ⭐ 5,652 | 537 | 110 | Python | 📉 falling |
+| [mksglu/claude-context-mode](https://github.com/mksglu/claude-context-mode) | ⭐ 2,507 | 129 | 11 | JavaScript | ➡️ flat |
+| [moltis-org/moltis](https://github.com/moltis-org/moltis) | ⭐ 1,842 | 195 | 107 | Rust | ➡️ flat |
+| [MCPJam/inspector](https://github.com/MCPJam/inspector) | ⭐ 1,781 | 197 | 25 | TypeScript |   |
+| [microsoft/skills](https://github.com/microsoft/skills) | ⭐ 1,609 | 161 | 5 | TypeScript |   |
+| [SixHq/Overture](https://github.com/SixHq/Overture) | ⭐ 585 | 52 | 2 | TypeScript |   |
+| [TensorBlock/awesome-mcp-servers](https://github.com/TensorBlock/awesome-mcp-servers) | ⭐ 557 | 136 | 12 | — |   |
 
 ---
 
@@ -68,32 +69,59 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 130,848 | 20373 | 778 | TypeScript | 📈 rising |
-| [lobehub/lobehub](https://github.com/lobehub/lobehub) | ⭐ 72,866 | 14696 | 821 | TypeScript | ➡️ flat |
-| [ToolJet/ToolJet](https://github.com/ToolJet/ToolJet) | ⭐ 37,531 | 4959 | 936 | JavaScript | 📉 falling |
-| [simstudioai/sim](https://github.com/simstudioai/sim) | ⭐ 26,795 | 3379 | 170 | TypeScript | 📉 falling |
-| [Yeachan-Heo/oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) | ⭐ 7,900 | 547 | 6 | TypeScript |   |
-| [alibaba/OpenSandbox](https://github.com/alibaba/OpenSandbox) | ⭐ 3,642 | 255 | 29 | Python |   |
-| [entireio/cli](https://github.com/entireio/cli) | ⭐ 3,222 | 226 | 100 | Go |   |
-| [datawhalechina/easy-vibe](https://github.com/datawhalechina/easy-vibe) | ⭐ 3,089 | 271 | 20 | JavaScript |   |
+| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 131,215 | 20431 | 803 | TypeScript | ➡️ flat |
+| [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) | ⭐ 36,916 | 2779 | 316 | TypeScript | ➡️ flat |
+| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 21,071 | 3367 | 399 | TypeScript | 📈 rising |
+| [superset-sh/superset](https://github.com/superset-sh/superset) | ⭐ 4,823 | 299 | 258 | TypeScript | ➡️ flat |
+| [datawhalechina/easy-vibe](https://github.com/datawhalechina/easy-vibe) | ⭐ 3,289 | 288 | 20 | JavaScript |   |
+| [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) | ⭐ 2,675 | 84 | 41 | Rust |   |
+| [generalaction/emdash](https://github.com/generalaction/emdash) | ⭐ 2,358 | 192 | 102 | TypeScript |   |
+| [ValueCell-ai/ClawX](https://github.com/ValueCell-ai/ClawX) | ⭐ 2,342 | 274 | 51 | TypeScript |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
+| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/vectordata-dotnet-10.0.1) | `vectordata-dotnet-10.0.1` | 2026-03-04 (1 👍) | ## Changes:  * e90102079382d3fb0ffeac29ab7c6d2994a2948f .Net: Bump SK and MEVD versions for release (#13630) * b36a327d7 |
+| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.73.0) | `dotnet-1.73.0` | 2026-03-04 (2 👍) | ## Changes:  * e90102079382d3fb0ffeac29ab7c6d2994a2948f .Net: Bump SK and MEVD versions for release (#13630) * b36a327d7 |
+| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/python-1.40.0) | `python-1.40.0` | 2026-03-02 (2 👍) | ## What's Changed * Remove unused workflow by @moonbox3 in https://github.com/microsoft/semantic-kernel/pull/13545 * P |
 | [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/vectordata-dotnet-10.0.0) | `vectordata-dotnet-10.0.0` | 2026-02-19 | ## Changes:  * cec0cba23cc0ce6754d9c95efc4f29c2653a0e37 .Net: Bump SK to 1.7.2 and MEVD to 10.0.0 (#13567) * c86a59ae04d |
 | [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.72.0) | `dotnet-1.72.0` | 2026-02-19 (1 👍) | ## Changes:  * cec0cba23cc0ce6754d9c95efc4f29c2653a0e37 .Net: Bump SK to 1.7.2 and MEVD to 10.0.0 (#13567) * c86a59ae04d |
-| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.71.0) | `dotnet-1.71.0` | 2026-02-16 (2 👍) | ## Changes:     - 91f795605e42f0dd03ed9cdfaf4ffd8bdb1ae553 .Net: Bumping - Version     1.71.0 (#13552)    - 1b8b08b0 |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.14-redirect-alpha) | `v1.81.14-redirect-alpha` | 2026-03-05 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.14-stable...v1.81.14-redirect-alpha |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.12-stable_gpt-5.3.patch1) | `v1.81.12-stable_gpt-5.3.patch1` | 2026-03-03 | ## What's Changed  ### Anthropic Beta Headers Configuration Update  This patch syncs the `anthropic_beta_headers_config. |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.6.rc.9) | `v1.81.6.rc.9` | 2026-03-03 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.6.rc.6...v1.81.6.rc.9 |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/litellm-trace-dev-v1.81.16) | `litellm-trace-dev-v1.81.16` | 2026-03-03 | ## What's Changed * feat(vertex): add gemini-3.1-flash-image-preview to model DB by @emerzon in https://github.com/Berri |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.rc.1) | `v1.82.rc.1` | 2026-03-03 | ## What's Changed * feat(vertex): add gemini-3.1-flash-image-preview to model DB by @emerzon in https://github.com/Berri |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.0-nightly) | `v1.82.0-nightly` | 2026-03-03 | ## What's Changed * feat(vertex): add gemini-3.1-flash-image-preview to model DB by @emerzon in https://github.com/Berri |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.12-stable.2) | `v1.81.12-stable.2` | 2026-02-28 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.12-stable.1...v1.81.12-stable.2 |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.6.rc.6) | `v1.81.6.rc.6` | 2026-02-28 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.6.rc.4...v1.81.6.rc.6 |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.14.rc.2) | `v1.81.14.rc.2` | 2026-02-27 (1 👍) | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.6.rc.5...v1.81.14.rc.2 |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/litellm_presidio-dev-v1.81.16) | `litellm_presidio-dev-v1.81.16` | 2026-02-27 | ## What's Changed * [Fix] /key/aliases: Add pagination and search to prevent OOMs by @yuneng-jiang in https://github.com |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.16.custm-auth.dev) | `v1.81.16.custm-auth.dev` | 2026-02-26 | ## What's Changed * security: fix critical/high CVEs in OS-level libs and NPM transitive by @Harshit28j in https://githu |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/1.81.16-nightly) | `1.81.16-nightly` | 2026-02-26 | ## What's Changed * security: fix critical/high CVEs in OS-level libs and NPM transitive by @Harshit28j in https://githu |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.15-nightly) | `v1.81.15-nightly` | 2026-02-24 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/litellmv1.81.15.presidio.dev...v1.81.15-nightly |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.12-stable_gpt-5.3) | `v1.81.12-stable_gpt-5.3` | 2026-02-24 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.12-stable...v1.81.12-stable_gpt-5.3 |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.12-stable.1) | `v1.81.12-stable.1` | 2026-02-24 (1 👍) | ## What's Changed * fix(mcp): backport StreamableHTTPSessionManager stateless fix to v1.81.12-stable by @michelligabriel |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.6.rc.5) | `v1.81.6.rc.5` | 2026-02-24 | ## What's Changed * fix(schema): remove duplicate LiteLLM_DeletedTeamTable definition by @ryan-crabbe in https://github. |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.14-stable) | `v1.81.14-stable` | 2026-03-03 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.6.rc.5...v1.81.14-stable |
+
+---
+
+## GitHub Copilot CLI
+
+### 🌱 New & Rising Repos
+
+| Repo | Stars | Forks | Issues | Language | Trend |
+|------|-------|-------|--------|----------|-------|
+| [github/copilot-cli](https://github.com/github/copilot-cli) | ⭐ 9,061 | 1245 | 972 | Shell | 📉 falling |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 3,785 | 277 | 150 | Go | ➡️ flat |
+| [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) | ⭐ 2,761 | 226 | 13 | TypeScript | ➡️ flat |
+| [FidelusAleksander/ghcertified](https://github.com/FidelusAleksander/ghcertified) | ⭐ 864 | 298 | 8 | HTML | ➡️ flat |
+| [jazzyalex/agent-sessions](https://github.com/jazzyalex/agent-sessions) | ⭐ 293 | 14 | 2 | Swift |   |
+| [sirredbeard/ghcopilot-taskbar-gui](https://github.com/sirredbeard/ghcopilot-taskbar-gui) | ⭐ 106 | 8 | 4 | C# |   |
+| [anton-abyzov/specweave](https://github.com/anton-abyzov/specweave) | ⭐ 84 | 9 | 5 | TypeScript |   |
+| [continuedev/rules](https://github.com/continuedev/rules) | ⭐ 53 | 14 | 5 | Go |   |
+
+### 🚀 Recent Releases
+
+| Repo | Version | Date | Highlights |
+|------|---------|------|------------|
+| [cli/cli](https://github.com/cli/cli/releases/tag/v2.87.3) | `v2.87.3` | 2026-02-23 (23 👍) | ## What's Changed * Fix project mutation query variable usage by @williammartin in https://github.com/cli/cli/pull/12757 |
+| [cli/cli](https://github.com/cli/cli/releases/tag/v2.87.2) | `v2.87.2` | 2026-02-20 (16 👍) | ## ℹ️ Note  This release was cut primarily to resolve a publishing issue. We recommend reviewing [the v2.87.1 release  |
+| [cli/cli](https://github.com/cli/cli/releases/tag/v2.87.1) | `v2.87.1` | 2026-02-20 (8 👍) | ## ⚠️ Incomplete Release  The v2.87.1 release experienced a failure in our workflow and is not fully published to the  |
 
 ---
 
@@ -103,14 +131,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners) | ⭐ 107,336 | 57517 | 23 | Jupyter Notebook | 📉 falling |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 37,412 | 6066 | 1627 | Python | 📉 falling |
-| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 34,238 | 6915 | 425 | TypeScript | ➡️ flat |
-| [crmne/ruby_llm](https://github.com/crmne/ruby_llm) | ⭐ 3,667 | 386 | 95 | Ruby | ➡️ flat |
-| [Azure-Samples/chat-with-your-data-solution-accelerator](https://github.com/Azure-Samples/chat-with-your-data-solution-accelerator) | ⭐ 1,156 | 622 | 33 | Python |   |
-| [Azure-Samples/AI-Gateway](https://github.com/Azure-Samples/AI-Gateway) | ⭐ 876 | 391 | 52 | Jupyter Notebook |   |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 37,769 | 6145 | 1655 | Python | 📉 falling |
+| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 34,341 | 6933 | 426 | TypeScript | ➡️ flat |
+| [Azure-Samples/azure-search-openai-demo](https://github.com/Azure-Samples/azure-search-openai-demo) | ⭐ 7,592 | 5258 | 528 | Python | 📈 rising |
+| [clusterzx/paperless-ai](https://github.com/clusterzx/paperless-ai) | ⭐ 5,348 | 267 | 61 | JavaScript | ➡️ flat |
+| [crmne/ruby_llm](https://github.com/crmne/ruby_llm) | ⭐ 3,684 | 390 | 55 | Ruby |   |
+| [lord-alfred/ipranges](https://github.com/lord-alfred/ipranges) | ⭐ 1,005 | 150 | 3 | Shell |   |
+| [Azure-Samples/AI-Gateway](https://github.com/Azure-Samples/AI-Gateway) | ⭐ 878 | 394 | 53 | Jupyter Notebook |   |
 | [retkowsky/Azure-AIGEN-demos](https://github.com/retkowsky/Azure-AIGEN-demos) | ⭐ 748 | 283 | 12 | Jupyter Notebook |   |
-| [microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | ⭐ 720 | 500 | 34 | Python |   |
 
 ---
 
@@ -120,19 +148,20 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [jlcodes99/vscode-antigravity-cockpit](https://github.com/jlcodes99/vscode-antigravity-cockpit) | ⭐ 3,506 | 97 | 0 | TypeScript | ➡️ flat |
-| [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) | ⭐ 1,085 | 62 | 55 | Go | ➡️ flat |
-| [AltimateAI/vscode-dbt-power-user](https://github.com/AltimateAI/vscode-dbt-power-user) | ⭐ 560 | 120 | 176 | JavaScript | ➡️ flat |
-| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 445 | 93 | 4 | TypeScript | ➡️ flat |
-| [matlab/matlab-mcp-core-server](https://github.com/matlab/matlab-mcp-core-server) | ⭐ 192 | 21 | 19 | Go |   |
-| [adifyr/shadow-code](https://github.com/adifyr/shadow-code) | ⭐ 67 | 8 | 4 | TypeScript |   |
-| [yxw007/vscode-translate-next](https://github.com/yxw007/vscode-translate-next) | ⭐ 59 | 3 | 1 | CSS |   |
-| [SmythOS/smythos-studio](https://github.com/SmythOS/smythos-studio) | ⭐ 44 | 15 | 10 | TypeScript |   |
+| [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) | ⭐ 3,947 | 322 | 4 | TypeScript | 📈 rising |
+| [jlcodes99/vscode-antigravity-cockpit](https://github.com/jlcodes99/vscode-antigravity-cockpit) | ⭐ 3,592 | 101 | 2 | TypeScript | ➡️ flat |
+| [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) | ⭐ 1,090 | 63 | 53 | Go | ➡️ flat |
+| [AltimateAI/vscode-dbt-power-user](https://github.com/AltimateAI/vscode-dbt-power-user) | ⭐ 561 | 121 | 178 | JavaScript | 📈 rising |
+| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 445 | 94 | 4 | TypeScript |   |
+| [matlab/matlab-mcp-core-server](https://github.com/matlab/matlab-mcp-core-server) | ⭐ 201 | 24 | 19 | Go |   |
+| [littleCareless/dish-ai-commit](https://github.com/littleCareless/dish-ai-commit) | ⭐ 145 | 14 | 6 | TypeScript |   |
+| [sourcegraph/cody-vs](https://github.com/sourcegraph/cody-vs) | ⭐ 75 | 30 | 19 | C# |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.110) | `1.110` | 2026-03-04 (37 👍) | Welcome to the February 2026 release of Visual Studio Code. This release makes agents practical for longer-running and m |
 | [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.109.5) | `1.109.5` | 2026-02-20 (72 👍) | The update addresses these [issues ](https://github.com/microsoft/vscode/milestone/378?closed=1).  For the complete r |
 
 ---
