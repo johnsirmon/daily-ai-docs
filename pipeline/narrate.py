@@ -102,6 +102,82 @@ _TABLE_SUBHEADINGS = {"### 🌱 New & Rising Repos", "### 📋 Quick Reference"}
 _STAT_LINE_RE = re.compile(r"^_[⭐📈📉➡️].*_$")
 
 
+def _table_cells(line: str) -> List[str]:
+    """Split a markdown table row into cell values."""
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+def _parse_repo_from_cell(cell: str) -> str:
+    """Extract repo text from markdown link cell."""
+    m = re.match(r"\[([^\]]+)\]\([^)]*\)", cell)
+    return m.group(1).strip() if m else cell.strip()
+
+
+def _parse_int_cell(cell: str) -> int | None:
+    """Parse integer-like markdown table cell values (e.g. ⭐ 1,234, 42, —)."""
+    digits = re.sub(r"[^\d]", "", cell or "")
+    return int(digits) if digits else None
+
+
+def _repo_row_to_spoken(row: str) -> List[str]:
+    """Convert a New & Rising Repos table row into spoken narration lines."""
+    cells = _table_cells(row)
+    if len(cells) < 3:
+        return []
+
+    repo = _parse_repo_from_cell(cells[0])
+    if not repo or repo.lower() == "repo":
+        return []
+
+    stars = _parse_int_cell(cells[1]) if len(cells) > 1 else None
+    forks = _parse_int_cell(cells[2]) if len(cells) > 2 else None
+    issues = _parse_int_cell(cells[3]) if len(cells) > 3 else None
+    language = cells[4] if len(cells) > 4 and cells[4] not in {"—", ""} else ""
+    trend_cell = (cells[5] if len(cells) > 5 else "").lower()
+
+    lines = [_next_repo_phrase(repo)]
+    details = []
+    if stars is not None:
+        details.append(f"it's sitting at about {stars:,} stars")
+    if forks is not None:
+        details.append(f"{forks:,} forks")
+    if issues is not None:
+        details.append(f"{issues} open issues")
+    if language:
+        details.append(f"primarily {language}")
+
+    if details:
+        lines.append(_normalise_sentence("Right now " + ", ".join(details)))
+
+    if "rising" in trend_cell:
+        lines.append("Commit momentum is rising, which usually signals growing real-world usage.")
+    elif "falling" in trend_cell:
+        lines.append("Commit momentum has cooled recently, so it's worth checking whether activity is shifting elsewhere.")
+    elif "flat" in trend_cell:
+        lines.append("Commit momentum looks steady, which can indicate a stable phase for adopters.")
+
+    return lines
+
+
+def _release_row_to_spoken(row: str) -> str:
+    """Convert a Recent Releases table row into a short spoken update."""
+    cells = _table_cells(row)
+    if len(cells) < 4:
+        return ""
+
+    repo = _parse_repo_from_cell(cells[0])
+    version = cells[1].strip("` ")
+    date = cells[2]
+    highlights = _strip_markdown(cells[3])
+    if not repo or repo.lower() == "repo":
+        return ""
+
+    sentence = f"{repo} shipped {version} on {date}"
+    if highlights and highlights not in {"—", "-"}:
+        sentence += f", with highlights including {highlights[:180]}"
+    return _normalise_sentence(sentence)
+
+
 def build_cold_open(research_report: dict | None) -> str:
     """Return a 1-2 sentence spoken cold-open from the research report's narrative_hook.
 
@@ -200,8 +276,18 @@ def _extract_sections(readme: str) -> List[str]:
         if _STAT_LINE_RE.match(stripped):
             continue
 
-        # ── Table rows — always skip ────────────────────────────────────────
+        # ── Table rows — narrate selected rows for richer podcast context ───
         if stripped.startswith("|"):
+            if set(stripped.replace("|", "").strip()) <= {"-", ":"}:
+                continue
+            if current_subheading == "### 🌱 New & Rising Repos":
+                paragraphs.extend(_repo_row_to_spoken(stripped))
+                continue
+            if current_subheading == "### 🚀 Recent Releases":
+                spoken = _release_row_to_spoken(stripped)
+                if spoken:
+                    paragraphs.append(spoken)
+                continue
             continue
 
         # ── Blurb lines (Why / What to learn) ───────────────────────────────

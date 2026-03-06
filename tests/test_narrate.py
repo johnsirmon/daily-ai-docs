@@ -26,9 +26,15 @@ _Updated: 2026-03-01T00:00:00Z | Covers last 14 days_
 
 ### 🌱 New & Rising Repos
 
-| Repo | Stars | Description |
-|------|-------|-------------|
-| [org/repo](https://github.com) | ⭐ 500 | A great repo |
+| Repo | Stars | Forks | Issues | Language | Trend |
+|------|-------|-------|--------|----------|-------|
+| [org/repo](https://github.com) | ⭐ 500 | 42 | 7 | Python | 📈 rising |
+
+### 🚀 Recent Releases
+
+| Repo | Version | Date | Highlights |
+|------|---------|------|------------|
+| [org/repo](https://github.com) | `v2.0.1` | 2026-03-01 | Adds better plugin support |
 
 ---
 
@@ -112,11 +118,22 @@ def test_narration_blurb_uses_spoken_bridge():
     assert "Here's what to focus on learning" in result
 
 
-def test_narration_omits_table_rows():
+def test_narration_includes_repo_context_from_table():
     _reset_counters()
     result = readme_to_narration(_SAMPLE_README)
-    assert "org/repo" not in result
-    assert "⭐ 500" not in result
+    assert "repo by org" in result.lower()
+    assert "500 stars" in result
+    assert "42 forks" in result
+    assert "7 open issues" in result
+    assert "primarily Python" in result
+    assert "momentum is rising" in result
+
+
+def test_narration_includes_release_context_from_table():
+    _reset_counters()
+    result = readme_to_narration(_SAMPLE_README)
+    assert "org/repo shipped v2.0.1 on 2026-03-01" in result
+    assert "Adds better plugin support" in result
 
 
 def test_narration_omits_toc():
