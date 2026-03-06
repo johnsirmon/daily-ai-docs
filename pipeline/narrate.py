@@ -1,9 +1,8 @@
-"""Convert a README.md string into a clean spoken-word script for TTS.
+"""Convert README markdown into a spoken-word podcast script for TTS.
 
-Strips markdown tables, link syntax, and decorators; retains topic headings,
-AI-generated blurbs (Why / What to learn), Overview narrative, Repo Deep Dive
-prose, Community Pulse, and Action Items — which together form the full
-~1-hour narration script.
+Retains topic headings, blurbs, deep-dive prose, and selected table signals
+(repo momentum + release highlights) so audio episodes stay concrete and
+compelling without reading raw markdown artifacts aloud.
 """
 
 import re
@@ -207,13 +206,14 @@ def _extract_sections(readme: str) -> List[str]:
     - Why/Learn blurbs
     - Overview narrative paragraphs
     - Repo deep-dive prose (prose paragraphs, skipping stat callout lines)
+    - Repo context synthesized from "New & Rising Repos" table rows
     - Community Pulse paragraphs
     - Action Items bullet text
-    - Recent Releases (notes prose only, not table rows)
+    - Release context synthesized from "Recent Releases" table rows
 
     Skips:
     - TOC list
-    - Table rows (lines starting with |)
+    - Raw table rows (converted to spoken summaries instead)
     - Stat callout lines (_⭐ 1,234 · Python · ..._)
     - Repo sub-headings (#### `org/name`) — spoken inline via repo name
     - Footer links
