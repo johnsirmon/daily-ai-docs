@@ -279,10 +279,9 @@ def run_adhoc(
         audio_path = write_audio(narration, path="adhoc-episode.mp3")
         if audio_path:
             episode["file_size_bytes"] = audio_path.stat().st_size
+            prepend_episode(episode, path="podcast.xml")
+            logger.info("podcast.xml updated (episode: %s)", tag)
         else:
-            logger.warning("TTS failed; podcast.xml will have 0-byte placeholder")
-
-        prepend_episode(episode, path="podcast.xml")
-        logger.info("podcast.xml updated (episode: %s)", tag)
+            logger.warning("TTS failed; skipping podcast.xml update for ad-hoc episode")
 
     return {"topic": topic, "narration": narration, "episode": episode}

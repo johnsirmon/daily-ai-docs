@@ -132,7 +132,7 @@ def test_narration_includes_repo_context_from_table():
 def test_narration_includes_release_context_from_table():
     _reset_counters()
     result = readme_to_narration(_SAMPLE_README)
-    assert "org/repo shipped v2.0.1 on 2026-03-01" in result
+    assert "Org/repo shipped v2.0.1 on 2026-03-01" in result
     assert "Adds better plugin support" in result
 
 
