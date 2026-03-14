@@ -12,12 +12,12 @@ Model endpoint: https://models.inference.ai.azure.com
 
 import json
 import logging
-import os
 from typing import Dict, List
+
+from .models_client import get_github_models_client
 
 logger = logging.getLogger(__name__)
 
-_ENDPOINT = "https://models.inference.ai.azure.com"
 _META_MODEL = "gpt-4o-mini"
 _DEEPDIVE_MODEL = "gpt-4o"
 _DEEPDIVE_MIN_WORDS = 150
@@ -26,12 +26,7 @@ _META_MIN_WORDS = 40
 
 def _get_client():
     """Lazily initialise the OpenAI-compatible client for GitHub Models."""
-    try:
-        from openai import OpenAI  # noqa: PLC0415
-        return OpenAI(base_url=_ENDPOINT, api_key=os.environ["GITHUB_TOKEN"])
-    except Exception as exc:  # noqa: BLE001
-        logger.warning("GitHub Models client unavailable: %s", exc)
-        return None
+    return get_github_models_client()
 
 
 def _word_count(text: str) -> int:

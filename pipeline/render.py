@@ -9,6 +9,11 @@ def _trend_emoji(trend: str) -> str:
     return {"rising": "📈", "falling": "📉", "flat": "➡️"}.get(trend, "")
 
 
+def topic_anchor_markup(topic_id: str) -> str:
+    """Return explicit HTML anchor markup for stable topic links."""
+    return f'<a id="{topic_id}"></a>'
+
+
 def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_report: Dict | None = None) -> str:
     """Build the full README content string from processed topic data."""
     now = datetime.now(tz=timezone.utc)
@@ -60,6 +65,7 @@ def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_rep
 
     # Per-topic sections
     for t in topics_data:
+        lines.append(topic_anchor_markup(t["id"]))
         lines.append(f"## {t['display']}")
         lines.append("")
 

@@ -29,6 +29,7 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 ---
 
+<a id="github-copilot"></a>
 ## GitHub Copilot
 
 ### 🌱 New & Rising Repos
@@ -46,6 +47,7 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 ---
 
+<a id="mcp"></a>
 ## MCP Ecosystem
 
 ### 🌱 New & Rising Repos
@@ -63,6 +65,7 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 ---
 
+<a id="agentic-workflows"></a>
 ## Agentic Workflows
 
 ### 🌱 New & Rising Repos
@@ -84,7 +87,9 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 |------|---------|------|------------|
 | [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/vectordata-dotnet-10.0.1) | `vectordata-dotnet-10.0.1` | 2026-03-04 (1 👍) | ## Changes:  * e90102079382d3fb0ffeac29ab7c6d2994a2948f .Net: Bump SK and MEVD versions for release (#13630) * b36a327d7 |
 | [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.73.0) | `dotnet-1.73.0` | 2026-03-04 (2 👍) | ## Changes:  * e90102079382d3fb0ffeac29ab7c6d2994a2948f .Net: Bump SK and MEVD versions for release (#13630) * b36a327d7 |
-| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/python-1.40.0) | `python-1.40.0` | 2026-03-02 (3 👍) | ## What's Changed * Remove unused workflow by @moonbox3 in https://github.com/microsoft/semantic-kernel/pull/13545 * P |
+| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/python-1.40.0) | `python-1.40.0` | 2026-03-02 (3 👍) | ## What's Changed
+ * Remove unused workflow by @moonbox3 in https://github.com/microsoft/semantic-kernel/pull/13545
+ * P |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.81.14-stable.gpt-5.4-patch6) | `v1.81.14-stable.gpt-5.4-patch6` | 2026-03-08 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.81.14-stable.gpt-5.4-patch5...v1.81.14-stable.gpt-5.4- |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.dev2) | `v1.82.dev2` | 2026-03-07 | ## What's Changed * fix(gemini): preserve $ref in JSON Schema for Gemini 2.0+ by @Chesars in https://github.com/BerriAI/ |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.dev1) | `v1.82.dev1` | 2026-03-07 | ## What's Changed * fix(gemini): preserve $ref in JSON Schema for Gemini 2.0+ by @Chesars in https://github.com/BerriAI/ |
@@ -98,6 +103,7 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 ---
 
+<a id="github-copilot-cli"></a>
 ## GitHub Copilot CLI
 
 ### 🌱 New & Rising Repos
@@ -121,6 +127,7 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 ---
 
+<a id="azure-ai"></a>
 ## Azure AI Foundry
 
 ### 🌱 New & Rising Repos
@@ -138,6 +145,7 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 ---
 
+<a id="vscode"></a>
 ## VS Code & AI Extensions
 
 ### 🌱 New & Rising Repos
