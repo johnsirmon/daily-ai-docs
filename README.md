@@ -1,6 +1,6 @@
-# AI Skills Radar — 2026-03-30
+# AI Skills Radar — 2026-04-06
 
-_Updated: 2026-03-30T07:50:41Z | Covers last 14 days_
+_Updated: 2026-04-06T07:52:02Z | Covers last 14 days_
 
 > Auto-generated. To refresh, go to **Actions → Update AI Skills Radar → Run workflow**.
 
@@ -36,14 +36,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) | ⭐ 29,852 | 3867 | 609 | TypeScript | 📉 falling |
-| [mksglu/context-mode](https://github.com/mksglu/context-mode) | ⭐ 6,204 | 408 | 5 | TypeScript | ➡️ flat |
-| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,185 | 316 | 171 | Go | ➡️ flat |
-| [jlcodes99/cockpit-tools](https://github.com/jlcodes99/cockpit-tools) | ⭐ 2,996 | 269 | 1 | Rust | ➡️ flat |
-| [nyldn/claude-octopus](https://github.com/nyldn/claude-octopus) | ⭐ 2,174 | 173 | 7 | Shell |   |
-| [MicrosoftDocs/mcp](https://github.com/MicrosoftDocs/mcp) | ⭐ 1,504 | 175 | 10 | TypeScript |   |
-| [runkids/skillshare](https://github.com/runkids/skillshare) | ⭐ 1,161 | 64 | 5 | Go |   |
-| [fjb040911/ai-rules](https://github.com/fjb040911/ai-rules) | ⭐ 1,106 | 18 | 1 | JavaScript |   |
+| [mksglu/context-mode](https://github.com/mksglu/context-mode) | ⭐ 6,598 | 443 | 4 | TypeScript | ➡️ flat |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,225 | 329 | 103 | Go | 📉 falling |
+| [runkids/skillshare](https://github.com/runkids/skillshare) | ⭐ 1,336 | 71 | 3 | Go | ➡️ flat |
+| [getpaseo/paseo](https://github.com/getpaseo/paseo) | ⭐ 628 | 52 | 68 | TypeScript | 📉 falling |
+| [Railly/agentfiles](https://github.com/Railly/agentfiles) | ⭐ 429 | 23 | 1 | TypeScript |   |
+| [frontman-ai/frontman](https://github.com/frontman-ai/frontman) | ⭐ 250 | 12 | 130 | ReScript |   |
+| [tninja/ai-code-interface.el](https://github.com/tninja/ai-code-interface.el) | ⭐ 194 | 22 | 3 | Emacs Lisp |   |
+| [skills/expand-your-team-with-copilot](https://github.com/skills/expand-your-team-with-copilot) | ⭐ 122 | 65 | 1 | JavaScript |   |
 
 ---
 
@@ -54,14 +54,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [oraios/serena](https://github.com/oraios/serena) | ⭐ 22,246 | 1486 | 89 | Python | ➡️ flat |
-| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 21,481 | 3478 | 675 | TypeScript | 📉 falling |
-| [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) | ⭐ 11,372 | 2083 | 734 | Java | ➡️ flat |
-| [stacklok/toolhive](https://github.com/stacklok/toolhive) | ⭐ 1,689 | 197 | 260 | Go | 📉 falling |
-| [trpc-group/trpc-agent-go](https://github.com/trpc-group/trpc-agent-go) | ⭐ 1,047 | 114 | 50 | Go |   |
-| [blitzdotdev/blitz-mac](https://github.com/blitzdotdev/blitz-mac) | ⭐ 983 | 65 | 4 | Swift |   |
-| [datalayer/jupyter-mcp-server](https://github.com/datalayer/jupyter-mcp-server) | ⭐ 969 | 149 | 29 | Python |   |
-| [MGdaasLab/WHartTest](https://github.com/MGdaasLab/WHartTest) | ⭐ 742 | 103 | 8 | Python |   |
+| [ComposioHQ/composio](https://github.com/ComposioHQ/composio) | ⭐ 27,653 | 4508 | 87 | TypeScript | 📉 falling |
+| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 21,583 | 3510 | 680 | TypeScript | 📉 falling |
+| [TensorBlock/awesome-mcp-servers](https://github.com/TensorBlock/awesome-mcp-servers) | ⭐ 601 | 250 | 45 | — | ➡️ flat |
+| [freee/freee-mcp](https://github.com/freee/freee-mcp) | ⭐ 396 | 48 | 1 | TypeScript | ➡️ flat |
+| [borski/travel-hacking-toolkit](https://github.com/borski/travel-hacking-toolkit) | ⭐ 338 | 15 | 0 | Python |   |
+| [CronusL-1141/AI-company](https://github.com/CronusL-1141/AI-company) | ⭐ 154 | 16 | 0 | Python |   |
+| [paiml/paiml-mcp-agent-toolkit](https://github.com/paiml/paiml-mcp-agent-toolkit) | ⭐ 146 | 22 | 14 | Rust |   |
+| [Vortiago/mcp-outline](https://github.com/Vortiago/mcp-outline) | ⭐ 127 | 43 | 2 | Python |   |
 
 ---
 
@@ -72,32 +72,29 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 134,957 | 21019 | 803 | TypeScript | 📉 falling |
-| [lobehub/lobehub](https://github.com/lobehub/lobehub) | ⭐ 74,495 | 14838 | 700 | TypeScript | 📉 falling |
-| [deepset-ai/haystack](https://github.com/deepset-ai/haystack) | ⭐ 24,649 | 2684 | 108 | MDX | 📉 falling |
-| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 21,481 | 3478 | 675 | TypeScript | 📉 falling |
-| [onestardao/WFGY](https://github.com/onestardao/WFGY) | ⭐ 1,688 | 158 | 11 | Jupyter Notebook |   |
-| [catlog22/Claude-Code-Workflow](https://github.com/catlog22/Claude-Code-Workflow) | ⭐ 1,614 | 136 | 1 | TypeScript |   |
-| [nextlevelbuilder/goclaw](https://github.com/nextlevelbuilder/goclaw) | ⭐ 1,363 | 400 | 126 | Go |   |
-| [dcostenco/prism-mcp](https://github.com/dcostenco/prism-mcp) | ⭐ 101 | 12 | 10 | TypeScript |   |
+| [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) | ⭐ 48,656 | 3823 | 423 | TypeScript | ➡️ flat |
+| [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | ⭐ 48,122 | 6556 | 510 | Python | 📉 falling |
+| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 21,583 | 3510 | 680 | TypeScript | 📉 falling |
+| [ComposioHQ/agent-orchestrator](https://github.com/ComposioHQ/agent-orchestrator) | ⭐ 5,788 | 793 | 472 | TypeScript | ➡️ flat |
+| [dagucloud/dagu](https://github.com/dagucloud/dagu) | ⭐ 3,244 | 249 | 125 | Go |   |
+| [gadievron/raptor](https://github.com/gadievron/raptor) | ⭐ 1,801 | 258 | 11 | Python |   |
+| [preset-io/agor](https://github.com/preset-io/agor) | ⭐ 1,118 | 91 | 96 | TypeScript |   |
+| [nrslib/takt](https://github.com/nrslib/takt) | ⭐ 907 | 55 | 52 | TypeScript |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
 | [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/python-1.41.1) | `python-1.41.1` | 2026-03-25 (2 👍) | ## What's Changed * Python: fix(python/google): preserve thought_signature in Gemini function call parts by @giulio-leo |
-| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/vectordata-dotnet-10.1.0) | `vectordata-dotnet-10.1.0` | 2026-03-20 | ## Changes:  * 14ea2fcabb02910e6fccfc939d217567caa4a0be SK .NET Release version bump (#13685) * 8b32b3ba6f62e94ea2533d81 |
-| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.74.0) | `dotnet-1.74.0` | 2026-03-20 (2 👍) | ## Changes:  * 14ea2fcabb02910e6fccfc939d217567caa4a0be SK .NET Release version bump (#13685) * 8b32b3ba6f62e94ea2533d81 |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.83.1-nightly) | `v1.83.1-nightly` | 2026-04-03 (5 👍) | This release was from the LiteLLM team. We are testing out a new signing process and it is safe to use.   This was a t |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.83.0-nightly) | `v1.83.0-nightly` | 2026-03-31 (7 👍) | ## Verifying the Docker Image ``` cosign verify --insecure-ignore-tlog=true --key https://raw.githubusercontent.com/Be |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.6.rc.2) | `v1.82.6.rc.2` | 2026-03-24 (2 👍) | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.82.6.dev1...v1.82.6.rc.2 |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.6.dev2) | `v1.82.6.dev2` | 2026-03-24 | ## What's Changed * fix(proxy): post-call guardrail response not captured for logging by @michelligabriele in https://gi |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.3-stable.patch.2) | `v1.82.3-stable.patch.2` | 2026-03-24 (1 👍) | ## What's Changed * fix: don't close HTTP/SDK clients on LLMClientCache eviction by @ishaan-jaff in https://github.com/B |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.3-stable.patch.2) | `v1.82.3-stable.patch.2` | 2026-03-24 (2 👍) | ## What's Changed * fix: don't close HTTP/SDK clients on LLMClientCache eviction by @ishaan-jaff in https://github.com/B |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.3-stable.patch.1) | `v1.82.3-stable.patch.1` | 2026-03-24 | ## What's Changed * fix: don't close HTTP/SDK clients on LLMClientCache eviction by @ishaan-jaff in https://github.com/B |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.6.dev1) | `v1.82.6.dev1` | 2026-03-23 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.82.6.rc.1...v1.82.6.dev1 |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.3.dev.5) | `v1.82.3.dev.5` | 2026-03-24 | **Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.82.5.dev.1...v1.82.3.dev.5 |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.6.rc.1) | `v1.82.6.rc.1` | 2026-03-23 | ## What's Changed * fix(anthropic): preserve thinking.summary when routing to OpenAI Responses API by @Chesars in https: |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.6.dev.1) | `v1.82.6.dev.1` | 2026-03-22 | ## What's Changed * [Test] UI: Add unit tests for 10 untested components by @yuneng-jiang in https://github.com/BerriAI/ |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.6-nightly) | `v1.82.6-nightly` | 2026-03-22 | ## What's Changed * fix(anthropic): preserve thinking.summary when routing to OpenAI Responses API by @Chesars in https: |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.82.5.dev.1) | `v1.82.5.dev.1` | 2026-03-23 | ## What's Changed * fix(anthropic): preserve thinking.summary when routing to OpenAI Responses API by @Chesars in https: |
 
 ---
 
@@ -108,20 +105,20 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,185 | 316 | 171 | Go | ➡️ flat |
-| [jlcodes99/cockpit-tools](https://github.com/jlcodes99/cockpit-tools) | ⭐ 2,996 | 269 | 1 | Rust | ➡️ flat |
-| [MicrosoftDocs/mcp](https://github.com/MicrosoftDocs/mcp) | ⭐ 1,504 | 175 | 10 | TypeScript | ➡️ flat |
-| [FidelusAleksander/ghcertified](https://github.com/FidelusAleksander/ghcertified) | ⭐ 875 | 298 | 8 | HTML | ➡️ flat |
-| [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) | ⭐ 314 | 47 | 0 | Rust |   |
-| [tninja/ai-code-interface.el](https://github.com/tninja/ai-code-interface.el) | ⭐ 186 | 22 | 7 | Emacs Lisp |   |
-| [microsoft/skills-for-copilot-studio](https://github.com/microsoft/skills-for-copilot-studio) | ⭐ 92 | 29 | 18 | JavaScript |   |
-| [crisnahine/rails-ai-context](https://github.com/crisnahine/rails-ai-context) | ⭐ 59 | 7 | 0 | Ruby |   |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,225 | 329 | 103 | Go | 📉 falling |
+| [mukul975/Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) | ⭐ 4,060 | 436 | 9 | Python | ➡️ flat |
+| [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) | ⭐ 3,026 | 233 | 19 | TypeScript | ➡️ flat |
+| [github/copilot-cli-for-beginners](https://github.com/github/copilot-cli-for-beginners) | ⭐ 1,975 | 1035 | 2 | — | ➡️ flat |
+| [getpaseo/paseo](https://github.com/getpaseo/paseo) | ⭐ 628 | 52 | 68 | TypeScript |   |
+| [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) | ⭐ 467 | 60 | 0 | Rust |   |
+| [AVIDS2/memorix](https://github.com/AVIDS2/memorix) | ⭐ 355 | 30 | 18 | TypeScript |   |
+| [tninja/ai-code-interface.el](https://github.com/tninja/ai-code-interface.el) | ⭐ 194 | 22 | 3 | Emacs Lisp |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [cli/cli](https://github.com/cli/cli/releases/tag/v2.89.0) | `v2.89.0` | 2026-03-26 (28 👍) | ## :copilot: `gh agent-task` now works on ghe.com tenancies  `gh agent-task` commands previously failed with `401 Unau |
+| [cli/cli](https://github.com/cli/cli/releases/tag/v2.89.0) | `v2.89.0` | 2026-03-26 (41 👍) | ## :copilot: `gh agent-task` now works on ghe.com tenancies  `gh agent-task` commands previously failed with `401 Unau |
 
 ---
 
@@ -132,14 +129,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners) | ⭐ 108,701 | 58267 | 18 | Jupyter Notebook | 📈 rising |
-| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 35,051 | 7120 | 463 | TypeScript | ➡️ flat |
-| [yym68686/uni-api](https://github.com/yym68686/uni-api) | ⭐ 1,199 | 152 | 10 | Python | ➡️ flat |
-| [Azure-Samples/AI-Gateway](https://github.com/Azure-Samples/AI-Gateway) | ⭐ 898 | 404 | 52 | Jupyter Notebook | ➡️ flat |
-| [vllora/vllora](https://github.com/vllora/vllora) | ⭐ 790 | 44 | 28 | Rust |   |
-| [microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | ⭐ 761 | 598 | 45 | Python |   |
-| [microsoft/Conversation-Knowledge-Mining-Solution-Accelerator](https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator) | ⭐ 435 | 252 | 5 | Python |   |
-| [microsoft/rag-experiment-accelerator](https://github.com/microsoft/rag-experiment-accelerator) | ⭐ 298 | 106 | 154 | Python |   |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 42,285 | 7017 | 2244 | Python | 📉 falling |
+| [microsoft/sample-app-aoai-chatGPT](https://github.com/microsoft/sample-app-aoai-chatGPT) | ⭐ 1,922 | 3107 | 17 | Python | ➡️ flat |
+| [yym68686/uni-api](https://github.com/yym68686/uni-api) | ⭐ 1,198 | 151 | 11 | Python | ➡️ flat |
+| [Azure-Samples/chat-with-your-data-solution-accelerator](https://github.com/Azure-Samples/chat-with-your-data-solution-accelerator) | ⭐ 1,160 | 624 | 53 | Python | ➡️ flat |
+| [lord-alfred/ipranges](https://github.com/lord-alfred/ipranges) | ⭐ 1,024 | 152 | 3 | Shell |   |
+| [microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | ⭐ 770 | 619 | 52 | Python |   |
+| [microsoft/Conversation-Knowledge-Mining-Solution-Accelerator](https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator) | ⭐ 436 | 252 | 8 | Python |   |
+| [Agents365-ai/video-podcast-maker](https://github.com/Agents365-ai/video-podcast-maker) | ⭐ 352 | 46 | 1 | TypeScript |   |
 
 ---
 
@@ -150,21 +147,21 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [jlcodes99/vscode-antigravity-cockpit](https://github.com/jlcodes99/vscode-antigravity-cockpit) | ⭐ 4,117 | 117 | 0 | TypeScript | ➡️ flat |
-| [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) | ⭐ 1,155 | 68 | 49 | Go | ➡️ flat |
-| [AltimateAI/vscode-dbt-power-user](https://github.com/AltimateAI/vscode-dbt-power-user) | ⭐ 570 | 120 | 179 | JavaScript | ➡️ flat |
-| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 450 | 96 | 4 | TypeScript | 📉 falling |
-| [matlab/matlab-mcp-core-server](https://github.com/matlab/matlab-mcp-core-server) | ⭐ 289 | 34 | 21 | Go |   |
-| [littleCareless/dish-ai-commit](https://github.com/littleCareless/dish-ai-commit) | ⭐ 151 | 14 | 6 | TypeScript |   |
-| [sourcegraph/cody-vs](https://github.com/sourcegraph/cody-vs) | ⭐ 79 | 30 | 19 | C# |   |
-| [dliedke/ClaudeCodeExtension](https://github.com/dliedke/ClaudeCodeExtension) | ⭐ 57 | 8 | 0 | C# |   |
+| [jlcodes99/vscode-antigravity-cockpit](https://github.com/jlcodes99/vscode-antigravity-cockpit) | ⭐ 4,231 | 121 | 1 | TypeScript | ➡️ flat |
+| [AltimateAI/vscode-dbt-power-user](https://github.com/AltimateAI/vscode-dbt-power-user) | ⭐ 570 | 121 | 167 | JavaScript | ➡️ flat |
+| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 451 | 97 | 4 | TypeScript | ➡️ flat |
+| [matlab/matlab-mcp-core-server](https://github.com/matlab/matlab-mcp-core-server) | ⭐ 323 | 37 | 27 | Go | ➡️ flat |
+| [littleCareless/dish-ai-commit](https://github.com/littleCareless/dish-ai-commit) | ⭐ 150 | 14 | 6 | TypeScript |   |
+| [sourcegraph/cody-vs](https://github.com/sourcegraph/cody-vs) | ⭐ 80 | 30 | 22 | C# |   |
+| [dliedke/ClaudeCodeExtension](https://github.com/dliedke/ClaudeCodeExtension) | ⭐ 60 | 10 | 1 | C# |   |
+| [SmythOS/smythos-studio](https://github.com/SmythOS/smythos-studio) | ⭐ 50 | 19 | 10 | TypeScript |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.113.0) | `1.113.0` | 2026-03-25 (110 👍) | https://code.visualstudio.com/updates/v1_113 |
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.112.0) | `1.112.0` | 2026-03-18 (110 👍) | https://code.visualstudio.com/updates/v1_112 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.114.0) | `1.114.0` | 2026-04-01 (101 👍) | https://code.visualstudio.com/updates/v1_114 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.113.0) | `1.113.0` | 2026-03-25 (117 👍) | https://code.visualstudio.com/updates/v1_113 |
 
 ---
 
