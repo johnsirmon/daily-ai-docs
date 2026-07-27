@@ -1,6 +1,6 @@
-# AI Skills Radar — 2026-07-20
+# AI Skills Radar — 2026-07-27
 
-_Updated: 2026-07-20T09:20:49Z | Covers last 14 days_
+_Updated: 2026-07-27T09:58:17Z | Covers last 14 days_
 
 > Auto-generated. To refresh, go to **Actions → Update AI Skills Radar → Run workflow**.
 
@@ -36,14 +36,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) | ⭐ 36,168 | 4461 | 429 | TypeScript | 📉 falling |
-| [mksglu/context-mode](https://github.com/mksglu/context-mode) | ⭐ 19,110 | 1343 | 90 | TypeScript | 📉 falling |
-| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,783 | 458 | 252 | Go | 📉 falling |
-| [IvanMurzak/Unity-MCP](https://github.com/IvanMurzak/Unity-MCP) | ⭐ 3,601 | 322 | 47 | C# | 📈 rising |
-| [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) | ⭐ 3,304 | 307 | 4 | Rust |   |
-| [SeemSeam/claude_codex_bridge](https://github.com/SeemSeam/claude_codex_bridge) | ⭐ 3,290 | 319 | 89 | Python |   |
-| [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) | ⭐ 2,845 | 269 | 104 | Rust |   |
-| [microsoft/intelligent-terminal](https://github.com/microsoft/intelligent-terminal) | ⭐ 1,581 | 109 | 63 | C++ |   |
+| [getpaseo/paseo](https://github.com/getpaseo/paseo) | ⭐ 11,471 | 1142 | 896 | TypeScript | 📉 falling |
+| [github/copilot-sdk](https://github.com/github/copilot-sdk) | ⭐ 10,052 | 1358 | 270 | Java | ➡️ flat |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,811 | 466 | 315 | Go | 📉 falling |
+| [IvanMurzak/Unity-MCP](https://github.com/IvanMurzak/Unity-MCP) | ⭐ 3,680 | 331 | 47 | C# | ➡️ flat |
+| [777genius/agent-teams-ai](https://github.com/777genius/agent-teams-ai) | ⭐ 1,716 | 300 | 19 | TypeScript |   |
+| [zzet/gortex](https://github.com/zzet/gortex) | ⭐ 963 | 82 | 25 | Go |   |
+| [data-goblin/power-bi-agentic-development](https://github.com/data-goblin/power-bi-agentic-development) | ⭐ 811 | 119 | 2 | C# |   |
+| [slkiser/opencode-quota](https://github.com/slkiser/opencode-quota) | ⭐ 770 | 77 | 4 | TypeScript |   |
 
 ---
 
@@ -54,20 +54,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [PostHog/posthog](https://github.com/PostHog/posthog) | ⭐ 37,058 | 3063 | 4797 | Python | 📉 falling |
-| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 23,340 | 3941 | 432 | TypeScript | 📉 falling |
-| [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) | ⭐ 12,644 | 2381 | 805 | Java | 📉 falling |
-| [modelcontextprotocol/modelcontextprotocol](https://github.com/modelcontextprotocol/modelcontextprotocol) | ⭐ 8,635 | 1656 | 192 | TypeScript | 📈 rising |
-| [mock-server/mockserver-monorepo](https://github.com/mock-server/mockserver-monorepo) | ⭐ 4,920 | 1113 | 1 | Java |   |
-| [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) | ⭐ 3,304 | 307 | 4 | Rust |   |
-| [stacklok/toolhive](https://github.com/stacklok/toolhive) | ⭐ 1,955 | 250 | 287 | Go |   |
-| [pab1it0/prometheus-mcp-server](https://github.com/pab1it0/prometheus-mcp-server) | ⭐ 501 | 97 | 12 | Python |   |
-
-### 🚀 Recent Releases
-
-| Repo | Version | Date | Highlights |
-|------|---------|------|------------|
-| [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/releases/tag/2026.7.10) | `2026.7.10` | 2026-07-10 (6 👍) | # Release : v2026.7.10  ## Updated packages - @modelcontextprotocol/server-filesystem@2026.7.10 - mcp-server-time@2026.7 |
+| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 150,386 | 23693 | 980 | TypeScript | 📉 falling |
+| [modelcontextprotocol/modelcontextprotocol](https://github.com/modelcontextprotocol/modelcontextprotocol) | ⭐ 8,702 | 1674 | 196 | TypeScript | 📉 falling |
+| [modelcontextprotocol/registry](https://github.com/modelcontextprotocol/registry) | ⭐ 7,072 | 912 | 119 | Go | 📉 falling |
+| [stacklok/toolhive](https://github.com/stacklok/toolhive) | ⭐ 1,977 | 262 | 299 | Go | ➡️ flat |
+| [containers/kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server) | ⭐ 1,848 | 401 | 86 | Go |   |
+| [modelcontextprotocol/php-sdk](https://github.com/modelcontextprotocol/php-sdk) | ⭐ 1,567 | 155 | 86 | PHP |   |
+| [shinpr/mcp-local-rag](https://github.com/shinpr/mcp-local-rag) | ⭐ 356 | 68 | 3 | TypeScript |   |
+| [toolsdk-ai/toolsdk-mcp-registry](https://github.com/toolsdk-ai/toolsdk-mcp-registry) | ⭐ 183 | 150 | 22 | TypeScript |   |
 
 ---
 
@@ -78,31 +72,29 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 149,442 | 23553 | 1078 | TypeScript | 📉 falling |
-| [deepset-ai/haystack](https://github.com/deepset-ai/haystack) | ⭐ 25,952 | 2937 | 112 | MDX | ➡️ flat |
-| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 23,340 | 3941 | 432 | TypeScript | 📉 falling |
-| [iflytek/astron-agent](https://github.com/iflytek/astron-agent) | ⭐ 9,413 | 867 | 36 | Java | 📉 falling |
-| [bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book) | ⭐ 8,258 | 756 | 1 | Python |   |
-| [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) | ⭐ 7,521 | 1074 | 604 | Python |   |
-| [entireio/cli](https://github.com/entireio/cli) | ⭐ 4,806 | 368 | 150 | Go |   |
-| [LazyAGI/LazyLLM](https://github.com/LazyAGI/LazyLLM) | ⭐ 3,854 | 397 | 42 | Python |   |
+| [langgenius/dify](https://github.com/langgenius/dify) | ⭐ 150,386 | 23693 | 980 | TypeScript | 📉 falling |
+| [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) | ⭐ 66,650 | 5430 | 933 | TypeScript | 📉 falling |
+| [triggerdotdev/trigger.dev](https://github.com/triggerdotdev/trigger.dev) | ⭐ 15,770 | 1375 | 410 | TypeScript | 📉 falling |
+| [MervinPraison/PraisonAI](https://github.com/MervinPraison/PraisonAI) | ⭐ 8,516 | 1335 | 68 | Python | ➡️ flat |
+| [archestra-ai/archestra](https://github.com/archestra-ai/archestra) | ⭐ 4,034 | 1142 | 77 | TypeScript |   |
+| [kdlbs/kandev](https://github.com/kdlbs/kandev) | ⭐ 494 | 67 | 30 | Go |   |
+| [ys-ll/uniterm](https://github.com/ys-ll/uniterm) | ⭐ 209 | 18 | 22 | Vue |   |
+| [softspark/ai-toolkit](https://github.com/softspark/ai-toolkit) | ⭐ 161 | 21 | 0 | Python |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/python-1.44.0) | `python-1.44.0` | 2026-07-07 (3 👍) | ## What's Changed * Python: Bump tornado from 6.5.5 to 6.5.7 in /python by @dependabot[bot] in https://github.com/micro |
-| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.78.0) | `dotnet-1.78.0` | 2026-07-07 (3 👍) | ## Changes:  * 35ba23e1b3092271c778ca057afe1a796e16e70e .Net: Update package version to 1.78.0 (#14142) * e6c9673684c |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.95.0-dev.2) | `v1.95.0-dev.2` | 2026-07-24 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.95.0-dev.1) | `v1.95.0-dev.1` | 2026-07-22 (1 👍) | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.94.0-rc.3) | `v1.94.0-rc.3` | 2026-07-22 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.94.0-rc.2) | `v1.94.0-rc.2` | 2026-07-20 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.93.0) | `v1.93.0` | 2026-07-19 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.92.1) | `v1.92.1` | 2026-07-19 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.91.4) | `v1.91.4` | 2026-07-19 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.90.6) | `v1.90.6` | 2026-07-19 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.94.0-rc.1) | `v1.94.0-rc.1` | 2026-07-19 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.94.0-dev.3) | `v1.94.0-dev.3` | 2026-07-17 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.94.0-dev.2) | `v1.94.0-dev.2` | 2026-07-16 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.93.0-rc.2) | `v1.93.0-rc.2` | 2026-07-16 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.90.5) | `v1.90.5` | 2026-07-17 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.94.0-dev.1) | `v1.94.0-dev.1` | 2026-07-15 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 
 ---
 
@@ -113,14 +105,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | ⭐ 75,269 | 6263 | 255 | TypeScript | 📉 falling |
-| [wshobson/agents](https://github.com/wshobson/agents) | ⭐ 38,069 | 4092 | 3 | Python | 📉 falling |
-| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,783 | 458 | 252 | Go | 📉 falling |
-| [IvanMurzak/Unity-MCP](https://github.com/IvanMurzak/Unity-MCP) | ⭐ 3,601 | 322 | 47 | C# | 📈 rising |
-| [SeemSeam/claude_codex_bridge](https://github.com/SeemSeam/claude_codex_bridge) | ⭐ 3,290 | 319 | 89 | Python |   |
-| [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) | ⭐ 2,845 | 269 | 104 | Rust |   |
-| [microsoft/intelligent-terminal](https://github.com/microsoft/intelligent-terminal) | ⭐ 1,581 | 109 | 63 | C++ |   |
-| [FidelusAleksander/ghcertified](https://github.com/FidelusAleksander/ghcertified) | ⭐ 937 | 301 | 9 | JavaScript |   |
+| [jlcodes99/cockpit-tools](https://github.com/jlcodes99/cockpit-tools) | ⭐ 14,528 | 1316 | 269 | Rust | 📉 falling |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 4,811 | 466 | 315 | Go | 📉 falling |
+| [IvanMurzak/Unity-MCP](https://github.com/IvanMurzak/Unity-MCP) | ⭐ 3,680 | 331 | 47 | C# | ➡️ flat |
+| [github/copilot-cli-for-beginners](https://github.com/github/copilot-cli-for-beginners) | ⭐ 2,761 | 2378 | 2 | — | ➡️ flat |
+| [fujibee/agmsg](https://github.com/fujibee/agmsg) | ⭐ 1,325 | 120 | 96 | Shell |   |
+| [zzet/gortex](https://github.com/zzet/gortex) | ⭐ 963 | 82 | 25 | Go |   |
+| [FidelusAleksander/ghcertified](https://github.com/FidelusAleksander/ghcertified) | ⭐ 939 | 299 | 10 | JavaScript |   |
+| [agent-sh/agnix](https://github.com/agent-sh/agnix) | ⭐ 367 | 31 | 2 | Rust |   |
 
 ---
 
@@ -131,14 +123,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 54,084 | 9898 | 4026 | Python | 📉 falling |
-| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 40,968 | 8420 | 601 | TypeScript | 📉 falling |
-| [Azure-Samples/chat-with-your-data-solution-accelerator](https://github.com/Azure-Samples/chat-with-your-data-solution-accelerator) | ⭐ 1,174 | 645 | 24 | Python | ➡️ flat |
-| [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) | ⭐ 1,164 | 311 | 2 | Python | 📉 falling |
-| [lord-alfred/ipranges](https://github.com/lord-alfred/ipranges) | ⭐ 1,100 | 163 | 5 | Shell |   |
-| [Azure-Samples/AI-Gateway](https://github.com/Azure-Samples/AI-Gateway) | ⭐ 957 | 491 | 71 | Jupyter Notebook |   |
-| [microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | ⭐ 857 | 804 | 21 | Python |   |
-| [microsoft/Conversation-Knowledge-Mining-Solution-Accelerator](https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator) | ⭐ 461 | 273 | 20 | Python |   |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 54,814 | 10110 | 4279 | Python | 📉 falling |
+| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 41,319 | 8509 | 634 | TypeScript | ➡️ flat |
+| [Azure-Samples/azure-search-openai-demo](https://github.com/Azure-Samples/azure-search-openai-demo) | ⭐ 7,713 | 5465 | 513 | Python | 📉 falling |
+| [microsoft/sample-app-aoai-chatGPT](https://github.com/microsoft/sample-app-aoai-chatGPT) | ⭐ 1,923 | 3067 | 8 | Python | ➡️ flat |
+| [yym68686/uni-api](https://github.com/yym68686/uni-api) | ⭐ 1,249 | 151 | 11 | Python |   |
+| [lord-alfred/ipranges](https://github.com/lord-alfred/ipranges) | ⭐ 1,103 | 159 | 4 | Shell |   |
+| [Azure-Samples/AI-Gateway](https://github.com/Azure-Samples/AI-Gateway) | ⭐ 961 | 490 | 76 | Jupyter Notebook |   |
+| [microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | ⭐ 860 | 811 | 22 | Python |   |
 
 ---
 
@@ -149,23 +141,23 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [PawanOsman/OpenCursor](https://github.com/PawanOsman/OpenCursor) | ⭐ 5,933 | 1012 | 3 | TypeScript | 📈 rising |
-| [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) | ⭐ 1,287 | 80 | 64 | Go | 📉 falling |
-| [AltimateAI/vscode-dbt-power-user](https://github.com/AltimateAI/vscode-dbt-power-user) | ⭐ 579 | 119 | 152 | JavaScript | 📉 falling |
-| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 460 | 97 | 5 | TypeScript | 📉 falling |
-| [cdervis/Pendant](https://github.com/cdervis/Pendant) | ⭐ 103 | 3 | 0 | — |   |
-| [sourcegraph/cody-vs](https://github.com/sourcegraph/cody-vs) | ⭐ 86 | 32 | 33 | C# |   |
-| [yxw007/vscode-translate-next](https://github.com/yxw007/vscode-translate-next) | ⭐ 68 | 5 | 0 | CSS |   |
-| [dliedke/ClaudeCodeExtension](https://github.com/dliedke/ClaudeCodeExtension) | ⭐ 56 | 12 | 0 | C# |   |
+| [PawanOsman/OpenCursor](https://github.com/PawanOsman/OpenCursor) | ⭐ 5,964 | 1016 | 3 | TypeScript | ➡️ flat |
+| [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) | ⭐ 1,291 | 81 | 61 | Go | 📉 falling |
+| [nexu-io/codex-slides](https://github.com/nexu-io/codex-slides) | ⭐ 603 | 47 | 1 | TypeScript | 📉 falling |
+| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 460 | 98 | 6 | TypeScript | 📉 falling |
+| [yxw007/vscode-translate-next](https://github.com/yxw007/vscode-translate-next) | ⭐ 69 | 6 | 0 | CSS |   |
+| [firish/claude_code_vs](https://github.com/firish/claude_code_vs) | ⭐ 62 | 9 | 0 | C# |   |
+| [dliedke/ClaudeCodeExtension](https://github.com/dliedke/ClaudeCodeExtension) | ⭐ 60 | 15 | 1 | C# |   |
+| [VizzleTF/CommitSage](https://github.com/VizzleTF/CommitSage) | ⭐ 49 | 11 | 0 | TypeScript |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.129.1) | `1.129.1` | 2026-07-17 (44 👍) | https://code.visualstudio.com/updates/v1_129 |
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.129.0) | `1.129.0` | 2026-07-15 (48 👍) | https://code.visualstudio.com/updates/v1_129 |
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.128.1) | `1.128.1` | 2026-07-14 (44 👍) | https://code.visualstudio.com/updates/v1_128 |
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.128.0) | `1.128.0` | 2026-07-08 (57 👍) | https://code.visualstudio.com/updates/v1_128 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.130.0) | `1.130.0` | 2026-07-22 (74 👍) | https://code.visualstudio.com/updates/v1_130 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.129.1) | `1.129.1` | 2026-07-17 (55 👍) | https://code.visualstudio.com/updates/v1_129 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.129.0) | `1.129.0` | 2026-07-15 (50 👍) | https://code.visualstudio.com/updates/v1_129 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.128.1) | `1.128.1` | 2026-07-14 (45 👍) | https://code.visualstudio.com/updates/v1_128 |
 
 ---
 
