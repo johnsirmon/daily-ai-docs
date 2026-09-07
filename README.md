@@ -1,6 +1,6 @@
-# AI Skills Radar — 2026-08-31
+# AI Skills Radar — 2026-09-07
 
-_Updated: 2026-08-31T13:07:37Z | Covers last 14 days_
+_Updated: 2026-09-07T11:59:01Z | Covers last 14 days_
 
 > Auto-generated. To refresh, go to **Actions → Update AI Skills Radar → Run workflow**.
 
@@ -36,14 +36,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) | ⭐ 37,128 | 4591 | 314 | TypeScript | 📉 falling |
-| [mksglu/context-mode](https://github.com/mksglu/context-mode) | ⭐ 20,274 | 1473 | 197 | TypeScript | 📉 falling |
-| [jlcodes99/cockpit-tools](https://github.com/jlcodes99/cockpit-tools) | ⭐ 16,818 | 1468 | 534 | Rust | 📉 falling |
-| [github/copilot-sdk](https://github.com/github/copilot-sdk) | ⭐ 10,444 | 1420 | 273 | Java | ➡️ flat |
-| [rullerzhou-afk/clawd-on-desk](https://github.com/rullerzhou-afk/clawd-on-desk) | ⭐ 6,080 | 633 | 98 | JavaScript |   |
-| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 5,066 | 528 | 363 | Go |   |
-| [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) | ⭐ 3,166 | 330 | 133 | Rust |   |
-| [777genius/agent-teams-ai](https://github.com/777genius/agent-teams-ai) | ⭐ 2,004 | 336 | 25 | TypeScript |   |
+| [jnMetaCode/agency-agents-zh](https://github.com/jnMetaCode/agency-agents-zh) | ⭐ 20,363 | 3293 | 1 | Shell | 📉 falling |
+| [jnMetaCode/superpowers-zh](https://github.com/jnMetaCode/superpowers-zh) | ⭐ 8,009 | 746 | 20 | JavaScript | 📈 rising |
+| [Gentleman-Programming/gentle-ai](https://github.com/Gentleman-Programming/gentle-ai) | ⭐ 6,334 | 729 | 846 | Go | 📉 falling |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 5,108 | 534 | 429 | Go | 📉 falling |
+| [zzet/gortex](https://github.com/zzet/gortex) | ⭐ 1,558 | 148 | 66 | Go |   |
+| [vshulcz/deja-vu](https://github.com/vshulcz/deja-vu) | ⭐ 785 | 65 | 40 | Go |   |
+| [javaevolved/javaevolved.github.io](https://github.com/javaevolved/javaevolved.github.io) | ⭐ 397 | 28 | 0 | Java |   |
+| [noviaidrl/copilot-tunnel-proxy](https://github.com/noviaidrl/copilot-tunnel-proxy) | ⭐ 120 | 0 | 0 | HTML |   |
 
 ---
 
@@ -54,20 +54,20 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [DeusData/codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) | ⭐ 41,431 | 3374 | 535 | C | ➡️ flat |
-| [PostHog/posthog](https://github.com/PostHog/posthog) | ⭐ 39,491 | 3322 | 5231 | Python | 📉 falling |
-| [FlorianBruniaux/claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | ⭐ 5,859 | 767 | 12 | Python | 📈 rising |
-| [modelcontextprotocol/go-sdk](https://github.com/modelcontextprotocol/go-sdk) | ⭐ 5,042 | 527 | 92 | Go | ➡️ flat |
-| [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) | ⭐ 4,394 | 848 | 878 | Python |   |
-| [ridafkih/keeper.sh](https://github.com/ridafkih/keeper.sh) | ⭐ 1,266 | 50 | 152 | TypeScript |   |
-| [erikdarlingdata/PerformanceMonitor](https://github.com/erikdarlingdata/PerformanceMonitor) | ⭐ 487 | 92 | 17 | C# |   |
-| [uvwt/agentdock](https://github.com/uvwt/agentdock) | ⭐ 443 | 69 | 1 | Go |   |
+| [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) | ⭐ 94,544 | 15796 | 3439 | — | ➡️ flat |
+| [SigNoz/signoz](https://github.com/SigNoz/signoz) | ⭐ 32,039 | 2470 | 1538 | TypeScript | ➡️ flat |
+| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 24,309 | 4147 | 538 | TypeScript | 📉 falling |
+| [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) | ⭐ 2,553 | 296 | 27 | Python | 📉 falling |
+| [stacklok/toolhive](https://github.com/stacklok/toolhive) | ⭐ 2,086 | 287 | 380 | Go |   |
+| [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) | ⭐ 1,273 | 95 | 60 | Rust |   |
+| [PrismorSec/prismor](https://github.com/PrismorSec/prismor) | ⭐ 339 | 35 | 53 | Python |   |
+| [tornikebolokadze1-cyber/awesome-ai-pulse-georgia](https://github.com/tornikebolokadze1-cyber/awesome-ai-pulse-georgia) | ⭐ 137 | 16 | 14 | TypeScript |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/releases/tag/2026.8.18) | `2026.8.18` | 2026-08-18 (4 👍) | # Release : v2026.8.18  ## Updated packages - @modelcontextprotocol/server-everything@2026.8.18 - mcp-server-time@2026.8 |
+| [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/releases/tag/2026.8.31) | `2026.8.31` | 2026-08-31 (4 👍) | # Release : v2026.8.31  ## Updated packages - @modelcontextprotocol/server-filesystem@2026.8.31 - @modelcontextprotocol/ |
 
 ---
 
@@ -78,28 +78,30 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [stablyai/orca](https://github.com/stablyai/orca) | ⭐ 58,010 | 3954 | 4887 | TypeScript | ➡️ flat |
-| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 42,648 | 8827 | 733 | TypeScript | 📉 falling |
-| [deepset-ai/haystack](https://github.com/deepset-ai/haystack) | ⭐ 26,370 | 3057 | 106 | Python | ➡️ flat |
-| [triggerdotdev/trigger.dev](https://github.com/triggerdotdev/trigger.dev) | ⭐ 16,170 | 1433 | 344 | TypeScript | 📉 falling |
-| [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) | ⭐ 9,540 | 1474 | 1195 | Python |   |
-| [Osmantic/ODS](https://github.com/Osmantic/ODS) | ⭐ 5,228 | 762 | 1482 | Python |   |
-| [entireio/cli](https://github.com/entireio/cli) | ⭐ 5,042 | 400 | 228 | Go |   |
-| [LodyAI/Lody](https://github.com/LodyAI/Lody) | ⭐ 828 | 84 | 61 | TypeScript |   |
+| [activepieces/activepieces](https://github.com/activepieces/activepieces) | ⭐ 24,309 | 4147 | 538 | TypeScript | 📉 falling |
+| [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) | ⭐ 9,759 | 1514 | 1318 | Python | ➡️ flat |
+| [entireio/cli](https://github.com/entireio/cli) | ⭐ 5,071 | 465 | 272 | Go | ➡️ flat |
+| [onestardao/WFGY](https://github.com/onestardao/WFGY) | ⭐ 1,787 | 165 | 13 | Jupyter Notebook | 📉 falling |
+| [google/adk-java](https://github.com/google/adk-java) | ⭐ 1,715 | 417 | 97 | Java |   |
+| [Team-Commonly/commonly](https://github.com/Team-Commonly/commonly) | ⭐ 1,326 | 185 | 151 | TypeScript |   |
+| [LodyAI/Lody](https://github.com/LodyAI/Lody) | ⭐ 917 | 103 | 105 | TypeScript |   |
+| [statelyai/agent](https://github.com/statelyai/agent) | ⭐ 456 | 21 | 8 | TypeScript |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.80.0) | `dotnet-1.80.0` | 2026-08-18 (2 👍) | ## Changes:  * 5e1f1fb87d9a38ed44683228dda2434a9b2f0ef9 .NET: Bump package version to 1.80.0 (#14301) * 1b7b020cd0a4e |
+| [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel/releases/tag/dotnet-1.80.1) | `dotnet-1.80.1` | 2026-09-03 (2 👍) | ## Changes:  * d8ec44919265b3641b7898a02038cbfe14590ee5 .NET: Bump package version to 1.80.1 (#14370) * 3438d882147b6 |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.101.0-rc.1) | `v1.101.0-rc.1` | 2026-09-06 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.100.0) | `v1.100.0` | 2026-09-06 (1 👍) | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.101.0-dev.2) | `v1.101.0-dev.2` | 2026-09-03 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.101.0-dev.1) | `v1.101.0-dev.1` | 2026-09-01 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.99.1) | `v1.99.1` | 2026-09-02 (1 👍) | ## Docker-only release  **This release ships container images only. There is no PyPI package for `1.99.1`.**  `pip insta |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.99.0) | `v1.99.0` | 2026-09-01 (2 👍) | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.97.1) | `v1.97.1` | 2026-09-02 | ## Docker-only release  **This release ships container images only. There is no PyPI package for `1.97.1`.**  `pip insta |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.100.0-rc.1) | `v1.100.0-rc.1` | 2026-08-30 (1 👍) | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.99.0-rc.2) | `v1.99.0-rc.2` | 2026-08-30 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 | [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.100.0-dev.2) | `v1.100.0-dev.2` | 2026-08-28 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.100.0-dev.1) | `v1.100.0-dev.1` | 2026-08-26 (1 👍) | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.99.0-rc.1) | `v1.99.0-rc.1` | 2026-08-23 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.98.0) | `v1.98.0` | 2026-08-23 (5 👍) | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.99.0-dev.2) | `v1.99.0-dev.2` | 2026-08-21 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
-| [BerriAI/litellm](https://github.com/BerriAI/litellm/releases/tag/v1.99.0-dev.1) | `v1.99.0-dev.1` | 2026-08-19 | ## Verify Docker Image Signature  All LiteLLM Docker images are signed with [cosign](https://docs.sigstore.dev/cosign/ov |
 
 ---
 
@@ -110,20 +112,21 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [mukul975/Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) | ⭐ 31,773 | 3828 | 50 | Python | 📈 rising |
-| [jlcodes99/cockpit-tools](https://github.com/jlcodes99/cockpit-tools) | ⭐ 16,818 | 1468 | 534 | Rust | 📉 falling |
-| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 5,066 | 528 | 363 | Go | 📉 falling |
-| [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) | ⭐ 3,166 | 330 | 133 | Rust | ➡️ flat |
-| [kenryu42/cc-safety-net](https://github.com/kenryu42/cc-safety-net) | ⭐ 1,517 | 75 | 0 | TypeScript |   |
-| [FidelusAleksander/ghcertified](https://github.com/FidelusAleksander/ghcertified) | ⭐ 961 | 300 | 12 | JavaScript |   |
-| [managedcode/dotnet-skills](https://github.com/managedcode/dotnet-skills) | ⭐ 477 | 33 | 0 | C# |   |
-| [softspark/ai-toolkit](https://github.com/softspark/ai-toolkit) | ⭐ 167 | 20 | 2 | Python |   |
+| [jlcodes99/cockpit-tools](https://github.com/jlcodes99/cockpit-tools) | ⭐ 17,209 | 1518 | 617 | Rust | 📉 falling |
+| [jnMetaCode/superpowers-zh](https://github.com/jnMetaCode/superpowers-zh) | ⭐ 8,009 | 746 | 20 | JavaScript | 📈 rising |
+| [github/gh-aw](https://github.com/github/gh-aw) | ⭐ 5,108 | 534 | 429 | Go | 📉 falling |
+| [zzet/gortex](https://github.com/zzet/gortex) | ⭐ 1,558 | 148 | 66 | Go | 📉 falling |
+| [FidelusAleksander/ghcertified](https://github.com/FidelusAleksander/ghcertified) | ⭐ 962 | 300 | 24 | JavaScript |   |
+| [vshulcz/deja-vu](https://github.com/vshulcz/deja-vu) | ⭐ 785 | 65 | 40 | Go |   |
+| [vivekchand/clawmetry](https://github.com/vivekchand/clawmetry) | ⭐ 407 | 65 | 159 | Python |   |
+| [nizos/probity](https://github.com/nizos/probity) | ⭐ 190 | 20 | 30 | TypeScript |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [cli/cli](https://github.com/cli/cli/releases/tag/v2.98.0) | `v2.98.0` | 2026-08-20 (29 👍) | ## Security A security vulnerability has been identified, and fixed, that binds the local forwarded port to all availab |
+| [cli/cli](https://github.com/cli/cli/releases/tag/v2.100.0) | `v2.100.0` | 2026-09-03 (11 👍) | ## Experimental: Route GitHub API traffic through a custom host  Organizations can now route a GitHub host's API traff |
+| [cli/cli](https://github.com/cli/cli/releases/tag/v2.99.0) | `v2.99.0` | 2026-09-01 (51 👍) | ## Attach images and videos to issues and pull requests  The repeatable `--attach` flag uploads local images and video |
 
 ---
 
@@ -134,14 +137,14 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 57,664 | 11040 | 4912 | Python | 📉 falling |
-| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 42,648 | 8827 | 733 | TypeScript | 📉 falling |
-| [yym68686/uni-api](https://github.com/yym68686/uni-api) | ⭐ 1,257 | 157 | 14 | Python | 📉 falling |
-| [kardolus/chatgpt-cli](https://github.com/kardolus/chatgpt-cli) | ⭐ 953 | 70 | 3 | Go | ➡️ flat |
-| [microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | ⭐ 878 | 830 | 28 | Python |   |
-| [anasfik/openai](https://github.com/anasfik/openai) | ⭐ 666 | 231 | 0 | Dart |   |
-| [microsoft/Conversation-Knowledge-Mining-Solution-Accelerator](https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator) | ⭐ 469 | 283 | 17 | Python |   |
-| [microsoft-foundry/foundry-samples](https://github.com/microsoft-foundry/foundry-samples) | ⭐ 432 | 474 | 114 | Bicep |   |
+| [BerriAI/litellm](https://github.com/BerriAI/litellm) | ⭐ 58,203 | 11234 | 4947 | Python | 📉 falling |
+| [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) | ⭐ 42,886 | 8880 | 717 | TypeScript | ➡️ flat |
+| [microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | ⭐ 878 | 833 | 28 | Python | 📉 falling |
+| [anasfik/openai](https://github.com/anasfik/openai) | ⭐ 666 | 231 | 0 | Dart | 📉 falling |
+| [microsoft/Conversation-Knowledge-Mining-Solution-Accelerator](https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator) | ⭐ 472 | 284 | 17 | Python |   |
+| [microsoft-foundry/foundry-samples](https://github.com/microsoft-foundry/foundry-samples) | ⭐ 438 | 483 | 120 | Bicep |   |
+| [iimeta/fastapi](https://github.com/iimeta/fastapi) | ⭐ 299 | 43 | 0 | Go |   |
+| [iimeta/fastapi-admin](https://github.com/iimeta/fastapi-admin) | ⭐ 257 | 32 | 3 | Go |   |
 
 ---
 
@@ -152,21 +155,22 @@ https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml
 
 | Repo | Stars | Forks | Issues | Language | Trend |
 |------|-------|-------|--------|----------|-------|
-| [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) | ⭐ 1,316 | 85 | 60 | Go | 📉 falling |
-| [AltimateAI/vscode-dbt-power-user](https://github.com/AltimateAI/vscode-dbt-power-user) | ⭐ 584 | 121 | 160 | JavaScript | ➡️ flat |
-| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 463 | 97 | 5 | TypeScript | ➡️ flat |
-| [firish/claude_code_vs](https://github.com/firish/claude_code_vs) | ⭐ 79 | 14 | 1 | C# | 📉 falling |
-| [yxw007/vscode-translate-next](https://github.com/yxw007/vscode-translate-next) | ⭐ 70 | 7 | 1 | CSS |   |
-| [dliedke/ClaudeCodeExtension](https://github.com/dliedke/ClaudeCodeExtension) | ⭐ 67 | 19 | 4 | C# |   |
-| [knoxchat/knoxchat](https://github.com/knoxchat/knoxchat) | ⭐ 56 | 10 | 0 | TypeScript |   |
-| [VizzleTF/CommitSage](https://github.com/VizzleTF/CommitSage) | ⭐ 51 | 11 | 1 | TypeScript |   |
+| [PawanOsman/OpenCursor](https://github.com/PawanOsman/OpenCursor) | ⭐ 6,015 | 1032 | 3 | TypeScript | ➡️ flat |
+| [twinnydotdev/twinny](https://github.com/twinnydotdev/twinny) | ⭐ 3,634 | 227 | 47 | TypeScript | 📈 rising |
+| [matlab/matlab-mcp-server](https://github.com/matlab/matlab-mcp-server) | ⭐ 1,467 | 123 | 28 | Go | 📉 falling |
+| [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) | ⭐ 1,325 | 86 | 58 | Go | 📈 rising |
+| [AltimateAI/vscode-dbt-power-user](https://github.com/AltimateAI/vscode-dbt-power-user) | ⭐ 585 | 121 | 162 | JavaScript |   |
+| [Tiledesk/design-studio](https://github.com/Tiledesk/design-studio) | ⭐ 464 | 97 | 5 | TypeScript |   |
+| [zmy15/DeepSeek-v4-for-VisualStudio](https://github.com/zmy15/DeepSeek-v4-for-VisualStudio) | ⭐ 91 | 15 | 12 | C# |   |
+| [yxw007/vscode-translate-next](https://github.com/yxw007/vscode-translate-next) | ⭐ 70 | 6 | 1 | CSS |   |
 
 ### 🚀 Recent Releases
 
 | Repo | Version | Date | Highlights |
 |------|---------|------|------------|
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.135.0) | `1.135.0` | 2026-08-26 (60 👍) | https://code.visualstudio.com/updates/v1_135 |
-| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.134.0) | `1.134.0` | 2026-08-19 (82 👍) | https://code.visualstudio.com/updates/v1_134 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.136.1) | `1.136.1` | 2026-09-03 (35 👍) | https://code.visualstudio.com/updates/v1_136 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.136.0) | `1.136.0` | 2026-09-02 (41 👍) | https://code.visualstudio.com/updates/v1_136 |
+| [microsoft/vscode](https://github.com/microsoft/vscode/releases/tag/1.135.0) | `1.135.0` | 2026-08-26 (64 👍) | https://code.visualstudio.com/updates/v1_135 |
 
 ---
 
