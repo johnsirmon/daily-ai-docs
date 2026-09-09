@@ -1,0 +1,42 @@
+name: Weekly YouTube AI Trends
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Sunday morning UTC; the digest feeds at most one learning pick into each daily edition.
+    - cron: '23 11 * * 0'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: podcast-publisher
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m pip install --requirement requirements.lock
+      - name: Discover and rank transcript-backed videos
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python -m pipeline.youtube
+      - name: Validate the digest through the daily source adapter
+        run: >-
+          python -c "from pipeline.sources.youtube import collect_youtube_digest;
+          events, health = collect_youtube_digest({'digest_path':'data/youtube-trends.json'});
+          assert health['youtube:weekly-digest'].startswith('ok:'); print(health)"
+      - name: Commit the bounded weekly digest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/youtube-trends.json
+          git diff --cached --quiet || git commit -m "chore: refresh weekly YouTube trends"
+          git push

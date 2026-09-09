@@ -30,7 +30,7 @@ def test_research_topic_no_exa_key(monkeypatch):
     monkeypatch.delenv("GITHUB_TOKEN", raising=False)
     result = research_topic("test topic", dry_run=False)
     assert result["exa_results"] == []
-    # AI summary is empty because no GITHUB_TOKEN
+    # AI summary is empty because no dedicated model key is configured.
     assert result["ai_summary"] == ""
 
 
@@ -154,6 +154,7 @@ def test_run_adhoc_live_calls_tts_and_podcast(monkeypatch, tmp_path):
         return Path(path)
 
     with patch("pipeline.tts.write_audio", side_effect=fake_write_audio), \
+         patch("pipeline.audio.analyze_audio", return_value={"size_bytes": 14000, "duration_secs": 60, "sha256": "abc"}), \
          patch("pipeline.podcast.prepend_episode", side_effect=fake_prepend_episode):
         result = run_adhoc(
             topic="Test AI",
@@ -179,8 +180,8 @@ def test_run_adhoc_skips_feed_update_when_tts_fails(monkeypatch, tmp_path):
             "guid": "existing-guid",
             "mp3_url": "https://example.com/existing.mp3",
             "pub_date": "2026-03-01",
-            "duration_secs": 0,
-            "file_size_bytes": 0,
+            "duration_secs": 60,
+            "file_size_bytes": 1000,
             "description": "Existing episode.",
         }],
         path="podcast.xml",
@@ -209,7 +210,8 @@ def test_run_adhoc_writes_actual_podcast_entry(monkeypatch, tmp_path):
         out.write_bytes(b"fake ad-hoc mp3")
         return out
 
-    with patch("pipeline.tts.write_audio", side_effect=fake_write_audio):
+    with patch("pipeline.tts.write_audio", side_effect=fake_write_audio), \
+         patch("pipeline.audio.analyze_audio", return_value={"size_bytes": 14000, "duration_secs": 60, "sha256": "abc"}):
         result = run_adhoc(
             topic="Model Context Protocol",
             dry_run=False,

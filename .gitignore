@@ -34,6 +34,9 @@ Thumbs.db
 # Secrets / environment
 .env
 *.env
+credentials.json
+client_secret*.json
+service-account*.json
 
 # Versioned docs (runtime artifacts)
 versions/
@@ -47,3 +50,6 @@ adhoc-episode.mp3
 
 # Narration script (generated artifact)
 radar-script.txt
+
+# Local Hermes plans/reviews are working artifacts, not product output.
+.hermes/

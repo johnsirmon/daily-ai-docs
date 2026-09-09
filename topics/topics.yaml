@@ -8,6 +8,83 @@ settings:
   top_n_per_topic: 8
   enrich_stats: true
 
+# Daily podcast control plane. Sources are deliberately curated and public.
+# Community popularity is discovery-only; spoken claims require these primary sources.
+daily:
+  lookback_hours: 36
+  max_stories: 7
+  max_youtube_stories: 1
+  minimum_score: 45
+  minimum_source_health: 0.6
+  sources:
+    github_releases:
+      - repo: openai/codex
+        product: OpenAI Codex
+        topic: AI coding agents
+        priority: 20
+      - repo: anthropics/claude-code
+        product: Claude Code
+        topic: AI coding agents
+        priority: 18
+      - repo: google-gemini/gemini-cli
+        product: Gemini CLI
+        topic: AI coding agents
+        priority: 16
+      - repo: NousResearch/hermes-agent
+        product: Hermes Agent
+        topic: AI agents
+        priority: 20
+      - repo: microsoft/vscode
+        product: Visual Studio Code
+        topic: Developer environment
+        priority: 18
+      - repo: microsoft/vscode-copilot-release
+        product: GitHub Copilot
+        topic: AI coding agents
+        priority: 20
+      - repo: modelcontextprotocol/specification
+        product: Model Context Protocol
+        topic: Agent interoperability
+        priority: 16
+      - repo: agentskills/agentskills
+        product: Agent Skills
+        topic: Agent interoperability
+        priority: 16
+    feeds:
+      - url: https://github.blog/changelog/feed/
+        product: GitHub Developer Tools
+        topic: AI coding agents
+        priority: 20
+        include:
+          - copilot
+          - visual studio code
+          - model context protocol
+          - coding agent
+    youtube:
+      enabled: true
+      required: false
+      digest_path: data/youtube-trends.json
+      lookback_days: 8
+      max_digest_age_days: 9
+      max_video_age_days: 14
+      max_results_per_query: 12
+      max_selected: 5
+      require_transcript: true
+      priority: 16
+      queries:
+        - "AI coding agents developer workflow"
+        - "MCP agent development"
+        - "Claude Code Codex Gemini CLI"
+        - "AI agent evaluation observability"
+      primary_domains:
+        - anthropic.com
+        - developers.googleblog.com
+        - github.com
+        - microsoft.com
+        - modelcontextprotocol.io
+        - nousresearch.com
+        - openai.com
+
 topics:
   - id: github-copilot
     display: "GitHub Copilot"

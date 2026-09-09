@@ -1,50 +1,137 @@
-name: Update AI Skills Radar
+name: Daily AI Developer Brief
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * 1'  # Mondays 6am UTC
+    # 06:17 EDT / 05:17 EST. Non-top-of-hour reduces scheduler contention.
+    - cron: '17 10 * * *'
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: podcast-publisher
+  cancel-in-progress: false
+
+env:
+  PODCAST_FEED_URL: https://johnsirmon.github.io/daily-ai-docs/podcast.xml
+  PODCAST_MIGRATE_FEED: "1"
+  AI_SYNTHESIS: ${{ vars.AI_SYNTHESIS || 'off' }}
+  AI_MODEL: ${{ vars.AI_MODEL || 'gpt-5-mini' }}
+  TTS_PROVIDER: ${{ vars.TTS_PROVIDER || 'edge' }}
 
 jobs:
-  update:
+  publish:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 35
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: pip
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install dependencies and media tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install --requirement requirements.lock
 
-      - name: Run pipeline
+      - name: Run tests and verify canonical feed is provisioned
+        run: |
+          python -m pytest -q
+          python -m pipeline.health --max-age-hours 10000 --retries 3 --delay-seconds 10
+
+      - name: Prepare evidence, narration, and validated audio
+        id: prepare
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_PODCAST: "1"
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python -m pipeline.main
+        run: python -m pipeline.daily prepare --github-output >> "$GITHUB_OUTPUT"
 
-      - name: Commit updated README and podcast feed
+      - name: Upload or resume immutable release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.prepare.outputs.tag }}
+          AUDIO_PATH: ${{ steps.prepare.outputs.audio_path }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release download "$TAG" --repo "$GITHUB_REPOSITORY" \
+              --pattern daily-ai-brief.mp3 --pattern episode-manifest.json \
+              --dir .cache --clobber
+          else
+            gh release create "$TAG" \
+              "$AUDIO_PATH#daily-ai-brief.mp3" \
+              ".cache/episode-manifest.json#episode-manifest.json" \
+              --title "Daily AI Developer Brief ${TAG#daily-}" \
+              --notes "Immutable audio and source-backed episode manifest" \
+              --repo "$GITHUB_REPOSITORY"
+          fi
+
+      - name: Verify audio and build candidate feed
+        run: python -m pipeline.daily finalize
+
+      - name: Commit candidate feed and manifest
+        env:
+          EPISODE_ID: ${{ steps.prepare.outputs.episode_id }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md podcast.xml
-          git diff --cached --quiet || git commit -m "chore: update AI Skills Radar [skip ci]"
+          git add README.md podcast.xml "data/episodes/${EPISODE_ID}.json"
+          git diff --cached --quiet || git commit -m "feat: publish candidate ${EPISODE_ID}"
           git push
 
-      - name: Publish audio to GitHub Release
-        if: hashFiles('radar.mp3') != ''
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Pages artifact from validated candidate
         run: |
-          TAG="radar-$(date +%Y-%m-%d)"
-          gh release create "$TAG" radar.mp3 \
-            --title "AI Skills Radar $(date +%Y-%m-%d)" \
-            --notes "Weekly AI skills audio update" \
-            --repo "$GITHUB_REPOSITORY" 2>/dev/null || \
-          gh release upload "$TAG" radar.mp3 --clobber --repo "$GITHUB_REPOSITORY"
+          mkdir -p _site/assets
+          cp podcast.xml _site/podcast.xml
+          cp assets/podcast-cover.jpg _site/assets/podcast-cover.jpg
+          printf '%s\n' 'Daily AI Developer Brief podcast feed' > _site/index.html
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy candidate to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify subscriber-facing delivery
+        env:
+          EXPECTED_GUID: ${{ steps.prepare.outputs.episode_id }}
+        run: python -m pipeline.health --max-age-hours 25 --retries 10 --delay-seconds 20
+
+      - name: Confirm publication and advance novelty state
+        env:
+          EXPECTED_GUID: ${{ steps.prepare.outputs.episode_id }}
+        run: python -m pipeline.daily confirm
+
+      - name: Commit publication receipt and state
+        env:
+          EPISODE_ID: ${{ steps.prepare.outputs.episode_id }}
+        run: |
+          git add data/state.json "data/episodes/${EPISODE_ID}.json" "data/receipts/${EPISODE_ID}.json"
+          git diff --cached --quiet || git commit -m "chore: confirm ${EPISODE_ID} delivery"
+          git push
+
+      - name: Preserve private-safe diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-podcast-${{ github.run_id }}
+          path: |
+            .cache/episode-manifest.json
+            .cache/publication.json
+          retention-days: 14
+          if-no-files-found: ignore
