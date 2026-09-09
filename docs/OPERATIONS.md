@@ -109,6 +109,6 @@ Direct feed following is the first release path; Apple directory submission is o
 
 ## Current limitations requiring owner action
 
-- This repository cannot enable GitHub Pages until the branch is pushed and repository settings allow Actions deployment.
+- GitHub Pages must be enabled with **GitHub Actions** as its source before the first subscriber-facing publication.
 - A supported paid TTS provider requires an owner-supplied API key; consumer ChatGPT/Copilot subscriptions do not supply a general workflow API key.
 - Apple Podcasts, CarPlay, automatic downloads, and the seven-day pilot require the owner's iPhone and vehicle.
