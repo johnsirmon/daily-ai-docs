@@ -45,6 +45,8 @@ def test_empty_items_returns_empty_report():
 
 def test_no_token_returns_empty_report(monkeypatch):
     monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    monkeypatch.delenv("AI_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     items = [_repo("org/repo")]
     report = run_research_summary(items, topic_ids=["mcp"], _force=True)
     assert report["week_story"] == ""

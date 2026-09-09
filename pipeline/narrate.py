@@ -347,3 +347,69 @@ def readme_to_narration(readme_content: str, research_report: dict | None = None
     if research_report is not None:
         sections = [build_cold_open(research_report)] + sections + [build_closing()]
     return "\n\n".join(sections)
+
+
+def manifest_to_narration(manifest) -> str:
+    """Render driving-safe narration directly from an EpisodeManifest."""
+    manifest.validate(require_audio=False)
+    date_text = manifest.published_at[:10]
+    failed_sources = [
+        name for name, status in manifest.source_health.items() if not status.startswith("ok:")
+    ]
+    if not manifest.stories:
+        if failed_sources:
+            coverage = (
+                f"Coverage was incomplete because {len(failed_sources)} tracked source"
+                f"{'s' if len(failed_sources) != 1 else ''} failed, so treat this as a partial update. "
+            )
+            conclusion = "No available item cleared the actionability threshold. "
+        else:
+            coverage = "The tracked sources are healthy, but nothing new cleared the actionability threshold today. "
+            conclusion = (
+                "That means there is no stable release, deprecation, security notice, or workflow change "
+                "worth interrupting your work for. "
+            )
+        return (
+            f"This is your Daily AI Developer Brief for {date_text}. "
+            + coverage
+            + conclusion
+            + "I also filtered routine prereleases, repeated announcements, and popularity numbers that do not prove real adoption. "
+            + "Use the time you saved to keep building, and check back tomorrow."
+        )
+
+    lead = manifest.stories[0]
+    paragraphs = [
+        f"This is your Daily AI Developer Brief for {date_text}. "
+        f"Today's lead is {lead.headline}. I filtered the rest down to {len(manifest.stories)} update"
+        f"{'s' if len(manifest.stories) != 1 else ''} worth your attention."
+    ]
+    labels = ["Here is the lead", "Next", "Also", "After that", "One more", "Next", "Finally"]
+    for index, story in enumerate(manifest.stories):
+        decision = {
+            "act": "The call is act.",
+            "watch": "The call is watch.",
+            "skip": "The call is skip.",
+        }[story.action]
+        transition = labels[index]
+        if story.headline.startswith("Weekly watch:"):
+            transition = "For your focused learning queue"
+        paragraphs.append(
+            f"{transition}: {story.headline}. {story.what_changed} "
+            f"{story.why_it_matters} {decision} {story.rationale}"
+        )
+    if manifest.noise_notes:
+        paragraphs.append("High noise, low signal. " + " ".join(manifest.noise_notes[:2]))
+    if failed_sources:
+        paragraphs.append(
+            f"Coverage note. {len(failed_sources)} tracked source"
+            f"{'s were' if len(failed_sources) != 1 else ' was'} unavailable, so this edition is incomplete."
+        )
+    paragraphs.append(
+        "That is the useful signal for today. Source links and exact versions are in the episode notes. "
+        "Keep building, and I will be back tomorrow."
+    )
+    narration = "\n\n".join(paragraphs)
+    words = narration.split()
+    if len(words) > 1500:
+        raise ValueError("manifest narration exceeds the ten-minute budget")
+    return narration

@@ -27,6 +27,16 @@ def validate_readme_drift(
     readme = readme_path.read_text(encoding="utf-8")
     errors: list[str] = []
 
+    if readme.startswith("# Daily AI Developer Brief"):
+        daily = config.get("daily") or {}
+        sources = daily.get("sources") or {}
+        if not sources.get("github_releases") and not sources.get("feeds"):
+            errors.append("Daily podcast has no authoritative sources configured.")
+        for heading in ("## Podcast", "## Today's signal", "## Source health"):
+            if heading not in readme:
+                errors.append(f"Missing daily README section: {heading}")
+        return errors
+
     last_toc_pos = -1
     last_section_pos = -1
 

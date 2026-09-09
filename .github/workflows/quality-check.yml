@@ -6,14 +6,25 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   validate-documentation:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m pip install --requirement requirements.lock
       - name: Validate topics config
-        run: python -c "import yaml; yaml.safe_load(open('topics/topics.yaml'))" && echo "topics.yaml is valid"
-      - name: Validate requirements
-        run: python -c "open('requirements.txt')" && echo "requirements.txt present"
-      - name: Check README drift
+        run: python -c "import yaml; data=yaml.safe_load(open('topics/topics.yaml')); assert data['daily']['sources']"
+      - name: Validate README contract
         run: python -m pipeline.drift_check
+      - name: Validate committed podcast feed
+        run: python -c "from pipeline.publish import validate_feed_file; print(validate_feed_file('podcast.xml'))"
+      - name: Validate artwork dimensions and mode
+        run: python -c "from PIL import Image; im=Image.open('assets/podcast-cover.jpg'); assert im.size == (3000,3000) and im.mode == 'RGB'"

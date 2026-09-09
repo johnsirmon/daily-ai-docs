@@ -6,8 +6,9 @@ Two generation modes:
 - generate_repo_deepdive() → free-form Markdown prose per repo (~200 words)
                              uses gpt-4o for quality
 
-Both use the built-in GITHUB_TOKEN — no extra API keys required.
-Model endpoint: https://models.inference.ai.azure.com
+Legacy/manual callers use the explicitly configured AI_API_KEY or
+OPENAI_API_KEY client. The manifest-driven daily publisher does not call these
+per-topic generators.
 """
 
 import json

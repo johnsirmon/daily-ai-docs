@@ -112,9 +112,12 @@ def test_publish_podcast_uses_polished_when_present(monkeypatch, tmp_path):
 
     def fake_write_audio(text, path="radar.mp3"):
         captured_scripts.append(text)
-        return None
+        out = tmp_path / "radar.mp3"
+        out.write_bytes(b"fake")
+        return out
 
     with patch("pipeline.main.write_audio", side_effect=fake_write_audio), \
+         patch("pipeline.main.analyze_audio", return_value={"size_bytes": 12000, "duration_secs": 60}), \
          patch("pipeline.main.prepend_episode"):
         _publish_podcast(readme, dry_run=False, mp3_url_template="http://x/{tag}/r.mp3")
 
@@ -136,9 +139,12 @@ def test_publish_podcast_falls_back_to_raw(monkeypatch, tmp_path):
 
     def fake_write_audio(text, path="radar.mp3"):
         captured_scripts.append(text)
-        return None
+        out = tmp_path / "radar.mp3"
+        out.write_bytes(b"fake")
+        return out
 
     with patch("pipeline.main.write_audio", side_effect=fake_write_audio), \
+         patch("pipeline.main.analyze_audio", return_value={"size_bytes": 12000, "duration_secs": 60}), \
          patch("pipeline.main.prepend_episode"):
         _publish_podcast(readme, dry_run=False, mp3_url_template="http://x/{tag}/r.mp3")
 
@@ -184,3 +190,15 @@ def test_narrate_only_cli_triggers_publish_podcast(monkeypatch, tmp_path):
     mock_pub.assert_called_once()
     _, kwargs = mock_pub.call_args
     assert kwargs.get("narrate_only") is True
+
+
+def test_publish_podcast_tts_failure_does_not_update_feed(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    readme = _write_readme(str(tmp_path), "# AI Skills Radar — 2026-03-01\nContent.")
+    monkeypatch.setattr("pipeline.main._NARRATION_RAW_PATH", tmp_path / ".cache/raw.txt")
+    monkeypatch.setattr("pipeline.main._NARRATION_POLISHED_PATH", tmp_path / ".cache/polished.txt")
+    with patch("pipeline.main.write_audio", return_value=None), \
+         patch("pipeline.main.prepend_episode") as update_feed:
+        with pytest.raises(RuntimeError, match="TTS failed"):
+            _publish_podcast(readme, dry_run=False, mp3_url_template="https://example.com/{tag}/r.mp3")
+    update_feed.assert_not_called()
