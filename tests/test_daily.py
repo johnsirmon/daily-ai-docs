@@ -123,7 +123,18 @@ def test_finalize_writes_feed_manifest_state_and_readme(monkeypatch, tmp_path):
     assert published.status == "candidate"
     assert (tmp_path / "data/episodes/daily-2026-09-07-test.json").exists()
     assert not (tmp_path / "data/state.json").exists()
-    assert "Daily AI Developer Brief" in (tmp_path / "README.md").read_text()
+    readme = (tmp_path / "README.md").read_text()
+    assert "Daily AI Developer Brief" in readme
+    assert "## Podcast" in readme
+    assert "## Today's signal" in readme
+    assert "## Tracked areas" in readme
+    assert "## Source health" in readme
+    assert "## Publication flow" in readme
+    assert "## Weekly YouTube signal" in readme
+    assert "## Development" in readme
+    assert "10:17 UTC" in readme
+    assert "11:23 UTC" in readme
+    assert "pytest -q" in readme
     assert published.episode_id in (tmp_path / "podcast.xml").read_text()
     with monkeypatch.context() as context:
         context.setattr(
