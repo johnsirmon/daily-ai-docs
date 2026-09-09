@@ -1,0 +1,346 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-09-68cfca8a",
+  "published_at": "2026-09-09T23:55:50.753309Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:6",
+    "github:anthropics/claude-code": "ok:3",
+    "github:google-gemini/gemini-cli": "ok:3",
+    "github:NousResearch/hermes-agent": "ok:0",
+    "github:microsoft/vscode": "ok:2",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:4",
+    "youtube:weekly-digest": "ok:0"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:2ec7a45fef458a79b70e",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.154.0",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.154.0",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-09T22:35:38Z",
+      "fetched_at": "2026-09-09T23:55:50.753309Z",
+      "evidence": "New Features - GPT-6-Astra is now available in the model picker and Amazon Bedrock catalogs. ( 42879, 42619) - Experimental worktree support lets you create isolated checkouts for new or forked sessions using --worktree or /worktree, then browse and resume them. ( 42652, 43069, 43120, 43286) - Answer questions inline while Codex continues working, using suggested choices or custom text without losing your main draft. ( 42891, 42894, 42897) - Windows sessions can now share a background Codex server, with daemon lifecycle commands and managed updates. ( 42405, 42392) - Vim editing gains R replace mode with undo and dot-repeat, plus more reliable Escape handling in legacy terminals. ( 42194, 42584) - Copying responses preserves formatting in rich-text apps, and /copy can copy status output or individual session fields. ( 42847, 43055) Bug Fixes - Existing sessions pick up newly installed pl",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.154.0",
+        "priority": 20,
+        "stars": 122839,
+        "private": false,
+        "draft": false
+      }
+    },
+    {
+      "event_id": "feed:faa37362568657fbf7a1",
+      "source_type": "official_feed",
+      "title": "Enterprise managed permissions for GitHub Copilot agent operations",
+      "url": "https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-09T20:08:14Z",
+      "fetched_at": "2026-09-09T23:55:50.753309Z",
+      "evidence": "If you administer GitHub Copilot Business or GitHub Copilot Enterprise, you can now centrally control which agent operations are blocked, require human approval, or can proceed without a prompt. Managed&#8230; The post Enterprise managed permissions for GitHub Copilot agent operations appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    },
+    {
+      "event_id": "ghrel:5ba86673e5548e8f3f86",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.267",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.267",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-09T19:58:14Z",
+      "fetched_at": "2026-09-09T23:55:50.753309Z",
+      "evidence": "What's changed - Added maxEffortLevel setting (top-level or per model under modelSettings): caps the effort level on every provider, including Bedrock, Vertex and Foundry; users can still pick a lower level - Added --system-prompt-snapshot off to render the system prompt fresh on every request instead of reusing the conversation's recorded prompt (for iterating on prompt text) - Fixed Cowork scheduled tasks in the cloud failing at startup for organizations whose managed settings require sandboxing - Fixed /context and other local command output rendering blank on mobile clients - Fixed shift+enter and option+backspace not working after reconnecting to a tmux or ssh session inside an agent view - Fixed the dim last-prompt header not appearing at the top of the conversation when scrolling up in fullscreen mode - Fixed Workflow agent() calls with large output schemas being refused in auto m",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.267",
+        "priority": 18,
+        "stars": 144572,
+        "private": false,
+        "draft": false
+      }
+    },
+    {
+      "event_id": "ghrel:03061493556813e52972",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.265",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.265",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-08T20:37:31Z",
+      "fetched_at": "2026-09-09T23:55:50.753309Z",
+      "evidence": "What's changed - Added user.email and user.groups to the telemetry Claude Desktop and Cowork send through a Claude apps gateway, matching terminal sessions - Added support for pointing --plugin-dir at a folder of plugins: each child folder with a manifest loads, and children added or removed while running are picked up - Added a 1 GB cap on tool results saved to disk; the in-conversation preview says when a saved file was truncated - Fixed resuming a foreground-spawned subagent changing its tool list and system prompt prefix, which broke prompt-cache reuse for that agent - Fixed agent teammates and resumed subagents moving SubagentStart hook context and preloaded skills out of the prompt prefix on later turns, which broke prompt-cache reuse - Fixed resume after the previous process died while a tool was running: the last prompt is no longer rewritten, and the interrupted tool call is kep",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.265",
+        "priority": 18,
+        "stars": 144572,
+        "private": false,
+        "draft": false
+      }
+    },
+    {
+      "event_id": "ghrel:a57e51f33d4586f567cc",
+      "source_type": "github_release",
+      "title": "Visual Studio Code 1.137.0",
+      "url": "https://github.com/microsoft/vscode/releases/tag/1.137.0",
+      "product": "Visual Studio Code",
+      "topic": "Developer environment",
+      "published_at": "2026-09-09T15:32:58Z",
+      "fetched_at": "2026-09-09T23:55:50.753309Z",
+      "evidence": "https://code.visualstudio.com/updates/v1_137",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "microsoft/vscode",
+        "version": "1.137.0",
+        "priority": 18,
+        "stars": 191504,
+        "private": false,
+        "draft": false
+      }
+    },
+    {
+      "event_id": "feed:56c4269b99a656fe7ff2",
+      "source_type": "official_feed",
+      "title": "Enterprise-managed sandbox in Copilot for JetBrains",
+      "url": "https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-09T02:43:38Z",
+      "fetched_at": "2026-09-09T23:55:50.753309Z",
+      "evidence": "This update brings support for enterprise-managed sandbox policies, cross-file cursor jumps for next edit suggestions, global project context in chat, enterprise policy diagnostics, and a new connection between terminal Copilot&#8230; The post Enterprise-managed sandbox in Copilot for JetBrains appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    },
+    {
+      "event_id": "feed:5024ef0cc7b0b96301fd",
+      "source_type": "official_feed",
+      "title": "GitHub Enterprise Server 3.22 is now generally available",
+      "url": "https://github.blog/changelog/2026-09-08-github-enterprise-server-3-22-is-now-generally-available",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-08T21:52:42Z",
+      "fetched_at": "2026-09-09T23:55:50.753309Z",
+      "evidence": "GitHub Enterprise Server (GHES) 3.22 is now available and introduces new capabilities across the platform. Here are a few highlights in the 3.22 release: Administrators can configure Copilot CLI to&#8230; The post GitHub Enterprise Server 3.22 is now generally available appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:2ec7a45fef458a79b70e",
+      "event_ids": [
+        "ghrel:2ec7a45fef458a79b70e"
+      ],
+      "headline": "OpenAI Codex rust-v0.154.0",
+      "what_changed": "New Features - GPT-6-Astra is now available in the model picker and Amazon Bedrock catalogs. ( 42879, 42619) - Experimental worktree support lets you create isolated checkouts for new or forked sessions using --worktree or /worktree, then browse and resume them. ( 42652, 43069, 43120, 43286) - Answer questions inline while Codex continues working, using suggested choices or custom text without losing your main draft. ( 42891, 42894, 42897) - Windows sessions can now share a background Codex server, with daemon lifecycle commands and managed updates. ( 42405, 42392) - Vim editing gains R replace mode with undo and dot-repeat, plus more reliable Escape handling in legacy terminals. ( 42194, 42584) - Copying responses preserves formatting in rich-text apps, and /copy can copy status output or individual session fields. ( 42847, 43055) Bug Fixes - Existing sessions pick up newly installed pl",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.154.0"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 19.55,
+        "impact": 15.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 104.55
+      }
+    },
+    {
+      "story_id": "story:feed:faa37362568657fbf7a1",
+      "event_ids": [
+        "feed:faa37362568657fbf7a1"
+      ],
+      "headline": "Enterprise managed permissions for GitHub Copilot agent operations",
+      "what_changed": "If you administer GitHub Copilot Business or GitHub Copilot Enterprise, you can now centrally control which agent operations are blocked, require human approval, or can proceed without a prompt. Managed&#8230; The post Enterprise managed permissions for GitHub Copilot agent operations appeared first on The GitHub Blog .",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 18.74,
+        "impact": 15.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 103.74
+      }
+    },
+    {
+      "story_id": "story:ghrel:5ba86673e5548e8f3f86",
+      "event_ids": [
+        "ghrel:5ba86673e5548e8f3f86"
+      ],
+      "headline": "Claude Code v2.1.267",
+      "what_changed": "What's changed - Added maxEffortLevel setting (top-level or per model under modelSettings): caps the effort level on every provider, including Bedrock, Vertex and Foundry; users can still pick a lower level - Added --system-prompt-snapshot off to render the system prompt fresh on every request instead of reusing the conversation's recorded prompt (for iterating on prompt text) - Fixed Cowork scheduled tasks in the cloud failing at startup for organizations whose managed settings require sandboxing - Fixed /context and other local command output rendering blank on mobile clients - Fixed shift+enter and option+backspace not working after reconnecting to a tmux or ssh session inside an agent view - Fixed the dim last-prompt header not appearing at the top of the conversation when scrolling up in fullscreen mode - Fixed Workflow agent() calls with large output schemas being refused in auto m",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Primary source; relevance score 18.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.267"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 18.68,
+        "impact": 15.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 101.68
+      }
+    },
+    {
+      "story_id": "story:ghrel:03061493556813e52972",
+      "event_ids": [
+        "ghrel:03061493556813e52972"
+      ],
+      "headline": "Claude Code v2.1.265",
+      "what_changed": "What's changed - Added user.email and user.groups to the telemetry Claude Desktop and Cowork send through a Claude apps gateway, matching terminal sessions - Added support for pointing --plugin-dir at a folder of plugins: each child folder with a manifest loads, and children added or removed while running are picked up - Added a 1 GB cap on tool results saved to disk; the in-conversation preview says when a saved file was truncated - Fixed resuming a foreground-spawned subagent changing its tool list and system prompt prefix, which broke prompt-cache reuse for that agent - Fixed agent teammates and resumed subagents moving SubagentStart hook context and preloaded skills out of the prompt prefix on later turns, which broke prompt-cache reuse - Fixed resume after the previous process died while a tool was running: the last prompt is no longer rewritten, and the interrupted tool call is kep",
+      "why_it_matters": "Check your current tooling or upgrade path because this may require a change.",
+      "action": "act",
+      "rationale": "Primary source; relevance score 18.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.265"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 10.9,
+        "impact": 15.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 93.9
+      }
+    },
+    {
+      "story_id": "story:ghrel:a57e51f33d4586f567cc",
+      "event_ids": [
+        "ghrel:a57e51f33d4586f567cc"
+      ],
+      "headline": "Visual Studio Code 1.137.0",
+      "what_changed": "https://code.visualstudio.com/updates/v1_137",
+      "why_it_matters": "This is relevant to developers tracking Developer environment.",
+      "action": "watch",
+      "rationale": "Primary source; relevance score 18.",
+      "source_urls": [
+        "https://github.com/microsoft/vscode/releases/tag/1.137.0"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 17.21,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 91.21
+      }
+    },
+    {
+      "story_id": "story:feed:56c4269b99a656fe7ff2",
+      "event_ids": [
+        "feed:56c4269b99a656fe7ff2"
+      ],
+      "headline": "Enterprise-managed sandbox in Copilot for JetBrains",
+      "what_changed": "This update brings support for enterprise-managed sandbox policies, cross-file cursor jumps for next edit suggestions, global project context in chat, enterprise policy diagnostics, and a new connection between terminal Copilot&#8230; The post Enterprise-managed sandbox in Copilot for JetBrains appeared first on The GitHub Blog .",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 12.93,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 88.93
+      }
+    },
+    {
+      "story_id": "story:feed:5024ef0cc7b0b96301fd",
+      "event_ids": [
+        "feed:5024ef0cc7b0b96301fd"
+      ],
+      "headline": "GitHub Enterprise Server 3.22 is now generally available",
+      "what_changed": "GitHub Enterprise Server (GHES) 3.22 is now available and introduces new capabilities across the platform. Here are a few highlights in the 3.22 release: Administrators can configure Copilot CLI to&#8230; The post GitHub Enterprise Server 3.22 is now generally available appeared first on The GitHub Blog .",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-08-github-enterprise-server-3-22-is-now-generally-available"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 11.32,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 87.32
+      }
+    }
+  ],
+  "noise_notes": [
+    "Skipped Gemini CLI: routine or prerelease-only update.",
+    "Skipped Gemini CLI: routine or prerelease-only update.",
+    "Skipped Gemini CLI: routine or prerelease-only update."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-09. Today's lead is OpenAI Codex rust-v0.154.0. I filtered the rest down to 7 updates worth your attention.\n\nHere is the lead: OpenAI Codex rust-v0.154.0. New Features - GPT-6-Astra is now available in the model picker and Amazon Bedrock catalogs. ( 42879, 42619) - Experimental worktree support lets you create isolated checkouts for new or forked sessions using --worktree or /worktree, then browse and resume them. ( 42652, 43069, 43120, 43286) - Answer questions inline while Codex continues working, using suggested choices or custom text without losing your main draft. ( 42891, 42894, 42897) - Windows sessions can now share a background Codex server, with daemon lifecycle commands and managed updates. ( 42405, 42392) - Vim editing gains R replace mode with undo and dot-repeat, plus more reliable Escape handling in legacy terminals. ( 42194, 42584) - Copying responses preserves formatting in rich-text apps, and /copy can copy status output or individual session fields. ( 42847, 43055) Bug Fixes - Existing sessions pick up newly installed pl This is relevant to developers tracking AI coding agents. The call is watch. Primary source; relevance score 20.\n\nNext: Enterprise managed permissions for GitHub Copilot agent operations. If you administer GitHub Copilot Business or GitHub Copilot Enterprise, you can now centrally control which agent operations are blocked, require human approval, or can proceed without a prompt. Managed&#8230; The post Enterprise managed permissions for GitHub Copilot agent operations appeared first on The GitHub Blog . This is relevant to developers tracking AI coding agents. The call is watch. Primary source; relevance score 20.\n\nAlso: Claude Code v2.1.267. What's changed - Added maxEffortLevel setting (top-level or per model under modelSettings): caps the effort level on every provider, including Bedrock, Vertex and Foundry; users can still pick a lower level - Added --system-prompt-snapshot off to render the system prompt fresh on every request instead of reusing the conversation's recorded prompt (for iterating on prompt text) - Fixed Cowork scheduled tasks in the cloud failing at startup for organizations whose managed settings require sandboxing - Fixed /context and other local command output rendering blank on mobile clients - Fixed shift+enter and option+backspace not working after reconnecting to a tmux or ssh session inside an agent view - Fixed the dim last-prompt header not appearing at the top of the conversation when scrolling up in fullscreen mode - Fixed Workflow agent() calls with large output schemas being refused in auto m This is relevant to developers tracking AI coding agents. The call is watch. Primary source; relevance score 18.\n\nAfter that: Claude Code v2.1.265. What's changed - Added user.email and user.groups to the telemetry Claude Desktop and Cowork send through a Claude apps gateway, matching terminal sessions - Added support for pointing --plugin-dir at a folder of plugins: each child folder with a manifest loads, and children added or removed while running are picked up - Added a 1 GB cap on tool results saved to disk; the in-conversation preview says when a saved file was truncated - Fixed resuming a foreground-spawned subagent changing its tool list and system prompt prefix, which broke prompt-cache reuse for that agent - Fixed agent teammates and resumed subagents moving SubagentStart hook context and preloaded skills out of the prompt prefix on later turns, which broke prompt-cache reuse - Fixed resume after the previous process died while a tool was running: the last prompt is no longer rewritten, and the interrupted tool call is kep Check your current tooling or upgrade path because this may require a change. The call is act. Primary source; relevance score 18.\n\nOne more: Visual Studio Code 1.137.0. https://code.visualstudio.com/updates/v1_137 This is relevant to developers tracking Developer environment. The call is watch. Primary source; relevance score 18.\n\nNext: Enterprise-managed sandbox in Copilot for JetBrains. This update brings support for enterprise-managed sandbox policies, cross-file cursor jumps for next edit suggestions, global project context in chat, enterprise policy diagnostics, and a new connection between terminal Copilot&#8230; The post Enterprise-managed sandbox in Copilot for JetBrains appeared first on The GitHub Blog . This is relevant to developers tracking AI coding agents. The call is watch. Primary source; relevance score 20.\n\nFinally: GitHub Enterprise Server 3.22 is now generally available. GitHub Enterprise Server (GHES) 3.22 is now available and introduces new capabilities across the platform. Here are a few highlights in the 3.22 release: Administrators can configure Copilot CLI to&#8230; The post GitHub Enterprise Server 3.22 is now generally available appeared first on The GitHub Blog . This is relevant to developers tracking AI coding agents. The call is watch. Primary source; relevance score 20.\n\nHigh noise, low signal. Skipped Gemini CLI: routine or prerelease-only update. Skipped Gemini CLI: routine or prerelease-only update.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "OpenAI Codex rust-v0.154.0\nWhat changed: New Features - GPT-6-Astra is now available in the model picker and Amazon Bedrock catalogs. ( 42879, 42619) - Experimental worktree support lets you create isolated checkouts for new or forked sessions using --worktree or /worktree, then browse and resume them. ( 42652, 43069, 43120, 43286) - Answer questions inline while Codex continues working, using suggested choices or custom text without losing your main draft. ( 42891, 42894, 42897) - Windows sessions can now share a background Codex server, with daemon lifecycle commands and managed updates. ( 42405, 42392) - Vim editing gains R replace mode with undo and dot-repeat, plus more reliable Escape handling in legacy terminals. ( 42194, 42584) - Copying responses preserves formatting in rich-text apps, and /copy can copy status output or individual session fields. ( 42847, 43055) Bug Fixes - Existing sessions pick up newly installed pl\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Primary source; relevance score 20.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.154.0\n\nEnterprise managed permissions for GitHub Copilot agent operations\nWhat changed: If you administer GitHub Copilot Business or GitHub Copilot Enterprise, you can now centrally control which agent operations are blocked, require human approval, or can proceed without a prompt. Managed&#8230; The post Enterprise managed permissions for GitHub Copilot agent operations appeared first on The GitHub Blog .\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Primary source; relevance score 20.\nSources: https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations\n\nClaude Code v2.1.267\nWhat changed: What's changed - Added maxEffortLevel setting (top-level or per model under modelSettings): caps the effort level on every provider, including Bedrock, Vertex and Foundry; users can still pick a lower level - Added --system-prompt-snapshot off to render the system prompt fresh on every request instead of reusing the conversation's recorded prompt (for iterating on prompt text) - Fixed Cowork scheduled tasks in the cloud failing at startup for organizations whose managed settings require sandboxing - Fixed /context and other local command output rendering blank on mobile clients - Fixed shift+enter and option+backspace not working after reconnecting to a tmux or ssh session inside an agent view - Fixed the dim last-prompt header not appearing at the top of the conversation when scrolling up in fullscreen mode - Fixed Workflow agent() calls with large output schemas being refused in auto m\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Primary source; relevance score 18.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.267\n\nClaude Code v2.1.265\nWhat changed: What's changed - Added user.email and user.groups to the telemetry Claude Desktop and Cowork send through a Claude apps gateway, matching terminal sessions - Added support for pointing --plugin-dir at a folder of plugins: each child folder with a manifest loads, and children added or removed while running are picked up - Added a 1 GB cap on tool results saved to disk; the in-conversation preview says when a saved file was truncated - Fixed resuming a foreground-spawned subagent changing its tool list and system prompt prefix, which broke prompt-cache reuse for that agent - Fixed agent teammates and resumed subagents moving SubagentStart hook context and preloaded skills out of the prompt prefix on later turns, which broke prompt-cache reuse - Fixed resume after the previous process died while a tool was running: the last prompt is no longer rewritten, and the interrupted tool call is kep\nWhy it matters: Check your current tooling or upgrade path because this may require a change.\nRecommendation: ACT — Primary source; relevance score 18.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.265\n\nVisual Studio Code 1.137.0\nWhat changed: https://code.visualstudio.com/updates/v1_137\nWhy it matters: This is relevant to developers tracking Developer environment.\nRecommendation: WATCH — Primary source; relevance score 18.\nSources: https://github.com/microsoft/vscode/releases/tag/1.137.0\n\nEnterprise-managed sandbox in Copilot for JetBrains\nWhat changed: This update brings support for enterprise-managed sandbox policies, cross-file cursor jumps for next edit suggestions, global project context in chat, enterprise policy diagnostics, and a new connection between terminal Copilot&#8230; The post Enterprise-managed sandbox in Copilot for JetBrains appeared first on The GitHub Blog .\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Primary source; relevance score 20.\nSources: https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains\n\nGitHub Enterprise Server 3.22 is now generally available\nWhat changed: GitHub Enterprise Server (GHES) 3.22 is now available and introduces new capabilities across the platform. Here are a few highlights in the 3.22 release: Administrators can configure Copilot CLI to&#8230; The post GitHub Enterprise Server 3.22 is now generally available appeared first on The GitHub Blog .\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Primary source; relevance score 20.\nSources: https://github.blog/changelog/2026-09-08-github-enterprise-server-3-22-is-now-generally-available\n\nHigh noise / low signal\n- Skipped Gemini CLI: routine or prerelease-only update.\n- Skipped Gemini CLI: routine or prerelease-only update.\n- Skipped Gemini CLI: routine or prerelease-only update.",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "normal"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-09-68cfca8a/daily-ai-brief.mp3",
+    "size_bytes": 2456784,
+    "duration_secs": 409.464,
+    "sha256": "526f369499ef0b699bc7ef5d9ba7eb3431622a0dc8801b3ea04ea9097c3d2849",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}
