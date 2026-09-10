@@ -33,6 +33,7 @@ from .render import write_readme
 from .research import run_research_summary, dry_run_report
 from .search import search_repos
 from .tts import write_audio
+from .audio import analyze_audio
 
 logging.basicConfig(
     level=logging.INFO,
@@ -225,15 +226,15 @@ def _publish_podcast(
     }
 
     if dry_run:
-        logger.info("[dry-run] Skipping TTS — podcast.xml updated with placeholder URL")
-        episode["mp3_url"] = "DRY_RUN"
-    else:
-        audio_path = write_audio(script, path="radar.mp3")
-        if audio_path:
-            episode["file_size_bytes"] = audio_path.stat().st_size
-        else:
-            logger.warning("TTS failed; podcast.xml will have 0-byte placeholder")
+        logger.info("[dry-run] Skipping TTS and podcast.xml update")
+        return
 
+    audio_path = write_audio(script, path="radar.mp3")
+    if not audio_path:
+        raise RuntimeError("TTS failed; podcast.xml was not modified")
+    analysis = analyze_audio(audio_path)
+    episode["file_size_bytes"] = analysis["size_bytes"]
+    episode["duration_secs"] = analysis["duration_secs"]
     prepend_episode(episode, path="podcast.xml")
     logger.info("podcast.xml updated (episode: %s)", tag)
 

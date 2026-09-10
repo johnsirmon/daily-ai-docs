@@ -4,6 +4,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
+from pipeline.podcast import load_episodes, write_feed
 from pipeline.adhoc import (
     research_topic,
     generate_adhoc_narration,
@@ -29,7 +30,7 @@ def test_research_topic_no_exa_key(monkeypatch):
     monkeypatch.delenv("GITHUB_TOKEN", raising=False)
     result = research_topic("test topic", dry_run=False)
     assert result["exa_results"] == []
-    # AI summary is empty because no GITHUB_TOKEN
+    # AI summary is empty because no dedicated model key is configured.
     assert result["ai_summary"] == ""
 
 
@@ -144,13 +145,16 @@ def test_run_adhoc_live_calls_tts_and_podcast(monkeypatch, tmp_path):
 
     def fake_write_audio(text, path="adhoc-episode.mp3"):
         tts_calls.append(text)
-        return None
+        out = Path(path)
+        out.write_bytes(b"fake mp3 bytes")
+        return out
 
     def fake_prepend_episode(episode, path="podcast.xml"):
         podcast_calls.append(episode)
         return Path(path)
 
     with patch("pipeline.tts.write_audio", side_effect=fake_write_audio), \
+         patch("pipeline.audio.analyze_audio", return_value={"size_bytes": 14000, "duration_secs": 60, "sha256": "abc"}), \
          patch("pipeline.podcast.prepend_episode", side_effect=fake_prepend_episode):
         result = run_adhoc(
             topic="Test AI",
@@ -161,6 +165,67 @@ def test_run_adhoc_live_calls_tts_and_podcast(monkeypatch, tmp_path):
     assert len(tts_calls) == 1
     assert len(podcast_calls) == 1
     assert podcast_calls[0]["guid"].startswith("adhoc-test-ai-")
+
+
+def test_run_adhoc_skips_feed_update_when_tts_fails(monkeypatch, tmp_path):
+    """When TTS fails, ad-hoc run should not append a broken episode to podcast.xml."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    monkeypatch.delenv("EXA_API_KEY", raising=False)
+
+    # Seed an existing feed and verify no extra item is appended.
+    write_feed(
+        [{
+            "title": "Existing",
+            "guid": "existing-guid",
+            "mp3_url": "https://example.com/existing.mp3",
+            "pub_date": "2026-03-01",
+            "duration_secs": 60,
+            "file_size_bytes": 1000,
+            "description": "Existing episode.",
+        }],
+        path="podcast.xml",
+    )
+
+    with patch("pipeline.tts.write_audio", return_value=None):
+        run_adhoc(
+            topic="Broken TTS",
+            dry_run=False,
+            mp3_url_template="https://x/{tag}/ep.mp3",
+        )
+
+    episodes = load_episodes("podcast.xml")
+    assert len(episodes) == 1
+    assert episodes[0]["guid"] == "existing-guid"
+
+
+def test_run_adhoc_writes_actual_podcast_entry(monkeypatch, tmp_path):
+    """Live ad-hoc run writes a real podcast.xml entry with expected metadata."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    monkeypatch.delenv("EXA_API_KEY", raising=False)
+
+    def fake_write_audio(text, path="adhoc-episode.mp3"):
+        out = Path(path)
+        out.write_bytes(b"fake ad-hoc mp3")
+        return out
+
+    with patch("pipeline.tts.write_audio", side_effect=fake_write_audio), \
+         patch("pipeline.audio.analyze_audio", return_value={"size_bytes": 14000, "duration_secs": 60, "sha256": "abc"}):
+        result = run_adhoc(
+            topic="Model Context Protocol",
+            dry_run=False,
+            mp3_url_template="https://example.com/{tag}/adhoc-episode.mp3",
+        )
+
+    assert (tmp_path / "adhoc-episode.mp3").exists()
+    assert (tmp_path / "podcast.xml").exists()
+
+    episodes = load_episodes("podcast.xml")
+    assert len(episodes) == 1
+    assert episodes[0]["guid"] == result["episode"]["guid"]
+    assert "adhoc-model-context-protocol-" in episodes[0]["guid"]
+    assert "adhoc-episode.mp3" in episodes[0]["mp3_url"]
 
 
 def test_run_adhoc_episode_guid_is_deterministic(monkeypatch, tmp_path):

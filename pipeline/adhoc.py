@@ -15,23 +15,19 @@ import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
+
+from .models_client import get_github_models_client
 
 logger = logging.getLogger(__name__)
 
-_ENDPOINT = "https://models.inference.ai.azure.com"
 _MODEL = "gpt-4o-mini"
 _CACHE_DIR = Path(".cache")
 
 
 def _get_ai_client():
     """Lazily initialise the OpenAI-compatible client for GitHub Models."""
-    try:
-        from openai import OpenAI  # noqa: PLC0415
-        return OpenAI(base_url=_ENDPOINT, api_key=os.environ["GITHUB_TOKEN"])
-    except Exception as exc:  # noqa: BLE001
-        logger.warning("GitHub Models client unavailable: %s", exc)
-        return None
+    return get_github_models_client()
 
 
 def _exa_search(topic: str, num_results: int = 5) -> List[Dict]:
@@ -239,6 +235,7 @@ def run_adhoc(
     """
     from .podcast import prepend_episode  # noqa: PLC0415
     from .tts import write_audio  # noqa: PLC0415
+    from .audio import analyze_audio  # noqa: PLC0415
 
     logger.info("Ad-hoc podcast: researching topic %r", topic)
     research = research_topic(topic, dry_run=dry_run)
@@ -278,11 +275,22 @@ def run_adhoc(
     else:
         audio_path = write_audio(narration, path="adhoc-episode.mp3")
         if audio_path:
-            episode["file_size_bytes"] = audio_path.stat().st_size
+            analysis = analyze_audio(audio_path)
+            episode["file_size_bytes"] = analysis["size_bytes"]
+            episode["duration_secs"] = analysis["duration_secs"]
+            prepend_episode(episode, path="podcast.xml")
+            (_CACHE_DIR / "adhoc_publication.json").write_text(
+                json.dumps({
+                    "tag": tag,
+                    "audio_path": str(audio_path),
+                    "audio_url": mp3_url,
+                    "size_bytes": analysis["size_bytes"],
+                    "sha256": analysis["sha256"],
+                }, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            logger.info("podcast.xml updated (episode: %s)", tag)
         else:
-            logger.warning("TTS failed; podcast.xml will have 0-byte placeholder")
-
-        prepend_episode(episode, path="podcast.xml")
-        logger.info("podcast.xml updated (episode: %s)", tag)
+            logger.warning("TTS failed; skipping podcast.xml update for ad-hoc episode")
 
     return {"topic": topic, "narration": narration, "episode": episode}

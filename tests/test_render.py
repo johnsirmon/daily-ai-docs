@@ -1,6 +1,6 @@
 """Tests for the render module."""
 
-from pipeline.render import render_readme
+from pipeline.render import render_readme, topic_anchor_markup
 
 
 def _topic(tid: str, display: str, repos=None, releases=None, why="", learn="",
@@ -89,6 +89,12 @@ def test_readme_toc_links():
     out = render_readme(topics)
     assert "[MCP Ecosystem]" in out
     assert "[Azure AI]" in out
+
+
+def test_readme_topic_sections_include_explicit_anchor():
+    topics = [_topic("mcp", "MCP Ecosystem", repos=[_repo("org/repo")])]
+    out = render_readme(topics)
+    assert f"{topic_anchor_markup('mcp')}\n## MCP Ecosystem" in out
 
 
 def test_readme_ends_with_pipeline_link():

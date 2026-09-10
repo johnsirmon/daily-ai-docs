@@ -1,25 +1,18 @@
 """Search GitHub for new/rising repos matching topic keywords."""
 
 import logging
-import os
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List
 
 import requests
 
+from .github_api import GITHUB_API, build_github_headers
+
 logger = logging.getLogger(__name__)
-GITHUB_API = "https://api.github.com"
 
 
 def _headers() -> Dict[str, str]:
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-    }
-    token = os.getenv("GITHUB_TOKEN")
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
-    return headers
+    return build_github_headers()
 
 
 def search_repos(

@@ -9,6 +9,11 @@ def _trend_emoji(trend: str) -> str:
     return {"rising": "📈", "falling": "📉", "flat": "➡️"}.get(trend, "")
 
 
+def topic_anchor_markup(topic_id: str) -> str:
+    """Return explicit HTML anchor markup for stable topic links."""
+    return f'<a id="{topic_id}"></a>'
+
+
 def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_report: Dict | None = None) -> str:
     """Build the full README content string from processed topic data."""
     now = datetime.now(tz=timezone.utc)
@@ -33,7 +38,7 @@ def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_rep
     lines += ["", "---", ""]
 
     # Podcast subscribe block
-    feed_url = "https://cdn.jsdelivr.net/gh/johnsirmon/daily-ai-docs@main/podcast.xml"
+    feed_url = "https://johnsirmon.github.io/daily-ai-docs/podcast.xml"
     lines += [
         "## 🎙️ Podcast",
         "",
@@ -45,9 +50,9 @@ def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_rep
         "",
         "**Or paste this feed URL into any podcast app:**",
         "",
-        f"```",
+        "```",
         feed_url,
-        f"```",
+        "```",
         "",
         "---",
         "",
@@ -60,6 +65,7 @@ def render_readme(topics_data: List[Dict], lookback_days: int = 14, research_rep
 
     # Per-topic sections
     for t in topics_data:
+        lines.append(topic_anchor_markup(t["id"]))
         lines.append(f"## {t['display']}")
         lines.append("")
 
@@ -187,3 +193,100 @@ def write_readme(
     out = Path(path)
     out.write_text(content, encoding="utf-8")
     return out
+
+
+def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
+    """Render the current brief and durable project overview from one manifest."""
+    manifest.validate(require_audio=False)
+    feed_url = feed_url or "https://johnsirmon.github.io/daily-ai-docs/podcast.xml"
+    lines = [
+        f"# Daily AI Developer Brief — {manifest.published_at[:10]}",
+        "",
+        "A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.",
+        "",
+        "## Podcast",
+        "",
+        f"Intended subscriber feed: `{feed_url}`",
+        "",
+        "Publication is confirmed only after the subscriber feed, audio, and artwork pass delivery checks.",
+        "",
+        "Once the feed is live, open Apple Podcasts on iPhone → Library → Follow a Show by URL and paste it. CarPlay uses the followed show through Apple Podcasts; device playback still requires verification.",
+        "",
+        "See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment status and setup.",
+        "",
+        "## Today's signal",
+        "",
+    ]
+    if not manifest.stories:
+        lines += [
+            "No tracked update cleared the actionability threshold today. This is a healthy quiet day, not a source outage.",
+            "",
+        ]
+    for story in manifest.stories:
+        lines += [
+            f"### {story.headline}",
+            "",
+            f"**What changed:** {story.what_changed}",
+            "",
+            f"**Why it matters:** {story.why_it_matters}",
+            "",
+            f"**Recommendation:** {story.action.upper()} — {story.rationale}",
+            "",
+            "Sources: " + ", ".join(f"[{index + 1}]({url})" for index, url in enumerate(story.source_urls)),
+            "",
+        ]
+    if manifest.noise_notes:
+        lines += ["## High noise / low signal", ""]
+        lines.extend(f"- {note}" for note in manifest.noise_notes)
+        lines.append("")
+    lines += [
+        "## Editorial contract",
+        "",
+        "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
+        "- Up to seven actionable stories, with shorter alerts and healthy quiet-day editions.",
+        "- Product-change claims require public primary evidence.",
+        "- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation.",
+        "- Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.",
+        "- At most one transcript-backed YouTube learning pick may appear; it never replaces vendor evidence.",
+        "",
+        "## Tracked areas",
+        "",
+        "The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics.yaml) monitors public releases and feeds for GitHub Copilot, VS Code, OpenAI Codex, Claude Code, Gemini CLI, Hermes Agent, MCP, and Agent Skills. Evaluation and observability are covered through bounded YouTube learning discovery rather than dedicated primary-source collectors.",
+        "",
+        "## Source health",
+        "",
+        *[f"- `{name}`: {status}" for name, status in sorted(manifest.source_health.items())],
+        "",
+        "Each edition manifest distinguishes healthy no-news results from source outages.",
+        "",
+        "## Publication flow",
+        "",
+        "`collect → select → manifest → narrate/audio → validate → publish → verify delivery → confirm`",
+        "",
+        "The versioned episode manifest is the source of truth for narration, show notes, and this README. Preparation and failed delivery do not advance novelty state.",
+        "",
+        "## Weekly YouTube signal",
+        "",
+        "The Sunday **11:23 UTC** workflow runs four focused searches and retains up to five videos with short transcript-derived takeaways. Full transcripts are never committed, and at most one deduplicated learning pick may enter a daily edition.",
+        "",
+        "## Development",
+        "",
+        "```bash",
+        "# Reproducible test suite",
+        "uv run --with-requirements requirements.lock pytest -q",
+        "",
+        "# Network-free manifest preparation; writes only under .cache/",
+        "uv run --with-requirements requirements.lock \\",
+        "  python -m pipeline.daily prepare --dry-run --no-audio",
+        "```",
+        "",
+        "Preparation does not publish or modify the subscriber feed. See [operations and setup](docs/OPERATIONS.md) for credentials, deployment, recovery, and manual commands.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def write_manifest_readme(manifest, path: str = "README.md", feed_url: str | None = None) -> Path:
+    output = Path(path)
+    output.write_text(render_manifest_readme(manifest, feed_url=feed_url), encoding="utf-8")
+    return output
