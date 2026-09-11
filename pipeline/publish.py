@@ -13,6 +13,8 @@ from typing import Any, Dict
 import requests
 from PIL import Image
 
+from .schema import EpisodeManifest
+
 _ITUNES_NS = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 
 
@@ -100,8 +102,17 @@ def verify_remote_feed(
     *,
     expected_guid: str | None = None,
     max_age_hours: float = 36,
+    candidate: EpisodeManifest | None = None,
     session: requests.Session | None = None,
 ) -> Dict[str, Any]:
+    # A recovery check is bound to a validated candidate, never a blanket age bypass.
+    if candidate is not None:
+        candidate.validate(require_audio=True)
+        if candidate.status not in {"candidate", "published"}:
+            raise PublicationError("delivery requires a candidate or published manifest")
+        if expected_guid and expected_guid != candidate.episode_id:
+            raise PublicationError("expected GUID does not match candidate")
+        expected_guid = candidate.episode_id
     session = session or requests.Session()
     response = session.get(url, headers={"Cache-Control": "no-cache"}, timeout=30)
     if response.status_code != 200:
@@ -119,20 +130,37 @@ def verify_remote_feed(
     latest_guid = items[0].findtext("guid") or ""
     if expected_guid and latest_guid != expected_guid:
         raise PublicationError(f"remote feed latest GUID is {latest_guid}, expected {expected_guid}")
-    pub_date = email.utils.parsedate_to_datetime(items[0].findtext("pubDate") or "")
-    if pub_date is None:
-        raise PublicationError("latest episode has no valid publication date")
-    if pub_date.tzinfo is None:
-        pub_date = pub_date.replace(tzinfo=timezone.utc)
+    try:
+        pub_date = email.utils.parsedate_to_datetime(items[0].findtext("pubDate") or "")
+    except (TypeError, ValueError) as exc:
+        raise PublicationError("latest episode has no valid publication date") from exc
+    if pub_date is None or pub_date.tzinfo is None:
+        raise PublicationError("latest episode has no valid timezone-aware publication date")
     age = (datetime.now(timezone.utc) - pub_date.astimezone(timezone.utc)).total_seconds() / 3600
-    if age > max_age_hours:
+    if candidate is None and age > max_age_hours:
         raise PublicationError(f"remote feed is stale ({age:.1f} hours)")
     enclosure = items[0].find("enclosure")
     if enclosure is None:
         raise PublicationError("latest remote episode has no enclosure")
     enclosure_url = enclosure.get("url", "")
-    enclosure_size = int(enclosure.get("length") or 0)
-    verify_remote_audio(enclosure_url, expected_size=enclosure_size, session=session)
+    try:
+        enclosure_size = int(enclosure.get("length") or 0)
+    except ValueError as exc:
+        raise PublicationError("latest enclosure has invalid length") from exc
+    if not enclosure_url or enclosure_size <= 0 or enclosure.get("type") != "audio/mpeg":
+        raise PublicationError("latest enclosure must be a nonempty MP3")
+    if candidate is not None:
+        original_date = datetime.fromisoformat(candidate.published_at.replace("Z", "+00:00"))
+        # RSS dates have second precision, unlike prepare's ISO timestamp.
+        if pub_date != original_date.replace(microsecond=0):
+            raise PublicationError("remote publication date does not match candidate")
+        if enclosure_url != candidate.audio["url"] or enclosure_size != int(candidate.audio["size_bytes"]):
+            raise PublicationError("remote enclosure does not match candidate")
+    verify_remote_audio(
+        enclosure_url, expected_size=enclosure_size,
+        expected_sha256=candidate.audio["sha256"] if candidate is not None else None,
+        session=session,
+    )
     image_node = channel.find(f"{{{_ITUNES_NS}}}image")
     image_url = image_node.get("href", "") if image_node is not None else ""
     if not image_url:
@@ -154,5 +182,7 @@ def verify_remote_feed(
         "age_hours": round(age, 2),
         "cache_control": response.headers.get("Cache-Control", ""),
         "audio_verified": True,
+        "candidate_verified": candidate is not None,
+        "sha256_verified": candidate is not None,
         "artwork": f"{width}x{height} {artwork.mode}",
     }

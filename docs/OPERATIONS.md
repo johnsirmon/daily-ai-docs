@@ -90,7 +90,10 @@ Deterministic stories are always available from validated source evidence. Optio
 - Release upload: an orphaned release is safe; reruns download and resume the accepted manifest/audio from that release.
 - Candidate feed: fix locally and rerun; the public feed remains the last known good version.
 - Git push: do not blindly rebase generated feed changes. Re-run from current `main` under the shared `podcast-publisher` concurrency group.
-- Pages/freshness: the publication job deploys Pages directly, retries the exact subscriber URL, verifies its latest audio and artwork, and only then confirms state. The independent health workflow uses a 25-hour deadline and opens or updates a GitHub issue if freshness later fails.
+- Pages/delivery: the publication job deploys Pages directly, retries the exact subscriber URL, verifies its latest audio and artwork, and only then confirms state. Transport failures participate in bounded retries.
+- Aged candidate: rerun the daily job without `--force`. A pending candidate resumes before collection, synthesis, or TTS, even after 48 hours. The release download must match the prepared episode ID/tag/enclosure, local audio checksum, and any accepted candidate manifest (except status). Mismatches fail before candidate writes; do not edit timestamps or regenerate media to get past a failure.
+- Delivery and freshness are separate: `pipeline.health --candidate "data/episodes/${EPISODE_ID}.json"` and `pipeline.daily confirm --episode-id "$EPISODE_ID"` use the same exact-candidate checks. Only age rejection is omitted: latest GUID, original publication date, enclosure URL/length, remote checksum, range support, and artwork must still match/pass. A successful repeat confirmation leaves an existing receipt/state unchanged.
+- Independent health checks remain age-sensitive (the scheduled workflow uses 25 hours). An aged recovery can succeed while freshness still alarms; the next scheduled run should collect a new edition. Do not raise the monitoring deadline or use a candidate for routine freshness monitoring.
 
 Ad-hoc publication is intentionally paused. It must be migrated to the same evidence manifest and transactional confirmation flow before it can publish again.
 

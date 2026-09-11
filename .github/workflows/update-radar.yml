@@ -80,7 +80,7 @@ jobs:
           fi
 
       - name: Verify audio and build candidate feed
-        run: python -m pipeline.daily finalize
+        run: python -m pipeline.daily finalize --publication .cache/publication.json
 
       - name: Commit candidate feed and manifest
         env:
@@ -110,7 +110,7 @@ jobs:
       - name: Verify subscriber-facing delivery
         env:
           EXPECTED_GUID: ${{ steps.prepare.outputs.episode_id }}
-        run: python -m pipeline.health --max-age-hours 25 --retries 10 --delay-seconds 20
+        run: python -m pipeline.health --candidate "data/episodes/${EXPECTED_GUID}.json" --retries 10 --delay-seconds 20
 
       - name: Confirm publication and advance novelty state
         env:

@@ -271,9 +271,30 @@ def finalize(
     *,
     verify_remote: bool = True,
     feed_path: Path = Path("podcast.xml"),
+    publication_path: Path | None = None,
 ) -> EpisodeManifest:
     manifest = EpisodeManifest.from_dict(_load_json(manifest_path, {}))
     manifest.validate(require_audio=True)
+    if publication_path is not None:
+        publication = _load_json(publication_path, {})
+        if (publication.get("episode_id") != manifest.episode_id
+                or publication.get("tag") != manifest.episode_id
+                or publication.get("audio_url") != manifest.audio["url"]):
+            raise RuntimeError("downloaded release identity does not match prepared publication")
+        audio = Path(publication["audio_path"]).read_bytes()
+        if (len(audio) != int(manifest.audio["size_bytes"])
+                or hashlib.sha256(audio).hexdigest() != manifest.audio["sha256"]):
+            raise RuntimeError("downloaded release audio does not match manifest")
+    existing_path = Path("data/episodes") / f"{manifest.episode_id}.json"
+    if existing_path.exists():
+        existing = EpisodeManifest.from_dict(_load_json(existing_path, {}))
+        accepted, downloaded = existing.to_dict(), manifest.to_dict()
+        accepted.pop("status")
+        downloaded.pop("status")
+        if accepted != downloaded:
+            raise RuntimeError("downloaded release manifest does not match accepted candidate")
+        if existing.status == "published":
+            raise RuntimeError("episode is already published; use confirm to recheck delivery")
     if verify_remote:
         verify_remote_audio(
             manifest.audio["url"],
@@ -308,13 +329,19 @@ def confirm(episode_id: str, *, verify_remote: bool = True) -> EpisodeManifest:
     manifest = EpisodeManifest.from_dict(_load_json(path, {}))
     if manifest.episode_id != episode_id or manifest.status not in {"candidate", "published"}:
         raise RuntimeError("publication candidate is missing or has the wrong state")
+    manifest.validate(require_audio=True)
+    state = load_state()
+    receipt_path = Path("data/receipts") / f"{episode_id}.json"
     feed_result = {"status": "skipped"}
     if verify_remote:
         feed_result = verify_remote_feed(
             os.environ.get("PODCAST_FEED_URL", "https://johnsirmon.github.io/daily-ai-docs/podcast.xml"),
             expected_guid=episode_id,
-            max_age_hours=25,
+            candidate=manifest,
         )
+    if (manifest.status == "published" and receipt_path.exists()
+            and set(e.event_id for e in manifest.source_events).issubset(state["seen_event_ids"])):
+        return manifest
     manifest.status = "published"
     manifest.validate(require_audio=True)
     _save_json(path, manifest.to_dict())
@@ -360,6 +387,7 @@ def main() -> None:
     prepare_parser.add_argument("--force", action="store_true", help="Allow a second same-day episode")
     finalize_parser = sub.add_parser("finalize")
     finalize_parser.add_argument("--manifest", default=str(_MANIFEST_PATH))
+    finalize_parser.add_argument("--publication", type=Path, help="Reconcile downloaded release with prepare outputs")
     finalize_parser.add_argument("--skip-remote-verification", action="store_true")
     confirm_parser = sub.add_parser("confirm")
     confirm_parser.add_argument("--episode-id", default=os.environ.get("EXPECTED_GUID"))
@@ -372,7 +400,8 @@ def main() -> None:
         else:
             print(json.dumps(result, indent=2))
     elif args.command == "finalize":
-        result = finalize(Path(args.manifest), verify_remote=not args.skip_remote_verification)
+        result = finalize(Path(args.manifest), verify_remote=not args.skip_remote_verification,
+                          publication_path=args.publication)
         print(json.dumps({"episode_id": result.episode_id, "status": result.status}, indent=2))
     else:
         if not args.episode_id:

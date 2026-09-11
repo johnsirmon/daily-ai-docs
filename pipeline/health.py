@@ -6,6 +6,11 @@ import argparse
 import json
 import os
 import time
+from pathlib import Path
+
+import requests
+
+from .schema import EpisodeManifest
 
 from .publish import PublicationError, verify_remote_feed
 
@@ -17,10 +22,12 @@ def main() -> None:
         default=os.environ.get("PODCAST_FEED_URL", "https://johnsirmon.github.io/daily-ai-docs/podcast.xml"),
     )
     parser.add_argument("--expected-guid", default=os.environ.get("EXPECTED_GUID"))
+    parser.add_argument("--candidate", type=Path, help="Verify exact candidate delivery, including aged recovery")
     parser.add_argument("--max-age-hours", type=float, default=36)
     parser.add_argument("--retries", type=int, default=1)
     parser.add_argument("--delay-seconds", type=float, default=15)
     args = parser.parse_args()
+    candidate = EpisodeManifest.from_dict(json.loads(args.candidate.read_text())) if args.candidate else None
     last_error = None
     for attempt in range(max(1, args.retries)):
         try:
@@ -28,10 +35,11 @@ def main() -> None:
                 args.feed_url,
                 expected_guid=args.expected_guid,
                 max_age_hours=args.max_age_hours,
+                candidate=candidate,
             )
             print(json.dumps(result, indent=2))
             return
-        except PublicationError as exc:
+        except (PublicationError, requests.RequestException) as exc:
             last_error = exc
             if attempt + 1 < max(1, args.retries):
                 time.sleep(max(0, args.delay_seconds))
