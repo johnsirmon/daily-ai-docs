@@ -166,4 +166,5 @@ def test_video_story_is_framed_as_a_learning_pick(tmp_path):
     narration = manifest_to_narration(manifest)
     assert "For your focused learning queue" in narration
     assert story.action == "watch"
-    assert "not as evidence that every claim" in narration
+    assert "not verified product-change evidence" in narration
+    assert "does not establish adoption" in narration

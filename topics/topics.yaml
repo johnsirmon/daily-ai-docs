@@ -14,7 +14,7 @@ daily:
   lookback_hours: 36
   max_stories: 7
   max_youtube_stories: 1
-  minimum_score: 45
+  minimum_score: 75
   minimum_source_health: 0.6
   sources:
     github_releases:

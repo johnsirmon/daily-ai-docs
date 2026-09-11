@@ -1,0 +1,19 @@
+[
+  {"label":"routine-docs-high-priority", "evidence":"Chore: fixes a documentation typo.", "selected":false, "action":"watch"},
+  {"label":"routine-dependency-bump", "evidence":"Dependency bump and signed Docker images.", "selected":false, "action":"watch"},
+  {"label":"routine-prerelease", "evidence":"Release candidate with documentation updates.", "channel":"prerelease", "selected":false, "action":"skip"},
+  {"label":"mixed-substantive-docs", "evidence":"Adds support for structured outputs in the API. Documentation includes working examples.", "priority":16, "selected":true, "action":"watch"},
+  {"label":"mixed-security-docs", "evidence":"Security patch fixes a vulnerability in tool execution. Documentation explains affected versions.", "priority":18, "selected":true, "action":"act"},
+  {"label":"stable-feature", "evidence":"Adds support for tool calling with typed arguments.", "selected":true, "action":"watch"},
+  {"label":"security-discussion", "evidence":"The security panel now displays permission status.", "selected":true, "action":"watch"},
+  {"label":"removed-logging", "evidence":"Removed noisy debug logging during startup.", "selected":true, "action":"watch"},
+  {"label":"removed-endpoint", "evidence":"The endpoint is removed in this version. Use the replacement endpoint.", "selected":true, "action":"act"},
+  {"label":"deprecated-api", "evidence":"The API is deprecated and will stop working next month.", "selected":true, "action":"act"},
+  {"label":"explicit-migration", "evidence":"Migration is required before using this release.", "selected":true, "action":"act"},
+  {"label":"migration-guide", "evidence":"A new migration guide describes optional approaches.", "selected":true, "action":"watch"},
+  {"label":"no-breaking-change", "evidence":"There are no breaking changes in this release.", "selected":true, "action":"watch"},
+  {"label":"prerelease-security", "evidence":"Security patch fixes a vulnerability in tool execution.", "channel":"prerelease", "selected":true, "action":"skip"},
+  {"label":"video-security-learning", "evidence":"Security patch review and migration required for a sample agent project.", "source_type":"youtube_video", "age_hours":168, "trend_score":80, "selected":true, "action":"watch"},
+  {"label":"generic-old-update", "evidence":"Minor interface polish in the settings panel.", "priority":10, "age_hours":72, "selected":false, "action":"watch"},
+  {"label":"secondary-unverified-notice", "evidence":"Security patch fixes a vulnerability.", "authority":"secondary", "selected":true, "action":"watch"}
+]

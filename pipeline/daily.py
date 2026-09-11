@@ -194,7 +194,7 @@ def prepare(
         events,
         state.get("seen_event_ids", []),
         limit=int(daily.get("max_stories", 7)),
-        minimum_score=float(daily.get("minimum_score", 45)),
+        minimum_score=float(daily.get("minimum_score", 75)),
         max_per_source_type={"youtube_video": int(daily.get("max_youtube_stories", 1))},
     )
     deterministic = [event_to_story(event, state.get("seen_event_ids", [])) for event in selected]

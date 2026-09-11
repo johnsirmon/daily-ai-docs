@@ -29,22 +29,20 @@ def test_seen_event_is_not_selected():
     assert selected == []
 
 
-def test_prerelease_boilerplate_is_filtered():
+def test_prerelease_boilerplate_is_filtered_at_production_threshold():
     selected, notes = select_events(
         [event("rc", channel="prerelease", evidence="Release candidate dependency bump")],
-        minimum_score=0,
     )
     assert selected == []
     assert notes
 
 
-def test_stable_typo_or_chore_is_filtered_even_with_high_priority():
+def test_stable_typo_or_chore_is_filtered_at_production_threshold():
     selected, notes = select_events(
         [event("typo", priority=20, evidence="Chore: fixes a documentation typo")],
-        minimum_score=0,
     )
     assert selected == []
-    assert notes == ["Skipped Tool: routine or prerelease-only update."]
+    assert notes == ["Skipped Tool: below threshold after routine/prerelease penalties."]
 
 
 def test_dedupe_prefers_primary_source():

@@ -65,7 +65,8 @@ Preparation does not modify `podcast.xml`. Finalization verifies the remote audi
 - Source errors are recorded separately from healthy no-news results.
 - Event IDs are derived from canonical URLs; accepted IDs are retained in `data/state.json` to prevent replay.
 - Ranking combines primary-source authority, personal relevance, recency, novelty, impact, and measured velocity. Lifetime stars alone never mean “rising.”
-- Prerelease and boilerplate events are penalized or omitted.
+- Routine/docs keywords subtract 24 points; prereleases subtract another 12. The production threshold is 75, not an unconditional keyword ban: a substantive primary-source change mentioning documentation can still qualify. Labeled editorial fixtures exercise the production threshold, including counterexamples.
+- ACT is reserved for explicit primary-source security/compatibility notices, with affected-version checks rather than automatic upgrade advice. Generic security discussion and removed logging are WATCH; prereleases remain SKIP and YouTube remains WATCH. Short deterministic excerpts preserve sentence/word boundaries, label omissions, and retain links to complete evidence. Repeated penalty notes are collapsed per product.
 - Weekly YouTube discovery is bounded to four searches and five stored candidates. It uses age-adjusted views, a channel/global velocity baseline, and like rate rather than lifetime views. Full transcripts are processed in memory and discarded; only short extractive takeaways are committed.
 - A daily edition may contain at most one YouTube learning pick. Treat it as a watch recommendation; product-change claims still require direct vendor/repository evidence.
 

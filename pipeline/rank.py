@@ -9,8 +9,9 @@ from typing import Dict, Iterable, List, Sequence, Tuple
 from .schema import SourceEvent, Story
 
 _HIGH_IMPACT = re.compile(
-    r"\b(security|vulnerab|breaking|deprecated|deprecat|retir|removed|migration|"
-    r"major|general availability|\bga\b|pricing|rate limit|model|agent)\b",
+    r"\b(security (?:fix|patch|advisory)|vulnerabilit(?:y|ies)|breaking change|"
+    r"deprecat(?:ed|ion)|retir(?:ed|ement)|migration|general availability|"
+    r"pricing|rate limit|tool calling|structured outputs?|adds? support)\b",
     re.IGNORECASE,
 )
 _NOISE = re.compile(
@@ -39,7 +40,7 @@ def score_event(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Dict[
     if event.channel == "prerelease":
         penalty += 12.0
     if _NOISE.search(text):
-        penalty += 18.0
+        penalty += 24.0
     velocity = float(event.metadata.get("star_velocity", 0) or 0)
     youtube_trend = float(event.metadata.get("trend_score", 0) or 0)
     momentum = min(10.0, max(0.0, velocity / 10.0, youtube_trend / 10.0))
@@ -75,7 +76,7 @@ def dedupe_events(events: Sequence[SourceEvent]) -> List[SourceEvent]:
         if current.authority != "primary" and event.authority == "primary":
             chosen[key] = event
             continue
-        if event.published_at > current.published_at:
+        if event.authority == current.authority and event.published_at > current.published_at:
             chosen[key] = event
     return list(chosen.values())
 
@@ -89,7 +90,7 @@ def select_events(
     seen_event_ids: Iterable[str] = (),
     *,
     limit: int = 7,
-    minimum_score: float = 45.0,
+    minimum_score: float = 75.0,
     max_per_source_type: Dict[str, int] | None = None,
 ) -> Tuple[List[SourceEvent], List[str]]:
     """Select novel high-signal events and return human-readable skipped notes."""
@@ -100,11 +101,10 @@ def select_events(
         scores = score_event(event, seen)
         if event.event_id in seen:
             continue
-        if is_noise(event):
-            noise_notes.append(f"Skipped {event.product}: routine or prerelease-only update.")
-            continue
         if scores["total"] >= minimum_score:
             ranked.append((scores["total"], event))
+        elif scores["noise_penalty"]:
+            noise_notes.append(f"Skipped {event.product}: below threshold after routine/prerelease penalties.")
     ranked.sort(key=lambda pair: (pair[0], pair[1].published_at), reverse=True)
     selected: List[SourceEvent] = []
     counts: Dict[str, int] = {}
@@ -117,37 +117,79 @@ def select_events(
         counts[event.source_type] = counts.get(event.source_type, 0) + 1
         if len(selected) == limit:
             break
-    return selected, noise_notes[:3]
+    return selected, list(dict.fromkeys(noise_notes))[:3]
+
+
+_ACTION_REQUIRED = re.compile(
+    r"\b(?:security (?:fix|patch|advisory)|CVE-\d{4}-\d{4,}|"
+    r"(?:fix(?:es|ed)?|patch(?:es|ed)?) (?:a |the )?(?:critical |security )?vulnerability|"
+    r"breaking changes?|migration (?:is )?required|must (?:migrate|upgrade)|"
+    r"(?:api|endpoint|model|support|feature) (?:\S+ )?(?:(?:is|was|will be) )?"
+    r"(?:deprecated|retired|removed)|"
+    r"(?:deprecat(?:ed|es)|retir(?:ed|es)|removed) (?:the )?(?:api|endpoint|model|support|feature))\b",
+    re.IGNORECASE,
+)
+
+
+def _requires_action(text: str) -> bool:
+    # Conservative sentence-level suppression: discussion/negation is not a notice.
+    for sentence in re.split(r"[.!?\n]+", text):
+        if re.search(r"\b(no|not|without|tutorial|guide|docs-only)\b|"
+                     r"\b(?:adds?|updates?) (?:the )?(?:documentation|docs)\b", sentence, re.I):
+            continue
+        if _ACTION_REQUIRED.search(sentence):
+            return True
+    return False
+
+
+def _bounded_excerpt(text: str, *, words: int = 110, chars: int = 1200, sentences: int = 3) -> str:
+    """Keep source wording, prefer sentence/word boundaries, and label omissions."""
+    clean = " ".join(text.split())
+    selected = []
+    for sentence in re.split(r"(?<=[.!?])\s+", clean)[:sentences]:
+        proposed = " ".join([*selected, sentence])
+        if len(proposed) > chars or len(proposed.split()) > words:
+            if not selected:
+                tokens = []
+                for token in sentence.split()[:words]:
+                    if len(" ".join([*tokens, token])) > chars:
+                        break
+                    tokens.append(token)
+                selected = [" ".join(tokens)] if tokens else []
+            break
+        selected.append(sentence)
+    excerpt = " ".join(selected)
+    if excerpt == clean:
+        return excerpt
+    return (excerpt + " … [Excerpt; see source for full details.]").strip()
 
 
 def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Story:
     scores = score_event(event, seen_event_ids)
     impact_text = f"This is relevant to developers tracking {event.topic}."
     action = "watch"
-    combined = f"{event.title} {event.evidence}".lower()
-    if any(term in combined for term in ("security", "deprecated", "retired", "removed", "migration")):
-        action = "act"
-        impact_text = "Check your current tooling or upgrade path because this may require a change."
-    elif event.source_type == "youtube_video":
-        action = "watch"
-        impact_text = (
-            "Use this as a focused learning recommendation, not as evidence that every claim in the video is true."
-        )
+    rationale = "Read the primary source and assess applicability before changing your workflow."
+    combined = f"{event.title} {event.evidence}"
+    # Learning videos and prereleases never become production ACT advice via keywords.
+    if event.source_type == "youtube_video":
+        impact_text = "Use this as a focused learning pick, not verified product-change evidence."
+        rationale = "Ranked within a bounded weekly discovery sample; the ranking does not establish adoption or verify video claims."
     elif event.channel == "prerelease":
         action = "skip"
         impact_text = "This is prerelease information; avoid changing production workflows without a specific need."
+        rationale = "Evaluate only in an isolated test environment if the cited change addresses a current need."
+    elif event.authority == "primary" and _requires_action(combined):
+        action = "act"
+        impact_text = "The source flags a security or compatibility change that may affect existing users."
+        rationale = "Check affected versions and the cited notice first; act only if your tooling is affected."
     return Story(
         story_id=f"story:{event.event_id}",
         event_ids=[event.event_id],
         headline=event.title,
-        what_changed=event.evidence,
+        what_changed=_bounded_excerpt(event.evidence),
         why_it_matters=impact_text,
         action=action,
-        rationale=(
-            "Transcript-backed weekly trend, normalized against comparable recent videos."
-            if event.source_type == "youtube_video"
-            else f"{event.authority.capitalize()} source; relevance score {scores['relevance']:.0f}."
-        ),
+        rationale=rationale,
         source_urls=list(dict.fromkeys([event.url, *event.metadata.get("corroboration_urls", [])])),
         scores=scores,
     ).validate()

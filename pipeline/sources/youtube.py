@@ -75,8 +75,8 @@ def collect_youtube_digest(
                     published_at=published_at.isoformat().replace("+00:00", "Z"),
                     fetched_at=now.isoformat().replace("+00:00", "Z"),
                     evidence=(
-                        f"This transcript-backed video is gaining attention relative to comparable recent videos. "
-                        f"Its practical takeaway is: {takeaway}"
+                        f"Selected from a bounded weekly sample using age-adjusted views and engagement. "
+                        f"Transcript excerpt: {takeaway}"
                     )[:4000],
                     authority="primary",
                     channel="announcement",
