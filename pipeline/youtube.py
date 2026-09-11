@@ -139,17 +139,27 @@ def discover_videos(
         })
         details.extend(item for item in payload.get("items", []) if isinstance(item, dict))
 
+    drops = {"missing_details": 0, "invalid_details": 0, "transcript_error": 0,
+             "empty_transcript": 0, "empty_takeaway": 0}
+    returned_ids = {str(item.get("id") or "") for item in details}
+    drops["missing_details"] = len(set(ids) - returned_ids)
     candidates: list[dict[str, Any]] = []
+    processed_ids: set[str] = set()
     for item in details:
         video_id = str(item.get("id") or "")
+        if video_id not in discovered or video_id in processed_ids:
+            continue
+        processed_ids.add(video_id)
         snippet = item.get("snippet") or {}
         statistics_data = item.get("statistics") or {}
-        if video_id not in discovered or not snippet.get("publishedAt"):
+        try:
+            published = _iso(str(snippet["publishedAt"]))
+            views = int(statistics_data.get("viewCount") or 0)
+            likes = int(statistics_data.get("likeCount") or 0)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            drops["invalid_details"] += 1
             continue
-        published = _iso(str(snippet["publishedAt"]))
         age_days = max((now - published).total_seconds() / 86400, 0.25)
-        views = int(statistics_data.get("viewCount") or 0)
-        likes = int(statistics_data.get("likeCount") or 0)
         candidates.append({
             "video_id": video_id,
             "title": str(snippet.get("title") or "Untitled video"),
@@ -183,14 +193,26 @@ def discover_videos(
     allowed_domains = config.get("primary_domains", [])
     require_transcript = bool(config.get("require_transcript", True))
     selected = []
+    attempts = successes = usable = 0
     for candidate in candidates:
+        attempts += 1
+        transcript_error = False
         try:
             transcript = transcript_fetcher(candidate["video_id"])
         except (YouTubeTranscriptApiException, requests.RequestException):
+            transcript_error = True
+            drops["transcript_error"] += 1
             transcript = ""
+        if transcript.strip():
+            successes += 1
+        elif not transcript_error:
+            drops["empty_transcript"] += 1
         takeaway = _takeaway(transcript, candidate["title"])
+        if transcript.strip() and not takeaway:
+            drops["empty_takeaway"] += 1
         if require_transcript and not takeaway:
             continue
+        usable += bool(takeaway)
         candidate["takeaway"] = takeaway
         candidate["transcript_chars"] = len(transcript)
         candidate["primary_urls"] = _extract_primary_urls(candidate.pop("description"), allowed_domains)
@@ -204,6 +226,18 @@ def discover_videos(
         "lookback_days": lookback_days,
         "query_count": len(queries),
         "candidate_count": len(candidates),
+        "discovery_health": {
+            "status": "degraded" if any(drops.values()) or (candidates and not usable) else "ok",
+            "search_result_count": len(discovered),
+            "detail_count": len(processed_ids),
+            "candidate_count": len(candidates),
+            "transcript_attempts": attempts,
+            "transcript_successes": successes,
+            "selected_count": len(selected),
+            "usable_count": usable,
+            "unattempted_count": len(candidates) - attempts,
+            "drop_reasons": drops,
+        },
         "videos": selected,
     }
 
@@ -219,13 +253,26 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="topics/topics.yaml")
     parser.add_argument("--output")
+    parser.add_argument("--diagnostics", default=".cache/youtube-discovery-health.json")
     args = parser.parse_args()
     config = yaml.safe_load(Path(args.config).read_text(encoding="utf-8")) or {}
     youtube = config.get("daily", {}).get("sources", {}).get("youtube", {})
     if not youtube:
         raise SystemExit("daily.sources.youtube is not configured")
     output = Path(args.output or youtube.get("digest_path", "data/youtube-trends.json"))
-    payload = discover_videos(youtube, api_key=os.environ.get("YOUTUBE_API_KEY", ""))
+    diagnostics_path = Path(args.diagnostics)
+    try:
+        payload = discover_videos(youtube, api_key=os.environ.get("YOUTUBE_API_KEY", ""))
+    except (requests.RequestException, ValueError, TypeError, KeyError):
+        # Never serialize an API URL, key, transcript, or raw exception message.
+        write_digest({"status": "error", "reason": "discovery_failed"}, diagnostics_path)
+        print("YouTube discovery failed; safe diagnostics saved; previous digest retained.")
+        return 1
+    diagnostics = {"generated_at": payload["generated_at"], **payload["discovery_health"]}
+    write_digest(diagnostics, diagnostics_path)
+    if diagnostics["status"] != "ok":
+        print("YouTube discovery degraded; safe diagnostics saved; previous digest retained.")
+        return 1
     write_digest(payload, output)
     print(f"Wrote {len(payload['videos'])} transcript-backed videos to {output}")
     return 0

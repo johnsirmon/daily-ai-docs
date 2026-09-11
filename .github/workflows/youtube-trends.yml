@@ -31,8 +31,16 @@ jobs:
       - name: Validate the digest through the daily source adapter
         run: >-
           python -c "from pipeline.sources.youtube import collect_youtube_digest;
-          events, health = collect_youtube_digest({'digest_path':'data/youtube-trends.json'});
-          assert health['youtube:weekly-digest'].startswith('ok:'); print(health)"
+          events, health = collect_youtube_digest({'digest_path':'data/youtube-trends.json','required':True});
+          assert health == {'youtube:weekly-digest': f'ok:{len(events)}'}, health; print(health)"
+      - name: Preserve safe discovery health diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-discovery-health-${{ github.run_id }}
+          path: .cache/youtube-discovery-health.json
+          retention-days: 14
+          if-no-files-found: ignore
       - name: Commit the bounded weekly digest
         run: |
           git config user.name "github-actions[bot]"

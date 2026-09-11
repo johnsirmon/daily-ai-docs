@@ -90,6 +90,15 @@ def collect_youtube_digest(
                     },
                 ).validate()
             )
+        discovery = payload.get("discovery_health")
+        if discovery is not None:
+            if not isinstance(discovery, dict) or discovery.get("status") not in {"ok", "degraded", "error"}:
+                raise ValueError("invalid discovery health")
+            if discovery["status"] != "ok":
+                return events, {source_key: f"degraded:{len(events)}"}
+        # Legacy artifacts may lack counters. Do not call known unusable results healthy no-news.
+        if not events and (videos or int(payload.get("candidate_count", 0)) > 0):
+            return [], {source_key: "degraded:0"}
         return events, {source_key: f"ok:{len(events)}"}
     except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
         return [], {source_key: f"error:{type(exc).__name__}"}
