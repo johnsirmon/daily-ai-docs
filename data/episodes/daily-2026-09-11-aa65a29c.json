@@ -1,0 +1,370 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-11-aa65a29c",
+  "published_at": "2026-09-11T14:28:31.094556Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:10",
+    "github:anthropics/claude-code": "ok:1",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:0",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:1",
+    "youtube:weekly-digest": "ok:0"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:94bf6e711cee1f8943dc",
+      "source_type": "github_release",
+      "title": "OpenAI Codex python-v0.154.0",
+      "url": "https://github.com/openai/codex/releases/tag/python-v0.154.0",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-10T19:51:43Z",
+      "fetched_at": "2026-09-11T14:28:31.094556Z",
+      "evidence": "Install with pip install --upgrade openai-codex==0.154.0 (Python 3.10 or later). This release includes the matching openai-codex-cli-bin==0.154.0 runtime. - Add max and ultra reasoning-effort values. 39662 - Add ExternalMessage to synchronous and asynchronous run() and turn() calls. External content can start a turn or join an active regular turn with tool-level authority; it does not grant user authorization. Consumers receive independent event streams. 44086 - Add include_turns on resume/fork, turn_service_tier for one newly started turn, and source metadata. History selection changes the returned response, not model context. Existing defaults are preserved when these options are omitted. 44084 - Refresh generated protocol models and notifications, and preserve completion events that arrive before a turn-start response. 44032, 44400 Check these migrations when upgrading: - HookMetadata",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "python-v0.154.0",
+        "priority": 20,
+        "stars": 123346,
+        "private": false,
+        "draft": false,
+        "star_delta": 507,
+        "star_velocity": 315.69,
+        "momentum_window_days": 1.61
+      }
+    },
+    {
+      "event_id": "ghrel:98ebc4a5c5a6d7540282",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.268",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.268",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-10T20:30:54Z",
+      "fetched_at": "2026-09-11T14:28:31.094556Z",
+      "evidence": "What's changed - Added to the Claude apps gateway: with pricing: set in gateway.yaml, signed-in Claude Code clients receive the same rates through managed settings, so /cost and telemetry match the spend meter - Added a startup warning for gateways when access_control.allow_cidrs is empty, and a one-time warning the first time a request arrives from a public address - Added the gatewayInternalNetworks managed setting, letting administrators allow /login to a Claude apps gateway on their organization's own public IPv4 block - Added claude self-hosted-runner --remove-session-state (default off): delete each session's per-session directories under /_sessions/ when the session ends - Added configDirectory to the output of claude auth status --json - Added --json to claude plugin install, uninstall, update, enable and disable, and errorDetails/noteDetails to each row of claude plugin list --j",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.268",
+        "priority": 18,
+        "stars": 144745,
+        "private": false,
+        "draft": false,
+        "star_delta": 173,
+        "star_velocity": 107.72,
+        "momentum_window_days": 1.61
+      }
+    },
+    {
+      "event_id": "feed:71ab167788f6ed97bc73",
+      "source_type": "official_feed",
+      "title": "MAI-Code-1-Flash deprecated",
+      "url": "https://github.blog/changelog/2026-09-10-mai-code-1-flash-deprecated",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-10T16:54:01Z",
+      "fetched_at": "2026-09-11T14:28:31.094556Z",
+      "evidence": "We have deprecated MAI-Code-1-Flash across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) today, September 10, 2026. Model Deprecation date Suggested alternative&#8230; The post MAI-Code-1-Flash deprecated appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    },
+    {
+      "event_id": "ghrel:d3e115fe290b079b5eae",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.3.9",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.9",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T11:51:30Z",
+      "fetched_at": "2026-09-11T14:28:31.094556Z",
+      "evidence": "Release 0.155.0-alpha.3.9",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.3.9",
+        "priority": 20,
+        "stars": 123346,
+        "private": false,
+        "draft": false,
+        "star_delta": 507,
+        "star_velocity": 315.69,
+        "momentum_window_days": 1.61
+      }
+    },
+    {
+      "event_id": "ghrel:4abc68b1b8aadb843ce1",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.3.8",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.8",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T09:18:04Z",
+      "fetched_at": "2026-09-11T14:28:31.094556Z",
+      "evidence": "Release 0.155.0-alpha.3.8",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.3.8",
+        "priority": 20,
+        "stars": 123346,
+        "private": false,
+        "draft": false,
+        "star_delta": 507,
+        "star_velocity": 315.69,
+        "momentum_window_days": 1.61
+      }
+    },
+    {
+      "event_id": "ghrel:01854b72308ef5051137",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.3.7",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.7",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T07:58:14Z",
+      "fetched_at": "2026-09-11T14:28:31.094556Z",
+      "evidence": "Release 0.155.0-alpha.3.7",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.3.7",
+        "priority": 20,
+        "stars": 123346,
+        "private": false,
+        "draft": false,
+        "star_delta": 507,
+        "star_velocity": 315.69,
+        "momentum_window_days": 1.61
+      }
+    },
+    {
+      "event_id": "ghrel:2ca8347c5a05c864ff41",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.3",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T02:35:52Z",
+      "fetched_at": "2026-09-11T14:28:31.094556Z",
+      "evidence": "Release 0.155.0-alpha.3",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.3",
+        "priority": 20,
+        "stars": 123346,
+        "private": false,
+        "draft": false,
+        "star_delta": 507,
+        "star_velocity": 315.69,
+        "momentum_window_days": 1.61
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:94bf6e711cee1f8943dc",
+      "event_ids": [
+        "ghrel:94bf6e711cee1f8943dc"
+      ],
+      "headline": "OpenAI Codex python-v0.154.0",
+      "what_changed": "Install with pip install --upgrade openai-codex==0.154.0 (Python 3.10 or later). This release includes the matching openai-codex-cli-bin==0.154.0 runtime. - Add max and ultra reasoning-effort values. 39662 - Add ExternalMessage to synchronous and asynchronous run() and turn() calls. External content can start a turn or join an active regular turn with tool-level authority; it does not grant user authorization. Consumers receive independent event streams. 44086 - Add include_turns on resume/fork, turn_service_tier for one newly started turn, and source metadata. History selection changes the returned response, not model context. Existing defaults are preserved when these options are omitted. 44084 - Refresh generated protocol models and notifications, and preserve completion events that arrive before a turn-start response. 44032, 44400 Check these migrations when upgrading: - HookMetadata",
+      "why_it_matters": "Check your current tooling or upgrade path because this may require a change.",
+      "action": "act",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/python-v0.154.0"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 13.8,
+        "impact": 15.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 108.8
+      }
+    },
+    {
+      "story_id": "story:ghrel:98ebc4a5c5a6d7540282",
+      "event_ids": [
+        "ghrel:98ebc4a5c5a6d7540282"
+      ],
+      "headline": "Claude Code v2.1.268",
+      "what_changed": "What's changed - Added to the Claude apps gateway: with pricing: set in gateway.yaml, signed-in Claude Code clients receive the same rates through managed settings, so /cost and telemetry match the spend meter - Added a startup warning for gateways when access_control.allow_cidrs is empty, and a one-time warning the first time a request arrives from a public address - Added the gatewayInternalNetworks managed setting, letting administrators allow /login to a Claude apps gateway on their organization's own public IPv4 block - Added claude self-hosted-runner --remove-session-state (default off): delete each session's per-session directories under /_sessions/ when the session ends - Added configDirectory to the output of claude auth status --json - Added --json to claude plugin install, uninstall, update, enable and disable, and errorDetails/noteDetails to each row of claude plugin list --j",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Primary source; relevance score 18.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.268"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 14.01,
+        "impact": 15.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 107.01
+      }
+    },
+    {
+      "story_id": "story:feed:71ab167788f6ed97bc73",
+      "event_ids": [
+        "feed:71ab167788f6ed97bc73"
+      ],
+      "headline": "MAI-Code-1-Flash deprecated",
+      "what_changed": "We have deprecated MAI-Code-1-Flash across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) today, September 10, 2026. Model Deprecation date Suggested alternative&#8230; The post MAI-Code-1-Flash deprecated appeared first on The GitHub Blog .",
+      "why_it_matters": "Check your current tooling or upgrade path because this may require a change.",
+      "action": "act",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-10-mai-code-1-flash-deprecated"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 12.81,
+        "impact": 15.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 97.81
+      }
+    },
+    {
+      "story_id": "story:ghrel:d3e115fe290b079b5eae",
+      "event_ids": [
+        "ghrel:d3e115fe290b079b5eae"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.3.9",
+      "what_changed": "Release 0.155.0-alpha.3.9",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.9"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 19.13,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 93.13
+      }
+    },
+    {
+      "story_id": "story:ghrel:4abc68b1b8aadb843ce1",
+      "event_ids": [
+        "ghrel:4abc68b1b8aadb843ce1"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.3.8",
+      "what_changed": "Release 0.155.0-alpha.3.8",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.8"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 18.28,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 92.28
+      }
+    },
+    {
+      "story_id": "story:ghrel:01854b72308ef5051137",
+      "event_ids": [
+        "ghrel:01854b72308ef5051137"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.3.7",
+      "what_changed": "Release 0.155.0-alpha.3.7",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.7"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 17.83,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 91.83
+      }
+    },
+    {
+      "story_id": "story:ghrel:2ca8347c5a05c864ff41",
+      "event_ids": [
+        "ghrel:2ca8347c5a05c864ff41"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.3",
+      "what_changed": "Release 0.155.0-alpha.3",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Primary source; relevance score 20.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 16.04,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 90.04
+      }
+    }
+  ],
+  "noise_notes": [
+    "Skipped Gemini CLI: routine or prerelease-only update."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-11. Today's lead is OpenAI Codex python-v0.154.0. I filtered the rest down to 7 updates worth your attention.\n\nHere is the lead: OpenAI Codex python-v0.154.0. Install with pip install --upgrade openai-codex==0.154.0 (Python 3.10 or later). This release includes the matching openai-codex-cli-bin==0.154.0 runtime. - Add max and ultra reasoning-effort values. 39662 - Add ExternalMessage to synchronous and asynchronous run() and turn() calls. External content can start a turn or join an active regular turn with tool-level authority; it does not grant user authorization. Consumers receive independent event streams. 44086 - Add include_turns on resume/fork, turn_service_tier for one newly started turn, and source metadata. History selection changes the returned response, not model context. Existing defaults are preserved when these options are omitted. 44084 - Refresh generated protocol models and notifications, and preserve completion events that arrive before a turn-start response. 44032, 44400 Check these migrations when upgrading: - HookMetadata Check your current tooling or upgrade path because this may require a change. The call is act. Primary source; relevance score 20.\n\nNext: Claude Code v2.1.268. What's changed - Added to the Claude apps gateway: with pricing: set in gateway.yaml, signed-in Claude Code clients receive the same rates through managed settings, so /cost and telemetry match the spend meter - Added a startup warning for gateways when access_control.allow_cidrs is empty, and a one-time warning the first time a request arrives from a public address - Added the gatewayInternalNetworks managed setting, letting administrators allow /login to a Claude apps gateway on their organization's own public IPv4 block - Added claude self-hosted-runner --remove-session-state (default off): delete each session's per-session directories under /_sessions/ when the session ends - Added configDirectory to the output of claude auth status --json - Added --json to claude plugin install, uninstall, update, enable and disable, and errorDetails/noteDetails to each row of claude plugin list --j This is relevant to developers tracking AI coding agents. The call is watch. Primary source; relevance score 18.\n\nAlso: MAI-Code-1-Flash deprecated. We have deprecated MAI-Code-1-Flash across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) today, September 10, 2026. Model Deprecation date Suggested alternative&#8230; The post MAI-Code-1-Flash deprecated appeared first on The GitHub Blog . Check your current tooling or upgrade path because this may require a change. The call is act. Primary source; relevance score 20.\n\nAfter that: OpenAI Codex rust-v0.155.0-alpha.3.9. Release 0.155.0-alpha.3.9 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Primary source; relevance score 20.\n\nOne more: OpenAI Codex rust-v0.155.0-alpha.3.8. Release 0.155.0-alpha.3.8 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Primary source; relevance score 20.\n\nNext: OpenAI Codex rust-v0.155.0-alpha.3.7. Release 0.155.0-alpha.3.7 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Primary source; relevance score 20.\n\nFinally: OpenAI Codex rust-v0.155.0-alpha.3. Release 0.155.0-alpha.3 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Primary source; relevance score 20.\n\nHigh noise, low signal. Skipped Gemini CLI: routine or prerelease-only update.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "OpenAI Codex python-v0.154.0\nWhat changed: Install with pip install --upgrade openai-codex==0.154.0 (Python 3.10 or later). This release includes the matching openai-codex-cli-bin==0.154.0 runtime. - Add max and ultra reasoning-effort values. 39662 - Add ExternalMessage to synchronous and asynchronous run() and turn() calls. External content can start a turn or join an active regular turn with tool-level authority; it does not grant user authorization. Consumers receive independent event streams. 44086 - Add include_turns on resume/fork, turn_service_tier for one newly started turn, and source metadata. History selection changes the returned response, not model context. Existing defaults are preserved when these options are omitted. 44084 - Refresh generated protocol models and notifications, and preserve completion events that arrive before a turn-start response. 44032, 44400 Check these migrations when upgrading: - HookMetadata\nWhy it matters: Check your current tooling or upgrade path because this may require a change.\nRecommendation: ACT — Primary source; relevance score 20.\nSources: https://github.com/openai/codex/releases/tag/python-v0.154.0\n\nClaude Code v2.1.268\nWhat changed: What's changed - Added to the Claude apps gateway: with pricing: set in gateway.yaml, signed-in Claude Code clients receive the same rates through managed settings, so /cost and telemetry match the spend meter - Added a startup warning for gateways when access_control.allow_cidrs is empty, and a one-time warning the first time a request arrives from a public address - Added the gatewayInternalNetworks managed setting, letting administrators allow /login to a Claude apps gateway on their organization's own public IPv4 block - Added claude self-hosted-runner --remove-session-state (default off): delete each session's per-session directories under /_sessions/ when the session ends - Added configDirectory to the output of claude auth status --json - Added --json to claude plugin install, uninstall, update, enable and disable, and errorDetails/noteDetails to each row of claude plugin list --j\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Primary source; relevance score 18.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.268\n\nMAI-Code-1-Flash deprecated\nWhat changed: We have deprecated MAI-Code-1-Flash across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) today, September 10, 2026. Model Deprecation date Suggested alternative&#8230; The post MAI-Code-1-Flash deprecated appeared first on The GitHub Blog .\nWhy it matters: Check your current tooling or upgrade path because this may require a change.\nRecommendation: ACT — Primary source; relevance score 20.\nSources: https://github.blog/changelog/2026-09-10-mai-code-1-flash-deprecated\n\nOpenAI Codex rust-v0.155.0-alpha.3.9\nWhat changed: Release 0.155.0-alpha.3.9\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Primary source; relevance score 20.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.9\n\nOpenAI Codex rust-v0.155.0-alpha.3.8\nWhat changed: Release 0.155.0-alpha.3.8\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Primary source; relevance score 20.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.8\n\nOpenAI Codex rust-v0.155.0-alpha.3.7\nWhat changed: Release 0.155.0-alpha.3.7\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Primary source; relevance score 20.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.7\n\nOpenAI Codex rust-v0.155.0-alpha.3\nWhat changed: Release 0.155.0-alpha.3\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Primary source; relevance score 20.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3\n\nHigh noise / low signal\n- Skipped Gemini CLI: routine or prerelease-only update.",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "normal"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-11-aa65a29c/daily-ai-brief.mp3",
+    "size_bytes": 1947744,
+    "duration_secs": 324.624,
+    "sha256": "8d3140bbee4feeaad16475b2a529f37d70808e24540ad7e3243eaee7be2d699d",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}
