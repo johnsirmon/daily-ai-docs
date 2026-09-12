@@ -14,22 +14,31 @@
     "ghrel:d3e115fe290b079b5eae",
     "ghrel:4abc68b1b8aadb843ce1",
     "ghrel:01854b72308ef5051137",
-    "ghrel:2ca8347c5a05c864ff41"
+    "ghrel:2ca8347c5a05c864ff41",
+    "ghrel:861b32064a74b3b8fbd1",
+    "feed:28ba300194033bae7a74",
+    "feed:f5b7434d849eacf13f00",
+    "ghrel:99c8c55cb2156921b1fe",
+    "ghrel:cb40d7cf02f214121fe6"
   ],
-  "last_publication": "2026-09-11T14:28:31.094556Z",
-  "last_episode_id": "daily-2026-09-11-aa65a29c",
+  "last_publication": "2026-09-12T13:37:53.058298Z",
+  "last_episode_id": "daily-2026-09-11-b18bb3f4",
   "repo_snapshots": {
     "openai/codex": {
-      "stars": 123346,
-      "fetched_at": "2026-09-11T14:28:31.094556Z"
+      "stars": 123547,
+      "fetched_at": "2026-09-12T13:37:53.058298Z"
     },
     "anthropics/claude-code": {
-      "stars": 144745,
-      "fetched_at": "2026-09-11T14:28:31.094556Z"
+      "stars": 144823,
+      "fetched_at": "2026-09-12T13:37:53.058298Z"
     },
     "microsoft/vscode": {
       "stars": 191504,
       "fetched_at": "2026-09-09T23:55:50.753309Z"
+    },
+    "NousResearch/hermes-agent": {
+      "stars": 244785,
+      "fetched_at": "2026-09-12T13:37:53.058298Z"
     }
   }
 }

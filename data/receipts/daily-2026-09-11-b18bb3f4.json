@@ -1,0 +1,16 @@
+{
+  "episode_id": "daily-2026-09-11-b18bb3f4",
+  "confirmed_at": "2026-09-12T13:38:22.790404Z",
+  "feed": {
+    "status": "ok",
+    "latest_guid": "daily-2026-09-11-b18bb3f4",
+    "episode_count": 35,
+    "age_hours": 0.01,
+    "cache_control": "max-age=600",
+    "audio_verified": true,
+    "candidate_verified": true,
+    "sha256_verified": true,
+    "artwork": "3000x3000 RGB"
+  },
+  "audio_sha256": "dab8e953cbf7468baafb4c0ec68509eb53a0d54a53797dd8fd726060cac88b15"
+}
