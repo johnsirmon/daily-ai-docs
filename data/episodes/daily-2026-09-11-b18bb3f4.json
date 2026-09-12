@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-11-b18bb3f4",
+  "published_at": "2026-09-12T13:37:53.058298Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:5",
+    "github:anthropics/claude-code": "ok:1",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:1",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:2",
+    "youtube:weekly-digest": "degraded:0"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:861b32064a74b3b8fbd1",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.269",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.269",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T19:17:55Z",
+      "fetched_at": "2026-09-12T13:37:53.058298Z",
+      "evidence": "What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. with OTEL_LOG_TOOL_DETAILS - Added CLAUDE_CODE_GATEWAY_MODEL_DISCOVERY_TIMEOUT_MS to extend the LLM gateway /v1/models discovery timeout (default 3s) - Added a spinner tip suggesting /focus for a view with just your prompt, a one-line work summary, and the response - Added CLAUDE_CODE_WORKFLOW_MAX_C",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.269",
+        "priority": 18,
+        "stars": 144823,
+        "private": false,
+        "draft": false,
+        "star_delta": 78,
+        "star_velocity": 80.84,
+        "momentum_window_days": 0.96
+      }
+    },
+    {
+      "event_id": "feed:28ba300194033bae7a74",
+      "source_type": "official_feed",
+      "title": "Add VS Code Agents to Copilot usage metrics",
+      "url": "https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T21:30:30Z",
+      "fetched_at": "2026-09-12T13:37:53.058298Z",
+      "evidence": "GitHub Copilot usage metrics reports now include generally available metrics for activity in the dedicated VS Code Agents window, helping you measure adoption and engagement across enterprises and organizations. What&#8217;s&#8230; The post Add VS Code Agents to Copilot usage metrics appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    },
+    {
+      "event_id": "feed:f5b7434d849eacf13f00",
+      "source_type": "official_feed",
+      "title": "Auto-resolution and analysis updates in Copilot code review",
+      "url": "https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T20:00:07Z",
+      "fetched_at": "2026-09-12T13:37:53.058298Z",
+      "evidence": "Copilot code review now resolves its own comments once you address them and writes smart commit messages for you when you apply its code suggestions. Behind the scenes, Copilot now&#8230; The post Auto-resolution and analysis updates in Copilot code review appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    },
+    {
+      "event_id": "ghrel:99c8c55cb2156921b1fe",
+      "source_type": "github_release",
+      "title": "Hermes Agent v2026.9.11",
+      "url": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.11",
+      "product": "Hermes Agent",
+      "topic": "AI agents",
+      "published_at": "2026-09-11T19:20:31Z",
+      "fetched_at": "2026-09-12T13:37:53.058298Z",
+      "evidence": "Hermes Agent v0.21.2 (v2026.9.11) — The state.db Patch Release Release Date: September 11, 2026 > Patch release. v0.21.0 shipped a large rewrite of the session store's connection handling, and for some installs it made state.db fragile: second writers cancelling each other's locks, healthy databases reported as corrupt, one bad row killing sessions list. This release closes that class and rolls up everything else that landed on main in the four days since v0.21.1. About this release Measured at commit 04dd80a977f40b05e5b2054111747af07a61886a, the window since v0.21.1 contains 947 non-merge commits across 1,869 changed files (+182,504 / −15,564) and 312 merged PRs . 140 contributors appear in commits, co-author trailers, or salvage credits. ✨ Highlights state.db reliability campaign (six PRs, 44 issues closed) If your state.db broke after 0.21.0, this is the release for you. Six PRs fix t",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "NousResearch/hermes-agent",
+        "version": "v2026.9.11",
+        "priority": 20,
+        "stars": 244785,
+        "private": false,
+        "draft": false
+      }
+    },
+    {
+      "event_id": "ghrel:cb40d7cf02f214121fe6",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.3.10",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.10",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-11T15:52:58Z",
+      "fetched_at": "2026-09-12T13:37:53.058298Z",
+      "evidence": "Release 0.155.0-alpha.3.10",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.3.10",
+        "priority": 20,
+        "stars": 123547,
+        "private": false,
+        "draft": false,
+        "star_delta": 201,
+        "star_velocity": 208.33,
+        "momentum_window_days": 0.96
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:861b32064a74b3b8fbd1",
+      "event_ids": [
+        "ghrel:861b32064a74b3b8fbd1"
+      ],
+      "headline": "Claude Code v2.1.269",
+      "what_changed": "What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.269"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 13.89,
+        "impact": 6.0,
+        "momentum": 8.08,
+        "noise_penalty": 0.0,
+        "total": 95.97
+      }
+    },
+    {
+      "story_id": "story:feed:28ba300194033bae7a74",
+      "event_ids": [
+        "feed:28ba300194033bae7a74"
+      ],
+      "headline": "Add VS Code Agents to Copilot usage metrics",
+      "what_changed": "GitHub Copilot usage metrics reports now include generally available metrics for activity in the dedicated VS Code Agents window, helping you measure adoption and engagement across enterprises and organizations. What&#8217;s&#8230; The post Add VS Code Agents to Copilot usage metrics appeared first on The GitHub Blog .",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 14.63,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 90.63
+      }
+    },
+    {
+      "story_id": "story:feed:f5b7434d849eacf13f00",
+      "event_ids": [
+        "feed:f5b7434d849eacf13f00"
+      ],
+      "headline": "Auto-resolution and analysis updates in Copilot code review",
+      "what_changed": "Copilot code review now resolves its own comments once you address them and writes smart commit messages for you when you apply its code suggestions. Behind the scenes, Copilot now&#8230; The post Auto-resolution and analysis updates in Copilot code review appeared first on The GitHub Blog .",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 14.12,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 90.12
+      }
+    },
+    {
+      "story_id": "story:ghrel:99c8c55cb2156921b1fe",
+      "event_ids": [
+        "ghrel:99c8c55cb2156921b1fe"
+      ],
+      "headline": "Hermes Agent v2026.9.11",
+      "what_changed": "Hermes Agent v0.21.2 (v2026.9.11) — The state.db Patch Release Release Date: September 11, 2026 > Patch release. v0.21.0 shipped a large rewrite of the session store's connection handling, and for some installs it made state.db fragile: second writers cancelling each other's locks, healthy databases reported as corrupt, one bad row killing sessions list. This release closes that class and rolls up everything else that landed on main in the four days since v0.21.1. … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.11"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 13.9,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 89.9
+      }
+    },
+    {
+      "story_id": "story:ghrel:cb40d7cf02f214121fe6",
+      "event_ids": [
+        "ghrel:cb40d7cf02f214121fe6"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.3.10",
+      "what_changed": "Release 0.155.0-alpha.3.10",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.10"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 12.75,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 86.75
+      }
+    }
+  ],
+  "noise_notes": [
+    "Skipped Gemini CLI: below threshold after routine/prerelease penalties."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-12. Today's lead is Claude Code v2.1.269. I filtered the rest down to 5 updates worth your attention.\n\nHere is the lead: Claude Code v2.1.269. What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. … [Excerpt; see source for full details.] This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nNext: Add VS Code Agents to Copilot usage metrics. GitHub Copilot usage metrics reports now include generally available metrics for activity in the dedicated VS Code Agents window, helping you measure adoption and engagement across enterprises and organizations. What&#8217;s&#8230; The post Add VS Code Agents to Copilot usage metrics appeared first on The GitHub Blog . This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nAlso: Auto-resolution and analysis updates in Copilot code review. Copilot code review now resolves its own comments once you address them and writes smart commit messages for you when you apply its code suggestions. Behind the scenes, Copilot now&#8230; The post Auto-resolution and analysis updates in Copilot code review appeared first on The GitHub Blog . This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nAfter that: Hermes Agent v2026.9.11. Hermes Agent v0.21.2 (v2026.9.11) — The state.db Patch Release Release Date: September 11, 2026 > Patch release. v0.21.0 shipped a large rewrite of the session store's connection handling, and for some installs it made state.db fragile: second writers cancelling each other's locks, healthy databases reported as corrupt, one bad row killing sessions list. This release closes that class and rolls up everything else that landed on main in the four days since v0.21.1. … [Excerpt; see source for full details.] This is relevant to developers tracking AI agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nOne more: OpenAI Codex rust-v0.155.0-alpha.3.10. Release 0.155.0-alpha.3.10 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nHigh noise, low signal. Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage note. 1 tracked source was unavailable, so this edition is incomplete.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "Claude Code v2.1.269\nWhat changed: What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.269\n\nAdd VS Code Agents to Copilot usage metrics\nWhat changed: GitHub Copilot usage metrics reports now include generally available metrics for activity in the dedicated VS Code Agents window, helping you measure adoption and engagement across enterprises and organizations. What&#8217;s&#8230; The post Add VS Code Agents to Copilot usage metrics appeared first on The GitHub Blog .\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics\n\nAuto-resolution and analysis updates in Copilot code review\nWhat changed: Copilot code review now resolves its own comments once you address them and writes smart commit messages for you when you apply its code suggestions. Behind the scenes, Copilot now&#8230; The post Auto-resolution and analysis updates in Copilot code review appeared first on The GitHub Blog .\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review\n\nHermes Agent v2026.9.11\nWhat changed: Hermes Agent v0.21.2 (v2026.9.11) — The state.db Patch Release Release Date: September 11, 2026 > Patch release. v0.21.0 shipped a large rewrite of the session store's connection handling, and for some installs it made state.db fragile: second writers cancelling each other's locks, healthy databases reported as corrupt, one bad row killing sessions list. This release closes that class and rolls up everything else that landed on main in the four days since v0.21.1. … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.11\n\nOpenAI Codex rust-v0.155.0-alpha.3.10\nWhat changed: Release 0.155.0-alpha.3.10\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.10\n\nHigh noise / low signal\n- Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "normal"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-11-b18bb3f4/daily-ai-brief.mp3",
+    "size_bytes": 1583712,
+    "duration_secs": 263.952,
+    "sha256": "dab8e953cbf7468baafb4c0ec68509eb53a0d54a53797dd8fd726060cac88b15",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}
