@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-12-eeccde22",
+  "published_at": "2026-09-13T14:25:25.067860Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:0",
+    "github:anthropics/claude-code": "ok:1",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:0",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:0",
+    "youtube:weekly-digest": "degraded:0"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:2a68cabb6c20de64eba5",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.270",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.270",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-12T19:45:44Z",
+      "fetched_at": "2026-09-13T14:25:25.067860Z",
+      "evidence": "What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.270",
+        "priority": 18,
+        "stars": 144906,
+        "private": false,
+        "draft": false,
+        "star_delta": 83,
+        "star_velocity": 80.35,
+        "momentum_window_days": 1.03
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:2a68cabb6c20de64eba5",
+      "event_ids": [
+        "ghrel:2a68cabb6c20de64eba5"
+      ],
+      "headline": "Claude Code v2.1.270",
+      "what_changed": "What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.270"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 13.78,
+        "impact": 6.0,
+        "momentum": 8.04,
+        "noise_penalty": 0.0,
+        "total": 95.81
+      }
+    }
+  ],
+  "noise_notes": [
+    "Skipped Gemini CLI: below threshold after routine/prerelease penalties."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-13. Today's lead is Claude Code v2.1.270. I filtered the rest down to 1 update worth your attention.\n\nHere is the lead: Claude Code v2.1.270. What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269) This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nHigh noise, low signal. Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage note. 1 tracked source was unavailable, so this edition is incomplete.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "Claude Code v2.1.270\nWhat changed: What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.270\n\nHigh noise / low signal\n- Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "alert"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-12-eeccde22/daily-ai-brief.mp3",
+    "size_bytes": 397152,
+    "duration_secs": 66.192,
+    "sha256": "9a89c25ec4e44621afeae04f1adf17e253372fb2472714efb0d95abb2a614d9e",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}

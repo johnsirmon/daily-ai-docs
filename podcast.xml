@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-12</title><guid isPermaLink="false">daily-2026-09-11-b18bb3f4</guid><description>Claude Code v2.1.269
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-13</title><guid isPermaLink="false">daily-2026-09-12-eeccde22</guid><description>Claude Code v2.1.270
+What changed: What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.270
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Claude Code v2.1.270
+What changed: What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.270
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Claude Code v2.1.270
+What changed: What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.270
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Sun, 13 Sep 2026 14:25:25 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-12-eeccde22/daily-ai-brief.mp3" length="397152" type="audio/mpeg" /><itunes:duration>1:06</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-12</title><guid isPermaLink="false">daily-2026-09-11-b18bb3f4</guid><description>Claude Code v2.1.269
 What changed: What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. … [Excerpt; see source for full details.]
 Why it matters: This is relevant to developers tracking AI coding agents.
 Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
