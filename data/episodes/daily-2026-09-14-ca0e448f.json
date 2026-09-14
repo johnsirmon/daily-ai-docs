@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-14-ca0e448f",
+  "published_at": "2026-09-14T16:24:09.494147Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:1",
+    "github:anthropics/claude-code": "ok:0",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:1",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:0",
+    "youtube:weekly-digest": "degraded:0"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:47b5f91a6667b3df4b07",
+      "source_type": "github_release",
+      "title": "Hermes Agent v2026.9.14",
+      "url": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.14",
+      "product": "Hermes Agent",
+      "topic": "AI agents",
+      "published_at": "2026-09-14T16:04:14Z",
+      "fetched_at": "2026-09-14T16:24:09.494147Z",
+      "evidence": "Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 > Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. What this patch ships for remote Desktop / Cloud users - Remote dashboard sessions no longer expire on refresh bursts ( 110061, fixes 55712; salvage 71548 @Doud-FR, 55717 @liuhao1024). Both refresh paths on the gateway (cookie gate and the desktop's native bearer route) now coalesce concurrent requests carrying the same rotating refresh token, so a Desktop wake burst can no longer replay an already-rotated token into the Portal's reuse detection and revoke the whole session. Refresh also runs off the event loop, so a slow identity provi",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "NousResearch/hermes-agent",
+        "version": "v2026.9.14",
+        "priority": 20,
+        "stars": 245403,
+        "private": false,
+        "draft": false,
+        "star_delta": 618,
+        "star_velocity": 292.13,
+        "momentum_window_days": 2.12
+      }
+    },
+    {
+      "event_id": "ghrel:fce9db4d4ccde886d0fa",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.4",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-14T11:48:08Z",
+      "fetched_at": "2026-09-14T16:24:09.494147Z",
+      "evidence": "Release 0.155.0-alpha.4",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.4",
+        "priority": 20,
+        "stars": 124087,
+        "private": false,
+        "draft": false,
+        "star_delta": 540,
+        "star_velocity": 255.26,
+        "momentum_window_days": 2.12
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:47b5f91a6667b3df4b07",
+      "event_ids": [
+        "ghrel:47b5f91a6667b3df4b07"
+      ],
+      "headline": "Hermes Agent v2026.9.14",
+      "what_changed": "Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 > Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.14"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 19.89,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 105.89
+      }
+    },
+    {
+      "story_id": "story:ghrel:fce9db4d4ccde886d0fa",
+      "event_ids": [
+        "ghrel:fce9db4d4ccde886d0fa"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.4",
+      "what_changed": "Release 0.155.0-alpha.4",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 18.47,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 92.47
+      }
+    }
+  ],
+  "noise_notes": [
+    "Skipped Gemini CLI: below threshold after routine/prerelease penalties."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-14. Today's lead is Hermes Agent v2026.9.14. I filtered the rest down to 2 updates worth your attention.\n\nHere is the lead: Hermes Agent v2026.9.14. Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 > Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. … [Excerpt; see source for full details.] This is relevant to developers tracking AI agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nNext: OpenAI Codex rust-v0.155.0-alpha.4. Release 0.155.0-alpha.4 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nHigh noise, low signal. Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage note. 1 tracked source was unavailable, so this edition is incomplete.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "Hermes Agent v2026.9.14\nWhat changed: Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 > Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.14\n\nOpenAI Codex rust-v0.155.0-alpha.4\nWhat changed: Release 0.155.0-alpha.4\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4\n\nHigh noise / low signal\n- Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "alert"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-14-ca0e448f/daily-ai-brief.mp3",
+    "size_bytes": 699120,
+    "duration_secs": 116.52,
+    "sha256": "276bb867ec627468e49f96cfe32b3c18fd03b45fe5124a4df2d664ab3f1092dd",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}

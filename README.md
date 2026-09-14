@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — 2026-09-13
+# Daily AI Developer Brief — 2026-09-14
 
 A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.
 
@@ -14,15 +14,25 @@ See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment statu
 
 ## Today's signal
 
-### Claude Code v2.1.270
+### Hermes Agent v2026.9.14
 
-**What changed:** What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)
+**What changed:** Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 > Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. … [Excerpt; see source for full details.]
 
-**Why it matters:** This is relevant to developers tracking AI coding agents.
+**Why it matters:** This is relevant to developers tracking AI agents.
 
 **Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
 
-Sources: [1](https://github.com/anthropics/claude-code/releases/tag/v2.1.270)
+Sources: [1](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.14)
+
+### OpenAI Codex rust-v0.155.0-alpha.4
+
+**What changed:** Release 0.155.0-alpha.4
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4)
 
 ## High noise / low signal
 
@@ -44,14 +54,14 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 ## Source health
 
 - `feed:https://github.blog/changelog/feed/`: ok:0
-- `github:NousResearch/hermes-agent`: ok:0
+- `github:NousResearch/hermes-agent`: ok:1
 - `github:agentskills/agentskills`: ok:0
-- `github:anthropics/claude-code`: ok:1
+- `github:anthropics/claude-code`: ok:0
 - `github:google-gemini/gemini-cli`: ok:1
 - `github:microsoft/vscode`: ok:0
 - `github:microsoft/vscode-copilot-release`: ok:0
 - `github:modelcontextprotocol/specification`: ok:0
-- `github:openai/codex`: ok:0
+- `github:openai/codex`: ok:1
 - `youtube:weekly-digest`: degraded:0
 
 Each edition manifest distinguishes healthy no-news results from source outages.
