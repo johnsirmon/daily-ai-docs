@@ -1,5 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-15</title><guid isPermaLink="false">daily-2026-09-15-9f5a149a</guid><description>Claude Code v2.1.272
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-16</title><guid isPermaLink="false">daily-2026-09-16-82a47114</guid><description>Visual Studio Code 1.138.0
+What changed: https://code.visualstudio.com/updates/v1_138
+Why it matters: This is relevant to developers tracking Developer environment.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/microsoft/vscode/releases/tag/1.138.0
+
+Claude Code v2.1.273
+What changed: What's changed - Added x-claude-code-request-class, x-claude-code-agent-type, x-claude-code-prev-tool-durations, x-claude-code-compaction and x-claude-code-context-compacted request headers for LLM gateways; opt in with CLAUDE_CODE_GATEWAY_HINT_HEADERS=1 - Added a notification when an MCP server disconnects mid-session and automatic reconnection gives up, pointing at /mcp - Added forking a session started with claude --remote-control or /remote-control from the Claude app; the fork runs as a background session on your computer - Fixed Bash commands the permission checker cannot fully analyze skipping the prompt under permissions.blockReadsOutsideWorkingDirectories, and a subshell hiding a dangerous rm in bypass mode - Fixed skills synced from claude.ai staying available after your organization turns Skills off; they now move to the recoverable trash - Fixed … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.273
+
+OpenAI Codex rust-v0.155.0-alpha.2.5
+What changed: Release 0.155.0-alpha.2.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.5
+
+OpenAI Codex rusty-v8-v152.2.0
+What changed: Published rusty-v8-v152.2.0.
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rusty-v8-v152.2.0
+
+OpenAI Codex rust-v0.155.0-alpha.10
+What changed: Release 0.155.0-alpha.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.10
+
+OpenAI Codex rust-v0.155.0-alpha.9
+What changed: Release 0.155.0-alpha.9
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9
+
+GitHub Copilot suggests custom properties definitions
+What changed: GitHub Copilot can now suggest allowed values when you create a custom property for repositories in your organization. This feature is in public preview for GitHub Copilot Business and Copilot&amp;#8230; The post GitHub Copilot suggests custom properties definitions appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-15-github-copilot-suggests-custom-properties-definitions
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Visual Studio Code 1.138.0
+What changed: https://code.visualstudio.com/updates/v1_138
+Why it matters: This is relevant to developers tracking Developer environment.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/microsoft/vscode/releases/tag/1.138.0
+
+Claude Code v2.1.273
+What changed: What's changed - Added x-claude-code-request-class, x-claude-code-agent-type, x-claude-code-prev-tool-durations, x-claude-code-compaction and x-claude-code-context-compacted request headers for LLM gateways; opt in with CLAUDE_CODE_GATEWAY_HINT_HEADERS=1 - Added a notification when an MCP server disconnects mid-session and automatic reconnection gives up, pointing at /mcp - Added forking a session started with claude --remote-control or /remote-control from the Claude app; the fork runs as a background session on your computer - Fixed Bash commands the permission checker cannot fully analyze skipping the prompt under permissions.blockReadsOutsideWorkingDirectories, and a subshell hiding a dangerous rm in bypass mode - Fixed skills synced from claude.ai staying available after your organization turns Skills off; they now move to the recoverable trash - Fixed … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.273
+
+OpenAI Codex rust-v0.155.0-alpha.2.5
+What changed: Release 0.155.0-alpha.2.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.5
+
+OpenAI Codex rusty-v8-v152.2.0
+What changed: Published rusty-v8-v152.2.0.
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rusty-v8-v152.2.0
+
+OpenAI Codex rust-v0.155.0-alpha.10
+What changed: Release 0.155.0-alpha.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.10
+
+OpenAI Codex rust-v0.155.0-alpha.9
+What changed: Release 0.155.0-alpha.9
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9
+
+GitHub Copilot suggests custom properties definitions
+What changed: GitHub Copilot can now suggest allowed values when you create a custom property for repositories in your organization. This feature is in public preview for GitHub Copilot Business and Copilot&amp;#8230; The post GitHub Copilot suggests custom properties definitions appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-15-github-copilot-suggests-custom-properties-definitions
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Visual Studio Code 1.138.0
+What changed: https://code.visualstudio.com/updates/v1_138
+Why it matters: This is relevant to developers tracking Developer environment.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/microsoft/vscode/releases/tag/1.138.0
+
+Claude Code v2.1.273
+What changed: What's changed - Added x-claude-code-request-class, x-claude-code-agent-type, x-claude-code-prev-tool-durations, x-claude-code-compaction and x-claude-code-context-compacted request headers for LLM gateways; opt in with CLAUDE_CODE_GATEWAY_HINT_HEADERS=1 - Added a notification when an MCP server disconnects mid-session and automatic reconnection gives up, pointing at /mcp - Added forking a session started with claude --remote-control or /remote-control from the Claude app; the fork runs as a background session on your computer - Fixed Bash commands the permission checker cannot fully analyze skipping the prompt under permissions.blockReadsOutsideWorkingDirectories, and a subshell hiding a dangerous rm in bypass mode - Fixed skills synced from claude.ai staying available after your organization turns Skills off; they now move to the recoverable trash - Fixed … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.273
+
+OpenAI Codex rust-v0.155.0-alpha.2.5
+What changed: Release 0.155.0-alpha.2.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.5
+
+OpenAI Codex rusty-v8-v152.2.0
+What changed: Published rusty-v8-v152.2.0.
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rusty-v8-v152.2.0
+
+OpenAI Codex rust-v0.155.0-alpha.10
+What changed: Release 0.155.0-alpha.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.10
+
+OpenAI Codex rust-v0.155.0-alpha.9
+What changed: Release 0.155.0-alpha.9
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9
+
+GitHub Copilot suggests custom properties definitions
+What changed: GitHub Copilot can now suggest allowed values when you create a custom property for repositories in your organization. This feature is in public preview for GitHub Copilot Business and Copilot&amp;#8230; The post GitHub Copilot suggests custom properties definitions appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-15-github-copilot-suggests-custom-properties-definitions
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Wed, 16 Sep 2026 15:00:27 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-16-82a47114/daily-ai-brief.mp3" length="1652832" type="audio/mpeg" /><itunes:duration>4:35</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-15</title><guid isPermaLink="false">daily-2026-09-15-9f5a149a</guid><description>Claude Code v2.1.272
 What changed: What's changed - Bug fixes and reliability improvements
 Why it matters: This is relevant to developers tracking AI coding agents.
 Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
