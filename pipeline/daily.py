@@ -435,6 +435,8 @@ def finalize(
     publication_path: Path | None = None,
 ) -> EpisodeManifest:
     manifest = EpisodeManifest.from_dict(_load_json(manifest_path, {}))
+    if manifest.generation.get("preview_only") is True:
+        raise RuntimeError("unpublished preview artifacts cannot be finalized")
     manifest.validate(require_audio=True)
     if publication_path is not None:
         publication = _load_json(publication_path, {})

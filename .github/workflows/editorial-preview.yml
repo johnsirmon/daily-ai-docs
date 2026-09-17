@@ -1,0 +1,74 @@
+name: Unpublished Editorial Preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/grounded-daily-ai-brief]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: podcast-editorial-preview
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[editorial-preview]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Load current public publication history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: .preview-history
+          sparse-checkout: data
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install locked dependencies and media tools
+        run: |
+          python -m pip install --requirement requirements.lock
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Validate before using API quota
+        run: |
+          if git grep --quiet --extended-regexp 'AIza[0-9A-Za-z_-]{30,}'; then
+            echo 'A tracked Google API-key pattern was found.' >&2
+            exit 1
+          fi
+          python -m pytest -q
+      - name: Prepare one unpublished preview
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_MODEL: gemini-3.8-flash
+          AI_EDITORIAL: required
+          TTS_PROVIDER: edge
+        run: |
+          python -m pipeline.preview --history-root .preview-history --free-tier-confirmed
+      - name: Verify publication files are untouched
+        if: always()
+        run: git diff --exit-code -- data podcast.xml README.md
+      - name: Preserve unpublished review artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-preview-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .cache/preview/preview-report.json
+            .cache/preview/episode-manifest.json
+            .cache/preview/narration.txt
+            .cache/preview/show-notes.txt
+            .cache/preview/daily-ai-brief.mp3
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7

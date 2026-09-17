@@ -72,6 +72,30 @@ def test_editorial_skip_guards_every_publication_step():
     assert "failure()" in failed["if"] and "fail-run" in failed["run"]
 
 
+def test_preview_cannot_publish_and_requires_an_explicit_trigger():
+    document = workflow("editorial-preview.yml")
+    assert document["permissions"] == {"contents": "read"}
+    assert document["on"]["push"]["branches"] == ["feature/grounded-daily-ai-brief"]
+    assert "schedule" not in document["on"]
+    assert "[editorial-preview]" in document["jobs"]["preview"]["if"]
+    all_steps = steps("editorial-preview.yml")
+    history = next(step for step in all_steps if step.get("name") == "Load current public publication history")
+    assert history["with"]["ref"] == "main"
+    assert history["with"]["sparse-checkout"] == "data"
+    prepare = next(step for step in all_steps if step.get("name") == "Prepare one unpublished preview")
+    assert "pipeline.preview" in prepare["run"]
+    assert "--history-root .preview-history --free-tier-confirmed" in prepare["run"]
+    assert prepare["env"]["TTS_PROVIDER"] == "edge"
+    assert prepare["env"]["AI_EDITORIAL"] == "required"
+    commands = "\n".join(step.get("run", "") for step in all_steps)
+    assert not any(command in commands for command in
+                   ("git push", "git commit", "gh release", "pipeline.daily finalize", "pipeline.daily confirm"))
+    assert not any("pages" in step.get("uses", "") for step in all_steps)
+    upload = next(step for step in all_steps if step.get("uses") == "actions/upload-artifact@v4")
+    assert upload["if"] == "always()"
+    assert ".cache/publication.json" not in upload["with"]["path"]
+
+
 def test_youtube_diagnostics_are_always_retained_without_transcripts():
     upload = next(step for step in steps("youtube-trends.yml") if step.get("uses") == "actions/upload-artifact@v4")
     assert upload["if"] == "always()"

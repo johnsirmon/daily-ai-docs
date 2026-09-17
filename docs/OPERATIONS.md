@@ -114,6 +114,34 @@ subscriber-facing GUID, enclosure, media checksum, and artwork. A stale, failed,
 does not bypass feed checks. The publisher records downstream workflow failures with `pipeline.daily fail-run`;
 pending immutable candidates remain recoverable.
 
+### Unpublished listening preview
+
+`pipeline.preview` runs the real grounded preparation stage in a temporary directory with a copy of confirmed
+publication history. It requires explicit confirmation that the project is unbilled and the chosen model has usable
+free-tier quota. Its model-metadata request verifies access, not billing eligibility. It makes at most two generation
+requests with no retries, uses Edge TTS only, and never finalizes or confirms an episode.
+
+The `Unpublished Editorial Preview` workflow has read-only repository permissions, checks out current `main` publication
+history separately from feature code, and uploads only the preview report, verified script/manifest, show notes, and
+validated audio. A thin-news skip is a valid reported outcome; provider or validation failures fail the run. Verified
+scripts can remain available when audio fails, but unvalidated audio is never uploaded. Preview manifests are explicitly
+marked and cannot be passed to publication finalization. The planned enclosure URL in a preview manifest is not uploaded.
+
+During feature development, a push to `feature/grounded-daily-ai-brief` runs generation only when its commit message
+contains `[editorial-preview]`; ordinary pushes skip the job. Manual dispatch is also supported once GitHub recognizes
+the workflow. Confirm free-tier eligibility before every dispatch or marked push: the flag records operator confirmation,
+not an automatic spending cap. This workflow neither enables billing nor changes the scheduled publisher's settings.
+Artifacts contain public-source material and are not a private sharing channel.
+
+For a local preview, provide the key through a secure environment, not command-line arguments, and use a new output
+directory for each run:
+
+```bash
+AI_EDITORIAL=required TTS_PROVIDER=edge GEMINI_MODEL=gemini-3.8-flash \
+  uv run --with-requirements requirements.lock python -m pipeline.preview \
+  --history-root . --output-dir .cache/preview --free-tier-confirmed
+```
+
 ### Notebook references, not dependencies
 
 [notebooklm-py](https://github.com/teng-lin/notebooklm-py) and
