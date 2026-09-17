@@ -63,3 +63,24 @@ def test_manifest_roundtrip():
     loaded = EpisodeManifest.from_dict(manifest.to_dict())
     assert loaded.source_events[0].event_id == "event-1"
     assert loaded.stories[0].action == "act"
+
+
+def test_legacy_manifest_serialization_does_not_add_editorial_defaults():
+    manifest = EpisodeManifest(
+        1, "daily-1", "2026-09-07T12:00:00Z", "candidate", {"source": "ok:1"},
+        [event()], [story()], [], "Immutable released narration.", "Immutable notes.", {}, {},
+    )
+    original = manifest.to_dict()
+    assert "kind" not in original["stories"][0]
+    assert "editorial" not in original["stories"][0]
+    loaded = EpisodeManifest.from_dict(original)
+    assert loaded.stories[0].kind == "product"
+    assert loaded.stories[0].editorial == {}
+    assert loaded.to_dict() == original
+    assert loaded.stories[0].to_dict() == original["stories"][0]
+
+
+def test_research_source_type_and_bounded_full_text():
+    event(source_type="research_paper", metadata={"full_text": "Bounded public evidence."}).validate()
+    with pytest.raises(SchemaError, match="full_text exceeds"):
+        event(source_type="research_paper", metadata={"full_text": "x" * 80001}).validate()

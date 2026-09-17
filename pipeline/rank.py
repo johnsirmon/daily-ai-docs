@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
-from datetime import datetime
+from dataclasses import replace
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Iterable, List, Sequence, Tuple
 
 from .schema import SourceEvent, Story
@@ -58,6 +60,8 @@ def score_event(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Dict[
 
 
 def _identity(event: SourceEvent) -> Tuple[str, str]:
+    if event.source_type == "research_paper":
+        return event.source_type, str(event.metadata.get("paper_id") or event.event_id)
     version = str(event.metadata.get("version") or event.metadata.get("canonical_event") or event.title)
     version = re.sub(r"\s+", " ", version.strip().lower())
     return event.product.strip().lower(), version
@@ -193,3 +197,136 @@ def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> St
         source_urls=list(dict.fromkeys([event.url, *event.metadata.get("corroboration_urls", [])])),
         scores=scores,
     ).validate()
+
+
+def has_substantive_evidence(event: SourceEvent) -> bool:
+    """Distinguish a source-backed change from a newly numbered release."""
+    text = re.sub(r"^(?:what(?:'s| is) changed|release notes)\s*[-:]*\s*", "", event.evidence.strip(), flags=re.I)
+    if re.fullmatch(r"https://\S+", text):
+        return False
+    if re.fullmatch(r"(?:(?:published|release|version)\s+)?[vr]?\d[\w.+-]*[.!]?", text, re.I):
+        return False
+    if re.fullmatch(
+        r"(?:minor )?(?:bug fixes?(?: and reliability improvements)?|"
+        r"maintenance(?: release)?|performance improvements|"
+        r"various fixes(?: and improvements)?)[.!]?", text, re.I,
+    ):
+        return False
+    if len(text.split()) < 4:
+        return False
+    if event.channel == "prerelease":
+        return bool(_HIGH_IMPACT.search(text) or _requires_action(text))
+    substantive_sentence = any(
+        not _NOISE.search(sentence)
+        and re.search(r"\b(?:added|adds?|fixed|fixes|enables?|introduced|improved|removed)\b", sentence, re.I)
+        and len(sentence.split()) >= 5
+        for sentence in re.split(r"[.!?\n]+", text)
+    )
+    return not is_noise(event) or bool(_HIGH_IMPACT.search(text) or _requires_action(text) or substantive_sentence)
+
+
+def select_editorial_events(
+    events: Sequence[SourceEvent],
+    seen_event_ids: Iterable[str] = (),
+    *,
+    covered_paper_ids: Iterable[str] = (),
+    published_events: Sequence[dict] = (),
+    max_products: int = 3,
+    max_events_per_product: int = 2,
+    max_research: int = 1,
+    now: datetime | None = None,
+) -> Tuple[List[SourceEvent], List[str]]:
+    """Apply editorial eligibility before ranking, without marking rejects published."""
+    if not 1 <= max_products <= 5 or not 1 <= max_events_per_product <= 3 or max_research not in {0, 1}:
+        raise ValueError("editorial selection limits are outside the supported budget")
+    now = now or datetime.now(timezone.utc)
+    seen, papers_seen = set(seen_event_ids), set(covered_paper_ids)
+    products: Dict[str, List[SourceEvent]] = {}
+    papers: List[SourceEvent] = []
+    reasons: List[str] = []
+    def prior_digest(row: dict) -> str:
+        return row.get("evidence_sha256") or hashlib.sha256(row["normalized_evidence"].encode("utf-8")).hexdigest()
+    for event in dedupe_events(events):
+        normalized = " ".join(event.evidence.casefold().split())
+        evidence_digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        previous = [
+            row for row in published_events
+            if row["canonical_event_id"] == event.metadata.get("canonical_event_id", event.event_id)
+        ]
+        if event.event_id in seen:
+            if not previous or not event.metadata.get("updated_at"):
+                continue
+            prior = max(previous, key=lambda row: row["published_at"])
+            updated = datetime.fromisoformat(str(event.metadata["updated_at"]).replace("Z", "+00:00"))
+            covered_at = datetime.fromisoformat(prior["published_at"].replace("Z", "+00:00"))
+            if not covered_at < updated <= now or evidence_digest == prior_digest(prior):
+                continue
+            revision = hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:12]
+            event = replace(event, event_id=f"{event.event_id}:rev:{revision}", metadata={
+                **event.metadata, "canonical_event_id": event.event_id,
+            })
+            if event.event_id in seen:
+                continue
+        if event.source_type != "research_paper" and any(
+            row["product"].casefold() == event.product.casefold()
+            and row["channel"] == event.channel
+            and prior_digest(row) == evidence_digest
+            for row in published_events
+        ):
+            reasons.append(f"Excluded {event.product}: unchanged previously published evidence.")
+            continue
+        if event.source_type == "research_paper":
+            first = datetime.fromisoformat(str(event.metadata.get("first_published_at", event.published_at)).replace("Z", "+00:00"))
+            if (not event.metadata.get("full_text_available")
+                    or not str(event.metadata.get("full_text", "")).strip()
+                    or not event.metadata.get("paper_id")
+                    or event.metadata["paper_id"] in papers_seen
+                    or not now - timedelta(days=30) <= first <= now):
+                reasons.append(f"Excluded {event.product}: stale, already covered, or insufficient paper evidence.")
+                continue
+            papers.append(event)
+        elif event.source_type == "youtube_video":
+            reasons.append(f"Excluded {event.product}: learning discovery is not a verified new product change.")
+        elif has_substantive_evidence(event):
+            products.setdefault(event.product.casefold(), []).append(event)
+        else:
+            reasons.append(f"Excluded {event.product}: no substantive change evidence.")
+    ranked_groups = []
+    for group in products.values():
+        group.sort(key=lambda event: (score_event(event, seen)["total"], event.published_at), reverse=True)
+        ranked_groups.append(group[:max_events_per_product])
+    ranked_groups.sort(key=lambda group: (score_event(group[0], seen)["total"], group[0].published_at), reverse=True)
+    selected = [event for group in ranked_groups[:max_products] for event in group]
+    # Research is a distinct optional segment, not an automatic no-news edition.
+    if selected and max_research:
+        papers.sort(key=lambda event: (score_event(event, seen)["relevance"], event.published_at), reverse=True)
+        selected.extend(papers[:max_research])
+    return selected, list(dict.fromkeys(reasons))
+
+
+def group_editorial_stories(events: Sequence[SourceEvent]) -> List[Story]:
+    """Keep related release evidence together instead of reading one segment per tag."""
+    groups: Dict[str, List[SourceEvent]] = {}
+    for event in events:
+        key = event.event_id if event.source_type == "research_paper" else event.product.casefold()
+        groups.setdefault(key, []).append(event)
+    stories = []
+    for group in groups.values():
+        first = group[0]
+        base = event_to_story(first)
+        urls = list(dict.fromkeys(url for event in group for url in [
+            event.url, *event.metadata.get("corroboration_urls", []),
+        ]))
+        stories.append(Story(
+            story_id=base.story_id,
+            event_ids=[event.event_id for event in group],
+            headline=base.headline if len(group) == 1 else f"{first.product}: recent changes",
+            what_changed=_bounded_excerpt(" ".join(event.evidence for event in group)),
+            why_it_matters=base.why_it_matters,
+            action=base.action,
+            rationale=base.rationale,
+            source_urls=urls,
+            scores=base.scores,
+            kind="research" if first.source_type == "research_paper" else "product",
+        ).validate())
+    return stories

@@ -350,7 +350,16 @@ def readme_to_narration(readme_content: str, research_report: dict | None = None
 
 
 def manifest_to_narration(manifest) -> str:
-    """Render driving-safe narration directly from an EpisodeManifest."""
+    """Render narration, allowing a v2 draft's temporary narration placeholder.
+
+    Validate its evidence and verified prose here; the caller assigns the returned
+    script before final manifest validation or serialization.
+    """
+    if manifest.schema_version == 2:
+        from .schema import editorial_narration, validate_editorial_stories  # noqa: PLC0415
+
+        validate_editorial_stories(manifest.source_events, manifest.stories)
+        return editorial_narration(manifest.stories, manifest.generation)
     manifest.validate(require_audio=False)
     date_text = manifest.published_at[:10]
     failed_sources = [

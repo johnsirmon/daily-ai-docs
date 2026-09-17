@@ -7,26 +7,30 @@ import hashlib
 import json
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
 import yaml
 
 from .audio import analyze_audio
+from .evidence_archive import publication_evidence
 from .narrate import manifest_to_narration
 from .podcast import prepend_episode
 from .publish import validate_feed_file, verify_remote_audio, verify_remote_feed
-from .rank import event_to_story, select_events
+from .rank import event_to_story, group_editorial_stories, select_editorial_events, select_events
 from .render import write_manifest_readme
 from .schema import EpisodeManifest, SourceEvent
 from .sources import (
     collect_github_releases,
     collect_official_feeds,
+    collect_research_papers,
     collect_youtube_digest,
 )
-from .synthesis import refine_stories
+from .synthesis import refine_editorial, refine_stories
 from .tts import write_audio
+from .run_health import RUN_PATH
+from .source_health import primary_source_health
 
 logger = logging.getLogger(__name__)
 _CACHE_DIR = Path(".cache")
@@ -58,6 +62,85 @@ def load_state(path: Path = _STATE_PATH) -> Dict[str, Any]:
     return state
 
 
+def editorial_enabled(config: Dict[str, Any]) -> bool:
+    mode = os.environ.get("AI_EDITORIAL")
+    if mode is not None:
+        if mode not in {"off", "required"}:
+            raise ValueError("AI_EDITORIAL must be off or required")
+        return mode == "required"
+    return config.get("daily", {}).get("editorial", {}).get("enabled", False) is True
+
+
+def _publication_history(now: datetime) -> tuple[list[dict], set[str], list[dict]]:
+    history, paper_ids, published_events = [], set(), []
+    for path in sorted(Path("data/episodes").glob("*.json")):
+        manifest = EpisodeManifest.from_dict(_load_json(path, {}))
+        if manifest.status != "published":
+            continue
+        stamp = datetime.fromisoformat(manifest.published_at.replace("Z", "+00:00"))
+        for event in manifest.source_events:
+            if event.source_type == "research_paper" and event.metadata.get("paper_id"):
+                paper_ids.add(str(event.metadata["paper_id"]))
+        if not now - timedelta(days=30) <= stamp <= now:
+            continue
+        for event in manifest.source_events:
+            published_events.append({
+                "canonical_event_id": event.metadata.get("canonical_event_id", event.event_id),
+                "product": event.product, "channel": event.channel,
+                "published_at": manifest.published_at,
+                "normalized_evidence": " ".join(event.evidence.casefold().split()),
+                "evidence_sha256": event.metadata.get("source_evidence_sha256") or hashlib.sha256(
+                    " ".join(event.evidence.casefold().split()).encode("utf-8")
+                ).hexdigest(),
+            })
+        for story in manifest.stories:
+            history.append({
+                "episode_id": manifest.episode_id,
+                "published_at": manifest.published_at,
+                "event_ids": story.event_ids,
+                "headline": story.headline,
+                "what_changed": story.what_changed,
+                "why_it_matters": story.why_it_matters,
+            })
+    history.sort(key=lambda row: row["published_at"])
+    bounded_history = []
+    chars = 0
+    for row in reversed(history):
+        size = len(json.dumps(row, ensure_ascii=False))
+        if chars + size > 12000:
+            break
+        bounded_history.append(row)
+        chars += size
+    return list(reversed(bounded_history)), paper_ids, published_events
+
+
+def _record_run(status: str, *, now: datetime, reason: str, health: Dict[str, str],
+                minimum_health: float = 0.6) -> None:
+    state = load_state()
+    _save_json(RUN_PATH, {
+        "schema_version": 1,
+        "status": status,
+        "evaluated_at": now.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "reason": reason,
+        "source_health": health,
+        "minimum_source_health": minimum_health,
+        "last_episode_id": state.get("last_episode_id"),
+    })
+
+
+def _skip(*, now: datetime, reason: str, health: Dict[str, str],
+          minimum_health: float, notes: List[str]) -> Dict[str, Any]:
+    _record_run("skipped", now=now, reason=reason, health=health, minimum_health=minimum_health)
+    publication = {
+        "outcome": "skipped", "reason": reason, "selection_notes": notes,
+        "episode_id": "", "tag": "", "manifest_path": "", "audio_path": "", "audio_url": "",
+        "dry_run": False,
+    }
+    _save_json(_PUBLICATION_PATH, publication)
+    logger.info("Editorial run skipped: %s", reason)
+    return publication
+
+
 def _dry_events(now: datetime) -> tuple[List[SourceEvent], Dict[str, str]]:
     stamp = now.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
     event = SourceEvent(
@@ -81,25 +164,38 @@ def collect_events(config: Dict[str, Any], *, dry_run: bool, now: datetime) -> t
     daily = config.get("daily", {})
     source_config = daily.get("sources", {})
     lookback = int(daily.get("lookback_hours", 36))
+    grounded = editorial_enabled(config)
+    def source_options(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        return [
+            {**item, "enrichment": {
+                **(item.get("enrichment") or {}),
+                "enabled": grounded and (item.get("enrichment") or {}).get("enabled") is True,
+            }}
+            for item in items
+        ]
     github_events, github_health = collect_github_releases(
-        source_config.get("github_releases", []), lookback_hours=lookback, now=now
+        source_options(source_config.get("github_releases", [])), lookback_hours=lookback, now=now
     )
     feed_events, feed_health = collect_official_feeds(
-        source_config.get("feeds", []), lookback_hours=lookback, now=now
+        source_options(source_config.get("feeds", [])), lookback_hours=lookback, now=now
     )
     youtube_events, youtube_health = collect_youtube_digest(source_config.get("youtube", {}), now=now)
-    health = {**github_health, **feed_health, **youtube_health}
+    paper_events, paper_health = ([], {})
+    if grounded:
+        paper_events, paper_health = collect_research_papers(source_config.get("papers", {}), now=now)
+    health = {**github_health, **feed_health, **youtube_health, **paper_health}
     if not health:
         raise RuntimeError("no daily sources are configured")
-    healthy = sum(status.startswith("ok:") for status in health.values())
+    source_health = primary_source_health(health)
+    healthy = sum(status.startswith("ok:") for status in source_health.values())
     if not healthy:
         raise RuntimeError("all configured sources failed; refusing to call this a quiet day")
     minimum_ratio = float(daily.get("minimum_source_health", 0.6))
-    if healthy / len(health) < minimum_ratio:
+    if healthy / len(source_health) < minimum_ratio:
         raise RuntimeError(
-            f"source health {healthy}/{len(health)} is below the required {minimum_ratio:.0%}"
+            f"source health {healthy}/{len(source_health)} is below the required {minimum_ratio:.0%}"
         )
-    return github_events + feed_events + youtube_events, health
+    return github_events + feed_events + youtube_events + paper_events, health
 
 
 def _show_notes(stories, noise_notes: Iterable[str], source_health: Dict[str, str]) -> str:
@@ -110,12 +206,20 @@ def _show_notes(stories, noise_notes: Iterable[str], source_health: Dict[str, st
         return "Tracked sources were healthy, but no update cleared the actionability threshold today."
     sections = []
     for story in stories:
-        sections.append(
+        section = (
             f"{story.headline}\nWhat changed: {story.what_changed}\n"
             f"Why it matters: {story.why_it_matters}\n"
             f"Recommendation: {story.action.upper()} — {story.rationale}\n"
             + "Sources: " + ", ".join(story.source_urls)
         )
+        if story.kind == "research":
+            review = story.editorial["paper_review"]
+            section += (
+                f"\nResearch evidence: {review['evidence_status']}\n"
+                f"Method: {review['method']}\nLimitations: {review['limitations']}\n"
+                f"Experiment to try: {review['takeaway']}"
+            )
+        sections.append(section)
     notes = list(noise_notes)
     if notes:
         sections.append("High noise / low signal\n" + "\n".join(f"- {note}" for note in notes))
@@ -158,7 +262,7 @@ def _pending_candidate() -> EpisodeManifest | None:
     return candidates[0] if candidates else None
 
 
-def prepare(
+def _prepare(
     config_path: Path = Path("topics/topics.yaml"),
     *,
     dry_run: bool = False,
@@ -168,12 +272,14 @@ def prepare(
 ) -> Dict[str, Any]:
     now = now or datetime.now(timezone.utc)
     config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    use_editorial = editorial_enabled(config) and not dry_run
     state = load_state()
     if not dry_run and not force:
         pending = _pending_candidate()
         if pending is not None:
             _save_json(_MANIFEST_PATH, pending.to_dict())
             publication = {
+                "outcome": "publish",
                 "episode_id": pending.episode_id,
                 "tag": pending.episode_id,
                 "manifest_path": str(_MANIFEST_PATH),
@@ -190,30 +296,61 @@ def prepare(
     events, health = collect_events(config, dry_run=dry_run, now=now)
     _apply_measured_momentum(events, state, now)
     daily = config.get("daily", {})
-    selected, noise_notes = select_events(
-        events,
-        state.get("seen_event_ids", []),
-        limit=int(daily.get("max_stories", 7)),
-        minimum_score=float(daily.get("minimum_score", 75)),
-        max_per_source_type={"youtube_video": int(daily.get("max_youtube_stories", 1))},
-    )
-    deterministic = [event_to_story(event, state.get("seen_event_ids", [])) for event in selected]
+    editorial = daily.get("editorial", {})
+    if use_editorial:
+        minimum_words = int(editorial.get("minimum_words", 600))
+        maximum_words = int(editorial.get("maximum_words", 1100))
+        if not 100 <= minimum_words <= maximum_words <= 1500:
+            raise ValueError("invalid editorial word budget")
+        history, paper_ids, published_events = _publication_history(now)
+        selected, noise_notes = select_editorial_events(
+            events, state.get("seen_event_ids", []), covered_paper_ids=paper_ids,
+            published_events=published_events,
+            max_products=int(editorial.get("max_products", 3)),
+            max_events_per_product=int(editorial.get("max_events_per_product", 2)),
+            max_research=int(editorial.get("max_research", 1)), now=now,
+        )
+        if not selected:
+            return _skip(now=now, reason="insufficient_new_information", health=health,
+                         minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes)
+        stories, generation = refine_editorial(
+            selected, group_editorial_stories(selected), history, config={
+                **editorial, "target_min_words": minimum_words, "target_max_words": maximum_words,
+            },
+        )
+        if not stories or all(story.kind == "research" for story in stories):
+            return _skip(now=now, reason="insufficient_substantive_material", health=health,
+                         minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes)
+        used_ids = {event_id for story in stories for event_id in story.event_ids}
+        selected = [event for event in selected if event.event_id in used_ids]
+        selected = publication_evidence(selected, stories)
+    else:
+        selected, noise_notes = select_events(
+            events,
+            state.get("seen_event_ids", []),
+            limit=int(daily.get("max_stories", 7)),
+            minimum_score=float(daily.get("minimum_score", 75)),
+            max_per_source_type={"youtube_video": int(daily.get("max_youtube_stories", 1))},
+        )
+        deterministic = [event_to_story(event, state.get("seen_event_ids", [])) for event in selected]
     if dry_run:
         stories, generation = deterministic, {"provider": "deterministic", "calls": 0, "dry_run": True}
-    else:
+    elif not use_editorial:
         stories, generation = refine_stories(selected, deterministic)
     identity_material = "\n".join(event.event_id for event in selected) or "quiet"
+    if use_editorial:
+        identity_material = "editorial-v2\n" + identity_material
     suffix = hashlib.sha256(identity_material.encode("utf-8")).hexdigest()[:8]
     episode_date = (
         max(event.published_at for event in selected)[:10]
-        if selected
+        if selected and not use_editorial
         else now.astimezone(timezone.utc).date().isoformat()
     )
     episode_id = f"daily-{episode_date}-{suffix}"
     repository = os.environ.get("GITHUB_REPOSITORY", "johnsirmon/daily-ai-docs")
     audio_url = f"https://github.com/{repository}/releases/download/{episode_id}/daily-ai-brief.mp3"
     manifest = EpisodeManifest(
-        schema_version=1,
+        schema_version=2 if use_editorial else 1,
         episode_id=episode_id,
         published_at=now.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
         status="draft",
@@ -230,6 +367,12 @@ def prepare(
         audio={"url": audio_url},
     )
     manifest.narration = manifest_to_narration(manifest)
+    if use_editorial:
+        if len(manifest.narration.split()) < minimum_words:
+            return _skip(now=now, reason="insufficient_substantive_material", health=health,
+                         minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes)
+        if len(manifest.narration.split()) > maximum_words:
+            raise ValueError("editorial narration exceeds the configured word budget")
     manifest.validate(require_audio=False)
     _save_json(_MANIFEST_PATH, manifest.to_dict())
 
@@ -240,8 +383,8 @@ def prepare(
         if produced is None:
             raise RuntimeError("TTS failed; candidate feed was not modified")
         edition = manifest.generation["edition"]
-        minimum_duration = {"quiet": 30, "alert": 30, "normal": 180}[edition]
-        maximum_duration = {"quiet": 120, "alert": 300, "normal": 600}[edition]
+        minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
+        maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
         analysis = analyze_audio(
             produced,
             min_duration_secs=minimum_duration,
@@ -255,6 +398,7 @@ def prepare(
         _save_json(_MANIFEST_PATH, manifest.to_dict())
 
     publication = {
+        "outcome": "publish",
         "episode_id": episode_id,
         "tag": episode_id,
         "manifest_path": str(_MANIFEST_PATH),
@@ -264,6 +408,23 @@ def prepare(
     }
     _save_json(_PUBLICATION_PATH, publication)
     return publication
+
+
+def prepare(
+    config_path: Path = Path("topics/topics.yaml"), *,
+    dry_run: bool = False, no_audio: bool = False, force: bool = False,
+    now: datetime | None = None,
+) -> Dict[str, Any]:
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    enabled = editorial_enabled(config) and not dry_run
+    now = now or datetime.now(timezone.utc)
+    try:
+        return _prepare(config_path, dry_run=dry_run, no_audio=no_audio, force=force, now=now)
+    except Exception as exc:
+        if enabled:
+            logger.error("Editorial preparation failed: %s", type(exc).__name__)
+            _record_run("failed", now=now, reason=type(exc).__name__, health={})
+        raise
 
 
 def finalize(
@@ -341,6 +502,8 @@ def confirm(episode_id: str, *, verify_remote: bool = True) -> EpisodeManifest:
         )
     if (manifest.status == "published" and receipt_path.exists()
             and set(e.event_id for e in manifest.source_events).issubset(state["seen_event_ids"])):
+        _record_run("published", now=datetime.now(timezone.utc), reason="subscriber_confirmed",
+                    health=manifest.source_health)
         return manifest
     manifest.status = "published"
     manifest.validate(require_audio=True)
@@ -367,11 +530,13 @@ def confirm(episode_id: str, *, verify_remote: bool = True) -> EpisodeManifest:
         "feed": feed_result,
         "audio_sha256": manifest.audio["sha256"],
     })
+    _record_run("published", now=datetime.now(timezone.utc), reason="subscriber_confirmed",
+                health=manifest.source_health)
     return manifest
 
 
 def _print_github_output(publication: Dict[str, Any]) -> None:
-    for key in ("episode_id", "tag", "manifest_path", "audio_path", "audio_url"):
+    for key in ("outcome", "episode_id", "tag", "manifest_path", "audio_path", "audio_url"):
         print(f"{key}={publication[key]}")
 
 
@@ -392,6 +557,7 @@ def main() -> None:
     confirm_parser = sub.add_parser("confirm")
     confirm_parser.add_argument("--episode-id", default=os.environ.get("EXPECTED_GUID"))
     confirm_parser.add_argument("--skip-remote-verification", action="store_true")
+    sub.add_parser("fail-run", help="Persist a safe failed-workflow receipt without modifying the feed")
     args = parser.parse_args()
     if args.command == "prepare":
         result = prepare(Path(args.config), dry_run=args.dry_run, no_audio=args.no_audio, force=args.force)
@@ -403,6 +569,8 @@ def main() -> None:
         result = finalize(Path(args.manifest), verify_remote=not args.skip_remote_verification,
                           publication_path=args.publication)
         print(json.dumps({"episode_id": result.episode_id, "status": result.status}, indent=2))
+    elif args.command == "fail-run":
+        _record_run("failed", now=datetime.now(timezone.utc), reason="workflow_failure", health={})
     else:
         if not args.episode_id:
             raise SystemExit("confirm requires --episode-id or EXPECTED_GUID")

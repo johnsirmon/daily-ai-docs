@@ -4,12 +4,81 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
+import ipaddress
+import re
 from typing import Any, Dict, List
 from urllib.parse import urlparse
 
 
 class SchemaError(ValueError):
     """Raised when pipeline data does not satisfy the publication contract."""
+
+
+MAX_PUBLIC_EXCERPT_WORDS = 180
+
+
+MAX_FULL_TEXT_CHARS = 80000
+_SPOKEN_DEBRIS = re.compile(
+    r"https?://|www\.|\b[a-z0-9.-]+\.(?:com|org|net|io|dev|ai|edu|gov)(?:/|\b)|"
+    r"&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]+);|<[^>]+>|"
+    r"`|\*\*|\[[^\]]+\]\(|^\s*(?:[#>|]|[-*+]\s)|"
+    r"full (?:release )?notes? (?:were |was )?not (?:available|included)|"
+    r"extraction (?:failed|notice)|\[(?:truncated|excerpt|extraction)[^\]]*\]|"
+    r"(?:summary|excerpt) unavailable|read more|click here|"
+    r"the call is (?:act|watch|skip)|"
+    r"this (?:update|release|change) (?:matters|is relevant) (?:because|for)|"
+    r"keep (?:an eye on|building)|worth (?:your attention|watching)|"
+    r"ignore (?:all |the |previous |prior )*instructions|system prompt",
+    re.IGNORECASE | re.MULTILINE,
+)
+_QUANTITIES = re.compile(
+    r"\d+(?:[.,]\d+)*(?:\s*(?:%|percent|million|billion|trillion))?|"
+    r"\b(?:zero|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+    r"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|"
+    r"thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|"
+    r"million|billion|trillion)\b",
+    re.IGNORECASE,
+)
+
+
+def validate_editorial_source_url(value: Any) -> None:
+    try:
+        _https_url(value, "editorial source URL")
+        parsed = urlparse(value)
+        port = parsed.port
+    except ValueError as exc:
+        raise SchemaError("editorial source URL is invalid") from exc
+    host = parsed.hostname or ""
+    if parsed.username or parsed.password or port not in {None, 443}:
+        raise SchemaError("editorial sources must use public HTTPS URLs without credentials")
+    if "." not in host or host.endswith((".localhost", ".local", ".internal", ".test")):
+        raise SchemaError("editorial sources must use public hosts")
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        return
+    if not address.is_global:
+        raise SchemaError("editorial sources must not use private addresses")
+
+
+def validate_spoken_text(value: Any, name: str, *, limit: int = 12000) -> str:
+    """Reject debris rather than silently rewriting already verified narration."""
+    text = _text(value, name, limit=limit)
+    if _SPOKEN_DEBRIS.search(text):
+        raise SchemaError(f"{name} contains URLs, markup, instructions, or editorial boilerplate")
+    return text
+
+
+def _quantities(text: str) -> set[str]:
+    return {
+        re.sub(r"\s+", "", match.lower().replace(",", "").replace("percent", "%"))
+        for match in _QUANTITIES.findall(text)
+    }
+
+
+def validate_quantities(text: str, evidence: str, name: str) -> None:
+    if not _quantities(text).issubset(_quantities(evidence)):
+        raise SchemaError(f"{name} contains an unsupported quantitative claim")
 
 
 def _text(value: Any, name: str, *, allow_empty: bool = False, limit: int = 8000) -> str:
@@ -60,7 +129,8 @@ class SourceEvent:
     def validate(self) -> "SourceEvent":
         _text(self.event_id, "event_id", limit=200)
         if self.source_type not in {
-            "github_release", "official_feed", "announcement", "security", "community", "youtube_video"
+            "github_release", "official_feed", "announcement", "security", "community", "youtube_video",
+            "research_paper",
         }:
             raise SchemaError("unsupported source_type")
         _text(self.title, "title", limit=500)
@@ -78,6 +148,8 @@ class SourceEvent:
             raise SchemaError("metadata must be an object")
         if self.metadata.get("private") is True or self.metadata.get("draft") is True:
             raise SchemaError("private repositories and draft releases are not publishable")
+        if "full_text" in self.metadata:
+            _text(self.metadata["full_text"], "full_text", allow_empty=True, limit=MAX_FULL_TEXT_CHARS)
         return self
 
     def to_dict(self) -> Dict[str, Any]:
@@ -105,6 +177,8 @@ class Story:
     rationale: str
     source_urls: List[str]
     scores: Dict[str, float]
+    kind: str = "product"
+    editorial: Dict[str, Any] = field(default_factory=dict)
 
     def validate(self) -> "Story":
         _text(self.story_id, "story_id", limit=200)
@@ -113,7 +187,7 @@ class Story:
         _text(self.headline, "headline", limit=500)
         _text(self.what_changed, "what_changed", limit=1600)
         _text(self.why_it_matters, "why_it_matters", limit=1600)
-        if self.action not in {"act", "watch", "skip"}:
+        if not isinstance(self.action, str) or self.action not in {"act", "watch", "skip"}:
             raise SchemaError("action must be act, watch, or skip")
         _text(self.rationale, "rationale", limit=1200)
         if not isinstance(self.source_urls, list) or not self.source_urls:
@@ -125,11 +199,20 @@ class Story:
         for key, value in self.scores.items():
             if not isinstance(key, str) or not isinstance(value, (int, float)):
                 raise SchemaError("scores must contain numeric values")
+        if not isinstance(self.kind, str) or self.kind not in {"product", "research"}:
+            raise SchemaError("kind must be product or research")
+        if not isinstance(self.editorial, dict):
+            raise SchemaError("editorial must be an object")
         return self
 
     def to_dict(self) -> Dict[str, Any]:
         self.validate()
-        return asdict(self)
+        data = asdict(self)
+        # Default fields must not change immutable pre-editorial release manifests.
+        if self.kind == "product" and not self.editorial:
+            data.pop("kind")
+            data.pop("editorial")
+        return data
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Story":
@@ -139,6 +222,161 @@ class Story:
             return cls(**data).validate()
         except TypeError as exc:
             raise SchemaError(f"invalid story fields: {exc}") from exc
+
+
+def source_urls_for_events(events: List[SourceEvent]) -> List[str]:
+    urls = []
+    for event in events:
+        urls.append(event.url)
+        corroboration = event.metadata.get("corroboration_urls", [])
+        if not isinstance(corroboration, list):
+            raise SchemaError("corroboration_urls must be a list")
+        for url in corroboration:
+            _https_url(url, "corroboration URL")
+        urls.extend(corroboration)
+    return list(dict.fromkeys(urls))
+
+
+def validate_editorial_stories(events: List[SourceEvent], stories: List[Story]) -> None:
+    """Check citations and structure; semantic entailment requires independent verification."""
+    by_id = {event.event_id: event.validate() for event in events}
+    if len(by_id) != len(events):
+        raise SchemaError("source event IDs must be unique")
+    if not stories or len(stories) > 7:
+        raise SchemaError("editorial publication requires one to seven stories")
+    seen_events: set[str] = set()
+    seen_stories: set[str] = set()
+    sentences: set[str] = set()
+    research_count = 0
+    for story in stories:
+        story.validate()
+        if story.story_id in seen_stories:
+            raise SchemaError("editorial story IDs must be unique")
+        seen_stories.add(story.story_id)
+        if len(set(story.event_ids)) != len(story.event_ids) or seen_events.intersection(story.event_ids):
+            raise SchemaError("editorial stories duplicate evidence")
+        seen_events.update(story.event_ids)
+        if not set(story.event_ids).issubset(by_id):
+            raise SchemaError("story references an unknown source event")
+        referenced = [by_id[event_id] for event_id in story.event_ids]
+        if not all(event.authority == "primary" for event in referenced):
+            raise SchemaError("editorial claims require public primary evidence")
+        if story.source_urls != source_urls_for_events(referenced):
+            raise SchemaError("story source URLs must match referenced evidence")
+        for url in story.source_urls:
+            validate_editorial_source_url(url)
+        if set(story.editorial) - {"spoken_text", "claims", "paper_review"}:
+            raise SchemaError("unknown editorial fields")
+        spoken = validate_spoken_text(story.editorial.get("spoken_text"), "spoken_text")
+        claims = story.editorial.get("claims")
+        if not isinstance(claims, list) or not 1 <= len(claims) <= 40:
+            raise SchemaError("editorial claims must be a bounded non-empty list")
+        claim_events = set()
+        claim_keys = set()
+        quotes = []
+        for claim in claims:
+            if not isinstance(claim, dict) or set(claim) != {"text", "event_id", "quote"}:
+                raise SchemaError("claim requires only text, event_id, and quote")
+            claim_id = _text(claim["event_id"], "claim.event_id", limit=200)
+            if claim_id not in story.event_ids:
+                raise SchemaError("claim references an unknown or unrelated source event")
+            claim_events.add(claim_id)
+            text = validate_spoken_text(claim["text"], "claim.text", limit=1600)
+            _text(claim["quote"], "claim.quote", limit=4000)
+            quote = claim["quote"]
+            event = by_id[claim_id]
+            if quote not in event.evidence and quote not in event.metadata.get("full_text", ""):
+                raise SchemaError("claim quote must exactly match known evidence")
+            key = (claim_id, text.casefold())
+            if key in claim_keys:
+                raise SchemaError("duplicate editorial claim")
+            claim_keys.add(key)
+            validate_quantities(text, quote, "claim.text")
+            quotes.append(quote)
+        if claim_events != set(story.event_ids):
+            raise SchemaError("claims must account for every grouped event")
+        support = "\n".join(quotes)
+        for name in ("headline", "what_changed", "why_it_matters", "rationale"):
+            text = validate_spoken_text(getattr(story, name), name)
+            validate_quantities(text, support, name)
+        validate_quantities(spoken, support, "spoken_text")
+        for sentence in re.split(r"(?<=[.!?])\s+", spoken):
+            normalized = " ".join(sentence.casefold().split())
+            if len(normalized.split()) >= 6:
+                if normalized in sentences:
+                    raise SchemaError("repeated spoken sentence is editorial boilerplate")
+                sentences.add(normalized)
+        papers = [event for event in referenced if event.source_type == "research_paper"]
+        if bool(papers) != (story.kind == "research"):
+            raise SchemaError("research evidence must be clearly classified as research")
+        if story.kind == "research":
+            research_count += 1
+            if len(papers) != 1 or len(referenced) != 1 or research_count > 1:
+                raise SchemaError("an episode supports at most one distinct research paper")
+            paper = papers[0]
+            metadata = paper.metadata
+            if metadata.get("full_text_available") is not True:
+                raise SchemaError("research requires reviewed full-text evidence, not an abstract")
+            if metadata.get("full_text_retained") is False:
+                if "full_text" in metadata or metadata.get("evidence_status") != "reviewed_excerpts":
+                    raise SchemaError("archived research must retain only reviewed excerpts")
+                full_text = _text(metadata.get("reviewed_excerpts"), "research.reviewed_excerpts", limit=4000)
+                if len(full_text.split()) > MAX_PUBLIC_EXCERPT_WORDS or full_text != papers[0].evidence:
+                    raise SchemaError("archived research exceeds the supporting-excerpt contract")
+            else:
+                full_text = _text(metadata.get("full_text"), "research.full_text", limit=MAX_FULL_TEXT_CHARS)
+            _text(metadata.get("paper_id"), "paper_id", limit=100)
+            if not re.fullmatch(r"(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?/\d{7})", metadata["paper_id"]):
+                raise SchemaError("paper_id must be a canonical base arXiv ID")
+            version = metadata.get("version")
+            if not ((type(version) is int and version > 0) or
+                    (isinstance(version, str) and re.fullmatch(r"v?[1-9]\d*", version))):
+                raise SchemaError("research version must identify a positive paper revision")
+            _timestamp(metadata.get("first_published_at"), "first_published_at")
+            _timestamp(metadata.get("updated_at"), "updated_at")
+            if any(claim["quote"].strip() not in full_text for claim in claims):
+                raise SchemaError("research claims require exact full-text quotes")
+            review = story.editorial.get("paper_review")
+            required = {"question", "method", "result", "limitations", "takeaway", "evidence_status"}
+            if not isinstance(review, dict) or set(review) != required:
+                raise SchemaError("paper_review requires question, method, result, limitations, takeaway, evidence_status")
+            for name in required - {"evidence_status"}:
+                text = validate_spoken_text(review[name], f"paper_review.{name}", limit=1600)
+                validate_quantities(text, support, f"paper_review.{name}")
+            if review["evidence_status"] != "author_reported_not_reproduced":
+                raise SchemaError("research evidence_status must be author_reported_not_reproduced")
+            if not re.search(r"\bresearch\b", spoken, re.IGNORECASE):
+                raise SchemaError("spoken research must be labeled as research")
+            if not re.search(r"\bauthor[- ]reported\b", spoken, re.IGNORECASE):
+                raise SchemaError("spoken research must identify author-reported evidence")
+            if not re.search(r"\bnot (?:independently )?reproduced\b", spoken, re.IGNORECASE):
+                raise SchemaError("spoken research must disclose that results are not reproduced")
+            if review["limitations"].strip() not in spoken:
+                raise SchemaError("spoken research must retain the reviewed limitations verbatim")
+        elif "paper_review" in story.editorial:
+            raise SchemaError("product stories must not contain a paper_review")
+
+
+def editorial_narration(stories: List[Story], generation: Dict[str, Any]) -> str:
+    """Assemble verified prose without introducing new, unverified narrator text."""
+    if not isinstance(generation, dict):
+        raise SchemaError("generation must be an object")
+    if (generation.get("provider") != "gemini" or generation.get("verified") is not True
+            or generation.get("editorial_version") != 1 or generation.get("calls") != 2):
+        raise SchemaError("editorial narration requires independently verified Gemini generation")
+    model = _text(generation.get("model"), "generation.model", limit=120)
+    if not model.startswith("gemini-"):
+        raise SchemaError("editorial model must be a Gemini model")
+    opening = validate_spoken_text(generation.get("opening"), "generation.opening", limit=2000)
+    closing = validate_spoken_text(generation.get("closing"), "generation.closing", limit=2000)
+    support = "\n".join(claim["quote"] for story in stories for claim in story.editorial["claims"])
+    validate_quantities(opening, support, "generation.opening")
+    validate_quantities(closing, support, "generation.closing")
+    text = "\n\n".join([opening, *(story.editorial["spoken_text"] for story in stories), closing])
+    _text(text, "editorial narration", limit=16000)
+    if len(text.split()) > 1500:
+        raise SchemaError("editorial narration exceeds the 1500-word budget")
+    return text
 
 
 @dataclass
@@ -157,7 +395,7 @@ class EpisodeManifest:
     audio: Dict[str, Any]
 
     def validate(self, *, require_audio: bool | None = None) -> "EpisodeManifest":
-        if self.schema_version != 1:
+        if self.schema_version not in {1, 2}:
             raise SchemaError("unsupported manifest schema_version")
         _text(self.episode_id, "episode_id", limit=200)
         _timestamp(self.published_at, "published_at")
@@ -184,15 +422,7 @@ class EpisodeManifest:
             referenced = [events_by_id[event_id] for event_id in story.event_ids]
             if not any(event.authority == "primary" for event in referenced):
                 raise SchemaError("every story requires a primary source")
-            expected_urls = []
-            for event in referenced:
-                expected_urls.append(event.url)
-                corroboration = event.metadata.get("corroboration_urls", [])
-                if not isinstance(corroboration, list):
-                    raise SchemaError("corroboration_urls must be a list")
-                expected_urls.extend(corroboration)
-            expected_urls = list(dict.fromkeys(expected_urls))
-            if story.source_urls != expected_urls:
+            if story.source_urls != source_urls_for_events(referenced):
                 raise SchemaError("story source URLs must match referenced evidence")
         if not isinstance(self.noise_notes, list) or not all(isinstance(x, str) for x in self.noise_notes):
             raise SchemaError("noise_notes must be a string list")
@@ -202,6 +432,15 @@ class EpisodeManifest:
         _text(self.show_notes, "show_notes", limit=24000)
         if not isinstance(self.generation, dict) or not isinstance(self.audio, dict):
             raise SchemaError("generation and audio must be objects")
+        if self.schema_version == 2:
+            validate_editorial_stories(self.source_events, self.stories)
+            expected_narration = editorial_narration(self.stories, self.generation)
+            if self.narration != expected_narration:
+                raise SchemaError("v2 narration must exactly match verified editorial prose")
+            if require_audio or self.status in {"ready", "candidate", "published"}:
+                for event in self.source_events:
+                    if "full_text" in event.metadata or len(event.evidence.split()) > MAX_PUBLIC_EXCERPT_WORDS:
+                        raise SchemaError("publication must archive short excerpts, not full source documents")
         if require_audio is None:
             require_audio = self.status in {"ready", "published"}
         if require_audio:
@@ -216,6 +455,8 @@ class EpisodeManifest:
     def to_dict(self) -> Dict[str, Any]:
         self.validate(require_audio=False)
         data = asdict(self)
+        if self.schema_version == 1:
+            data["stories"] = [story.to_dict() for story in self.stories]
         return data
 
     @classmethod

@@ -55,6 +55,21 @@ def test_independent_monitor_remains_age_sensitive():
     monitor = next(step["run"] for step in steps("feed-health.yml") if step.get("name") == "Verify public feed freshness")
     assert "--max-age-hours 25" in monitor
     assert "--candidate" not in monitor
+    assert "--allow-editorial-skips" in monitor
+
+
+def test_editorial_skip_guards_every_publication_step():
+    all_steps = steps("update-radar.yml")
+    first = next(index for index, step in enumerate(all_steps)
+                 if step.get("name") == "Upload or resume immutable release assets")
+    last = next(index for index, step in enumerate(all_steps)
+                if step.get("name") == "Commit publication receipt and state")
+    for step in all_steps[first:last + 1]:
+        assert step.get("if") == "steps.prepare.outputs.outcome == 'publish'"
+    skipped = next(step for step in all_steps if step.get("name") == "Persist editorial skip receipt")
+    assert "data/runs/latest.json" in skipped["run"]
+    failed = next(step for step in all_steps if step.get("name") == "Persist failed editorial run")
+    assert "failure()" in failed["if"] and "fail-run" in failed["run"]
 
 
 def test_youtube_diagnostics_are_always_retained_without_transcripts():

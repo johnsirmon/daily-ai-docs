@@ -35,9 +35,95 @@ secret, and delete the old key. Repository-side controls cannot revoke a disclos
 The retired GitHub Models endpoint and `GITHUB_TOKEN` are not used for inference. `GITHUB_TOKEN` is limited to GitHub
 collection and publication.
 
-For lowest maintenance, use `TTS_PROVIDER=openai` with a supported audio API and set `OPENAI_API_KEY`. The default Edge
-path keeps the existing no-key deployment working, but it is treated as best-effort and still must pass full decode,
-duration, and size checks before publication.
+Keep `TTS_PROVIDER=edge` for the existing no-key deployment. It is treated as best-effort and must pass full decode,
+duration, and size checks before publication. `TTS_PROVIDER=openai` is an optional paid alternative requiring a supported
+audio API and `OPENAI_API_KEY`; enabling it is a separate cost decision, never an automatic fallback.
+
+## Grounded editorial mode
+
+The new mode is **opt-in**: `AI_EDITORIAL=off` remains the workflow default so that deploying code without a Gemini
+key does not break the existing publisher. The legacy `AI_SYNTHESIS` setting only prioritizes action labels; enabling
+it alone does not produce better explanations.
+
+With `AI_EDITORIAL=required`, the publisher:
+
+- Rejects version-only releases, generic maintenance notes, and insufficient evidence before scoring.
+- Groups related product releases rather than reading a segment for every tag.
+- Compares evidence with confirmed publication history. Rejected candidates are not marked published.
+- Uses a dedicated Gemini key for a bounded editorial draft and verification, with no paid, alternate-provider,
+  or deterministic publication fallback on failure.
+- Explains the actual change, affected workflow, practical consequence, and justified next step.
+- Optionally includes one research-paper takeaway inside the same listening budget. Papers require available
+  full-text evidence, method, result, limitations, and a practical experiment; collection alone is not review.
+- Requires normal audio to measure **300-480 seconds**. Word budgets guide preparation but do not replace measured
+  duration. Short scripts are skipped, not padded; an unexpected audio duration is a validation failure.
+
+### Free-tier-only activation
+
+1. Create or choose a Gemini API project whose selected model has free-tier access, without paid billing enabled.
+   Check the actual project's model availability and quotas: a Google AI/Notebook subscription is separate from API
+   access, and a cost alert is not a hard spending cap.
+2. Store the dedicated key as the `GEMINI_API_KEY` GitHub Actions secret. Never paste a real key into chat, source,
+   issue text, logs, or example commands. Do not reuse an OpenAI key or export consumer-account cookies.
+3. Set `GEMINI_MODEL` to a verified free-tier model. The default is `gemini-3.8-flash`, using Google's documented
+   OpenAI-compatible endpoint. No NotebookLM wrapper package is required.
+4. Validate an unpublished sample and its grounded claims before activation. Browser generation and live publishing
+   are separate operational actions; ordinary tests mock providers and do not consume account quotas.
+5. Set repository variable `AI_EDITORIAL=required`. Keep `TTS_PROVIDER=edge` for the existing no-key audio path.
+   Setting another TTS provider is a separate cost decision, not an automatic fallback.
+
+The free Gemini API tier may use submitted content to improve Google's products. Only approved public source material
+and public episode history may be sent. Authentication, quota, timeout, schema, grounding, or verification failures stop
+publication and retain the last good feed.
+
+`daily.editorial` in [topics.yaml](../topics/topics.yaml) controls grouping and script budgets. Daily evaluation does
+not promise daily audio. A short urgent-alert exception and research-only editions are not enabled.
+
+### Research evidence
+
+The first-party paper collector uses bounded primary arXiv metadata and available HTML full text. Initial eligibility
+requires first publication within the last 30 days. An updated timestamp alone does not make an old paper new.
+Unavailable or oversized full text is explicitly rejected rather than summarized from an abstract as though fully
+reviewed. Paper identities are checked against confirmed episodes so the same paper is not repeated each day.
+
+Numerical results must retain their evaluation setting and important limitations. Label author-reported/preprint
+findings honestly; do not describe benchmark results as independently reproduced or as shipped product capabilities.
+
+Paper `queries` are literal topic phrases, not raw arXiv query expressions. Discovery, full-text attempts, response
+sizes, and model context are bounded. Recent model context is capped independently from confirmed novelty history.
+Full text is used in memory for review, then removed before any episode manifest is saved. Publication retains only
+short supporting excerpts (at most 180 quoted words per source), provenance hashes, and independently verified
+paraphrases. Long verbatim spoken passages are rejected. Archived research excerpts can validate immutable recovery
+but cannot stand in for full text during a new paper review.
+
+Public article enrichment is configured per GitHub/feed source through `enrichment.enabled` and exact `allowed_hosts`.
+The daily orchestrator disables these extra fetches outside grounded mode. VS Code release-note links and GitHub Blog
+excerpts have curated allowlists. Failed enrichment records degraded health and summary-only evidence; it does not
+invent article content. Per-candidate/detail diagnostics remain visible without counting as additional configured
+sources in the health quorum.
+
+### Intentional skips and monitoring
+
+A healthy run with insufficient new information writes `data/runs/latest.json` and a skipped preparation outcome.
+It does not synthesize audio, create a release, modify RSS, deploy Pages, or advance published-event history. A script
+rejected for insufficient material can also skip after editorial evaluation but before TTS.
+
+The independent monitor runs `pipeline.health --max-age-hours 25 --allow-editorial-skips`. A fresh healthy skip
+receipt must reference the exact last confirmed episode and its delivery receipt. Monitoring still checks that
+subscriber-facing GUID, enclosure, media checksum, and artwork. A stale, failed, malformed, or mismatched run receipt
+does not bypass feed checks. The publisher records downstream workflow failures with `pipeline.daily fail-run`;
+pending immutable candidates remain recoverable.
+
+### Notebook references, not dependencies
+
+[notebooklm-py](https://github.com/teng-lin/notebooklm-py) and
+[notebooklm-mcp](https://github.com/roomi-fields/notebooklm-mcp) are useful references for asynchronous audio generation,
+source readiness, polling, and download. Their consumer integrations depend on undocumented endpoints and full-account
+sessions. Reimplementing them locally would not remove those protocol and credential risks.
+
+No wrapper dependency, copied implementation, or cookie-based production adapter is included. A separately authorized
+Notebook audio comparison may be useful later. The official Google Cloud Podcast API is a different service; its cost
+eligibility must be established separately and is not implied by a consumer subscription or Gemini API key.
 
 ## Local commands
 
@@ -103,9 +189,11 @@ pass, `python -m pipeline.daily confirm` marks the manifest published, advances 
 
 ## Model policy
 
-Deterministic stories are always available from validated source evidence. Optional AI synthesis performs at most one
+In legacy mode, deterministic stories are available from validated source evidence. Optional AI synthesis performs at most one
 call over the selected events. External source text is labeled untrusted in the prompt, output must reference known
 event IDs, and all output is schema-validated. `AI_SYNTHESIS=required` fails closed if the provider or schema fails.
+Grounded editorial mode has a different, versioned contract with a bounded draft and independent verification.
+It never publishes the legacy deterministic fallback when a required editorial stage fails.
 
 ## Audio and RSS policy
 

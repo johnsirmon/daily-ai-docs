@@ -13,6 +13,7 @@ import requests
 from .schema import EpisodeManifest
 
 from .publish import PublicationError, verify_remote_feed
+from .run_health import skip_candidate
 
 
 def main() -> None:
@@ -24,10 +25,14 @@ def main() -> None:
     parser.add_argument("--expected-guid", default=os.environ.get("EXPECTED_GUID"))
     parser.add_argument("--candidate", type=Path, help="Verify exact candidate delivery, including aged recovery")
     parser.add_argument("--max-age-hours", type=float, default=36)
+    parser.add_argument("--allow-editorial-skips", action="store_true",
+                        help="Verify fresh intentional skips against the last confirmed episode")
     parser.add_argument("--retries", type=int, default=1)
     parser.add_argument("--delay-seconds", type=float, default=15)
     args = parser.parse_args()
     candidate = EpisodeManifest.from_dict(json.loads(args.candidate.read_text())) if args.candidate else None
+    if args.allow_editorial_skips and candidate is None:
+        candidate = skip_candidate(max_age_hours=args.max_age_hours)
     last_error = None
     for attempt in range(max(1, args.retries)):
         try:

@@ -16,6 +16,15 @@ daily:
   max_youtube_stories: 1
   minimum_score: 75
   minimum_source_health: 0.6
+  editorial:
+    # Enable only after configuring and verifying a free-tier GEMINI_API_KEY.
+    enabled: false
+    max_products: 3
+    max_events_per_product: 2
+    max_research: 1
+    minimum_words: 600
+    maximum_words: 1100
+    max_input_chars: 120000
   sources:
     github_releases:
       - repo: openai/codex
@@ -38,6 +47,9 @@ daily:
         product: Visual Studio Code
         topic: Developer environment
         priority: 18
+        enrichment:
+          enabled: true
+          allowed_hosts: [code.visualstudio.com, github.com]
       - repo: microsoft/vscode-copilot-release
         product: GitHub Copilot
         topic: AI coding agents
@@ -55,11 +67,25 @@ daily:
         product: GitHub Developer Tools
         topic: AI coding agents
         priority: 20
+        enrichment:
+          enabled: true
+          allowed_hosts: [github.blog]
         include:
           - copilot
           - visual studio code
           - model context protocol
           - coding agent
+    papers:
+      enabled: true
+      lookback_days: 30
+      max_results: 5
+      max_papers: 3
+      max_full_text_chars: 60000
+      queries:
+        - coding agents
+        - software engineering agents
+        - agent evaluation
+        - agent reliability
     youtube:
       enabled: true
       required: false

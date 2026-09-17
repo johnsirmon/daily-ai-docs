@@ -1,9 +1,30 @@
 import shutil
 import subprocess
+import json
 
 import pytest
 
 from pipeline.audio import AudioValidationError, analyze_audio
+
+
+@pytest.mark.parametrize("duration,accepted", [(299.999, False), (300, True), (480, True), (480.001, False)])
+def test_grounded_brief_measured_duration_boundaries(monkeypatch, tmp_path, duration, accepted):
+    path = tmp_path / "measured.mp3"
+    path.write_bytes(b"x" * 12000)
+    monkeypatch.setattr("pipeline.audio.shutil.which", lambda name: f"/usr/bin/{name}")
+    payload = {"format": {"duration": str(duration)}, "streams": [
+        {"codec_name": "mp3", "sample_rate": 24000, "channels": 1},
+    ]}
+    monkeypatch.setattr(
+        "pipeline.audio.subprocess.run",
+        lambda command, **kwargs: subprocess.CompletedProcess(command, 0, stdout=json.dumps(payload)),
+    )
+    if accepted:
+        assert analyze_audio(path, min_duration_secs=300, max_duration_secs=480,
+                             full_decode=False)["duration_secs"] == duration
+    else:
+        with pytest.raises(AudioValidationError, match="outside 300-480"):
+            analyze_audio(path, min_duration_secs=300, max_duration_secs=480, full_decode=False)
 
 
 def test_audio_validation_rejects_small_file(tmp_path):

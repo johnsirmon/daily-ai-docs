@@ -20,6 +20,8 @@ env:
   PODCAST_MIGRATE_FEED: "1"
   AI_SYNTHESIS: ${{ vars.AI_SYNTHESIS || 'off' }}
   AI_MODEL: ${{ vars.AI_MODEL || 'gpt-5-mini' }}
+  AI_EDITORIAL: ${{ vars.AI_EDITORIAL || 'off' }}
+  GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.8-flash' }}
   TTS_PROVIDER: ${{ vars.TTS_PROVIDER || 'edge' }}
 
 jobs:
@@ -57,10 +59,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: python -m pipeline.daily prepare --github-output >> "$GITHUB_OUTPUT"
 
+      - name: Persist editorial skip receipt
+        if: env.AI_EDITORIAL == 'required' && steps.prepare.outputs.outcome == 'skipped'
+        run: |
+          test -f data/runs/latest.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/runs/latest.json
+          git diff --cached --quiet || git commit -m "chore: record editorial evaluation"
+          git push
+
       - name: Upload or resume immutable release assets
+        if: steps.prepare.outputs.outcome == 'publish'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.prepare.outputs.tag }}
@@ -80,9 +94,11 @@ jobs:
           fi
 
       - name: Verify audio and build candidate feed
+        if: steps.prepare.outputs.outcome == 'publish'
         run: python -m pipeline.daily finalize --publication .cache/publication.json
 
       - name: Commit candidate feed and manifest
+        if: steps.prepare.outputs.outcome == 'publish'
         env:
           EPISODE_ID: ${{ steps.prepare.outputs.episode_id }}
         run: |
@@ -93,6 +109,7 @@ jobs:
           git push
 
       - name: Build Pages artifact from validated candidate
+        if: steps.prepare.outputs.outcome == 'publish'
         run: |
           mkdir -p _site/assets
           cp podcast.xml _site/podcast.xml
@@ -100,29 +117,45 @@ jobs:
           printf '%s\n' 'Daily AI Developer Brief podcast feed' > _site/index.html
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
+        if: steps.prepare.outputs.outcome == 'publish'
       - uses: actions/upload-pages-artifact@v3
+        if: steps.prepare.outputs.outcome == 'publish'
         with:
           path: _site
       - name: Deploy candidate to GitHub Pages
+        if: steps.prepare.outputs.outcome == 'publish'
         id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Verify subscriber-facing delivery
+        if: steps.prepare.outputs.outcome == 'publish'
         env:
           EXPECTED_GUID: ${{ steps.prepare.outputs.episode_id }}
         run: python -m pipeline.health --candidate "data/episodes/${EXPECTED_GUID}.json" --retries 10 --delay-seconds 20
 
       - name: Confirm publication and advance novelty state
+        if: steps.prepare.outputs.outcome == 'publish'
         env:
           EXPECTED_GUID: ${{ steps.prepare.outputs.episode_id }}
         run: python -m pipeline.daily confirm
 
       - name: Commit publication receipt and state
+        if: steps.prepare.outputs.outcome == 'publish'
         env:
           EPISODE_ID: ${{ steps.prepare.outputs.episode_id }}
         run: |
-          git add data/state.json "data/episodes/${EPISODE_ID}.json" "data/receipts/${EPISODE_ID}.json"
+          git add data/state.json data/runs/latest.json "data/episodes/${EPISODE_ID}.json" "data/receipts/${EPISODE_ID}.json"
           git diff --cached --quiet || git commit -m "chore: confirm ${EPISODE_ID} delivery"
+          git push
+
+      - name: Persist failed editorial run
+        if: failure() && env.AI_EDITORIAL == 'required'
+        run: |
+          python -m pipeline.daily fail-run
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/runs/latest.json
+          git diff --cached --quiet || git commit -m "chore: record failed editorial run"
           git push
 
       - name: Preserve private-safe diagnostics

@@ -23,7 +23,7 @@ jobs:
       - name: Verify public feed freshness
         env:
           PODCAST_FEED_URL: https://johnsirmon.github.io/daily-ai-docs/podcast.xml
-        run: python -m pipeline.health --max-age-hours 25 --retries 3 --delay-seconds 20
+        run: python -m pipeline.health --max-age-hours 25 --allow-editorial-skips --retries 3 --delay-seconds 20
       - name: Open or update a failure issue
         if: failure()
         env:

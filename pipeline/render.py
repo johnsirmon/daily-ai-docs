@@ -235,6 +235,18 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             "Sources: " + ", ".join(f"[{index + 1}]({url})" for index, url in enumerate(story.source_urls)),
             "",
         ]
+        if story.kind == "research":
+            review = story.editorial["paper_review"]
+            lines += [
+                f"**Research evidence:** {review['evidence_status']}",
+                "",
+                f"**Method:** {review['method']}",
+                "",
+                f"**Limitations:** {review['limitations']}",
+                "",
+                f"**Experiment to try:** {review['takeaway']}",
+                "",
+            ]
     if manifest.noise_notes:
         lines += ["## High noise / low signal", ""]
         lines.extend(f"- {note}" for note in manifest.noise_notes)
@@ -244,6 +256,8 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "",
         "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
         "- Up to seven actionable stories, with shorter alerts and healthy quiet-day editions.",
+        "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs and skips thin-news days without changing the feed.",
+        "- Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.",
         "- Product-change claims require public primary evidence.",
         "- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation.",
         "- Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.",
@@ -264,6 +278,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "`collect → select → manifest → narrate/audio → validate → publish → verify delivery → confirm`",
         "",
         "The versioned episode manifest is the source of truth for narration, show notes, and this README. Preparation and failed delivery do not advance novelty state.",
+        "In grounded mode, intentional skips have durable run receipts. Monitoring still verifies the last confirmed feed, audio, and artwork and rejects failed or stale evaluations.",
         "",
         "## Weekly YouTube signal",
         "",

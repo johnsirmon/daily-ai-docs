@@ -2,6 +2,7 @@
 
 import pipeline.narrate as _narrate_mod
 from pipeline.narrate import readme_to_narration, _strip_markdown, _normalise_sentence
+from pipeline.schema import EpisodeManifest, SourceEvent, Story
 
 
 _SAMPLE_README = """\
@@ -70,6 +71,29 @@ def _reset_counters():
     """Reset rotation counters so each test starts from index 0."""
     _narrate_mod._topic_idx = 0
     _narrate_mod._repo_idx = 0
+
+
+def test_legacy_manifest_narration_remains_byte_for_byte_unchanged():
+    event = SourceEvent(
+        "event-1", "announcement", "Tool update", "https://example.com/tool", "Tool", "Agents",
+        "2026-09-17T10:00:00Z", "2026-09-17T11:00:00Z", "Adds command previews.",
+    )
+    story = Story(
+        "story-1", ["event-1"], "Tool update", "Adds command previews.", "Inspect commands.",
+        "watch", "Try the preview.", [event.url], {"total": 80},
+    )
+    manifest = EpisodeManifest(
+        1, "daily-1", "2026-09-17T12:00:00Z", "draft", {"primary": "ok:1"},
+        [event], [story], [], "Draft placeholder.", "Source notes.", {}, {},
+    )
+    assert _narrate_mod.manifest_to_narration(manifest) == (
+        "This is your Daily AI Developer Brief for 2026-09-17. Today's lead is Tool update. "
+        "I filtered the rest down to 1 update worth your attention.\n\n"
+        "Here is the lead: Tool update. Adds command previews. Inspect commands. "
+        "The call is watch. Try the preview.\n\n"
+        "That is the useful signal for today. Source links and exact versions are in the episode notes. "
+        "Keep building, and I will be back tomorrow."
+    )
 
 
 def test_narration_contains_date_heading():
@@ -244,4 +268,3 @@ def test_build_closing_is_non_empty():
     closing = build_closing()
     assert len(closing) > 20
     assert "week" in closing.lower()
-
