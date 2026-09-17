@@ -35,18 +35,25 @@
     "ghrel:4d916e5dd5a1f46cf24f",
     "ghrel:ee3a7e2a044903ed6d15",
     "ghrel:e4ce5c78b5100b96a6f0",
-    "feed:547415ff166106996890"
+    "feed:547415ff166106996890",
+    "ghrel:5744b97e5a176886ffa7",
+    "ghrel:cb08c3ec4026c81c3a27",
+    "feed:41f2b23db141d620003a",
+    "ghrel:004241a97c26ea44979a",
+    "ghrel:ca8bc2182dbdf131efc9",
+    "ghrel:0ec3008b414dbc1e5a3f",
+    "ghrel:7c90a1cd27592e5ce7b8"
   ],
-  "last_publication": "2026-09-16T15:00:27.170645Z",
-  "last_episode_id": "daily-2026-09-16-82a47114",
+  "last_publication": "2026-09-17T15:02:10.012307Z",
+  "last_episode_id": "daily-2026-09-17-1711ce11",
   "repo_snapshots": {
     "openai/codex": {
-      "stars": 124696,
-      "fetched_at": "2026-09-16T15:00:27.170645Z"
+      "stars": 124918,
+      "fetched_at": "2026-09-17T15:02:10.012307Z"
     },
     "anthropics/claude-code": {
-      "stars": 145303,
-      "fetched_at": "2026-09-16T15:00:27.170645Z"
+      "stars": 145828,
+      "fetched_at": "2026-09-17T15:02:10.012307Z"
     },
     "microsoft/vscode": {
       "stars": 192574,
