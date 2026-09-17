@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — 2026-09-16
+# Daily AI Developer Brief — 2026-09-17
 
 A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.
 
@@ -14,75 +14,75 @@ See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment statu
 
 ## Today's signal
 
-### Visual Studio Code 1.138.0
+### Claude Code v2.1.274
 
-**What changed:** https://code.visualstudio.com/updates/v1_138
-
-**Why it matters:** This is relevant to developers tracking Developer environment.
-
-**Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
-
-Sources: [1](https://github.com/microsoft/vscode/releases/tag/1.138.0)
-
-### Claude Code v2.1.273
-
-**What changed:** What's changed - Added x-claude-code-request-class, x-claude-code-agent-type, x-claude-code-prev-tool-durations, x-claude-code-compaction and x-claude-code-context-compacted request headers for LLM gateways; opt in with CLAUDE_CODE_GATEWAY_HINT_HEADERS=1 - Added a notification when an MCP server disconnects mid-session and automatic reconnection gives up, pointing at /mcp - Added forking a session started with claude --remote-control or /remote-control from the Claude app; the fork runs as a background session on your computer - Fixed Bash commands the permission checker cannot fully analyze skipping the prompt under permissions.blockReadsOutsideWorkingDirectories, and a subshell hiding a dangerous rm in bypass mode - Fixed skills synced from claude.ai staying available after your organization turns Skills off; they now move to the recoverable trash - Fixed … [Excerpt; see source for full details.]
+**What changed:** What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]
 
 **Why it matters:** This is relevant to developers tracking AI coding agents.
 
 **Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
 
-Sources: [1](https://github.com/anthropics/claude-code/releases/tag/v2.1.273)
+Sources: [1](https://github.com/anthropics/claude-code/releases/tag/v2.1.274)
 
-### OpenAI Codex rust-v0.155.0-alpha.2.5
+### OpenAI Codex rust-v0.155.0-alpha.16
 
-**What changed:** Release 0.155.0-alpha.2.5
-
-**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
-
-**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
-
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.5)
-
-### OpenAI Codex rusty-v8-v152.2.0
-
-**What changed:** Published rusty-v8-v152.2.0.
+**What changed:** Release 0.155.0-alpha.16
 
 **Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
 
 **Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
 
-Sources: [1](https://github.com/openai/codex/releases/tag/rusty-v8-v152.2.0)
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16)
 
-### OpenAI Codex rust-v0.155.0-alpha.10
+### Copilot budget increase requests are generally available
 
-**What changed:** Release 0.155.0-alpha.10
-
-**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
-
-**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
-
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.10)
-
-### OpenAI Codex rust-v0.155.0-alpha.9
-
-**What changed:** Release 0.155.0-alpha.9
-
-**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
-
-**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
-
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9)
-
-### GitHub Copilot suggests custom properties definitions
-
-**What changed:** GitHub Copilot can now suggest allowed values when you create a custom property for repositories in your organization. This feature is in public preview for GitHub Copilot Business and Copilot&#8230; The post GitHub Copilot suggests custom properties definitions appeared first on The GitHub Blog .
+**What changed:** Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .
 
 **Why it matters:** This is relevant to developers tracking AI coding agents.
 
 **Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
 
-Sources: [1](https://github.blog/changelog/2026-09-15-github-copilot-suggests-custom-properties-definitions)
+Sources: [1](https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available)
+
+### OpenAI Codex rust-v0.155.0-alpha.15
+
+**What changed:** Release 0.155.0-alpha.15
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15)
+
+### OpenAI Codex rust-v0.155.0-alpha.14
+
+**What changed:** Release 0.155.0-alpha.14
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14)
+
+### OpenAI Codex rust-v0.155.0-alpha.13
+
+**What changed:** Release 0.155.0-alpha.13
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13)
+
+### OpenAI Codex rust-v0.155.0-alpha.2.6
+
+**What changed:** Release 0.155.0-alpha.2.6
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6)
 
 ## High noise / low signal
 
@@ -107,11 +107,11 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 - `github:NousResearch/hermes-agent`: ok:0
 - `github:agentskills/agentskills`: ok:0
 - `github:anthropics/claude-code`: ok:1
-- `github:google-gemini/gemini-cli`: ok:3
+- `github:google-gemini/gemini-cli`: ok:1
 - `github:microsoft/vscode`: ok:1
 - `github:microsoft/vscode-copilot-release`: ok:0
 - `github:modelcontextprotocol/specification`: ok:0
-- `github:openai/codex`: ok:6
+- `github:openai/codex`: ok:10
 - `youtube:weekly-digest`: degraded:0
 
 Each edition manifest distinguishes healthy no-news results from source outages.
