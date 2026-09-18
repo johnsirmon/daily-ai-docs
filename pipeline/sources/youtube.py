@@ -39,6 +39,8 @@ def collect_youtube_digest(
         if payload.get("schema_version") != 1:
             raise ValueError("unsupported YouTube digest schema")
         generated_at = _timestamp(str(payload["generated_at"]))
+        if generated_at > now:
+            raise ValueError("future digest")
         maximum_digest_age = timedelta(days=int(config.get("max_digest_age_days", 9)))
         if now - generated_at > maximum_digest_age:
             raise ValueError("stale digest")
@@ -53,6 +55,8 @@ def collect_youtube_digest(
             if not isinstance(video, dict):
                 raise TypeError("video must be an object")
             published_at = _timestamp(str(video["published_at"]))
+            if published_at > now:
+                raise ValueError("future video")
             if published_at < cutoff:
                 continue
             video_id = str(video["video_id"])

@@ -8,10 +8,10 @@ from pipeline.schema import SourceEvent
 from pipeline.synthesis import refine_stories
 
 
-def event(event_id="e1"):
+def event(event_id="e1", *, source_type="announcement", channel="stable"):
     return SourceEvent(
         event_id=event_id,
-        source_type="announcement",
+        source_type=source_type,
         title="Tool update",
         url=f"https://example.com/{event_id}",
         product="Tool",
@@ -19,6 +19,7 @@ def event(event_id="e1"):
         published_at="2026-09-07T10:00:00Z",
         fetched_at="2026-09-07T11:00:00Z",
         evidence="Fixes a typo.",
+        channel=channel,
         metadata={"priority": 20},
     )
 
@@ -60,3 +61,17 @@ def test_required_synthesis_rejects_duplicate_or_unknown_ids(monkeypatch):
     with patch("pipeline.synthesis.get_model_client", return_value=client_response(response)):
         with pytest.raises(Exception, match="omitted, duplicated, or invented"):
             refine_stories(items, [event_to_story(item) for item in items])
+
+
+@pytest.mark.parametrize("item", [
+    event(source_type="youtube_video"),
+    event(channel="prerelease"),
+])
+def test_synthesis_cannot_upgrade_protected_watch_or_skip_policy(monkeypatch, item):
+    monkeypatch.setenv("AI_SYNTHESIS", "required")
+    base = event_to_story(item)
+    response = {"decisions": [{"event_id": item.event_id, "action": "act"}]}
+    with patch("pipeline.synthesis.get_model_client", return_value=client_response(response)):
+        stories, _ = refine_stories([item], [base])
+    assert stories[0].action == base.action
+    assert stories[0].rationale == base.rationale

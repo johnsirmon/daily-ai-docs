@@ -1,6 +1,7 @@
 # AI Skills Radar — Topics & Sources
 # Edit this file to control what the pipeline tracks.
-# Run `python -m pipeline.main --dry-run` to test locally.
+# The command below exercises only the legacy weekly radar.
+# Test the daily pipeline with `python -m pipeline.daily prepare --dry-run --no-audio`.
 
 settings:
   lookback_days: 14
@@ -13,6 +14,8 @@ settings:
 daily:
   lookback_hours: 36
   max_stories: 7
+  # Keep one product from consuming the whole deterministic brief.
+  max_stories_per_product: 2
   max_youtube_stories: 1
   minimum_score: 75
   minimum_source_health: 0.6
@@ -75,6 +78,13 @@ daily:
           - visual studio code
           - model context protocol
           - coding agent
+        product_rules:
+          - product: GitHub Copilot
+            include: [copilot]
+          - product: Visual Studio Code
+            include: [visual studio code, vscode]
+          - product: Model Context Protocol
+            include: [model context protocol, mcp]
     papers:
       enabled: true
       lookback_days: 30

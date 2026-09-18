@@ -139,6 +139,28 @@ def test_digest_adapter_rejects_stale_digest(tmp_path):
     assert health == {"youtube:weekly-digest": "error:ValueError"}
 
 
+def test_digest_adapter_rejects_future_digest_and_video_timestamps(tmp_path):
+    for generated_at, published_at in [
+        ("2026-09-09T12:00:00Z", "2026-09-07T12:00:00Z"),
+        ("2026-09-08T12:00:00Z", "2026-09-09T12:00:00Z"),
+    ]:
+        path = tmp_path / f"youtube-{generated_at[-2:]}.json"
+        path.write_text(json.dumps({
+            "schema_version": 1,
+            "generated_at": generated_at,
+            "videos": [{
+                "video_id": "video-a", "title": "Agent workflow", "channel_title": "Channel",
+                "published_at": published_at, "takeaway": "Trace tools before changing workflows.",
+                "primary_urls": [],
+            }],
+        }), encoding="utf-8")
+        events, health = collect_youtube_digest(
+            {"digest_path": str(path)}, now=datetime(2026, 9, 8, 12, tzinfo=timezone.utc),
+        )
+        assert events == []
+        assert health == {"youtube:weekly-digest": "error:ValueError"}
+
+
 def test_video_story_is_framed_as_a_learning_pick(tmp_path):
     path = tmp_path / "youtube.json"
     path.write_text(json.dumps({

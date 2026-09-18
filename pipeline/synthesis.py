@@ -443,6 +443,10 @@ def refine_stories(events: Iterable[SourceEvent], fallback: List[Story]) -> tupl
             if action not in {"act", "watch", "skip"}:
                 raise SchemaError("model action is invalid")
             base = fallback_by_id[event_id]
+            # Models may downgrade urgency, but ACT remains bound to deterministic
+            # primary-source policy. Preserve applicability-qualified rationale.
+            if action == "act" and base.action != "act":
+                action = base.action
             stories.append(Story(
                 story_id=base.story_id,
                 event_ids=base.event_ids,
@@ -450,9 +454,7 @@ def refine_stories(events: Iterable[SourceEvent], fallback: List[Story]) -> tupl
                 what_changed=base.what_changed,
                 why_it_matters=base.why_it_matters,
                 action=action,
-                rationale=(
-                    "AI-assisted prioritization; factual text remains extractive from the primary source."
-                ),
+                rationale=base.rationale,
                 source_urls=base.source_urls,
                 scores=base.scores,
             ).validate())

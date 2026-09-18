@@ -224,8 +224,16 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "",
     ]
     if not manifest.stories:
+        failed = [status for status in manifest.source_health.values() if not status.startswith("ok:")]
+        quiet_message = (
+            "No tracked update cleared the actionability threshold today. Coverage was incomplete; "
+            "review the source-health details below."
+            if failed
+            else "No tracked update cleared the actionability threshold today. "
+                 "This is a healthy quiet day, not a source outage."
+        )
         lines += [
-            "No tracked update cleared the actionability threshold today. This is a healthy quiet day, not a source outage.",
+            quiet_message,
             "",
         ]
     for story in manifest.stories:
@@ -269,8 +277,8 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             "",
         ] if manifest.schema_version == 3 and "editing" in manifest.generation else []),
         "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
-        "- Up to seven actionable stories, with shorter alerts and healthy quiet-day editions.",
-        "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs and skips thin-news days without changing the feed.",
+        "- Up to seven actionable stories, capped per product for variety; thin-news runs skip publication.",
+        "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.",
         "- Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.",
         "- Product-change claims require public primary evidence.",
         (
@@ -296,7 +304,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "`collect → select → manifest → narrate/audio → validate → publish → verify delivery → confirm`",
         "",
         "The versioned episode manifest is the source of truth for narration, show notes, and this README. Preparation and failed delivery do not advance novelty state.",
-        "In grounded mode, intentional skips have durable run receipts. Monitoring still verifies the last confirmed feed, audio, and artwork and rejects failed or stale evaluations.",
+        "All intentional skips have durable run receipts. Monitoring still verifies the last confirmed feed, audio, and artwork and rejects failed or stale evaluations.",
         "",
         "## Weekly YouTube signal",
         "",

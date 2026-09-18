@@ -1,6 +1,7 @@
 """Tests for the render module."""
 
-from pipeline.render import render_readme, topic_anchor_markup
+from pipeline.render import render_manifest_readme, render_readme, topic_anchor_markup
+from pipeline.schema import EpisodeManifest
 
 
 def _topic(tid: str, display: str, repos=None, releases=None, why="", learn="",
@@ -106,6 +107,28 @@ def test_readme_empty_topics():
     out = render_readme([])
     assert "AI Skills Radar" in out
     assert "update-radar.yml" in out
+
+
+def test_quiet_manifest_discloses_incomplete_coverage():
+    manifest = EpisodeManifest(
+        1, "daily-test", "2026-09-07T12:00:00Z", "draft",
+        {"github:tool": "ok:0", "feed:news": "error:timeout"},
+        [], [], [], "A quiet daily brief with enough words to validate.", "No updates.",
+        {"edition": "quiet"}, {},
+    )
+    out = render_manifest_readme(manifest)
+    assert "Coverage was incomplete" in out
+    assert "healthy quiet day" not in out
+
+
+def test_quiet_manifest_calls_healthy_empty_sources_a_quiet_day():
+    manifest = EpisodeManifest(
+        1, "daily-test", "2026-09-07T12:00:00Z", "draft",
+        {"github:tool": "ok:0"}, [], [], [],
+        "A quiet daily brief with enough words to validate.", "No updates.",
+        {"edition": "quiet"}, {},
+    )
+    assert "healthy quiet day" in render_manifest_readme(manifest)
 
 
 # ---------------------------------------------------------------------------

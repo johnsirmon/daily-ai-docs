@@ -138,7 +138,7 @@ def _skip(*, now: datetime, reason: str, health: Dict[str, str],
         "dry_run": False,
     }
     _save_json(_PUBLICATION_PATH, publication)
-    logger.info("Editorial run skipped: %s", reason)
+    logger.info("Daily run skipped: %s", reason)
     return publication
 
 
@@ -159,18 +159,20 @@ def _dry_events(now: datetime) -> tuple[List[SourceEvent], Dict[str, str]]:
     return [event], {"dry-run": "ok:1"}
 
 
-def collect_events(config: Dict[str, Any], *, dry_run: bool, now: datetime) -> tuple[List[SourceEvent], Dict[str, str]]:
+def collect_events(
+    config: Dict[str, Any], *, dry_run: bool, now: datetime,
+    covered_paper_ids: Iterable[str] = (),
+) -> tuple[List[SourceEvent], Dict[str, str]]:
     if dry_run:
         return _dry_events(now)
     daily = config.get("daily", {})
     source_config = daily.get("sources", {})
     lookback = int(daily.get("lookback_hours", 36))
-    grounded = editorial_enabled(config)
     def source_options(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         return [
             {**item, "enrichment": {
                 **(item.get("enrichment") or {}),
-                "enabled": grounded and (item.get("enrichment") or {}).get("enabled") is True,
+                "enabled": (item.get("enrichment") or {}).get("enabled") is True,
             }}
             for item in items
         ]
@@ -182,12 +184,16 @@ def collect_events(config: Dict[str, Any], *, dry_run: bool, now: datetime) -> t
     )
     youtube_events, youtube_health = collect_youtube_digest(source_config.get("youtube", {}), now=now)
     paper_events, paper_health = ([], {})
-    if grounded:
-        paper_events, paper_health = collect_research_papers(source_config.get("papers", {}), now=now)
+    if editorial_enabled(config):
+        paper_events, paper_health = collect_research_papers(
+            source_config.get("papers", {}), now=now, covered_paper_ids=covered_paper_ids,
+        )
     health = {**github_health, **feed_health, **youtube_health, **paper_health}
     if not health:
         raise RuntimeError("no daily sources are configured")
     source_health = primary_source_health(health)
+    if not source_health:
+        raise RuntimeError("no daily primary sources are configured")
     healthy = sum(status.startswith("ok:") for status in source_health.values())
     if not healthy:
         raise RuntimeError("all configured sources failed; refusing to call this a quiet day")
@@ -294,7 +300,12 @@ def _prepare(
     last_publication = str(state.get("last_publication") or "")
     if not dry_run and not force and last_publication[:10] == now.astimezone(timezone.utc).date().isoformat():
         raise RuntimeError(f"a daily episode was already published on {last_publication[:10]}")
-    events, health = collect_events(config, dry_run=dry_run, now=now)
+    history, paper_ids, published_events = ([], set(), [])
+    if use_editorial:
+        history, paper_ids, published_events = _publication_history(now)
+    events, health = collect_events(
+        config, dry_run=dry_run, now=now, covered_paper_ids=paper_ids,
+    )
     _apply_measured_momentum(events, state, now)
     daily = config.get("daily", {})
     editorial = daily.get("editorial", {})
@@ -303,7 +314,6 @@ def _prepare(
         maximum_words = int(editorial.get("maximum_words", 1100))
         if not 100 <= minimum_words <= maximum_words <= 1500:
             raise ValueError("invalid editorial word budget")
-        history, paper_ids, published_events = _publication_history(now)
         selected, noise_notes = select_editorial_events(
             events, state.get("seen_event_ids", []), covered_paper_ids=paper_ids,
             published_events=published_events,
@@ -332,7 +342,13 @@ def _prepare(
             limit=int(daily.get("max_stories", 7)),
             minimum_score=float(daily.get("minimum_score", 75)),
             max_per_source_type={"youtube_video": int(daily.get("max_youtube_stories", 1))},
+            max_per_product=int(daily.get("max_stories_per_product", 2)),
         )
+        if not selected:
+            return _skip(
+                now=now, reason="insufficient_new_information", health=health,
+                minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes,
+            )
         deterministic = [event_to_story(event, state.get("seen_event_ids", [])) for event in selected]
     if dry_run:
         stories, generation = deterministic, {"provider": "deterministic", "calls": 0, "dry_run": True}

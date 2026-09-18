@@ -46,8 +46,20 @@ Legacy weekly radar modules remain for backward compatibility while the daily pa
 
 ## Reusable operating skills
 
-- For Notebook audio, follow [notebook-podcast](skills/notebook-podcast/SKILL.md).
-- For repository diagnosis or multi-model reviews, follow [evidence-led-review](skills/evidence-led-review/SKILL.md).
+Use the narrowest matching repository skill and read current code/workflows before acting:
+
+- For failed publication, stale feeds, pending candidates, or recovery, follow
+  [publication-recovery](../.agents/skills/publication-recovery/SKILL.md).
+- For new feeds, repositories, paper queries, enrichment hosts, or collectors, follow
+  [source-onboarding](../.agents/skills/source-onboarding/SKILL.md).
+- For schema, manifest, prompt, provenance, narration, or publication-contract changes,
+  follow [daily-contract-change](../.agents/skills/daily-contract-change/SKILL.md).
+- For CI and workflow failures that have not reached publication state, follow
+  [ci-failure-debug](../.agents/skills/ci-failure-debug/SKILL.md).
+- For repository diagnosis, claim review, previews, or multi-model reviews, follow
+  [evidence-led-review](../.agents/skills/evidence-led-review/SKILL.md).
+- For Notebook generation, download, transcript review, and imported audio, follow
+  [notebook-podcast](../.agents/skills/notebook-podcast/SKILL.md).
 - Consult [recorded session lessons](../docs/SESSION_LESSONS.md) before repeating those workflows.
 - Browser tools may not control a native Save As dialog. Record the operator's Save step; do not treat a missing download event as a failed generation or retry downloads blindly.
 - Publication readiness requires review of actual spoken claims, not only a good prompt, an audio duration label, or passing unit tests.

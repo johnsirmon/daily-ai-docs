@@ -33,10 +33,12 @@ def test_editorial_labels_at_production_threshold(case):
     assert bool(select_events([source])[0]) is case["selected"]
 
 
-def test_noise_penalty_is_not_a_hidden_veto():
+def test_substantive_eligibility_is_an_explicit_gate_before_scoring():
     source = event("noise", evidence="Documentation typo.")
     assert score_event(source)["noise_penalty"] == 24
-    assert select_events([source], minimum_score=0) == ([source], [])
+    selected, notes = select_events([source], minimum_score=0)
+    assert selected == []
+    assert notes == ["Excluded Tool: no substantive change evidence."]
 
 
 def test_noise_notes_are_deduplicated_before_limit():
@@ -46,7 +48,7 @@ def test_noise_notes_are_deduplicated_before_limit():
     assert not selected
     assert len(notes) == 2
     assert "Tool" in notes[0] and "Other" in notes[1]
-    assert all("below threshold" in note for note in notes)
+    assert all("no substantive change evidence" in note for note in notes)
 
 
 def test_newer_secondary_never_displaces_primary():
