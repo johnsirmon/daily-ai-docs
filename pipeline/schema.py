@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
+import hashlib
 import ipaddress
+import math
 import re
 from typing import Any, Dict, List
 from urllib.parse import urlparse
@@ -381,6 +383,191 @@ def editorial_narration(stories: List[Story], generation: Dict[str, Any]) -> str
     return text
 
 
+def _sha256(value: Any, name: str) -> str:
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value):
+        raise SchemaError(f"{name} must be a lowercase SHA-256 hex digest")
+    return value
+
+
+def _exact_fields(value: Any, fields: set[str], name: str) -> None:
+    if not isinstance(value, dict) or set(value) != fields:
+        raise SchemaError(f"{name} requires only {', '.join(sorted(fields))}")
+
+
+def _reviewed_public_url(value: str) -> None:
+    validate_editorial_source_url(value)
+    parsed = urlparse(value)
+    host = parsed.hostname or ""
+    private_hosts = {
+        "notebooklm.google", "notebooklm.google.com", "gemini.google.com",
+        "accounts.google.com", "docs.google.com", "drive.google.com", "aistudio.google.com",
+    }
+    if (parsed.query or parsed.fragment
+            or any(host == private or host.endswith("." + private) for private in private_hosts)):
+        raise SchemaError("reviewed audio artifacts require public URLs without account links or query data")
+
+
+def _reviewed_public_values(value: Any) -> None:
+    """Check embedded links too, including transcript and review-note links."""
+    if isinstance(value, dict):
+        for key, item in value.items():
+            _reviewed_public_values(key)
+            _reviewed_public_values(item)
+    elif isinstance(value, list):
+        for item in value:
+            _reviewed_public_values(item)
+    elif isinstance(value, str):
+        for url in re.findall(r"https?://[^\s<>\"']+", value):
+            _reviewed_public_url(url.rstrip(".,;!)]}"))
+
+
+def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
+    """Validate explicit human-authorized, locally transcribed audio provenance.
+
+    This records a transcript/source comparison, not Gemini API verification.
+    Semantic entailment and any ASR limitations remain the reviewer's responsibility.
+    """
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", manifest.episode_id):
+        raise SchemaError("reviewed audio requires a safe episode_id")
+    if manifest.status not in {"draft", "ready", "candidate", "published"}:
+        raise SchemaError("reviewed audio requires a publication status")
+    generation = manifest.generation
+    if generation.get("preview_only") is True:
+        raise SchemaError("preview-only audio cannot be published")
+    _exact_fields(generation, {
+        "edition", "provider", "approved_at", "source_audio_sha256", "transcript", "review",
+    }, "reviewed generation")
+    if generation["edition"] != "notebook" or generation["provider"] != "gemini-notebook-web":
+        raise SchemaError("reviewed audio requires the gemini-notebook-web notebook provider")
+    _timestamp(generation["approved_at"], "generation.approved_at")
+    _sha256(generation["source_audio_sha256"], "generation.source_audio_sha256")
+    transcript = generation["transcript"]
+    _exact_fields(transcript, {"engine", "model", "sha256"}, "transcript")
+    if transcript["engine"] not in ("faster-whisper", "whisper", "openai-whisper", "whisper.cpp"):
+        raise SchemaError("transcript.engine must identify a supported local ASR engine")
+    _text(transcript["model"], "transcript.model", limit=120)
+    _sha256(transcript["sha256"], "transcript.sha256")
+    if transcript["sha256"] != hashlib.sha256(manifest.narration.encode("utf-8")).hexdigest():
+        raise SchemaError("transcript.sha256 must hash the exact UTF-8 narration")
+    if len(manifest.narration) > 16000:
+        raise SchemaError("narration exceeds 16000 characters")
+    review = generation["review"]
+    _exact_fields(review, {"method", "reviewed_at", "reviewer", "claims", "notes"}, "review")
+    if review["method"] != "transcript_source_comparison" or review["reviewer"] != "assistant":
+        raise SchemaError("review must identify the assistant transcript_source_comparison")
+    _timestamp(review["reviewed_at"], "review.reviewed_at")
+    if not isinstance(review["notes"], list) or not 1 <= len(review["notes"]) <= 20:
+        raise SchemaError("review.notes must be a bounded non-empty list of review and ASR limitations")
+    for note in review["notes"]:
+        _text(note, "review.note", limit=1600)
+    if not isinstance(review["claims"], list) or not 1 <= len(review["claims"]) <= 100:
+        raise SchemaError("review.claims must be a bounded non-empty list")
+    events = {event.event_id: event for event in manifest.source_events}
+    paper_fields = {
+        "paper_id", "version", "first_published_at", "updated_at", "full_text_available",
+        "full_text_retained", "evidence_status", "reviewed_excerpts",
+    }
+    for event in manifest.source_events:
+        if event.authority != "primary":
+            raise SchemaError("reviewed audio requires public primary evidence")
+        _reviewed_public_url(event.url)
+        if "full_text" in event.metadata or len(event.evidence.split()) > MAX_PUBLIC_EXCERPT_WORDS:
+            raise SchemaError("reviewed audio must archive short excerpts, not full source documents")
+        allowed = {"corroboration_urls"} | (paper_fields if event.source_type == "research_paper" else set())
+        if set(event.metadata) - allowed:
+            raise SchemaError("unsupported reviewed source metadata; retain only public provenance")
+    if not 1 <= len(manifest.stories) <= 7:
+        raise SchemaError("reviewed audio requires one to seven stories")
+    mapped_events: set[str] = set()
+    for story in manifest.stories:
+        if len(set(story.event_ids)) != len(story.event_ids) or mapped_events.intersection(story.event_ids):
+            raise SchemaError("reviewed stories must map each source exactly once")
+        mapped_events.update(story.event_ids)
+        papers = [events[event_id] for event_id in story.event_ids
+                  if events[event_id].source_type == "research_paper"]
+        if bool(papers) != (story.kind == "research"):
+            raise SchemaError("research evidence must be clearly classified as research")
+        if story.kind == "research":
+            if len(papers) != 1 or len(story.event_ids) != 1:
+                raise SchemaError("each research story requires one distinct paper")
+            paper = papers[0]
+            metadata = paper.metadata
+            if (metadata.get("full_text_available") is not True
+                    or metadata.get("full_text_retained") is not False
+                    or metadata.get("evidence_status") != "reviewed_excerpts"
+                    or metadata.get("reviewed_excerpts") != paper.evidence):
+                raise SchemaError("research requires archived reviewed excerpts from the full paper")
+            paper_id = _text(metadata.get("paper_id"), "paper_id", limit=100)
+            if not re.fullmatch(r"(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?/\d{7})", paper_id):
+                raise SchemaError("paper_id must be a canonical base arXiv ID")
+            version = metadata.get("version")
+            if not ((type(version) is int and version > 0) or
+                    (isinstance(version, str) and re.fullmatch(r"v?[1-9]\d*", version))):
+                raise SchemaError("research version must identify a positive paper revision")
+            if paper.url != f"https://arxiv.org/abs/{paper_id}":
+                raise SchemaError("research URL must match the canonical paper_id")
+            _timestamp(metadata.get("first_published_at"), "first_published_at")
+            _timestamp(metadata.get("updated_at"), "updated_at")
+            _exact_fields(story.editorial, {"paper_review"}, "research editorial")
+            paper_review = story.editorial["paper_review"]
+            _exact_fields(paper_review, {
+                "question", "method", "result", "limitations", "takeaway", "evidence_status",
+            }, "paper_review")
+            for name in ("question", "method", "result", "limitations", "takeaway"):
+                text = validate_spoken_text(paper_review[name], f"paper_review.{name}", limit=1600)
+                validate_quantities(text, paper.evidence, f"paper_review.{name}")
+            if paper_review["evidence_status"] != "author_reported_not_reproduced":
+                raise SchemaError("paper_review evidence_status must be author_reported_not_reproduced")
+        elif story.editorial:
+            raise SchemaError("reviewed product stories store claims in generation.review, not editorial")
+    if mapped_events != set(events):
+        raise SchemaError("reviewed stories must account for every source event")
+    claimed_events: set[str] = set()
+    claim_keys: set[tuple[str, str]] = set()
+    for claim in review["claims"]:
+        _exact_fields(claim, {"text", "event_id", "quote"}, "review claim")
+        event_id = _text(claim["event_id"], "claim.event_id", limit=200)
+        _text(claim["text"], "claim.text", limit=1600)
+        _text(claim["quote"], "claim.quote", limit=4000)
+        if event_id not in events or event_id not in mapped_events:
+            raise SchemaError("claim references an unknown or unmapped source event")
+        if claim["text"] not in manifest.narration:
+            raise SchemaError("claim.text must occur verbatim in the ASR narration")
+        if claim["quote"] not in events[event_id].evidence:
+            raise SchemaError("claim.quote must occur verbatim in the referenced event evidence")
+        key = (event_id, claim["text"])
+        if key in claim_keys:
+            raise SchemaError("duplicate reviewed claim")
+        claim_keys.add(key)
+        claimed_events.add(event_id)
+    if claimed_events != set(events):
+        raise SchemaError("review claims must account for every source event")
+    url = manifest.audio.get("url")
+    if not isinstance(url, str) or not re.fullmatch(
+        r"https://github\.com/[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9][A-Za-z0-9_.-]*/"
+        r"releases/download/" + re.escape(manifest.episode_id) + r"/daily-ai-brief\.mp3", url,
+    ):
+        raise SchemaError("audio.url must be the canonical GitHub release MP3 for this episode")
+    if manifest.status == "draft":
+        _exact_fields(manifest.audio, {"url"}, "draft audio")
+    else:
+        _exact_fields(manifest.audio, {
+            "url", "sha256", "size_bytes", "duration_secs", "codec", "sample_rate", "channels",
+        }, "reviewed audio")
+        _sha256(manifest.audio["sha256"], "audio.sha256")
+        if type(manifest.audio["size_bytes"]) is not int or manifest.audio["size_bytes"] < 10_000:
+            raise SchemaError("reviewed audio size must be a measured positive integer")
+        duration = manifest.audio["duration_secs"]
+        if (type(duration) not in (int, float) or not math.isfinite(duration)
+                or not 300 <= duration <= 480):
+            raise SchemaError("reviewed audio duration must be within 300-480 seconds")
+        if (manifest.audio["codec"] != "mp3" or type(manifest.audio["sample_rate"]) is not int
+                or manifest.audio["sample_rate"] != 44100
+                or type(manifest.audio["channels"]) is not int or manifest.audio["channels"] != 2):
+            raise SchemaError("reviewed audio must be a 44100 Hz stereo MP3")
+    _reviewed_public_values(asdict(manifest))
+
+
 @dataclass
 class EpisodeManifest:
     schema_version: int
@@ -397,7 +584,7 @@ class EpisodeManifest:
     audio: Dict[str, Any]
 
     def validate(self, *, require_audio: bool | None = None) -> "EpisodeManifest":
-        if self.schema_version not in {1, 2}:
+        if self.schema_version not in {1, 2, 3}:
             raise SchemaError("unsupported manifest schema_version")
         _text(self.episode_id, "episode_id", limit=200)
         _timestamp(self.published_at, "published_at")
@@ -434,6 +621,8 @@ class EpisodeManifest:
         _text(self.show_notes, "show_notes", limit=24000)
         if not isinstance(self.generation, dict) or not isinstance(self.audio, dict):
             raise SchemaError("generation and audio must be objects")
+        if self.schema_version == 3:
+            validate_reviewed_audio(self)
         if self.schema_version == 2:
             validate_editorial_stories(self.source_events, self.stories)
             expected_narration = editorial_narration(self.stories, self.generation)

@@ -427,6 +427,43 @@ def prepare(
         raise
 
 
+def _validate_reviewed_audio_file(manifest: EpisodeManifest, path: Path) -> None:
+    measured = analyze_audio(
+        path, min_duration_secs=300, max_duration_secs=480,
+        expected_word_count=len(manifest.narration.split()),
+    )
+    for field in ("size_bytes", "duration_secs", "sha256", "codec", "sample_rate", "channels"):
+        if manifest.audio.get(field) != measured[field]:
+            raise RuntimeError(f"reviewed release audio {field} does not match its manifest")
+
+
+def resume_reviewed_release(episode_id: str, directory: Path = _CACHE_DIR) -> Dict[str, Any]:
+    """Resume approved external audio from downloaded immutable release assets."""
+    manifest_path = directory / "episode-manifest.json"
+    manifest = EpisodeManifest.from_dict(_load_json(manifest_path, {}))
+    if manifest.schema_version != 3 or manifest.episode_id != episode_id:
+        raise RuntimeError("reviewed release identity or schema does not match the requested episode")
+    if manifest.status not in {"ready", "candidate"} or manifest.generation.get("preview_only"):
+        raise RuntimeError("reviewed release must be approved publication media, not a preview")
+    manifest.validate(require_audio=True)
+    pending = _pending_candidate()
+    if pending is not None and pending.episode_id != episode_id:
+        raise RuntimeError("another publication candidate requires recovery first")
+    audio_path = directory / "daily-ai-brief.mp3"
+    repository = os.environ.get("GITHUB_REPOSITORY", "johnsirmon/daily-ai-docs")
+    expected_url = f"https://github.com/{repository}/releases/download/{episode_id}/daily-ai-brief.mp3"
+    if manifest.audio["url"] != expected_url:
+        raise RuntimeError("reviewed release audio URL does not match the requested repository and tag")
+    _validate_reviewed_audio_file(manifest, audio_path)
+    publication = {
+        "outcome": "publish", "episode_id": episode_id, "tag": episode_id,
+        "manifest_path": str(manifest_path), "audio_path": str(audio_path),
+        "audio_url": expected_url, "dry_run": False, "resumed": True,
+    }
+    _save_json(directory / "publication.json", publication)
+    return publication
+
+
 def finalize(
     manifest_path: Path = _MANIFEST_PATH,
     *,
@@ -438,6 +475,8 @@ def finalize(
     if manifest.generation.get("preview_only") is True:
         raise RuntimeError("unpublished preview artifacts cannot be finalized")
     manifest.validate(require_audio=True)
+    if manifest.schema_version == 3 and publication_path is None:
+        raise RuntimeError("reviewed audio finalization requires downloaded release reconciliation")
     if publication_path is not None:
         publication = _load_json(publication_path, {})
         if (publication.get("episode_id") != manifest.episode_id
@@ -448,6 +487,8 @@ def finalize(
         if (len(audio) != int(manifest.audio["size_bytes"])
                 or hashlib.sha256(audio).hexdigest() != manifest.audio["sha256"]):
             raise RuntimeError("downloaded release audio does not match manifest")
+        if manifest.schema_version == 3:
+            _validate_reviewed_audio_file(manifest, Path(publication["audio_path"]))
     existing_path = Path("data/episodes") / f"{manifest.episode_id}.json"
     if existing_path.exists():
         existing = EpisodeManifest.from_dict(_load_json(existing_path, {}))
@@ -465,7 +506,10 @@ def finalize(
             expected_sha256=manifest.audio["sha256"],
         )
     episode = {
-        "title": f"Daily AI Developer Brief — {manifest.published_at[:10]}",
+        "title": (
+            f"Daily AI Developer Brief — {manifest.published_at[:10]}"
+            + (" — Notebook edition" if manifest.schema_version == 3 else "")
+        ),
         "guid": manifest.episode_id,
         "pub_date": manifest.published_at,
         "description": manifest.show_notes,
@@ -552,6 +596,10 @@ def main() -> None:
     prepare_parser.add_argument("--no-audio", action="store_true")
     prepare_parser.add_argument("--github-output", action="store_true")
     prepare_parser.add_argument("--force", action="store_true", help="Allow a second same-day episode")
+    resume_parser = sub.add_parser("resume-reviewed", help="Validate downloaded reviewed-audio release assets")
+    resume_parser.add_argument("--episode-id", required=True)
+    resume_parser.add_argument("--directory", type=Path, default=_CACHE_DIR)
+    resume_parser.add_argument("--github-output", action="store_true")
     finalize_parser = sub.add_parser("finalize")
     finalize_parser.add_argument("--manifest", default=str(_MANIFEST_PATH))
     finalize_parser.add_argument("--publication", type=Path, help="Reconcile downloaded release with prepare outputs")
@@ -563,6 +611,12 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "prepare":
         result = prepare(Path(args.config), dry_run=args.dry_run, no_audio=args.no_audio, force=args.force)
+        if args.github_output:
+            _print_github_output(result)
+        else:
+            print(json.dumps(result, indent=2))
+    elif args.command == "resume-reviewed":
+        result = resume_reviewed_release(args.episode_id, args.directory)
         if args.github_output:
             _print_github_output(result)
         else:

@@ -51,6 +51,24 @@ def test_delivery_workflow_binds_candidate_and_downloaded_release():
     assert "--pattern daily-ai-brief.mp3" in upload
 
 
+def test_reviewed_release_uses_existing_locked_publisher_without_regeneration():
+    document = workflow("update-radar.yml")
+    assert document["jobs"]["publish"]["if"] == "github.ref == 'refs/heads/main'"
+    assert document["on"]["workflow_dispatch"]["inputs"]["reviewed_episode"]["default"] == ""
+    prepare = next(step for step in steps("update-radar.yml")
+                   if step.get("name") == "Prepare evidence, narration, and validated audio")
+    assert prepare["env"]["REVIEWED_EPISODE"] == "${{ inputs.reviewed_episode }}"
+    reviewed_branch = prepare["run"].split("\nelse\n")[0]
+    assert "resume-reviewed" in reviewed_branch
+    assert "gh release download" in reviewed_branch
+    assert "--json isDraft,isPrerelease" in reviewed_branch
+    assert "grep -qx true" in reviewed_branch
+    assert "--clobber" not in reviewed_branch
+    assert "daily prepare" not in reviewed_branch
+    assert "${{ inputs.reviewed_episode }}" not in prepare["run"]
+    assert "^daily-" in reviewed_branch
+
+
 def test_independent_monitor_remains_age_sensitive():
     monitor = next(step["run"] for step in steps("feed-health.yml") if step.get("name") == "Verify public feed freshness")
     assert "--max-age-hours 25" in monitor

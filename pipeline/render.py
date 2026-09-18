@@ -254,6 +254,10 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
     lines += [
         "## Editorial contract",
         "",
+        *([
+            "- This edition uses user-authorized Gemini Notebook web audio, a local-ASR transcript, and an assistant transcript/source comparison; it is not independently verified Gemini API generation.",
+            "",
+        ] if manifest.schema_version == 3 else []),
         "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
         "- Up to seven actionable stories, with shorter alerts and healthy quiet-day editions.",
         "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs and skips thin-news days without changing the feed.",

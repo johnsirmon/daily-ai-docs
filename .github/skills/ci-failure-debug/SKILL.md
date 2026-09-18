@@ -21,22 +21,22 @@ Guides the agent through diagnosing and fixing a failing CI run in this reposito
 ## Steps
 
 1. **Identify the failing workflow run**
-   - Use the GitHub MCP server tool `list_workflow_runs` with `status=failure` to find
-     the most recent failed run.
-   - Note the `run_id` and the workflow file name (e.g., `pipeline-ci.yml`).
+   - Prefer `gh run list` and `gh run view` to identify the relevant failing run.
+   - Inspect the actual workflow under `.github/workflows/`; do not assume a
+     remembered workflow filename or inspect an unrelated historical failure.
 
 2. **Fetch the failure logs**
-   - Call `get_job_logs` with `run_id=<id>` and `failed_only=true`.
+   - Run `gh run view <run-id> --log-failed`.
    - Scan for the first `Error`, `FAILED`, or `exit code` line to locate the root cause.
 
 3. **Map the error to source**
 
    | Error pattern | Likely cause | Where to look |
    |---------------|-------------|---------------|
-   | `ModuleNotFoundError` | Missing dependency | `requirements.txt` |
+   | `ModuleNotFoundError` | Missing dependency | `requirements.lock` and the failing workflow |
    | `AssertionError` in `tests/` | Logic regression | `pipeline/` module matching test file |
    | `yaml.YAMLError` | Bad syntax in `topics/topics.yaml` | `topics/topics.yaml` |
-   | `json.JSONDecodeError` | Corrupt `config.json` | `config.json` |
+   | `json.JSONDecodeError` | Malformed JSON artifact | The exact path in the traceback |
    | `Missing required elements` | Guide missing obsolescence section | New `*-Guide.md` file |
    | `Broken internal links` | Link target renamed or deleted | `README.md` or guide files |
 
@@ -49,11 +49,16 @@ Guides the agent through diagnosing and fixing a failing CI run in this reposito
 5. **Verify locally**
 
    ```bash
-   python -m pytest tests/ -v
-   python -m pipeline.main --dry-run
+   uv run --with-requirements requirements.lock pytest -q tests/test_affected.py
+   uv run --with-requirements requirements.lock python -m pipeline.daily prepare --dry-run --no-audio
    ```
 
-6. **Commit and push** — the `pipeline-ci.yml` workflow re-runs automatically on push.
+   Replace the illustrative test selector with the actual affected tests, then run
+   the complete suite before committing.
+
+6. **Commit and push when authorized** — inspect `ci.yml` triggers first; CI runs
+   for main pushes and pull requests, not every feature-branch push. Never add a
+   preview-trigger marker merely to rerun tests: it can spend provider quota.
 
 ## Notes
 

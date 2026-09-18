@@ -2,6 +2,12 @@ name: Daily AI Developer Brief
 
 on:
   workflow_dispatch:
+    inputs:
+      reviewed_episode:
+        description: "Existing reviewed-audio release tag; leave blank for the normal daily pipeline"
+        required: false
+        type: string
+        default: ""
   schedule:
     # 06:17 EDT / 05:17 EST. Non-top-of-hour reduces scheduler contention.
     - cron: '17 10 * * *'
@@ -26,6 +32,7 @@ env:
 
 jobs:
   publish:
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -61,7 +68,24 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python -m pipeline.daily prepare --github-output >> "$GITHUB_OUTPUT"
+          REVIEWED_EPISODE: ${{ inputs.reviewed_episode }}
+        run: |
+          if [ -n "$REVIEWED_EPISODE" ]; then
+            if [[ ! "$REVIEWED_EPISODE" =~ ^daily-[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9][a-z0-9-]{0,80}$ ]]; then
+              echo "Invalid reviewed episode tag" >&2
+              exit 1
+            fi
+            gh release view "$REVIEWED_EPISODE" --repo "$GITHUB_REPOSITORY" \
+              --json isDraft,isPrerelease --jq '(.isDraft == false) and (.isPrerelease == false)' \
+              | grep -qx true
+            gh release download "$REVIEWED_EPISODE" --repo "$GITHUB_REPOSITORY" \
+              --pattern daily-ai-brief.mp3 --pattern episode-manifest.json \
+              --dir .cache
+            python -m pipeline.daily resume-reviewed --episode-id "$REVIEWED_EPISODE" \
+              --github-output >> "$GITHUB_OUTPUT"
+          else
+            python -m pipeline.daily prepare --github-output >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Persist editorial skip receipt
         if: env.AI_EDITORIAL == 'required' && steps.prepare.outputs.outcome == 'skipped'
