@@ -59,6 +59,11 @@ claims is a nonempty array of objects with exactly text, event_id, quote.
 Every substantive assertion across ALL fields and opening/closing must be supported
 by claims; include applicability, limitations, and the basis for advice.
 Use exact nonempty quotations from the referenced event evidence or full_text.
+Every numeral or spelled-out quantity in each claim.text must appear with the
+same notation in THAT CLAIM'S OWN quote. A number in a title, version metadata,
+or another claim's quote is not sufficient. Omit unnecessary versions and dates.
+Do not invent counts by enumerating changes, stories, steps, or suggested trials.
+Apply the same discipline to the opening and closing; avoid numbered roundups.
 Keep the combined unique quotations below 180 words per source. Paraphrase spoken
 explanations; never copy more than 50 consecutive source words into spoken_text.
 At least one claim must cite each grouped event. Matching a quote alone does not

@@ -303,6 +303,15 @@ def test_invented_numbers_rejected_on_every_spoken_and_written_surface(field):
         run_editorial(proposal)
 
 
+def test_quantitative_rejection_reports_only_bounded_numeric_evidence():
+    proposal = draft()
+    proposal["stories"][0]["editorial"]["claims"][0]["text"] = "An unverified claim about 900 million users."
+    with pytest.raises(EditorialValidationError, match="unsupported: 900million") as caught:
+        run_editorial(proposal)
+    assert "An unverified claim" not in str(caught.value)
+    assert "users" not in str(caught.value)
+
+
 @pytest.mark.parametrize("text", [
     "Learn more at https://example.com/e1",
     "Learn more at example.com/e1",

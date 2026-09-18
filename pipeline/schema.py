@@ -77,8 +77,10 @@ def _quantities(text: str) -> set[str]:
 
 
 def validate_quantities(text: str, evidence: str, name: str) -> None:
-    if not _quantities(text).issubset(_quantities(evidence)):
-        raise SchemaError(f"{name} contains an unsupported quantitative claim")
+    missing = sorted(_quantities(text) - _quantities(evidence))
+    if missing:
+        detail = ", ".join(quantity[:32] for quantity in missing[:8])
+        raise SchemaError(f"{name} contains an unsupported quantitative claim (unsupported: {detail})")
 
 
 def _text(value: Any, name: str, *, allow_empty: bool = False, limit: int = 8000) -> str:

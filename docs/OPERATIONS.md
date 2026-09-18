@@ -80,6 +80,8 @@ Both Gemini requests explicitly use the documented `reasoning_effort=low` settin
 default thinking level. Draft and verification output remain capped at 4,000 and 2,500 tokens respectively, with no
 automatic retries. Incomplete responses still fail; diagnostics record only allowlisted finish reasons and numeric
 HTTP statuses, never raw provider responses or credentials.
+Quantitative validation requires each claim's numbers to be supported by its own quoted evidence, not merely by a
+release title or a different claim. Rejections expose only bounded numeric tokens for diagnosis, not rejected drafts.
 
 `daily.editorial` in [topics.yaml](../topics/topics.yaml) controls grouping and script budgets. Daily evaluation does
 not promise daily audio. A short urgent-alert exception and research-only editions are not enabled.
