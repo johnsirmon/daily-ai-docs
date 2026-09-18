@@ -20,7 +20,8 @@ uv run --with pillow python scripts/generate_artwork.py
 - `pipeline/sources/` collects explicit public primary-source events.
 - `pipeline/schema.py` defines validated `SourceEvent`, `Story`, and `EpisodeManifest` contracts.
 - `pipeline/rank.py` applies novelty, relevance, authority, impact, and noise policy.
-- `pipeline/synthesis.py` optionally performs one evidence-constrained model call.
+- `pipeline/synthesis.py` supports legacy refinement and opt-in Gemini drafting plus separate verification.
+- `pipeline/reviewed_audio.py` imports explicitly approved, transcript/source-reviewed Notebook audio without pretending it passed the Gemini API contract.
 - `pipeline/narrate.py` and `pipeline/render.py` render directly from the episode manifest.
 - `pipeline/audio.py`, `pipeline/tts.py`, and `pipeline/podcast.py` validate media and RSS.
 - `pipeline/daily.py` prepares locally, writes a candidate only after remote audio verification, and advances state only after subscriber-facing confirmation.
@@ -42,3 +43,11 @@ uv run --with pillow python scripts/generate_artwork.py
 - Run the complete test suite before committing.
 
 Legacy weekly radar modules remain for backward compatibility while the daily path stabilizes. New product behavior belongs in the manifest-driven daily pipeline, not additional README parsing or mandatory per-topic model calls.
+
+## Reusable operating skills
+
+- For Notebook audio, follow [notebook-podcast](skills/notebook-podcast/SKILL.md).
+- For repository diagnosis or multi-model reviews, follow [evidence-led-review](skills/evidence-led-review/SKILL.md).
+- Consult [recorded session lessons](../docs/SESSION_LESSONS.md) before repeating those workflows.
+- Browser tools may not control a native Save As dialog. Record the operator's Save step; do not treat a missing download event as a failed generation or retry downloads blindly.
+- Publication readiness requires review of actual spoken claims, not only a good prompt, an audio duration label, or passing unit tests.

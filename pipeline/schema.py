@@ -400,6 +400,7 @@ def _reviewed_public_url(value: str) -> None:
     host = parsed.hostname or ""
     private_hosts = {
         "notebooklm.google", "notebooklm.google.com", "gemini.google.com",
+        "notebook.google", "notebook.google.com",
         "accounts.google.com", "docs.google.com", "drive.google.com", "aistudio.google.com",
     }
     if (parsed.query or parsed.fragment
@@ -434,13 +435,33 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     generation = manifest.generation
     if generation.get("preview_only") is True:
         raise SchemaError("preview-only audio cannot be published")
-    _exact_fields(generation, {
+    generation_fields = {
         "edition", "provider", "approved_at", "source_audio_sha256", "transcript", "review",
-    }, "reviewed generation")
+    }
+    if "editing" in generation:
+        generation_fields.add("editing")
+    _exact_fields(generation, generation_fields, "reviewed generation")
     if generation["edition"] != "notebook" or generation["provider"] != "gemini-notebook-web":
         raise SchemaError("reviewed audio requires the gemini-notebook-web notebook provider")
     _timestamp(generation["approved_at"], "generation.approved_at")
     _sha256(generation["source_audio_sha256"], "generation.source_audio_sha256")
+    if "editing" in generation:
+        editing = generation["editing"]
+        _exact_fields(editing, {
+            "method", "original_audio_sha256", "correction_text",
+            "correction_audio_sha256", "correction_provider",
+        }, "generation.editing")
+        if (editing["method"] != "prefixed_editorial_correction"
+                or editing["correction_provider"] != "edge"):
+            raise SchemaError("editing requires a prefixed_editorial_correction from edge")
+        _sha256(editing["original_audio_sha256"], "editing.original_audio_sha256")
+        _sha256(editing["correction_audio_sha256"], "editing.correction_audio_sha256")
+        _text(editing["correction_text"], "editing.correction_text", limit=1600)
+        correction = editing["correction_text"]
+        if not manifest.narration.startswith(correction):
+            raise SchemaError("editing.correction_text must be the exact narration prefix")
+        if not manifest.narration[len(correction):].strip():
+            raise SchemaError("edited narration must retain the conversation after the correction")
     transcript = generation["transcript"]
     _exact_fields(transcript, {"engine", "model", "sha256"}, "transcript")
     if transcript["engine"] not in ("faster-whisper", "whisper", "openai-whisper", "whisper.cpp"):
@@ -473,9 +494,16 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         _reviewed_public_url(event.url)
         if "full_text" in event.metadata or len(event.evidence.split()) > MAX_PUBLIC_EXCERPT_WORDS:
             raise SchemaError("reviewed audio must archive short excerpts, not full source documents")
-        allowed = {"corroboration_urls"} | (paper_fields if event.source_type == "research_paper" else set())
+        hash_fields = {"source_text_sha256", "source_document_sha256", "source_evidence_sha256"}
+        allowed = {"corroboration_urls", "evidence_status"} | hash_fields
+        if event.source_type == "research_paper":
+            allowed |= paper_fields
         if set(event.metadata) - allowed:
             raise SchemaError("unsupported reviewed source metadata; retain only public provenance")
+        for name in hash_fields & event.metadata.keys():
+            _sha256(event.metadata[name], name)
+        if "evidence_status" in event.metadata and event.metadata["evidence_status"] != "reviewed_excerpts":
+            raise SchemaError("reviewed source evidence_status must identify reviewed_excerpts")
     if not 1 <= len(manifest.stories) <= 7:
         raise SchemaError("reviewed audio requires one to seven stories")
     mapped_events: set[str] = set()

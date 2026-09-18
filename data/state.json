@@ -14,22 +14,54 @@
     "ghrel:d3e115fe290b079b5eae",
     "ghrel:4abc68b1b8aadb843ce1",
     "ghrel:01854b72308ef5051137",
-    "ghrel:2ca8347c5a05c864ff41"
+    "ghrel:2ca8347c5a05c864ff41",
+    "ghrel:861b32064a74b3b8fbd1",
+    "feed:28ba300194033bae7a74",
+    "feed:f5b7434d849eacf13f00",
+    "ghrel:99c8c55cb2156921b1fe",
+    "ghrel:cb40d7cf02f214121fe6",
+    "ghrel:2a68cabb6c20de64eba5",
+    "ghrel:47b5f91a6667b3df4b07",
+    "ghrel:fce9db4d4ccde886d0fa",
+    "ghrel:3f132fb2c563cba4f817",
+    "ghrel:ba3341f9799b1e8e2729",
+    "ghrel:ae2cac4ea7b93694f21c",
+    "ghrel:f051068284697e2ee406",
+    "ghrel:a7a7f41d5d262d67e935",
+    "feed:ef18d943849cad0ec287",
+    "ghrel:c1036bbcbba51b57db11",
+    "ghrel:6726c9df5fadbf36c281",
+    "ghrel:2af43af9d7b1b9438e90",
+    "ghrel:4d916e5dd5a1f46cf24f",
+    "ghrel:ee3a7e2a044903ed6d15",
+    "ghrel:e4ce5c78b5100b96a6f0",
+    "feed:547415ff166106996890",
+    "ghrel:5744b97e5a176886ffa7",
+    "ghrel:cb08c3ec4026c81c3a27",
+    "feed:41f2b23db141d620003a",
+    "ghrel:004241a97c26ea44979a",
+    "ghrel:ca8bc2182dbdf131efc9",
+    "ghrel:0ec3008b414dbc1e5a3f",
+    "ghrel:7c90a1cd27592e5ce7b8"
   ],
-  "last_publication": "2026-09-11T14:28:31.094556Z",
-  "last_episode_id": "daily-2026-09-11-aa65a29c",
+  "last_publication": "2026-09-17T15:02:10.012307Z",
+  "last_episode_id": "daily-2026-09-17-1711ce11",
   "repo_snapshots": {
     "openai/codex": {
-      "stars": 123346,
-      "fetched_at": "2026-09-11T14:28:31.094556Z"
+      "stars": 124918,
+      "fetched_at": "2026-09-17T15:02:10.012307Z"
     },
     "anthropics/claude-code": {
-      "stars": 144745,
-      "fetched_at": "2026-09-11T14:28:31.094556Z"
+      "stars": 145828,
+      "fetched_at": "2026-09-17T15:02:10.012307Z"
     },
     "microsoft/vscode": {
-      "stars": 191504,
-      "fetched_at": "2026-09-09T23:55:50.753309Z"
+      "stars": 192574,
+      "fetched_at": "2026-09-16T15:00:27.170645Z"
+    },
+    "NousResearch/hermes-agent": {
+      "stars": 245403,
+      "fetched_at": "2026-09-14T16:24:09.494147Z"
     }
   }
 }

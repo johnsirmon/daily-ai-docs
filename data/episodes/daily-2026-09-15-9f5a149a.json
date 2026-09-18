@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-15-9f5a149a",
+  "published_at": "2026-09-15T15:02:56.728954Z",
+  "status": "published",
+  "source_health": {
+    "github:openai/codex": "ok:4",
+    "github:anthropics/claude-code": "ok:2",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:1",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:1",
+    "youtube:weekly-digest": "degraded:0"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:3f132fb2c563cba4f817",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.272",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.272",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-15T00:42:25Z",
+      "fetched_at": "2026-09-15T15:02:56.728954Z",
+      "evidence": "What's changed - Bug fixes and reliability improvements",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.272",
+        "priority": 18,
+        "stars": 145147,
+        "private": false,
+        "draft": false,
+        "star_delta": 241,
+        "star_velocity": 118.95,
+        "momentum_window_days": 2.03
+      }
+    },
+    {
+      "event_id": "ghrel:ba3341f9799b1e8e2729",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.271",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.271",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-14T22:12:54Z",
+      "fetched_at": "2026-09-15T15:02:56.728954Z",
+      "evidence": "What's changed - Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or /fast typed in the session applies where your organization allows it - Added mouse support to the /config panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted - Added claude self-hosted-runner --drain-marker-file : when that file exists at a SIGTERM drain, the runner reports its exit to the server as a host drain (telemetry only) - Added per-command allowed_domains to Bash, PowerShell and Monitor in auto mode with sandboxing: the hosts a command needs are reviewed with it and opened for it alone; other hosts are refused - Added omitClaudeMd to agent frontmatter and --agents JSON, letting custom and plugin subagents run without user, project and local CLAUDE.md files;",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.271",
+        "priority": 18,
+        "stars": 145147,
+        "private": false,
+        "draft": false,
+        "star_delta": 241,
+        "star_velocity": 118.95,
+        "momentum_window_days": 2.03
+      }
+    },
+    {
+      "event_id": "ghrel:ae2cac4ea7b93694f21c",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.6",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.6",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-15T02:00:26Z",
+      "fetched_at": "2026-09-15T15:02:56.728954Z",
+      "evidence": "Release 0.155.0-alpha.6",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.6",
+        "priority": 20,
+        "stars": 124357,
+        "private": false,
+        "draft": false,
+        "star_delta": 270,
+        "star_velocity": 286.14,
+        "momentum_window_days": 0.94
+      }
+    },
+    {
+      "event_id": "ghrel:f051068284697e2ee406",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.5",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.5",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-15T00:31:51Z",
+      "fetched_at": "2026-09-15T15:02:56.728954Z",
+      "evidence": "Release 0.155.0-alpha.5",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.5",
+        "priority": 20,
+        "stars": 124357,
+        "private": false,
+        "draft": false,
+        "star_delta": 270,
+        "star_velocity": 286.14,
+        "momentum_window_days": 0.94
+      }
+    },
+    {
+      "event_id": "ghrel:a7a7f41d5d262d67e935",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.2.4",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.4",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-14T23:04:27Z",
+      "fetched_at": "2026-09-15T15:02:56.728954Z",
+      "evidence": "Release 0.155.0-alpha.2.4",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.2.4",
+        "priority": 20,
+        "stars": 124357,
+        "private": false,
+        "draft": false,
+        "star_delta": 270,
+        "star_velocity": 286.14,
+        "momentum_window_days": 0.94
+      }
+    },
+    {
+      "event_id": "feed:ef18d943849cad0ec287",
+      "source_type": "official_feed",
+      "title": "Configure cost and quality in Copilot auto model selection",
+      "url": "https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-14T16:05:27Z",
+      "fetched_at": "2026-09-15T15:02:56.728954Z",
+      "evidence": "GitHub Copilot auto model selection now offers three tiers: efficiency, balance, and intelligence. Choose the tier that reflects how you want auto to weigh cost, quality, and response time for&#8230; The post Configure cost and quality in Copilot auto model selection appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:3f132fb2c563cba4f817",
+      "event_ids": [
+        "ghrel:3f132fb2c563cba4f817"
+      ],
+      "headline": "Claude Code v2.1.272",
+      "what_changed": "What's changed - Bug fixes and reliability improvements",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.272"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 15.22,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 99.22
+      }
+    },
+    {
+      "story_id": "story:ghrel:ba3341f9799b1e8e2729",
+      "event_ids": [
+        "ghrel:ba3341f9799b1e8e2729"
+      ],
+      "headline": "Claude Code v2.1.271",
+      "what_changed": "What's changed - Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or /fast typed in the session applies where your organization allows it - Added mouse support to the /config panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted - Added claude self-hosted-runner --drain-marker-file : when that file exists at a SIGTERM drain, the runner reports its exit to the server as a host drain (telemetry only) - Added per-command allowed_domains to Bash, PowerShell and Monitor in auto mode with sandboxing: the hosts a command … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.271"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 14.39,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 98.39
+      }
+    },
+    {
+      "story_id": "story:ghrel:ae2cac4ea7b93694f21c",
+      "event_ids": [
+        "ghrel:ae2cac4ea7b93694f21c"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.6",
+      "what_changed": "Release 0.155.0-alpha.6",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.6"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 15.65,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 89.65
+      }
+    },
+    {
+      "story_id": "story:ghrel:f051068284697e2ee406",
+      "event_ids": [
+        "ghrel:f051068284697e2ee406"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.5",
+      "what_changed": "Release 0.155.0-alpha.5",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.5"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 15.16,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 89.16
+      }
+    },
+    {
+      "story_id": "story:ghrel:a7a7f41d5d262d67e935",
+      "event_ids": [
+        "ghrel:a7a7f41d5d262d67e935"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.2.4",
+      "what_changed": "Release 0.155.0-alpha.2.4",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.4"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 14.68,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 88.68
+      }
+    },
+    {
+      "story_id": "story:feed:ef18d943849cad0ec287",
+      "event_ids": [
+        "feed:ef18d943849cad0ec287"
+      ],
+      "headline": "Configure cost and quality in Copilot auto model selection",
+      "what_changed": "GitHub Copilot auto model selection now offers three tiers: efficiency, balance, and intelligence. Choose the tier that reflects how you want auto to weigh cost, quality, and response time for&#8230; The post Configure cost and quality in Copilot auto model selection appeared first on The GitHub Blog .",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 12.35,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 88.35
+      }
+    }
+  ],
+  "noise_notes": [
+    "Skipped Gemini CLI: below threshold after routine/prerelease penalties."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-15. Today's lead is Claude Code v2.1.272. I filtered the rest down to 6 updates worth your attention.\n\nHere is the lead: Claude Code v2.1.272. What's changed - Bug fixes and reliability improvements This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nNext: Claude Code v2.1.271. What's changed - Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or /fast typed in the session applies where your organization allows it - Added mouse support to the /config panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted - Added claude self-hosted-runner --drain-marker-file : when that file exists at a SIGTERM drain, the runner reports its exit to the server as a host drain (telemetry only) - Added per-command allowed_domains to Bash, PowerShell and Monitor in auto mode with sandboxing: the hosts a command … [Excerpt; see source for full details.] This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nAlso: OpenAI Codex rust-v0.155.0-alpha.6. Release 0.155.0-alpha.6 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nAfter that: OpenAI Codex rust-v0.155.0-alpha.5. Release 0.155.0-alpha.5 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nOne more: OpenAI Codex rust-v0.155.0-alpha.2.4. Release 0.155.0-alpha.2.4 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nNext: Configure cost and quality in Copilot auto model selection. GitHub Copilot auto model selection now offers three tiers: efficiency, balance, and intelligence. Choose the tier that reflects how you want auto to weigh cost, quality, and response time for&#8230; The post Configure cost and quality in Copilot auto model selection appeared first on The GitHub Blog . This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nHigh noise, low signal. Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage note. 1 tracked source was unavailable, so this edition is incomplete.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "Claude Code v2.1.272\nWhat changed: What's changed - Bug fixes and reliability improvements\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.272\n\nClaude Code v2.1.271\nWhat changed: What's changed - Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or /fast typed in the session applies where your organization allows it - Added mouse support to the /config panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted - Added claude self-hosted-runner --drain-marker-file : when that file exists at a SIGTERM drain, the runner reports its exit to the server as a host drain (telemetry only) - Added per-command allowed_domains to Bash, PowerShell and Monitor in auto mode with sandboxing: the hosts a command … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.271\n\nOpenAI Codex rust-v0.155.0-alpha.6\nWhat changed: Release 0.155.0-alpha.6\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.6\n\nOpenAI Codex rust-v0.155.0-alpha.5\nWhat changed: Release 0.155.0-alpha.5\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.5\n\nOpenAI Codex rust-v0.155.0-alpha.2.4\nWhat changed: Release 0.155.0-alpha.2.4\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.4\n\nConfigure cost and quality in Copilot auto model selection\nWhat changed: GitHub Copilot auto model selection now offers three tiers: efficiency, balance, and intelligence. Choose the tier that reflects how you want auto to weigh cost, quality, and response time for&#8230; The post Configure cost and quality in Copilot auto model selection appeared first on The GitHub Blog .\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection\n\nHigh noise / low signal\n- Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "normal"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-15-9f5a149a/daily-ai-brief.mp3",
+    "size_bytes": 1391472,
+    "duration_secs": 231.912,
+    "sha256": "8b738f496f0d9aa36fe512d8c72a327a0dabe2f814d74ed95edf5e3b6f7d8b8c",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}

@@ -1,0 +1,370 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-17-1711ce11",
+  "published_at": "2026-09-17T15:02:10.012307Z",
+  "status": "published",
+  "source_health": {
+    "github:openai/codex": "ok:10",
+    "github:anthropics/claude-code": "ok:1",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:0",
+    "github:microsoft/vscode": "ok:1",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:1",
+    "youtube:weekly-digest": "degraded:0"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:5744b97e5a176886ffa7",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.274",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.274",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-17T00:12:02Z",
+      "fetched_at": "2026-09-17T15:02:10.012307Z",
+      "evidence": "What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, the IdP subject, to the telemetry Claude Desktop and Cowork send through a Claude apps",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.274",
+        "priority": 18,
+        "stars": 145828,
+        "private": false,
+        "draft": false,
+        "star_delta": 525,
+        "star_velocity": 524.38,
+        "momentum_window_days": 1.0
+      }
+    },
+    {
+      "event_id": "ghrel:cb08c3ec4026c81c3a27",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.16",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-17T04:34:06Z",
+      "fetched_at": "2026-09-17T15:02:10.012307Z",
+      "evidence": "Release 0.155.0-alpha.16",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.16",
+        "priority": 20,
+        "stars": 124918,
+        "private": false,
+        "draft": false,
+        "star_delta": 222,
+        "star_velocity": 221.74,
+        "momentum_window_days": 1.0
+      }
+    },
+    {
+      "event_id": "feed:41f2b23db141d620003a",
+      "source_type": "official_feed",
+      "title": "Copilot budget increase requests are generally available",
+      "url": "https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available",
+      "product": "GitHub Developer Tools",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-16T20:17:18Z",
+      "fetched_at": "2026-09-17T15:02:10.012307Z",
+      "evidence": "Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/"
+      }
+    },
+    {
+      "event_id": "ghrel:004241a97c26ea44979a",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.15",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-17T01:21:10Z",
+      "fetched_at": "2026-09-17T15:02:10.012307Z",
+      "evidence": "Release 0.155.0-alpha.15",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.15",
+        "priority": 20,
+        "stars": 124918,
+        "private": false,
+        "draft": false,
+        "star_delta": 222,
+        "star_velocity": 221.74,
+        "momentum_window_days": 1.0
+      }
+    },
+    {
+      "event_id": "ghrel:ca8bc2182dbdf131efc9",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.14",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-16T23:06:38Z",
+      "fetched_at": "2026-09-17T15:02:10.012307Z",
+      "evidence": "Release 0.155.0-alpha.14",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.14",
+        "priority": 20,
+        "stars": 124918,
+        "private": false,
+        "draft": false,
+        "star_delta": 222,
+        "star_velocity": 221.74,
+        "momentum_window_days": 1.0
+      }
+    },
+    {
+      "event_id": "ghrel:0ec3008b414dbc1e5a3f",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.13",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-16T21:43:35Z",
+      "fetched_at": "2026-09-17T15:02:10.012307Z",
+      "evidence": "Release 0.155.0-alpha.13",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.13",
+        "priority": 20,
+        "stars": 124918,
+        "private": false,
+        "draft": false,
+        "star_delta": 222,
+        "star_velocity": 221.74,
+        "momentum_window_days": 1.0
+      }
+    },
+    {
+      "event_id": "ghrel:7c90a1cd27592e5ce7b8",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.0-alpha.2.6",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-16T20:03:32Z",
+      "fetched_at": "2026-09-17T15:02:10.012307Z",
+      "evidence": "Release 0.155.0-alpha.2.6",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.0-alpha.2.6",
+        "priority": 20,
+        "stars": 124918,
+        "private": false,
+        "draft": false,
+        "star_delta": 222,
+        "star_velocity": 221.74,
+        "momentum_window_days": 1.0
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:5744b97e5a176886ffa7",
+      "event_ids": [
+        "ghrel:5744b97e5a176886ffa7"
+      ],
+      "headline": "Claude Code v2.1.274",
+      "what_changed": "What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.274"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 15.05,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 99.05
+      }
+    },
+    {
+      "story_id": "story:ghrel:cb08c3ec4026c81c3a27",
+      "event_ids": [
+        "ghrel:cb08c3ec4026c81c3a27"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.16",
+      "what_changed": "Release 0.155.0-alpha.16",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 16.51,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 90.51
+      }
+    },
+    {
+      "story_id": "story:feed:41f2b23db141d620003a",
+      "event_ids": [
+        "feed:41f2b23db141d620003a"
+      ],
+      "headline": "Copilot budget increase requests are generally available",
+      "what_changed": "Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 13.75,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 89.75
+      }
+    },
+    {
+      "story_id": "story:ghrel:004241a97c26ea44979a",
+      "event_ids": [
+        "ghrel:004241a97c26ea44979a"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.15",
+      "what_changed": "Release 0.155.0-alpha.15",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 15.44,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 89.44
+      }
+    },
+    {
+      "story_id": "story:ghrel:ca8bc2182dbdf131efc9",
+      "event_ids": [
+        "ghrel:ca8bc2182dbdf131efc9"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.14",
+      "what_changed": "Release 0.155.0-alpha.14",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 14.69,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 88.69
+      }
+    },
+    {
+      "story_id": "story:ghrel:0ec3008b414dbc1e5a3f",
+      "event_ids": [
+        "ghrel:0ec3008b414dbc1e5a3f"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.13",
+      "what_changed": "Release 0.155.0-alpha.13",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 14.23,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 88.23
+      }
+    },
+    {
+      "story_id": "story:ghrel:7c90a1cd27592e5ce7b8",
+      "event_ids": [
+        "ghrel:7c90a1cd27592e5ce7b8"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.0-alpha.2.6",
+      "what_changed": "Release 0.155.0-alpha.2.6",
+      "why_it_matters": "This is prerelease information; avoid changing production workflows without a specific need.",
+      "action": "skip",
+      "rationale": "Evaluate only in an isolated test environment if the cited change addresses a current need.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 13.67,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 12.0,
+        "total": 87.67
+      }
+    }
+  ],
+  "noise_notes": [
+    "Skipped Gemini CLI: below threshold after routine/prerelease penalties."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-17. Today's lead is Claude Code v2.1.274. I filtered the rest down to 7 updates worth your attention.\n\nHere is the lead: Claude Code v2.1.274. What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.] This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nNext: OpenAI Codex rust-v0.155.0-alpha.16. Release 0.155.0-alpha.16 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nAlso: Copilot budget increase requests are generally available. Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog . This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nAfter that: OpenAI Codex rust-v0.155.0-alpha.15. Release 0.155.0-alpha.15 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nOne more: OpenAI Codex rust-v0.155.0-alpha.14. Release 0.155.0-alpha.14 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nNext: OpenAI Codex rust-v0.155.0-alpha.13. Release 0.155.0-alpha.13 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nFinally: OpenAI Codex rust-v0.155.0-alpha.2.6. Release 0.155.0-alpha.2.6 This is prerelease information; avoid changing production workflows without a specific need. The call is skip. Evaluate only in an isolated test environment if the cited change addresses a current need.\n\nHigh noise, low signal. Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage note. 1 tracked source was unavailable, so this edition is incomplete.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "Claude Code v2.1.274\nWhat changed: What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.274\n\nOpenAI Codex rust-v0.155.0-alpha.16\nWhat changed: Release 0.155.0-alpha.16\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16\n\nCopilot budget increase requests are generally available\nWhat changed: Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available\n\nOpenAI Codex rust-v0.155.0-alpha.15\nWhat changed: Release 0.155.0-alpha.15\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15\n\nOpenAI Codex rust-v0.155.0-alpha.14\nWhat changed: Release 0.155.0-alpha.14\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14\n\nOpenAI Codex rust-v0.155.0-alpha.13\nWhat changed: Release 0.155.0-alpha.13\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13\n\nOpenAI Codex rust-v0.155.0-alpha.2.6\nWhat changed: Release 0.155.0-alpha.2.6\nWhy it matters: This is prerelease information; avoid changing production workflows without a specific need.\nRecommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6\n\nHigh noise / low signal\n- Skipped Gemini CLI: below threshold after routine/prerelease penalties.\n\nCoverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "normal"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-17-1711ce11/daily-ai-brief.mp3",
+    "size_bytes": 1687104,
+    "duration_secs": 281.184,
+    "sha256": "00730899e3bfb68df8fff2d819ff07c3a52d53867e154a03208ddd4805a55878",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}

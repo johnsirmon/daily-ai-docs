@@ -1,5 +1,581 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-11</title><guid isPermaLink="false">daily-2026-09-11-aa65a29c</guid><description>OpenAI Codex python-v0.154.0
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-17</title><guid isPermaLink="false">daily-2026-09-17-1711ce11</guid><description>Claude Code v2.1.274
+What changed: What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.274
+
+OpenAI Codex rust-v0.155.0-alpha.16
+What changed: Release 0.155.0-alpha.16
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16
+
+Copilot budget increase requests are generally available
+What changed: Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&amp;#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available
+
+OpenAI Codex rust-v0.155.0-alpha.15
+What changed: Release 0.155.0-alpha.15
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15
+
+OpenAI Codex rust-v0.155.0-alpha.14
+What changed: Release 0.155.0-alpha.14
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14
+
+OpenAI Codex rust-v0.155.0-alpha.13
+What changed: Release 0.155.0-alpha.13
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13
+
+OpenAI Codex rust-v0.155.0-alpha.2.6
+What changed: Release 0.155.0-alpha.2.6
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Claude Code v2.1.274
+What changed: What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.274
+
+OpenAI Codex rust-v0.155.0-alpha.16
+What changed: Release 0.155.0-alpha.16
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16
+
+Copilot budget increase requests are generally available
+What changed: Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&amp;#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available
+
+OpenAI Codex rust-v0.155.0-alpha.15
+What changed: Release 0.155.0-alpha.15
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15
+
+OpenAI Codex rust-v0.155.0-alpha.14
+What changed: Release 0.155.0-alpha.14
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14
+
+OpenAI Codex rust-v0.155.0-alpha.13
+What changed: Release 0.155.0-alpha.13
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13
+
+OpenAI Codex rust-v0.155.0-alpha.2.6
+What changed: Release 0.155.0-alpha.2.6
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Claude Code v2.1.274
+What changed: What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.274
+
+OpenAI Codex rust-v0.155.0-alpha.16
+What changed: Release 0.155.0-alpha.16
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16
+
+Copilot budget increase requests are generally available
+What changed: Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&amp;#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available
+
+OpenAI Codex rust-v0.155.0-alpha.15
+What changed: Release 0.155.0-alpha.15
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15
+
+OpenAI Codex rust-v0.155.0-alpha.14
+What changed: Release 0.155.0-alpha.14
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14
+
+OpenAI Codex rust-v0.155.0-alpha.13
+What changed: Release 0.155.0-alpha.13
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13
+
+OpenAI Codex rust-v0.155.0-alpha.2.6
+What changed: Release 0.155.0-alpha.2.6
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Thu, 17 Sep 2026 15:02:10 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-17-1711ce11/daily-ai-brief.mp3" length="1687104" type="audio/mpeg" /><itunes:duration>4:41</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-16</title><guid isPermaLink="false">daily-2026-09-16-82a47114</guid><description>Visual Studio Code 1.138.0
+What changed: https://code.visualstudio.com/updates/v1_138
+Why it matters: This is relevant to developers tracking Developer environment.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/microsoft/vscode/releases/tag/1.138.0
+
+Claude Code v2.1.273
+What changed: What's changed - Added x-claude-code-request-class, x-claude-code-agent-type, x-claude-code-prev-tool-durations, x-claude-code-compaction and x-claude-code-context-compacted request headers for LLM gateways; opt in with CLAUDE_CODE_GATEWAY_HINT_HEADERS=1 - Added a notification when an MCP server disconnects mid-session and automatic reconnection gives up, pointing at /mcp - Added forking a session started with claude --remote-control or /remote-control from the Claude app; the fork runs as a background session on your computer - Fixed Bash commands the permission checker cannot fully analyze skipping the prompt under permissions.blockReadsOutsideWorkingDirectories, and a subshell hiding a dangerous rm in bypass mode - Fixed skills synced from claude.ai staying available after your organization turns Skills off; they now move to the recoverable trash - Fixed … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.273
+
+OpenAI Codex rust-v0.155.0-alpha.2.5
+What changed: Release 0.155.0-alpha.2.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.5
+
+OpenAI Codex rusty-v8-v152.2.0
+What changed: Published rusty-v8-v152.2.0.
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rusty-v8-v152.2.0
+
+OpenAI Codex rust-v0.155.0-alpha.10
+What changed: Release 0.155.0-alpha.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.10
+
+OpenAI Codex rust-v0.155.0-alpha.9
+What changed: Release 0.155.0-alpha.9
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9
+
+GitHub Copilot suggests custom properties definitions
+What changed: GitHub Copilot can now suggest allowed values when you create a custom property for repositories in your organization. This feature is in public preview for GitHub Copilot Business and Copilot&amp;#8230; The post GitHub Copilot suggests custom properties definitions appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-15-github-copilot-suggests-custom-properties-definitions
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Visual Studio Code 1.138.0
+What changed: https://code.visualstudio.com/updates/v1_138
+Why it matters: This is relevant to developers tracking Developer environment.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/microsoft/vscode/releases/tag/1.138.0
+
+Claude Code v2.1.273
+What changed: What's changed - Added x-claude-code-request-class, x-claude-code-agent-type, x-claude-code-prev-tool-durations, x-claude-code-compaction and x-claude-code-context-compacted request headers for LLM gateways; opt in with CLAUDE_CODE_GATEWAY_HINT_HEADERS=1 - Added a notification when an MCP server disconnects mid-session and automatic reconnection gives up, pointing at /mcp - Added forking a session started with claude --remote-control or /remote-control from the Claude app; the fork runs as a background session on your computer - Fixed Bash commands the permission checker cannot fully analyze skipping the prompt under permissions.blockReadsOutsideWorkingDirectories, and a subshell hiding a dangerous rm in bypass mode - Fixed skills synced from claude.ai staying available after your organization turns Skills off; they now move to the recoverable trash - Fixed … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.273
+
+OpenAI Codex rust-v0.155.0-alpha.2.5
+What changed: Release 0.155.0-alpha.2.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.5
+
+OpenAI Codex rusty-v8-v152.2.0
+What changed: Published rusty-v8-v152.2.0.
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rusty-v8-v152.2.0
+
+OpenAI Codex rust-v0.155.0-alpha.10
+What changed: Release 0.155.0-alpha.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.10
+
+OpenAI Codex rust-v0.155.0-alpha.9
+What changed: Release 0.155.0-alpha.9
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9
+
+GitHub Copilot suggests custom properties definitions
+What changed: GitHub Copilot can now suggest allowed values when you create a custom property for repositories in your organization. This feature is in public preview for GitHub Copilot Business and Copilot&amp;#8230; The post GitHub Copilot suggests custom properties definitions appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-15-github-copilot-suggests-custom-properties-definitions
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Visual Studio Code 1.138.0
+What changed: https://code.visualstudio.com/updates/v1_138
+Why it matters: This is relevant to developers tracking Developer environment.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/microsoft/vscode/releases/tag/1.138.0
+
+Claude Code v2.1.273
+What changed: What's changed - Added x-claude-code-request-class, x-claude-code-agent-type, x-claude-code-prev-tool-durations, x-claude-code-compaction and x-claude-code-context-compacted request headers for LLM gateways; opt in with CLAUDE_CODE_GATEWAY_HINT_HEADERS=1 - Added a notification when an MCP server disconnects mid-session and automatic reconnection gives up, pointing at /mcp - Added forking a session started with claude --remote-control or /remote-control from the Claude app; the fork runs as a background session on your computer - Fixed Bash commands the permission checker cannot fully analyze skipping the prompt under permissions.blockReadsOutsideWorkingDirectories, and a subshell hiding a dangerous rm in bypass mode - Fixed skills synced from claude.ai staying available after your organization turns Skills off; they now move to the recoverable trash - Fixed … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.273
+
+OpenAI Codex rust-v0.155.0-alpha.2.5
+What changed: Release 0.155.0-alpha.2.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.5
+
+OpenAI Codex rusty-v8-v152.2.0
+What changed: Published rusty-v8-v152.2.0.
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rusty-v8-v152.2.0
+
+OpenAI Codex rust-v0.155.0-alpha.10
+What changed: Release 0.155.0-alpha.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.10
+
+OpenAI Codex rust-v0.155.0-alpha.9
+What changed: Release 0.155.0-alpha.9
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9
+
+GitHub Copilot suggests custom properties definitions
+What changed: GitHub Copilot can now suggest allowed values when you create a custom property for repositories in your organization. This feature is in public preview for GitHub Copilot Business and Copilot&amp;#8230; The post GitHub Copilot suggests custom properties definitions appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-15-github-copilot-suggests-custom-properties-definitions
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Wed, 16 Sep 2026 15:00:27 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-16-82a47114/daily-ai-brief.mp3" length="1652832" type="audio/mpeg" /><itunes:duration>4:35</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-15</title><guid isPermaLink="false">daily-2026-09-15-9f5a149a</guid><description>Claude Code v2.1.272
+What changed: What's changed - Bug fixes and reliability improvements
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.272
+
+Claude Code v2.1.271
+What changed: What's changed - Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or /fast typed in the session applies where your organization allows it - Added mouse support to the /config panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted - Added claude self-hosted-runner --drain-marker-file : when that file exists at a SIGTERM drain, the runner reports its exit to the server as a host drain (telemetry only) - Added per-command allowed_domains to Bash, PowerShell and Monitor in auto mode with sandboxing: the hosts a command … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.271
+
+OpenAI Codex rust-v0.155.0-alpha.6
+What changed: Release 0.155.0-alpha.6
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.6
+
+OpenAI Codex rust-v0.155.0-alpha.5
+What changed: Release 0.155.0-alpha.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.5
+
+OpenAI Codex rust-v0.155.0-alpha.2.4
+What changed: Release 0.155.0-alpha.2.4
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.4
+
+Configure cost and quality in Copilot auto model selection
+What changed: GitHub Copilot auto model selection now offers three tiers: efficiency, balance, and intelligence. Choose the tier that reflects how you want auto to weigh cost, quality, and response time for&amp;#8230; The post Configure cost and quality in Copilot auto model selection appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Claude Code v2.1.272
+What changed: What's changed - Bug fixes and reliability improvements
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.272
+
+Claude Code v2.1.271
+What changed: What's changed - Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or /fast typed in the session applies where your organization allows it - Added mouse support to the /config panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted - Added claude self-hosted-runner --drain-marker-file : when that file exists at a SIGTERM drain, the runner reports its exit to the server as a host drain (telemetry only) - Added per-command allowed_domains to Bash, PowerShell and Monitor in auto mode with sandboxing: the hosts a command … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.271
+
+OpenAI Codex rust-v0.155.0-alpha.6
+What changed: Release 0.155.0-alpha.6
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.6
+
+OpenAI Codex rust-v0.155.0-alpha.5
+What changed: Release 0.155.0-alpha.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.5
+
+OpenAI Codex rust-v0.155.0-alpha.2.4
+What changed: Release 0.155.0-alpha.2.4
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.4
+
+Configure cost and quality in Copilot auto model selection
+What changed: GitHub Copilot auto model selection now offers three tiers: efficiency, balance, and intelligence. Choose the tier that reflects how you want auto to weigh cost, quality, and response time for&amp;#8230; The post Configure cost and quality in Copilot auto model selection appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Claude Code v2.1.272
+What changed: What's changed - Bug fixes and reliability improvements
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.272
+
+Claude Code v2.1.271
+What changed: What's changed - Added fast mode in Claude Code Remote sessions (cloud and self-hosted runners): the host's fast-mode setting or /fast typed in the session applies where your organization allows it - Added mouse support to the /config panel in fullscreen mode: the wheel scrolls the settings list, a click on a setting's value changes it, and the row under the pointer is highlighted - Added claude self-hosted-runner --drain-marker-file : when that file exists at a SIGTERM drain, the runner reports its exit to the server as a host drain (telemetry only) - Added per-command allowed_domains to Bash, PowerShell and Monitor in auto mode with sandboxing: the hosts a command … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.271
+
+OpenAI Codex rust-v0.155.0-alpha.6
+What changed: Release 0.155.0-alpha.6
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.6
+
+OpenAI Codex rust-v0.155.0-alpha.5
+What changed: Release 0.155.0-alpha.5
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.5
+
+OpenAI Codex rust-v0.155.0-alpha.2.4
+What changed: Release 0.155.0-alpha.2.4
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.4
+
+Configure cost and quality in Copilot auto model selection
+What changed: GitHub Copilot auto model selection now offers three tiers: efficiency, balance, and intelligence. Choose the tier that reflects how you want auto to weigh cost, quality, and response time for&amp;#8230; The post Configure cost and quality in Copilot auto model selection appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Tue, 15 Sep 2026 15:02:56 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-15-9f5a149a/daily-ai-brief.mp3" length="1391472" type="audio/mpeg" /><itunes:duration>3:52</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-14</title><guid isPermaLink="false">daily-2026-09-14-ca0e448f</guid><description>Hermes Agent v2026.9.14
+What changed: Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 &gt; Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.14
+
+OpenAI Codex rust-v0.155.0-alpha.4
+What changed: Release 0.155.0-alpha.4
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Hermes Agent v2026.9.14
+What changed: Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 &gt; Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.14
+
+OpenAI Codex rust-v0.155.0-alpha.4
+What changed: Release 0.155.0-alpha.4
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Hermes Agent v2026.9.14
+What changed: Hermes Agent v0.21.3 (v2026.9.14) Release Date: September 14, 2026 &gt; Patch release. This tag rolls up the ~338 PRs merged since v0.21.2 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). It exists so the remote-gateway sign-in fixes below reach Cloud agents, which auto-update to the newest release tag. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.14
+
+OpenAI Codex rust-v0.155.0-alpha.4
+What changed: Release 0.155.0-alpha.4
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Mon, 14 Sep 2026 16:24:09 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-14-ca0e448f/daily-ai-brief.mp3" length="699120" type="audio/mpeg" /><itunes:duration>1:57</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-13</title><guid isPermaLink="false">daily-2026-09-12-eeccde22</guid><description>Claude Code v2.1.270
+What changed: What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.270
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Claude Code v2.1.270
+What changed: What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.270
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Claude Code v2.1.270
+What changed: What's changed - Fixed read-only git commands in Bash unexpectedly asking for permission after a session had been running for a while (regression in 2.1.269)
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.270
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Sun, 13 Sep 2026 14:25:25 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-12-eeccde22/daily-ai-brief.mp3" length="397152" type="audio/mpeg" /><itunes:duration>1:06</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-12</title><guid isPermaLink="false">daily-2026-09-11-b18bb3f4</guid><description>Claude Code v2.1.269
+What changed: What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.269
+
+Add VS Code Agents to Copilot usage metrics
+What changed: GitHub Copilot usage metrics reports now include generally available metrics for activity in the dedicated VS Code Agents window, helping you measure adoption and engagement across enterprises and organizations. What&amp;#8217;s&amp;#8230; The post Add VS Code Agents to Copilot usage metrics appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics
+
+Auto-resolution and analysis updates in Copilot code review
+What changed: Copilot code review now resolves its own comments once you address them and writes smart commit messages for you when you apply its code suggestions. Behind the scenes, Copilot now&amp;#8230; The post Auto-resolution and analysis updates in Copilot code review appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review
+
+Hermes Agent v2026.9.11
+What changed: Hermes Agent v0.21.2 (v2026.9.11) — The state.db Patch Release Release Date: September 11, 2026 &gt; Patch release. v0.21.0 shipped a large rewrite of the session store's connection handling, and for some installs it made state.db fragile: second writers cancelling each other's locks, healthy databases reported as corrupt, one bad row killing sessions list. This release closes that class and rolls up everything else that landed on main in the four days since v0.21.1. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.11
+
+OpenAI Codex rust-v0.155.0-alpha.3.10
+What changed: Release 0.155.0-alpha.3.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.10
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</description><itunes:summary>Claude Code v2.1.269
+What changed: What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.269
+
+Add VS Code Agents to Copilot usage metrics
+What changed: GitHub Copilot usage metrics reports now include generally available metrics for activity in the dedicated VS Code Agents window, helping you measure adoption and engagement across enterprises and organizations. What&amp;#8217;s&amp;#8230; The post Add VS Code Agents to Copilot usage metrics appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics
+
+Auto-resolution and analysis updates in Copilot code review
+What changed: Copilot code review now resolves its own comments once you address them and writes smart commit messages for you when you apply its code suggestions. Behind the scenes, Copilot now&amp;#8230; The post Auto-resolution and analysis updates in Copilot code review appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review
+
+Hermes Agent v2026.9.11
+What changed: Hermes Agent v0.21.2 (v2026.9.11) — The state.db Patch Release Release Date: September 11, 2026 &gt; Patch release. v0.21.0 shipped a large rewrite of the session store's connection handling, and for some installs it made state.db fragile: second writers cancelling each other's locks, healthy databases reported as corrupt, one bad row killing sessions list. This release closes that class and rolls up everything else that landed on main in the four days since v0.21.1. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.11
+
+OpenAI Codex rust-v0.155.0-alpha.3.10
+What changed: Release 0.155.0-alpha.3.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.10
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</itunes:summary><content:encoded>Claude Code v2.1.269
+What changed: What's changed - Added claude plugin eval: run a plugin's eval suite against Claude Code and get scored, reproducible results (JSON + HTML report); see claude plugin eval --help - Added /output-style [name] to list and switch output styles, including over Remote Control and in cloud and other headless sessions - Added a diff of the files a Bash command changed to the Bash tool result when the Bash tool handles file edits (setting bashEditDiffEnabled) - Added OTEL_METRICS_INCLUDE_REPOSITORY to tag OpenTelemetry metrics and events with vcs. repository attributes; commit events get vcs.ref.head. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/anthropics/claude-code/releases/tag/v2.1.269
+
+Add VS Code Agents to Copilot usage metrics
+What changed: GitHub Copilot usage metrics reports now include generally available metrics for activity in the dedicated VS Code Agents window, helping you measure adoption and engagement across enterprises and organizations. What&amp;#8217;s&amp;#8230; The post Add VS Code Agents to Copilot usage metrics appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics
+
+Auto-resolution and analysis updates in Copilot code review
+What changed: Copilot code review now resolves its own comments once you address them and writes smart commit messages for you when you apply its code suggestions. Behind the scenes, Copilot now&amp;#8230; The post Auto-resolution and analysis updates in Copilot code review appeared first on The GitHub Blog .
+Why it matters: This is relevant to developers tracking AI coding agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review
+
+Hermes Agent v2026.9.11
+What changed: Hermes Agent v0.21.2 (v2026.9.11) — The state.db Patch Release Release Date: September 11, 2026 &gt; Patch release. v0.21.0 shipped a large rewrite of the session store's connection handling, and for some installs it made state.db fragile: second writers cancelling each other's locks, healthy databases reported as corrupt, one bad row killing sessions list. This release closes that class and rolls up everything else that landed on main in the four days since v0.21.1. … [Excerpt; see source for full details.]
+Why it matters: This is relevant to developers tracking AI agents.
+Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.
+Sources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.11
+
+OpenAI Codex rust-v0.155.0-alpha.3.10
+What changed: Release 0.155.0-alpha.3.10
+Why it matters: This is prerelease information; avoid changing production workflows without a specific need.
+Recommendation: SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+Sources: https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.10
+
+High noise / low signal
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
+
+Coverage gaps
+- youtube:weekly-digest</content:encoded><pubDate>Sat, 12 Sep 2026 13:37:53 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-11-b18bb3f4/daily-ai-brief.mp3" length="1583712" type="audio/mpeg" /><itunes:duration>4:24</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-11</title><guid isPermaLink="false">daily-2026-09-11-aa65a29c</guid><description>OpenAI Codex python-v0.154.0
 What changed: Install with pip install --upgrade openai-codex==0.154.0 (Python 3.10 or later). This release includes the matching openai-codex-cli-bin==0.154.0 runtime. - Add max and ultra reasoning-effort values. 39662 - Add ExternalMessage to synchronous and asynchronous run() and turn() calls. External content can start a turn or join an active regular turn with tool-level authority; it does not grant user authorization. Consumers receive independent event streams. 44086 - Add include_turns on resume/fork, turn_service_tier for one newly started turn, and source metadata. History selection changes the returned response, not model context. Existing defaults are preserved when these options are omitted. 44084 - Refresh generated protocol models and notifications, and preserve completion events that arrive before a turn-start response. 44032, 44400 Check these migrations when upgrading: - HookMetadata
 Why it matters: Check your current tooling or upgrade path because this may require a change.
 Recommendation: ACT — Primary source; relevance score 20.

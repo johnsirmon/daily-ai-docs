@@ -179,8 +179,53 @@ and measured duration, not just the Notebook's displayed length. This is an oper
 
 Do not export browser cookies, copy private notebooks, or depend on undocumented consumer endpoints. A Notebook audio overview
 does not satisfy the manifest's two-call Gemini verification contract by itself. Never invent API-call counts or mark it
-verified to bypass the publisher. A provenance-aware import and review handoff must be explicitly implemented and approved
-before Notebook audio can enter the immutable release/RSS pipeline. Unattended browser scheduling is not implemented.
+verified to bypass the publisher. Use the reviewed-audio handoff below after explicit publication approval.
+Unattended browser scheduling is not implemented.
+
+### Publishing approved Notebook audio
+
+Schema 3 is the separate reviewed-audio contract. It retains public source events and stories, an exact transcript hash,
+the input audio hash, publication-authorization time, and transcript-to-source review claims. It does not claim two
+Gemini API calls or independent model verification. Research still requires full-text review, archived supporting excerpts,
+methods, limitations, and an author-reported/not-reproduced qualification. Full papers, private notebook identifiers,
+account details, and browser cookies must not enter the release manifest.
+
+Review the actual recording before preparing the draft manifest. Local ASR can assist, but disclose its uncertainties.
+Correct material errors before publication. An optional, explicitly recorded spoken editorial prefix can clarify an error
+in the otherwise intact conversation; its exact text and audio hash are retained separately from the original recording.
+Keep the original download unchanged. The final audio must remain within 300-480 seconds.
+
+Import a schema-3 draft and the reviewed source recording into a **new, unused** output directory:
+
+```bash
+uv run --with-requirements requirements.lock python -m pipeline.reviewed_audio \
+  --manifest /absolute/path/to/reviewed-draft.json \
+  --audio /absolute/path/to/reviewed-recording.m4a \
+  --output-dir .cache/reviewed-release
+```
+
+The importer validates provenance, converts to MP3 once, performs full media checks, and writes `daily-ai-brief.mp3`,
+`episode-manifest.json`, and local `publication.json`. It makes no model, TTS, upload, feed, or state changes. It refuses
+preview flags, mismatched source hashes, and reused output directories, including directories from failed imports.
+
+After all tests pass and the reviewed-audio code is on `main`, create a **new** public release named exactly as the
+manifest's episode ID, attaching only the prepared MP3 and manifest. Never use `gh release upload --clobber`. If the
+release already exists, download and reconcile its existing assets rather than regenerating them.
+
+Run **Actions -> Daily AI Developer Brief -> Run workflow** on `main`, setting `reviewed_episode` to that release tag.
+Equivalently:
+
+```bash
+gh workflow run update-radar.yml --ref main -f reviewed_episode="$EPISODE_ID"
+```
+
+The existing workflow shares `podcast-publisher` concurrency. It rejects draft/prerelease assets, downloads the exact
+manifest/MP3, verifies identity and local media again, then uses the normal remote verification, candidate RSS, Pages,
+subscriber GUID, and confirmation steps. An empty input retains the normal daily preparation path. This manual import
+does not activate scheduled Notebook generation or change the configured model/TTS provider.
+
+For recovery, rerun the same workflow with the same release tag. Do not rebuild or replace its media. A pending different
+candidate blocks the import until recovered. A confirmed episode must not be promoted again as a new episode.
 
 ## Local commands
 

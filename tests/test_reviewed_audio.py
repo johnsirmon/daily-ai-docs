@@ -92,6 +92,21 @@ def paper_draft():
     return data
 
 
+def corrected_draft():
+    data = draft()
+    correction = "Editorial correction: approval changes the member's budget, not the organization's budget."
+    data["generation"]["editing"] = {
+        "method": "prefixed_editorial_correction",
+        "original_audio_sha256": digest(b"original Notebook M4A"),
+        "correction_text": correction,
+        "correction_audio_sha256": digest(b"Edge correction MP3"),
+        "correction_provider": "edge",
+    }
+    data["narration"] = correction + "\n\n" + data["narration"]
+    data["generation"]["transcript"]["sha256"] = digest(data["narration"].encode())
+    return data
+
+
 def test_valid_manifest_preserves_exact_transcript_and_explicit_provenance():
     data = draft()
     manifest = EpisodeManifest.from_dict(data)
@@ -101,6 +116,70 @@ def test_valid_manifest_preserves_exact_transcript_and_explicit_provenance():
     assert "calls" not in manifest.generation
     rendered = render_manifest_readme(manifest)
     assert "not independently verified Gemini API generation" in rendered
+    assert "preserves a conversational format" in rendered
+    assert "Every story ends with" not in rendered
+    assert "### Editorial correction" not in rendered
+
+
+def test_prefixed_correction_provenance_preserves_combined_transcript():
+    data = corrected_draft()
+    manifest = EpisodeManifest.from_dict(data)
+    assert manifest_to_narration(manifest) == data["narration"]
+    assert manifest.narration.endswith(draft()["narration"])
+    assert manifest.to_dict()["generation"]["editing"] == data["generation"]["editing"]
+    rendered = render_manifest_readme(manifest)
+    assert "An Edge-TTS editorial correction" in rendered
+    correction = data["generation"]["editing"]["correction_text"]
+    assert correction in rendered
+    assert rendered.index(correction) < rendered.index("## Today's signal")
+    assert "An Edge-TTS editorial correction" not in render_manifest_readme(EpisodeManifest.from_dict(draft()))
+
+
+@pytest.mark.parametrize("field,value", [
+    ("method", "trimmed_conversation"), ("method", []), ("correction_provider", "gemini"),
+    ("original_audio_sha256", "invalid"), ("original_audio_sha256", "A" * 64),
+    ("correction_audio_sha256", None), ("correction_audio_sha256", "f" * 63),
+    ("correction_text", ""), ("correction_text", None), ("correction_text", "x" * 1601),
+    ("correction_text", "A correction that was not prefixed."),
+    ("verified", True), ("calls", 2), ("notebook_url", "https://notebooklm.google.com/private"),
+])
+def test_rejects_invalid_correction_provenance(field, value):
+    data = corrected_draft()
+    data["generation"]["editing"][field] = value
+    with pytest.raises(SchemaError):
+        EpisodeManifest.from_dict(data)
+
+
+@pytest.mark.parametrize("editing", [None, [], {}, {"method": "prefixed_editorial_correction"}])
+def test_correction_provenance_requires_complete_typed_object(editing):
+    data = corrected_draft()
+    data["generation"]["editing"] = editing
+    with pytest.raises(SchemaError, match="generation.editing"):
+        EpisodeManifest.from_dict(data)
+
+
+def test_correction_must_be_a_prefix_not_merely_present_in_transcript():
+    data = corrected_draft()
+    correction = data["generation"]["editing"]["correction_text"]
+    data["narration"] = draft()["narration"] + correction
+    data["generation"]["transcript"]["sha256"] = digest(data["narration"].encode())
+    with pytest.raises(SchemaError, match="exact narration prefix"):
+        EpisodeManifest.from_dict(data)
+
+
+def test_correction_cannot_replace_entire_conversation():
+    data = corrected_draft()
+    data["narration"] = data["generation"]["editing"]["correction_text"] + "\n "
+    data["generation"]["transcript"]["sha256"] = digest(data["narration"].encode())
+    with pytest.raises(SchemaError, match="retain the conversation"):
+        EpisodeManifest.from_dict(data)
+
+
+def test_correction_requires_hash_of_complete_combined_transcript():
+    data = corrected_draft()
+    data["generation"]["transcript"]["sha256"] = draft()["generation"]["transcript"]["sha256"]
+    with pytest.raises(SchemaError, match="exact UTF-8 narration"):
+        EpisodeManifest.from_dict(data)
 
 
 @pytest.mark.parametrize("path,value", [
@@ -204,11 +283,29 @@ def test_rejects_unarchived_documents_and_private_source_metadata(metadata):
         EpisodeManifest.from_dict(data)
 
 
+@pytest.mark.parametrize("field", ["source_text_sha256", "source_document_sha256", "source_evidence_sha256"])
+def test_reviewed_source_retains_only_valid_provenance_hashes(field):
+    data = draft()
+    data["source_events"][0]["metadata"] = {field: digest(b"public source"), "evidence_status": "reviewed_excerpts"}
+    EpisodeManifest.from_dict(data)
+    data["source_events"][0]["metadata"][field] = "not-a-digest"
+    with pytest.raises(SchemaError, match="SHA-256"):
+        EpisodeManifest.from_dict(data)
+
+
+def test_reviewed_source_status_must_be_reviewed():
+    data = draft()
+    data["source_events"][0]["metadata"] = {"evidence_status": "unreviewed"}
+    with pytest.raises(SchemaError, match="reviewed_excerpts"):
+        EpisodeManifest.from_dict(data)
+
+
 @pytest.mark.parametrize("url", [
     "http://example.com/release", "https://localhost/release", "https://127.0.0.1/release",
     "https://10.0.0.1/release", "https://example.internal/release",
     "https://user:password@example.com/release", "https://example.com:8443/release",
     "https://notebooklm.google.com/notebook/private", "https://gemini.google.com/app/private",
+    "https://notebook.google.com/notebook/private", "https://notebook.google/notebook/private",
     "https://drive.google.com/file/private", "https://example.com/release?api_key=private",
 ])
 def test_rejects_nonpublic_urls_in_sources_and_notes(url):
@@ -328,6 +425,8 @@ def test_import_binds_measured_audio_without_mutating_sources(inputs, mocked_aud
     assert manifest.audio["size_bytes"] == Path(publication["audio_path"]).stat().st_size
     assert manifest.audio["duration_secs"] == 320.125
     assert "path" not in manifest.audio
+    assert str(output) not in Path(publication["manifest_path"]).read_text()
+    assert str(source) not in Path(publication["manifest_path"]).read_text()
     assert manifest.narration == draft()["narration"]
     runner.assert_called_once()
     command = runner.call_args.args[0]
@@ -341,6 +440,25 @@ def test_import_binds_measured_audio_without_mutating_sources(inputs, mocked_aud
     assert set(path.name for path in output.iterdir()) == {
         "daily-ai-brief.mp3", "episode-manifest.json", "publication.json",
     }
+
+
+def test_import_transcodes_supplied_composite_without_assembling_components(inputs, mocked_audio):
+    manifest_path, source, _ = inputs
+    composite = b"parent-produced correction plus intact Notebook recording"
+    source.write_bytes(composite)
+    data = corrected_draft()
+    data["generation"]["source_audio_sha256"] = digest(composite)
+    manifest_path.write_text(json.dumps(data))
+    publication = prepare_reviewed_audio(*inputs)
+    ready = EpisodeManifest.from_dict(json.loads(Path(publication["manifest_path"]).read_text()))
+    assert ready.generation == data["generation"]
+    assert ready.narration == data["narration"]
+    assert source.read_bytes() == composite
+    mocked_audio[0].assert_called_once()
+    command = mocked_audio[0].call_args.args[0]
+    assert command.count("-i") == 1
+    assert command[command.index("-i") + 1] == str(source)
+    assert not {"concat", "-af", "-filter_complex"} & set(command)
 
 
 @pytest.mark.parametrize("conflict", ["directory", "file", "symlink"])
@@ -423,6 +541,7 @@ def test_cli_outputs_publication_json(inputs, mocked_audio, capsys):
     ("sha256", "invalid"), ("size_bytes", True), ("size_bytes", "12000"),
     ("duration_secs", float("nan")), ("duration_secs", 299.99), ("duration_secs", 480.01),
     ("codec", "aac"), ("sample_rate", 0), ("channels", True),
+    ("path", "/home/private-account/recording.mp3"),
 ])
 def test_ready_manifest_requires_typed_measured_audio(inputs, mocked_audio, key, value):
     publication = prepare_reviewed_audio(*inputs)
@@ -437,6 +556,7 @@ def test_legacy_and_verified_editorial_contracts_are_unchanged():
     data.update(schema_version=1, generation={}, audio={})
     legacy = EpisodeManifest.from_dict(data)
     assert manifest_to_narration(legacy) != data["narration"]
+    assert "Every story ends with" in render_manifest_readme(legacy)
     data["schema_version"] = 2
     data["stories"][0]["editorial"] = {
         "spoken_text": CLAIM,

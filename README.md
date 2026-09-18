@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — 2026-09-11
+# Daily AI Developer Brief — 2026-09-17
 
 A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.
 
@@ -14,79 +14,79 @@ See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment statu
 
 ## Today's signal
 
-### OpenAI Codex python-v0.154.0
+### Claude Code v2.1.274
 
-**What changed:** Install with pip install --upgrade openai-codex==0.154.0 (Python 3.10 or later). This release includes the matching openai-codex-cli-bin==0.154.0 runtime. - Add max and ultra reasoning-effort values. 39662 - Add ExternalMessage to synchronous and asynchronous run() and turn() calls. External content can start a turn or join an active regular turn with tool-level authority; it does not grant user authorization. Consumers receive independent event streams. 44086 - Add include_turns on resume/fork, turn_service_tier for one newly started turn, and source metadata. History selection changes the returned response, not model context. Existing defaults are preserved when these options are omitted. 44084 - Refresh generated protocol models and notifications, and preserve completion events that arrive before a turn-start response. 44032, 44400 Check these migrations when upgrading: - HookMetadata
-
-**Why it matters:** Check your current tooling or upgrade path because this may require a change.
-
-**Recommendation:** ACT — Primary source; relevance score 20.
-
-Sources: [1](https://github.com/openai/codex/releases/tag/python-v0.154.0)
-
-### Claude Code v2.1.268
-
-**What changed:** What's changed - Added to the Claude apps gateway: with pricing: set in gateway.yaml, signed-in Claude Code clients receive the same rates through managed settings, so /cost and telemetry match the spend meter - Added a startup warning for gateways when access_control.allow_cidrs is empty, and a one-time warning the first time a request arrives from a public address - Added the gatewayInternalNetworks managed setting, letting administrators allow /login to a Claude apps gateway on their organization's own public IPv4 block - Added claude self-hosted-runner --remove-session-state (default off): delete each session's per-session directories under /_sessions/ when the session ends - Added configDirectory to the output of claude auth status --json - Added --json to claude plugin install, uninstall, update, enable and disable, and errorDetails/noteDetails to each row of claude plugin list --j
+**What changed:** What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]
 
 **Why it matters:** This is relevant to developers tracking AI coding agents.
 
-**Recommendation:** WATCH — Primary source; relevance score 18.
+**Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
 
-Sources: [1](https://github.com/anthropics/claude-code/releases/tag/v2.1.268)
+Sources: [1](https://github.com/anthropics/claude-code/releases/tag/v2.1.274)
 
-### MAI-Code-1-Flash deprecated
+### OpenAI Codex rust-v0.155.0-alpha.16
 
-**What changed:** We have deprecated MAI-Code-1-Flash across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) today, September 10, 2026. Model Deprecation date Suggested alternative&#8230; The post MAI-Code-1-Flash deprecated appeared first on The GitHub Blog .
-
-**Why it matters:** Check your current tooling or upgrade path because this may require a change.
-
-**Recommendation:** ACT — Primary source; relevance score 20.
-
-Sources: [1](https://github.blog/changelog/2026-09-10-mai-code-1-flash-deprecated)
-
-### OpenAI Codex rust-v0.155.0-alpha.3.9
-
-**What changed:** Release 0.155.0-alpha.3.9
+**What changed:** Release 0.155.0-alpha.16
 
 **Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
 
-**Recommendation:** SKIP — Primary source; relevance score 20.
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
 
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.9)
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.16)
 
-### OpenAI Codex rust-v0.155.0-alpha.3.8
+### Copilot budget increase requests are generally available
 
-**What changed:** Release 0.155.0-alpha.3.8
+**What changed:** Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits. This release adds a flow for them to&#8230; The post Copilot budget increase requests are generally available appeared first on The GitHub Blog .
 
-**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+**Why it matters:** This is relevant to developers tracking AI coding agents.
 
-**Recommendation:** SKIP — Primary source; relevance score 20.
+**Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
 
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.8)
+Sources: [1](https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available)
 
-### OpenAI Codex rust-v0.155.0-alpha.3.7
+### OpenAI Codex rust-v0.155.0-alpha.15
 
-**What changed:** Release 0.155.0-alpha.3.7
-
-**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
-
-**Recommendation:** SKIP — Primary source; relevance score 20.
-
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.7)
-
-### OpenAI Codex rust-v0.155.0-alpha.3
-
-**What changed:** Release 0.155.0-alpha.3
+**What changed:** Release 0.155.0-alpha.15
 
 **Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
 
-**Recommendation:** SKIP — Primary source; relevance score 20.
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
 
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3)
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.15)
+
+### OpenAI Codex rust-v0.155.0-alpha.14
+
+**What changed:** Release 0.155.0-alpha.14
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.14)
+
+### OpenAI Codex rust-v0.155.0-alpha.13
+
+**What changed:** Release 0.155.0-alpha.13
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.13)
+
+### OpenAI Codex rust-v0.155.0-alpha.2.6
+
+**What changed:** Release 0.155.0-alpha.2.6
+
+**Why it matters:** This is prerelease information; avoid changing production workflows without a specific need.
+
+**Recommendation:** SKIP — Evaluate only in an isolated test environment if the cited change addresses a current need.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.6)
 
 ## High noise / low signal
 
-- Skipped Gemini CLI: routine or prerelease-only update.
+- Skipped Gemini CLI: below threshold after routine/prerelease penalties.
 
 ## Editorial contract
 
@@ -108,11 +108,11 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 - `github:agentskills/agentskills`: ok:0
 - `github:anthropics/claude-code`: ok:1
 - `github:google-gemini/gemini-cli`: ok:1
-- `github:microsoft/vscode`: ok:0
+- `github:microsoft/vscode`: ok:1
 - `github:microsoft/vscode-copilot-release`: ok:0
 - `github:modelcontextprotocol/specification`: ok:0
 - `github:openai/codex`: ok:10
-- `youtube:weekly-digest`: ok:0
+- `youtube:weekly-digest`: degraded:0
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 

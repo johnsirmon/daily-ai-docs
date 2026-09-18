@@ -214,6 +214,12 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "",
         "See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment status and setup.",
         "",
+        *([
+            "### Editorial correction",
+            "",
+            manifest.generation["editing"]["correction_text"],
+            "",
+        ] if manifest.schema_version == 3 and "editing" in manifest.generation else []),
         "## Today's signal",
         "",
     ]
@@ -258,12 +264,20 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             "- This edition uses user-authorized Gemini Notebook web audio, a local-ASR transcript, and an assistant transcript/source comparison; it is not independently verified Gemini API generation.",
             "",
         ] if manifest.schema_version == 3 else []),
+        *([
+            "- An Edge-TTS editorial correction precedes the retained Notebook conversation; the manifest records both component hashes and the exact correction text.",
+            "",
+        ] if manifest.schema_version == 3 and "editing" in manifest.generation else []),
         "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
         "- Up to seven actionable stories, with shorter alerts and healthy quiet-day editions.",
         "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs and skips thin-news days without changing the feed.",
         "- Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.",
         "- Product-change claims require public primary evidence.",
-        "- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation.",
+        (
+            "- This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings."
+            if manifest.schema_version == 3
+            else "- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation."
+        ),
         "- Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.",
         "- At most one transcript-backed YouTube learning pick may appear; it never replaces vendor evidence.",
         "",
