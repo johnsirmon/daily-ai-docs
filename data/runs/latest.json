@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "status": "published",
+  "evaluated_at": "2026-09-18T01:12:53.050295Z",
+  "reason": "subscriber_confirmed",
+  "source_health": {
+    "manual:vscode": "ok:1",
+    "manual:copilot": "ok:1",
+    "manual:research": "ok:1"
+  },
+  "minimum_source_health": 0.6,
+  "last_episode_id": "daily-2026-09-18-notebook-cde95bbf"
+}

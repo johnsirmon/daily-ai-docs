@@ -42,10 +42,13 @@
     "ghrel:004241a97c26ea44979a",
     "ghrel:ca8bc2182dbdf131efc9",
     "ghrel:0ec3008b414dbc1e5a3f",
-    "ghrel:7c90a1cd27592e5ce7b8"
+    "ghrel:7c90a1cd27592e5ce7b8",
+    "feed:8bc291f39a282969dd45",
+    "feed:243fbc7123f71efe978c",
+    "arxiv:2609.17394"
   ],
-  "last_publication": "2026-09-17T15:02:10.012307Z",
-  "last_episode_id": "daily-2026-09-17-1711ce11",
+  "last_publication": "2026-09-18T01:06:23.967651Z",
+  "last_episode_id": "daily-2026-09-18-notebook-cde95bbf",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 124918,

@@ -2,7 +2,7 @@
   "schema_version": 3,
   "episode_id": "daily-2026-09-18-notebook-cde95bbf",
   "published_at": "2026-09-18T01:06:23.967651Z",
-  "status": "candidate",
+  "status": "published",
   "source_health": {
     "manual:vscode": "ok:1",
     "manual:copilot": "ok:1",
