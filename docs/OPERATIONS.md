@@ -172,8 +172,12 @@ targeting 5-8 minutes. Ask for concrete changes, affected workflows, practical i
 exclude routine version lists, generic product introductions, invented measurements, and long verbatim excerpts.
 Length selection is only a request: verify the actual generated duration and review the spoken claims before approval.
 
-Keep the notebook and audio unpublished during listening review. Download through the normal UI when available; do not
-export browser cookies, copy private notebooks, or depend on undocumented consumer endpoints. A Notebook audio overview
+Keep the notebook and audio unpublished during listening review. Download through the normal UI when available. A native
+Save As dialog may require the operator to click Save; browser automation may not expose that dialog or capture the
+download event. Do not retry downloads while confirmation is pending. Verify the saved file itself with full decoding
+and measured duration, not just the Notebook's displayed length. This is an operator-assisted workflow.
+
+Do not export browser cookies, copy private notebooks, or depend on undocumented consumer endpoints. A Notebook audio overview
 does not satisfy the manifest's two-call Gemini verification contract by itself. Never invent API-call counts or mark it
 verified to bypass the publisher. A provenance-aware import and review handoff must be explicitly implemented and approved
 before Notebook audio can enter the immutable release/RSS pipeline. Unattended browser scheduling is not implemented.
