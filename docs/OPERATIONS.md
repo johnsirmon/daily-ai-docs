@@ -160,6 +160,24 @@ No wrapper dependency, copied implementation, or cookie-based production adapter
 Notebook audio comparison may be useful later. The official Google Cloud Podcast API is a different service; its cost
 eligibility must be established separately and is not implied by a consumer subscription or Gemini API key.
 
+### Browser-created Notebook listening samples
+
+An explicitly authorized sample can instead be authored in the signed-in Gemini Notebook web UI using the account's
+existing allowance. This does not use `GEMINI_API_KEY` and does not authorize a subscription upgrade or paid billing.
+Consumer quotas and supported formats can change; check the current UI rather than assuming a fixed daily allowance.
+
+Create a dedicated notebook and import only selected public primary URLs. Verify that a research source contains its
+methods and limitations, not just an abstract. In Audio Overview, use English, Deep Dive, Short, and a custom briefing
+targeting 5-8 minutes. Ask for concrete changes, affected workflows, practical implications, and essential caveats;
+exclude routine version lists, generic product introductions, invented measurements, and long verbatim excerpts.
+Length selection is only a request: verify the actual generated duration and review the spoken claims before approval.
+
+Keep the notebook and audio unpublished during listening review. Download through the normal UI when available; do not
+export browser cookies, copy private notebooks, or depend on undocumented consumer endpoints. A Notebook audio overview
+does not satisfy the manifest's two-call Gemini verification contract by itself. Never invent API-call counts or mark it
+verified to bypass the publisher. A provenance-aware import and review handoff must be explicitly implemented and approved
+before Notebook audio can enter the immutable release/RSS pipeline. Unattended browser scheduling is not implemented.
+
 ## Local commands
 
 ```bash
