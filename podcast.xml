@@ -1,5 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-17</title><guid isPermaLink="false">daily-2026-09-17-1711ce11</guid><description>Claude Code v2.1.274
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</description><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:summary>A concise daily briefing of source-backed AI developer-tool changes, with clear act, watch, or skip guidance.</itunes:summary><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Daily AI Developer Brief — 2026-09-18 — Notebook edition</title><guid isPermaLink="false">daily-2026-09-18-notebook-cde95bbf</guid><description>Notebook edition: Local AI agents and leaderboard noise.
+
+Editorial correction: approval changes the member's Copilot budget, not the organization's overall budget. Workflow benefits discussed are recommendations, not measured performance gains. This correction is spoken before the original conversation.
+
+Generated in Gemini Notebook with a separately scripted editorial correction. Transcript reviewed against public primary sources; research findings are author-reported and not independently reproduced.
+
+Put the agent in the project's environment, and retain session context
+What changed: VS Code added local agent sessions inside a project's Dev Container and expanded Codex session continuity between ChatGPT and VS Code.
+Why it matters: Project-specific tools and dependencies can reduce environment mismatch; preserving the session avoids restarting the conversation. These are workflow recommendations, not measured performance gains.
+Recommendation: ACT — Try a noncritical project. Docker and the Agents window are required; rollout is gradual. Containers are not an absolute security boundary, and the AI-generated release notes should be checked against the installed build.
+Sources: https://code.visualstudio.com/updates/v1_138, https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus
+
+Route Copilot credit requests to the responsible administrator
+What changed: Members who exhaust their Copilot AI credits can request an increase from the paying organization or enterprise; an authorized administrator can approve, adjust, or deny.
+Why it matters: Approval changes the requesting member's budget to the chosen amount. It does not supply free credits or automatically raise the entire organization's budget.
+Recommendation: ACT — For Business or Enterprise under usage-based billing, assign an approval owner. The announcement excludes enterprises with managed users; individual subscriptions are outside its scope.
+Sources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available/
+
+Treat small leaderboard rank differences as hypotheses, not buying decisions
+What changed: A new paper audits historical SWE-bench results rather than evaluating today's newest models.
+Why it matters: Fine-grained ranking can exceed the resolution of the observed verdicts. Non-significance does not prove that models have equal capability.
+Recommendation: WATCH — Use paired repository evaluations and repeat runs before switching model-plus-harness setups. Findings are author-reported and not independently reproduced.
+Sources: https://arxiv.org/abs/2609.17394, https://arxiv.org/pdf/2609.17394
+Research evidence: author_reported_not_reproduced
+Method: Observational audit of per-instance verdicts for 254 historical submissions across four SWE-bench splits, retrieved July 30, 2026.
+Limitations: Historical submissions from 2023-2025; observational model/scaffold choices; one run per submission; one benchmark family. Results were not independently reproduced.
+Experiment to try: Compare model-plus-harness setups on the same representative repository tasks, retain per-task outcomes and versions, repeat runs, and consider cost and latency.</description><itunes:summary>Notebook edition: Local AI agents and leaderboard noise.
+
+Editorial correction: approval changes the member's Copilot budget, not the organization's overall budget. Workflow benefits discussed are recommendations, not measured performance gains. This correction is spoken before the original conversation.
+
+Generated in Gemini Notebook with a separately scripted editorial correction. Transcript reviewed against public primary sources; research findings are author-reported and not independently reproduced.
+
+Put the agent in the project's environment, and retain session context
+What changed: VS Code added local agent sessions inside a project's Dev Container and expanded Codex session continuity between ChatGPT and VS Code.
+Why it matters: Project-specific tools and dependencies can reduce environment mismatch; preserving the session avoids restarting the conversation. These are workflow recommendations, not measured performance gains.
+Recommendation: ACT — Try a noncritical project. Docker and the Agents window are required; rollout is gradual. Containers are not an absolute security boundary, and the AI-generated release notes should be checked against the installed build.
+Sources: https://code.visualstudio.com/updates/v1_138, https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus
+
+Route Copilot credit requests to the responsible administrator
+What changed: Members who exhaust their Copilot AI credits can request an increase from the paying organization or enterprise; an authorized administrator can approve, adjust, or deny.
+Why it matters: Approval changes the requesting member's budget to the chosen amount. It does not supply free credits or automatically raise the entire organization's budget.
+Recommendation: ACT — For Business or Enterprise under usage-based billing, assign an approval owner. The announcement excludes enterprises with managed users; individual subscriptions are outside its scope.
+Sources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available/
+
+Treat small leaderboard rank differences as hypotheses, not buying decisions
+What changed: A new paper audits historical SWE-bench results rather than evaluating today's newest models.
+Why it matters: Fine-grained ranking can exceed the resolution of the observed verdicts. Non-significance does not prove that models have equal capability.
+Recommendation: WATCH — Use paired repository evaluations and repeat runs before switching model-plus-harness setups. Findings are author-reported and not independently reproduced.
+Sources: https://arxiv.org/abs/2609.17394, https://arxiv.org/pdf/2609.17394
+Research evidence: author_reported_not_reproduced
+Method: Observational audit of per-instance verdicts for 254 historical submissions across four SWE-bench splits, retrieved July 30, 2026.
+Limitations: Historical submissions from 2023-2025; observational model/scaffold choices; one run per submission; one benchmark family. Results were not independently reproduced.
+Experiment to try: Compare model-plus-harness setups on the same representative repository tasks, retain per-task outcomes and versions, repeat runs, and consider cost and latency.</itunes:summary><content:encoded>Notebook edition: Local AI agents and leaderboard noise.
+
+Editorial correction: approval changes the member's Copilot budget, not the organization's overall budget. Workflow benefits discussed are recommendations, not measured performance gains. This correction is spoken before the original conversation.
+
+Generated in Gemini Notebook with a separately scripted editorial correction. Transcript reviewed against public primary sources; research findings are author-reported and not independently reproduced.
+
+Put the agent in the project's environment, and retain session context
+What changed: VS Code added local agent sessions inside a project's Dev Container and expanded Codex session continuity between ChatGPT and VS Code.
+Why it matters: Project-specific tools and dependencies can reduce environment mismatch; preserving the session avoids restarting the conversation. These are workflow recommendations, not measured performance gains.
+Recommendation: ACT — Try a noncritical project. Docker and the Agents window are required; rollout is gradual. Containers are not an absolute security boundary, and the AI-generated release notes should be checked against the installed build.
+Sources: https://code.visualstudio.com/updates/v1_138, https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus
+
+Route Copilot credit requests to the responsible administrator
+What changed: Members who exhaust their Copilot AI credits can request an increase from the paying organization or enterprise; an authorized administrator can approve, adjust, or deny.
+Why it matters: Approval changes the requesting member's budget to the chosen amount. It does not supply free credits or automatically raise the entire organization's budget.
+Recommendation: ACT — For Business or Enterprise under usage-based billing, assign an approval owner. The announcement excludes enterprises with managed users; individual subscriptions are outside its scope.
+Sources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available/
+
+Treat small leaderboard rank differences as hypotheses, not buying decisions
+What changed: A new paper audits historical SWE-bench results rather than evaluating today's newest models.
+Why it matters: Fine-grained ranking can exceed the resolution of the observed verdicts. Non-significance does not prove that models have equal capability.
+Recommendation: WATCH — Use paired repository evaluations and repeat runs before switching model-plus-harness setups. Findings are author-reported and not independently reproduced.
+Sources: https://arxiv.org/abs/2609.17394, https://arxiv.org/pdf/2609.17394
+Research evidence: author_reported_not_reproduced
+Method: Observational audit of per-instance verdicts for 254 historical submissions across four SWE-bench splits, retrieved July 30, 2026.
+Limitations: Historical submissions from 2023-2025; observational model/scaffold choices; one run per submission; one benchmark family. Results were not independently reproduced.
+Experiment to try: Compare model-plus-harness setups on the same representative repository tasks, retain per-task outcomes and versions, repeat runs, and consider cost and latency.</content:encoded><pubDate>Fri, 18 Sep 2026 01:06:23 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-18-notebook-cde95bbf/daily-ai-brief.mp3" length="6416552" type="audio/mpeg" /><itunes:duration>6:41</itunes:duration></item><item><title>Daily AI Developer Brief — 2026-09-17</title><guid isPermaLink="false">daily-2026-09-17-1711ce11</guid><description>Claude Code v2.1.274
 What changed: What's changed - Added a visible warning when memory usage is critical, with steps to free memory or restart safely - Added CLAUDE_CODE_MCP_STARTUP_WAIT_MS to bound how long the first non-interactive turn waits for connecting MCP servers (0 = don't wait) - Added effort attribute to the claude_code.llm_request OpenTelemetry trace span, matching the api_request event - Added claude_code.managed_settings_resolved OTel event: managed-settings sources and policy helper state; redacted settings and digests with OTEL_LOG_MANAGED_SETTINGS=1 - Added store.connect_timeout_seconds to the Claude apps gateway config to lengthen the Postgres connect timeout (default 5 seconds), and improved the boot error when the database is unreachable to point to store.postgres_url and the configured timeout - Added enduser.sub, … [Excerpt; see source for full details.]
 Why it matters: This is relevant to developers tracking AI coding agents.
 Recommendation: WATCH — Read the primary source and assess applicability before changing your workflow.

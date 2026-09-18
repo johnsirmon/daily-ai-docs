@@ -1,0 +1,279 @@
+{
+  "schema_version": 3,
+  "episode_id": "daily-2026-09-18-notebook-cde95bbf",
+  "published_at": "2026-09-18T01:06:23.967651Z",
+  "status": "candidate",
+  "source_health": {
+    "manual:vscode": "ok:1",
+    "manual:copilot": "ok:1",
+    "manual:research": "ok:1"
+  },
+  "source_events": [
+    {
+      "event_id": "feed:8bc291f39a282969dd45",
+      "source_type": "official_feed",
+      "title": "Visual Studio Code 1.138",
+      "url": "https://code.visualstudio.com/updates/v1_138",
+      "product": "VS Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-16T00:00:00Z",
+      "fetched_at": "2026-09-18T01:06:23.967651Z",
+      "evidence": "Keep agent work aligned with your project's toolchain by running a session inside a local folder's Dev Container. The agent uses the environment and dependencies configured for the project instead of those on your local machine.\nDocker must be installed on your machine.\n(Agents window only)\nLocal Dev Container sessions are rolling out gradually, so the setting might not be enabled by default for you yet. You can enable the setting manually to try the feature now.\nmove the same Codex session between the ChatGPT app and VS Code instead of starting a new conversation.\nThese release notes were generated using GitHub Copilot and might contain inaccuracies.\nNot included: API usage is separate and billed independently.",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts",
+        "corroboration_urls": [
+          "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus"
+        ]
+      }
+    },
+    {
+      "event_id": "feed:243fbc7123f71efe978c",
+      "source_type": "official_feed",
+      "title": "Copilot budget increase requests are generally available",
+      "url": "https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available/",
+      "product": "GitHub Copilot",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-16T00:00:00Z",
+      "fetched_at": "2026-09-18T01:06:23.967651Z",
+      "evidence": "Previously, when a member used all the Copilot AI credits available to them, they were blocked from Copilot features that consume credits.\nYou can approve, adjust, or deny that request without leaving your settings.\nRequests automatically route to whichever account pays for the budget.\nApproving a request updates the member's budget to the amount you set and immediately restores their access to AI credits.\nThis feature is available with the GitHub Copilot Business and GitHub Copilot Enterprise plans under usage-based billing.\nThis feature is not available for enterprises with managed users.",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts"
+      }
+    },
+    {
+      "event_id": "arxiv:2609.17394",
+      "source_type": "research_paper",
+      "title": "Coding Agents Have Converged: Why the SWE-bench Leaderboard Can No Longer Order Its Top Entries, and What to Measure Instead",
+      "url": "https://arxiv.org/abs/2609.17394",
+      "product": "arXiv research",
+      "topic": "AI developer research",
+      "published_at": "2026-09-15T00:00:00Z",
+      "fetched_at": "2026-09-18T01:06:23.967651Z",
+      "evidence": "using254SWE-bench submissions across four splits without running models.\nExact paired McNemar tests separate none of the29adjacent Verified top-thirty pairs atα= 0.05, while the larger Test split separates 14of23.\nnon-rejection does not establish equivalence.\nthe leaderboard as retrieved on 30 July 2026\nSubmissions span 2023–2025\nThe factorial design is observational.\nOne run per submission; contamination.\nBetween-system differences cannot be separated from run-to-run variance.\nThe pool is one benchmark family, one harness, and voluntarily submitted.",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "paper_id": "2609.17394",
+        "version": 1,
+        "first_published_at": "2026-09-15T00:00:00Z",
+        "updated_at": "2026-09-15T00:00:00Z",
+        "full_text_available": true,
+        "full_text_retained": false,
+        "reviewed_excerpts": "using254SWE-bench submissions across four splits without running models.\nExact paired McNemar tests separate none of the29adjacent Verified top-thirty pairs atα= 0.05, while the larger Test split separates 14of23.\nnon-rejection does not establish equivalence.\nthe leaderboard as retrieved on 30 July 2026\nSubmissions span 2023–2025\nThe factorial design is observational.\nOne run per submission; contamination.\nBetween-system differences cannot be separated from run-to-run variance.\nThe pool is one benchmark family, one harness, and voluntarily submitted.",
+        "evidence_status": "reviewed_excerpts",
+        "source_text_sha256": "f304b5204537bba787edb44a38c8a30da618506312fd061e2757bd345ada7132",
+        "source_document_sha256": "e92261f13d1c993a89eb417b0da39bc8820c5f75f57fdb2427723a83100043fd",
+        "corroboration_urls": [
+          "https://arxiv.org/pdf/2609.17394"
+        ]
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "vscode-agent-environments",
+      "event_ids": [
+        "feed:8bc291f39a282969dd45"
+      ],
+      "headline": "Put the agent in the project's environment, and retain session context",
+      "what_changed": "VS Code added local agent sessions inside a project's Dev Container and expanded Codex session continuity between ChatGPT and VS Code.",
+      "why_it_matters": "Project-specific tools and dependencies can reduce environment mismatch; preserving the session avoids restarting the conversation. These are workflow recommendations, not measured performance gains.",
+      "action": "act",
+      "rationale": "Try a noncritical project. Docker and the Agents window are required; rollout is gradual. Containers are not an absolute security boundary, and the AI-generated release notes should be checked against the installed build.",
+      "source_urls": [
+        "https://code.visualstudio.com/updates/v1_138",
+        "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus"
+      ],
+      "scores": {
+        "editorial_review": 1.0
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "copilot-budget-requests",
+      "event_ids": [
+        "feed:243fbc7123f71efe978c"
+      ],
+      "headline": "Route Copilot credit requests to the responsible administrator",
+      "what_changed": "Members who exhaust their Copilot AI credits can request an increase from the paying organization or enterprise; an authorized administrator can approve, adjust, or deny.",
+      "why_it_matters": "Approval changes the requesting member's budget to the chosen amount. It does not supply free credits or automatically raise the entire organization's budget.",
+      "action": "act",
+      "rationale": "For Business or Enterprise under usage-based billing, assign an approval owner. The announcement excludes enterprises with managed users; individual subscriptions are outside its scope.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available/"
+      ],
+      "scores": {
+        "editorial_review": 1.0
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "swe-bench-ranking-audit",
+      "event_ids": [
+        "arxiv:2609.17394"
+      ],
+      "headline": "Treat small leaderboard rank differences as hypotheses, not buying decisions",
+      "what_changed": "A new paper audits historical SWE-bench results rather than evaluating today's newest models.",
+      "why_it_matters": "Fine-grained ranking can exceed the resolution of the observed verdicts. Non-significance does not prove that models have equal capability.",
+      "action": "watch",
+      "rationale": "Use paired repository evaluations and repeat runs before switching model-plus-harness setups. Findings are author-reported and not independently reproduced.",
+      "source_urls": [
+        "https://arxiv.org/abs/2609.17394",
+        "https://arxiv.org/pdf/2609.17394"
+      ],
+      "scores": {
+        "editorial_review": 1.0
+      },
+      "kind": "research",
+      "editorial": {
+        "paper_review": {
+          "question": "Can the observed leaderboard verdicts reliably order the leading coding-agent submissions?",
+          "method": "Observational audit of per-instance verdicts for 254 historical submissions across four SWE-bench splits, retrieved July 30, 2026.",
+          "result": "The authors' paired tests distinguished none of the 29 adjacent Verified top-thirty pairs; this is not proof of equal capability.",
+          "limitations": "Historical submissions from 2023-2025; observational model/scaffold choices; one run per submission; one benchmark family. Results were not independently reproduced.",
+          "takeaway": "Compare model-plus-harness setups on the same representative repository tasks, retain per-task outcomes and versions, repeat runs, and consider cost and latency.",
+          "evidence_status": "author_reported_not_reproduced"
+        }
+      }
+    }
+  ],
+  "noise_notes": [],
+  "narration": "Before today's discussion, two clarifications. The workflow recommendations here are not measured performance gains. And approving a Copilot budget request changes the individual member's budget, not the organization's overall budget. The conversation uses that scope incorrectly. Now, the discussion.\n\nSo what if the secret to getting better AI code isn't just upgrading to the newest model,\nbut actually changing the room your current model works on?\nRight. I mean, it sounds a bit counterintuitive, especially when the whole industry is, you know,\nobsessed with leaderboard rankings right now. But improving your agent's working environment\nand your evaluation methods, that actually yields far better practical results than just\nchasing whatever model is trending today.\nYeah, let's dive into a concrete example of changing that environment.\nLike looking at the VS Code release from September 16th, which completely changes how we run local\nagents. Oh, definitely. It solves a massive headache. If you have Docker installed, you can\nnow run agent sessions directly inside a project's local dev container. And you do this right from\nthe agent's window, which is huge, right? Because previously, your AI agent was essentially just\nguessing based on whatever random global dependencies happen to be installed on your local machine.\nExactly. And now the agent is operating inside the exact isolated environment and tool chain\nconfigured specifically for that project.\nI mean, the way they're handling codec session continuity here makes so much sense. Think of it\nlike, well, jumping between coding tasks used to feel like someone came in and just erased your\nwhiteboard. Oh, I hate that feeling. Right. But now it's like picking up that brainstorming whiteboard\nand rolling it over to a new desk without losing a single diagram. Preserving that session context\nacross your workflow is way more valuable than simply plugging in a newer AI.\nIt is. But I do need to jump in with a pretty crucial warning here. Dev containers are fantastic\nfor aligning dependencies, but you really cannot treat them as a guaranteed security boundary.\nWait, really? So if the agent is running locally inside my project's container,\ncould an AI like hallucinated destructive command and actually wipe my repo?\nYeah, potentially. I mean, they aren't an impenetrable sandbox for untrusted AI generated code. Also,\nthis rollout is opt in and gradual. So don't be surprised if you have to manually enable it.\nGood to know. And keep in mind, just because you have subscription support for these tools,\nthat doesn't mean you automatically get free API entitlements to run them infinitely.\nPlus, the release notes themselves explicitly warn that they are AI generated.\nOh, well, okay. Yeah. So you really need to test this feature in your specific build,\ninstead of just assuming it's fully supported everywhere. We're skipping the unrelated maintenance\nupdates, but that is the core change that actually brings up a very real developer friction point\nAPI entitlements. Yeah, there is literally nothing worse than being deeply in the zone,\ngenerating a complex refactor and hitting a hard block because your team's AI credits ran out.\nYeah, co-pilot just rolled out a new budget request feature to handle exactly this.\nSo just clicking this new request button just like automatically unlock free credits for my\nteam so we can keep working. No, not at all. It is not free credits hitting that button routes a\nformal request to your paying organization or your enterprise admin. Okay. So it goes straight to\nthe boss. Right. And that admin has the power to approve, adjust or deny it. If they approve,\nit actually alters your organization's budget to that newly chosen amount. It's really just a\nstreamlined workflow for spending real money. Got it. And this is strictly limited to business and\nenterprise accounts on usage based billing, right? Yeah. So if you're an individual subscriber or\nyour enterprise uses managed users, this update doesn't even apply to you. Correct. For the admins\nit does apply to the big action we'll take away is to set up an intentional approval process today.\nYou don't want to leave your developers hanging mid workflow waiting for some arbitrary spend\nlimit to be lifted. Okay. So say your team has the budget, the admins approved the spend,\nand you were actively paying for these API calls. Yeah. How do you actually know the model you're\npaying for is, you know, any better than the one you used last year? That is the million-dollar\nquestion. And it leads us to a fascinating new research audit of the SW bench rankings.\nThey analyzed 254 historical submissions from 2023 to 2025. And they pulled this data fairly recently,\nright? July 30th, 2026. Exactly. Now keep in mind this audit isn't testing today's absolute newest\nmodels, but the historical finding is still a huge wake-up call. Looking at the verified top 30\nsubmissions, the author's paired tests could not statistically distinguish any of the 29 adjacent\npairs. Hold on. Literally none of them. None of them. That's like a leaderboard photo finish,\nwhere the camera is actually just too blurry to declare a winner. That is the perfect visual.\nBut let's explain why the camera is blurry. I mean, it's not that all models are identical clones.\nThe blurriness comes from the limitations of the testing itself. Right, because this audit relies\non observational data, right? Different models mixed with different scaffolds, like the custom code\nand tool chains built around a model to help it solve problems. Exactly. And furthermore,\nthey only ran one test per submission on a single benchmark family. When you don't run multiple tests\nto account for variants, well, statistical noise just masks the real differences at the very top.\nSo just to be clear, this doesn't prove the models have equal capability,\nbecause other splits, like a broader test set, might actually distinguish those differences better.\nPlus, these are author reported findings, not independently reproduced. Yeah, exactly. The\nactionable experiment here is to stop obsessing over the public leaderboard. If you want to switch\nagents, you should compare different model plus harness configurations on the exact\nsame representative tasks from your own code base. And you'd want to retain the outcomes for\neach task, repeat the runs to account for that variance, and prioritize actual cost and latency\nover, you know, tiny headline ranks. You hit the nail on the head. That's how you actually evaluate\nwhat you're buying. Alright, let's leave you with a compact checklist to put all this into action.\nOne, try the dev container environment change on a non-critical project first.\nTwo, if you administer a team, review your credit request ownership and your approval process today.\nAnd three, use paired repository evaluations before you decide to switch agents.\nWhile always keeping the limitations of those evaluations in mind when reviewing your results,\nof course. Absolutely. So consider this. How much engineering time is wasted,\ntrying to integrate a 1% leaderboard game that might just be well statistical noise.",
+  "show_notes": "Notebook edition: Local AI agents and leaderboard noise.\n\nEditorial correction: approval changes the member's Copilot budget, not the organization's overall budget. Workflow benefits discussed are recommendations, not measured performance gains. This correction is spoken before the original conversation.\n\nGenerated in Gemini Notebook with a separately scripted editorial correction. Transcript reviewed against public primary sources; research findings are author-reported and not independently reproduced.\n\nPut the agent in the project's environment, and retain session context\nWhat changed: VS Code added local agent sessions inside a project's Dev Container and expanded Codex session continuity between ChatGPT and VS Code.\nWhy it matters: Project-specific tools and dependencies can reduce environment mismatch; preserving the session avoids restarting the conversation. These are workflow recommendations, not measured performance gains.\nRecommendation: ACT — Try a noncritical project. Docker and the Agents window are required; rollout is gradual. Containers are not an absolute security boundary, and the AI-generated release notes should be checked against the installed build.\nSources: https://code.visualstudio.com/updates/v1_138, https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus\n\nRoute Copilot credit requests to the responsible administrator\nWhat changed: Members who exhaust their Copilot AI credits can request an increase from the paying organization or enterprise; an authorized administrator can approve, adjust, or deny.\nWhy it matters: Approval changes the requesting member's budget to the chosen amount. It does not supply free credits or automatically raise the entire organization's budget.\nRecommendation: ACT — For Business or Enterprise under usage-based billing, assign an approval owner. The announcement excludes enterprises with managed users; individual subscriptions are outside its scope.\nSources: https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available/\n\nTreat small leaderboard rank differences as hypotheses, not buying decisions\nWhat changed: A new paper audits historical SWE-bench results rather than evaluating today's newest models.\nWhy it matters: Fine-grained ranking can exceed the resolution of the observed verdicts. Non-significance does not prove that models have equal capability.\nRecommendation: WATCH — Use paired repository evaluations and repeat runs before switching model-plus-harness setups. Findings are author-reported and not independently reproduced.\nSources: https://arxiv.org/abs/2609.17394, https://arxiv.org/pdf/2609.17394\nResearch evidence: author_reported_not_reproduced\nMethod: Observational audit of per-instance verdicts for 254 historical submissions across four SWE-bench splits, retrieved July 30, 2026.\nLimitations: Historical submissions from 2023-2025; observational model/scaffold choices; one run per submission; one benchmark family. Results were not independently reproduced.\nExperiment to try: Compare model-plus-harness setups on the same representative repository tasks, retain per-task outcomes and versions, repeat runs, and consider cost and latency.",
+  "generation": {
+    "provider": "gemini-notebook-web",
+    "edition": "notebook",
+    "approved_at": "2026-09-18T00:43:35Z",
+    "source_audio_sha256": "cde95bbfe0a4688b523441df83cf95a016144a3197d5aa90bf32727b621ece4b",
+    "transcript": {
+      "engine": "faster-whisper",
+      "model": "base.en",
+      "sha256": "b26989e843535500cdaaf0b4d4c1d49d6413ecced11ba8cd602af914df4a10fe"
+    },
+    "review": {
+      "method": "transcript_source_comparison",
+      "reviewed_at": "2026-09-18T01:06:23.967651Z",
+      "reviewer": "assistant",
+      "claims": [
+        {
+          "text": "If you have Docker installed, you can\nnow run agent sessions directly inside a project's local dev container.",
+          "event_id": "feed:8bc291f39a282969dd45",
+          "quote": "Keep agent work aligned with your project's toolchain by running a session inside a local folder's Dev Container. The agent uses the environment and dependencies configured for the project instead of those on your local machine.\nDocker must be installed on your machine."
+        },
+        {
+          "text": "you do this right from\nthe agent's window",
+          "event_id": "feed:8bc291f39a282969dd45",
+          "quote": "(Agents window only)"
+        },
+        {
+          "text": "this rollout is opt in and gradual.",
+          "event_id": "feed:8bc291f39a282969dd45",
+          "quote": "Local Dev Container sessions are rolling out gradually, so the setting might not be enabled by default for you yet. You can enable the setting manually to try the feature now."
+        },
+        {
+          "text": "Preserving that session context",
+          "event_id": "feed:8bc291f39a282969dd45",
+          "quote": "move the same Codex session between the ChatGPT app and VS Code instead of starting a new conversation."
+        },
+        {
+          "text": "the release notes themselves explicitly warn that they are AI generated.",
+          "event_id": "feed:8bc291f39a282969dd45",
+          "quote": "These release notes were generated using GitHub Copilot and might contain inaccuracies."
+        },
+        {
+          "text": "that doesn't mean you automatically get free API entitlements to run them infinitely.",
+          "event_id": "feed:8bc291f39a282969dd45",
+          "quote": "Not included: API usage is separate and billed independently."
+        },
+        {
+          "text": "approving a Copilot budget request changes the individual member's budget, not the organization's overall budget.",
+          "event_id": "feed:243fbc7123f71efe978c",
+          "quote": "Approving a request updates the member's budget to the amount you set and immediately restores their access to AI credits."
+        },
+        {
+          "text": "that admin has the power to approve, adjust or deny it.",
+          "event_id": "feed:243fbc7123f71efe978c",
+          "quote": "You can approve, adjust, or deny that request without leaving your settings."
+        },
+        {
+          "text": "It is not free credits",
+          "event_id": "feed:243fbc7123f71efe978c",
+          "quote": "Approving a request updates the member's budget to the amount you set and immediately restores their access to AI credits."
+        },
+        {
+          "text": "formal request to your paying organization or your enterprise admin.",
+          "event_id": "feed:243fbc7123f71efe978c",
+          "quote": "Requests automatically route to whichever account pays for the budget."
+        },
+        {
+          "text": "this is strictly limited to business and\nenterprise accounts on usage based billing",
+          "event_id": "feed:243fbc7123f71efe978c",
+          "quote": "This feature is available with the GitHub Copilot Business and GitHub Copilot Enterprise plans under usage-based billing."
+        },
+        {
+          "text": "your enterprise uses managed users, this update doesn't even apply to you.",
+          "event_id": "feed:243fbc7123f71efe978c",
+          "quote": "This feature is not available for enterprises with managed users."
+        },
+        {
+          "text": "They analyzed 254 historical submissions from 2023 to 2025.",
+          "event_id": "arxiv:2609.17394",
+          "quote": "using254SWE-bench submissions across four splits without running models.\nExact paired McNemar tests separate none of the29adjacent Verified top-thirty pairs atα= 0.05, while the larger Test split separates 14of23.\nnon-rejection does not establish equivalence.\nthe leaderboard as retrieved on 30 July 2026\nSubmissions span 2023–2025"
+        },
+        {
+          "text": "July 30th, 2026.",
+          "event_id": "arxiv:2609.17394",
+          "quote": "the leaderboard as retrieved on 30 July 2026"
+        },
+        {
+          "text": "the author's paired tests could not statistically distinguish any of the 29 adjacent\npairs.",
+          "event_id": "arxiv:2609.17394",
+          "quote": "Exact paired McNemar tests separate none of the29adjacent Verified top-thirty pairs atα= 0.05, while the larger Test split separates 14of23."
+        },
+        {
+          "text": "this doesn't prove the models have equal capability,",
+          "event_id": "arxiv:2609.17394",
+          "quote": "non-rejection does not establish equivalence."
+        },
+        {
+          "text": "this audit relies\non observational data",
+          "event_id": "arxiv:2609.17394",
+          "quote": "The factorial design is observational."
+        },
+        {
+          "text": "they only ran one test per submission on a single benchmark family.",
+          "event_id": "arxiv:2609.17394",
+          "quote": "One run per submission; contamination.\nBetween-system differences cannot be separated from run-to-run variance.\nThe pool is one benchmark family, one harness, and voluntarily submitted."
+        }
+      ],
+      "notes": [
+        "This is an operator-approved Gemini Notebook web-UI edition, not a Gemini API-verified draft.",
+        "The complete original discussion is retained after an audible correction of the member-budget scope and clarification that workflow benefits are recommendations, not measured gains.",
+        "Transcript body is local faster-whisper base.en ASR; the prefixed correction is its exact Edge TTS script. ASR spellings such as codec/Codex and SW/SWE-bench are transcription uncertainties, not independently verified pronunciation.",
+        "Research is an observational audit of prior results, not a rerun of today's latest models. Its one-run limitation concerns submitted results; the authors did not independently run the models."
+      ]
+    },
+    "editing": {
+      "method": "prefixed_editorial_correction",
+      "original_audio_sha256": "afbd3fa96498c80a38bcfb5048bb7e3d9cf66dcc067a5aa13b09df6be068657b",
+      "correction_text": "Before today's discussion, two clarifications. The workflow recommendations here are not measured performance gains. And approving a Copilot budget request changes the individual member's budget, not the organization's overall budget. The conversation uses that scope incorrectly. Now, the discussion.",
+      "correction_audio_sha256": "3ea6e8f4d480a5d6b8fd830f25057fac102c1cca9f8dbd24585f1ce6ce9fe254",
+      "correction_provider": "edge"
+    }
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-18-notebook-cde95bbf/daily-ai-brief.mp3",
+    "size_bytes": 6416552,
+    "duration_secs": 400.955,
+    "sha256": "60bcc14772c887bca0142c89c39d305ba267ac266c373f15411047fb786238dc",
+    "codec": "mp3",
+    "sample_rate": 44100,
+    "channels": 2
+  }
+}
