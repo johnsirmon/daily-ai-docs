@@ -42,7 +42,24 @@ def test_stable_typo_or_chore_is_filtered_at_production_threshold():
         [event("typo", priority=20, evidence="Chore: fixes a documentation typo")],
     )
     assert selected == []
-    assert notes == ["Skipped Tool: below threshold after routine/prerelease penalties."]
+    assert notes == ["Excluded Tool: no substantive change evidence."]
+
+
+def test_deterministic_selection_requires_substantive_evidence_even_with_momentum():
+    filler = event("filler", priority=20, velocity=10000, evidence="Published 1.2.3.")
+    selected, notes = select_events([filler])
+    assert selected == []
+    assert notes == ["Excluded Tool: no substantive change evidence."]
+
+
+def test_documentation_sentence_does_not_penalize_a_substantive_fix():
+    fixed = event(
+        "fixed",
+        priority=20,
+        evidence="Fixed a crash when the tool host disconnects. Documentation explains recovery.",
+    )
+    assert score_event(fixed)["noise_penalty"] == 0
+    assert select_events([fixed])[0] == [fixed]
 
 
 def test_dedupe_prefers_primary_source():
@@ -52,6 +69,19 @@ def test_dedupe_prefers_primary_source():
     result = dedupe_events([secondary, primary])
     assert len(result) == 1
     assert result[0].event_id == "primary"
+
+
+def test_dedupe_keeps_stable_and_prerelease_channels_distinct():
+    stable = event("stable", version="v2", channel="stable")
+    preview = event("preview", version="v2", channel="prerelease")
+    assert {item.event_id for item in dedupe_events([preview, stable])} == {"preview", "stable"}
+
+
+def test_dedupe_tie_break_is_deterministic_and_prefers_better_evidence():
+    weak = event("z-weak", evidence="Added support.")
+    strong = event("a-strong", evidence="Added support for scoped tool approvals in shared coding sessions.")
+    assert dedupe_events([weak, strong]) == [strong]
+    assert dedupe_events([strong, weak]) == [strong]
 
 
 def test_selection_caps_weekly_video_recommendations():
@@ -70,3 +100,21 @@ def test_selection_caps_weekly_video_recommendations():
         max_per_source_type={"youtube_video": 1},
     )
     assert len(selected) == 1
+
+
+def test_selection_caps_same_product_for_daily_diversity():
+    sources = [
+        event(f"tool-{index}", version=f"v{index}", priority=20,
+              evidence=f"Added support for scoped tool workflow {index} in coding sessions.")
+        for index in range(3)
+    ]
+    other = event(
+        "other", product="Other", priority=20,
+        evidence="Added support for verified agent traces in development sessions.",
+    )
+    selected, notes = select_events(
+        [*sources, other], minimum_score=0, limit=4, max_per_product=2,
+    )
+    assert len([item for item in selected if item.product == "Tool"]) == 2
+    assert other in selected
+    assert "additional same-product updates omitted" in " ".join(notes)

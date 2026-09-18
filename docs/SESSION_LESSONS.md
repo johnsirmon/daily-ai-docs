@@ -20,8 +20,12 @@ the browser workflow is fully automated.
 
 ## Reusable procedures
 
-- [Notebook generation, download, review, and publication](../.github/skills/notebook-podcast/SKILL.md)
-- [Evidence-led repository and model review](../.github/skills/evidence-led-review/SKILL.md)
+- [Publication incident diagnosis and recovery](../.agents/skills/publication-recovery/SKILL.md)
+- [Source onboarding and adversarial collector acceptance](../.agents/skills/source-onboarding/SKILL.md)
+- [Schema and editorial contract changes](../.agents/skills/daily-contract-change/SKILL.md)
+- [CI failure diagnosis](../.agents/skills/ci-failure-debug/SKILL.md)
+- [Notebook generation, download, review, and publication](../.agents/skills/notebook-podcast/SKILL.md)
+- [Evidence-led repository, claim, and model review](../.agents/skills/evidence-led-review/SKILL.md)
 - [Current operations](OPERATIONS.md)
 
 ## Non-negotiable publication gates

@@ -104,8 +104,9 @@ def test_enrich_one_merges_fields(mock_get, tmp_path):
     assert item["prs_merged_14d"] == 2
 
 
+@patch("pipeline.enrich.time.sleep")
 @patch("pipeline.enrich.requests.get")
-def test_enrich_one_handles_202_gracefully(mock_get, tmp_path):
+def test_enrich_one_handles_202_gracefully(mock_get, mock_sleep, tmp_path):
     """Stats endpoints returning 202 fall back to empty weekly_commits."""
     call_count = 0
 
@@ -130,6 +131,7 @@ def test_enrich_one_handles_202_gracefully(mock_get, tmp_path):
 
     assert item.get("weekly_commits") == []
     assert item.get("commit_trend") == "flat"
+    assert mock_sleep.call_args_list == [call(2), call(2)]
 
 
 @patch("pipeline.enrich.requests.get")

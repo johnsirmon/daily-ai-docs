@@ -82,7 +82,11 @@ def collect_official_feeds(
                 raise ValueError("official feed contains no entries")
             accepted = 0
             detail_failures = 0
+            malformed = 0
             include = [term.lower() for term in config.get("include", [])]
+            product_rules = config.get("product_rules", [])
+            if not isinstance(product_rules, list):
+                raise ValueError("feed product_rules must be a list")
             for node in nodes:
                 title = clean_source_text(_first_text(node, ("title",)), limit=500)
                 item_url = _entry_url(node) or _first_text(node, ("link", "id", "guid"))
@@ -91,7 +95,16 @@ def collect_official_feeds(
                 haystack = f"{title} {summary}".lower()
                 if include and not any(term in haystack for term in include):
                     continue
+                product = str(config.get("product") or title)
+                for rule in product_rules:
+                    if not isinstance(rule, dict) or not isinstance(rule.get("include"), list):
+                        raise ValueError("invalid feed product rule")
+                    terms = [str(term).lower() for term in rule["include"] if str(term).strip()]
+                    if terms and any(term in haystack for term in terms):
+                        product = str(rule.get("product") or product)
+                        break
                 if not title or not item_url.startswith("https://") or not date_text:
+                    malformed += 1
                     continue
                 published = _parse_time(date_text)
                 if published < cutoff or published > now:
@@ -114,7 +127,7 @@ def collect_official_feeds(
                     source_type="official_feed",
                     title=title,
                     url=item_url,
-                    product=str(config.get("product") or title),
+                    product=product,
                     topic=str(config.get("topic") or "AI developer tools"),
                     published_at=published.isoformat().replace("+00:00", "Z"),
                     fetched_at=fetched,
@@ -124,7 +137,7 @@ def collect_official_feeds(
                     metadata=metadata,
                 ).validate())
                 accepted += 1
-            health[key] = f"{'degraded' if detail_failures else 'ok'}:{accepted}"
+            health[key] = f"{'degraded' if detail_failures or malformed else 'ok'}:{accepted}"
         except Exception as exc:
             health[key] = f"error:{type(exc).__name__}"
     return events, health

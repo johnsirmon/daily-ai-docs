@@ -103,17 +103,20 @@ short supporting excerpts (at most 180 quoted words per source), provenance hash
 paraphrases. Long verbatim spoken passages are rejected. Archived research excerpts can validate immutable recovery
 but cannot stand in for full text during a new paper review.
 
-Public article enrichment is configured per GitHub/feed source through `enrichment.enabled` and exact `allowed_hosts`.
-The daily orchestrator disables these extra fetches outside grounded mode. VS Code release-note links and GitHub Blog
+Public article enrichment is explicitly configured per GitHub/feed source through `enrichment.enabled` and exact
+`allowed_hosts`. It remains bounded and allowlisted in deterministic and grounded modes; grounded mode additionally
+enables research-paper collection and model-backed editorial review. VS Code release-note links and GitHub Blog
 excerpts have curated allowlists. Failed enrichment records degraded health and summary-only evidence; it does not
 invent article content. Per-candidate/detail diagnostics remain visible without counting as additional configured
 sources in the health quorum.
 
 ### Intentional skips and monitoring
 
-A healthy run with insufficient new information writes `data/runs/latest.json` and a skipped preparation outcome.
-It does not synthesize audio, create a release, modify RSS, deploy Pages, or advance published-event history. A script
-rejected for insufficient material can also skip after editorial evaluation but before TTS.
+A healthy run with insufficient new information writes `data/runs/latest.json` and a skipped preparation outcome in
+both deterministic and grounded editorial modes. It does not synthesize audio, create a release, modify RSS, deploy
+Pages, or advance published-event history. Deterministic selection requires substantive change evidence, limits repeated
+same-product stories, and records rejected churn as high-noise/low-signal notes. A grounded script rejected for
+insufficient material can also skip after editorial evaluation but before TTS.
 
 The independent monitor runs `pipeline.health --max-age-hours 25 --allow-editorial-skips`. A fresh healthy skip
 receipt must reference the exact last confirmed episode and its delivery receipt. Monitoring still checks that
@@ -271,9 +274,12 @@ pass, `python -m pipeline.daily confirm` marks the manifest published, advances 
 - Event IDs are derived from canonical URLs; accepted IDs are retained in `data/state.json` to prevent replay.
 - Ranking combines primary-source authority, personal relevance, recency, novelty, impact, and measured velocity.
   Lifetime stars alone never mean “rising.”
-- Routine/docs keywords subtract 24 points; prereleases subtract another 12. The production threshold is 75, not an
-  unconditional keyword ban: a substantive primary-source change mentioning documentation can still qualify. Labeled
-  editorial fixtures exercise the production threshold, including counterexamples.
+- Routine/docs keywords penalize only routine-only evidence; a separate substantive sentence is not discarded merely
+  because documentation is also mentioned. Prereleases subtract another 12 points and require explicit high-impact or
+  compatibility evidence. Deterministic selection rejects version-only and generic maintenance releases before scoring,
+  limits same-product stories to `max_stories_per_product`, and skips publication when nothing useful remains.
+  The production threshold is 75, not an unconditional keyword ban: a substantive primary-source change mentioning
+  documentation can still qualify. Labeled editorial fixtures exercise the production threshold, including counterexamples.
 - ACT is reserved for explicit primary-source security/compatibility notices, with affected-version checks rather than
   automatic upgrade advice. Generic security discussion and removed logging are WATCH; prereleases remain SKIP and
   YouTube remains WATCH. Short deterministic excerpts preserve sentence/word boundaries, label omissions, and retain

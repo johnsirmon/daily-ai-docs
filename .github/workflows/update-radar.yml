@@ -42,6 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
       - uses: actions/setup-python@v5
@@ -51,8 +52,10 @@ jobs:
 
       - name: Install dependencies and media tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
           python -m pip install --requirement requirements.lock
 
       - name: Run tests and verify canonical feed is provisioned
@@ -87,8 +90,8 @@ jobs:
             python -m pipeline.daily prepare --github-output >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Persist editorial skip receipt
-        if: env.AI_EDITORIAL == 'required' && steps.prepare.outputs.outcome == 'skipped'
+      - name: Persist skip receipt
+        if: steps.prepare.outputs.outcome == 'skipped'
         run: |
           test -f data/runs/latest.json
           git config user.name "github-actions[bot]"
@@ -103,11 +106,17 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.prepare.outputs.tag }}
           AUDIO_PATH: ${{ steps.prepare.outputs.audio_path }}
+          REVIEWED_EPISODE: ${{ inputs.reviewed_episode }}
         run: |
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release download "$TAG" --repo "$GITHUB_REPOSITORY" \
-              --pattern daily-ai-brief.mp3 --pattern episode-manifest.json \
-              --dir .cache --clobber
+            if [ -n "$REVIEWED_EPISODE" ]; then
+              test -s .cache/daily-ai-brief.mp3
+              test -s .cache/episode-manifest.json
+            else
+              gh release download "$TAG" --repo "$GITHUB_REPOSITORY" \
+                --pattern daily-ai-brief.mp3 --pattern episode-manifest.json \
+                --dir .cache --clobber
+            fi
           else
             gh release create "$TAG" \
               "$AUDIO_PATH#daily-ai-brief.mp3" \

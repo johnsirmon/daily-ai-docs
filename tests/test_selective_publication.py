@@ -11,6 +11,7 @@ from pipeline.publish import PublicationError
 from pipeline.rank import group_editorial_stories, score_event, select_editorial_events
 from pipeline.run_health import RUN_PATH, skip_candidate
 from pipeline.schema import EpisodeManifest, SourceEvent
+from pipeline.source_health import primary_source_health
 
 NOW = datetime(2026, 9, 17, 15, tzinfo=timezone.utc)
 
@@ -48,8 +49,8 @@ def test_title_only_alpha_flood_is_ineligible_even_with_momentum():
     assert not selected and reasons
 
 
-@pytest.mark.parametrize("mode,enabled", [("off", False), ("required", True)])
-def test_enrichment_and_papers_are_gated_without_diagnostic_quorum_inflation(monkeypatch, mode, enabled):
+@pytest.mark.parametrize("mode,papers_enabled", [("off", False), ("required", True)])
+def test_enrichment_is_independent_while_papers_require_editorial(monkeypatch, mode, papers_enabled):
     monkeypatch.setenv("AI_EDITORIAL", mode)
     captured = []
     source = {"repo": "example/tool", "enrichment": {"enabled": True, "allowed_hosts": ["example.com"]}}
@@ -58,7 +59,7 @@ def test_enrichment_and_papers_are_gated_without_diagnostic_quorum_inflation(mon
         captured.extend(items)
         return [], {"github:example/tool": "ok:0"}
     def papers(options, **kwargs):
-        assert enabled and options["enabled"]
+        assert papers_enabled and options["enabled"]
         return [], {"research:arxiv": "ok:0", **{
             f"research:arxiv:paper-{index}": "rejected:outside_first_publication_window"
             for index in range(10)
@@ -69,7 +70,7 @@ def test_enrichment_and_papers_are_gated_without_diagnostic_quorum_inflation(mon
     monkeypatch.setattr("pipeline.daily.collect_research_papers", papers)
     events, health = collect_events(config, dry_run=False, now=NOW)
     assert not events and health["github:example/tool"] == "ok:0"
-    assert captured[0]["enrichment"]["enabled"] is enabled
+    assert captured[0]["enrichment"]["enabled"] is True
     assert source["enrichment"]["enabled"] is True
 
 
@@ -87,6 +88,18 @@ def test_production_paper_configuration_builds_a_valid_bounded_query(monkeypatch
     monkeypatch.setattr("pipeline.sources.papers.fetch_public", empty_feed)
     events, health = collect_research_papers(config, now=NOW)
     assert not events and health["research:arxiv"] == "ok:0"
+
+
+def test_optional_youtube_health_cannot_inflate_primary_source_quorum():
+    health = {
+        "github:a": "ok:0", "github:b": "error:timeout",
+        "youtube:weekly-digest": "ok:1",
+        "feed:x:detail:item": "error:timeout",
+        "research:arxiv:paper": "rejected:missing",
+    }
+    assert primary_source_health(health) == {
+        "github:a": "ok:0", "github:b": "error:timeout",
+    }
 
 
 @pytest.mark.parametrize("evidence", [
@@ -176,6 +189,25 @@ def test_thin_run_skips_model_audio_feed_and_published_state(monkeypatch, tmp_pa
     assert json.loads(RUN_PATH.read_text())["status"] == "skipped"
     _print_github_output(result)
     assert "outcome=skipped" in capsys.readouterr().out
+
+
+def test_deterministic_thin_run_skips_synthesis_audio_and_state(monkeypatch, tmp_path):
+    config = setup_config(monkeypatch, tmp_path)
+    monkeypatch.setenv("AI_EDITORIAL", "off")
+    monkeypatch.setattr("pipeline.daily.collect_events", lambda *args, **kwargs: (
+        [event(evidence="Release 0.155.0-alpha.16", channel="prerelease")], {"source": "ok:1"},
+    ))
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("thin deterministic run must not generate")
+
+    monkeypatch.setattr("pipeline.daily.refine_stories", forbidden)
+    monkeypatch.setattr("pipeline.daily.write_audio", forbidden)
+    result = prepare(config, now=NOW)
+    assert result["outcome"] == "skipped" and not result["audio_path"]
+    assert Path("podcast.xml").read_text() == "last-good-feed"
+    assert not Path("data/state.json").exists()
+    assert json.loads(RUN_PATH.read_text())["status"] == "skipped"
 
 
 def test_model_failure_is_not_a_healthy_skip_or_fallback(monkeypatch, tmp_path):

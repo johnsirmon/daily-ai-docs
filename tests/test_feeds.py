@@ -46,6 +46,37 @@ def test_feed_adapter_accepts_recent_atom_entry():
     assert health["feed:https://example.com/feed"] == "ok:1"
 
 
+def test_feed_routes_entries_to_specific_products_before_grouping():
+    atom = b"""<feed xmlns='http://www.w3.org/2005/Atom'>
+      <entry><title>Copilot agent update</title><link href='https://example.com/copilot'/>
+      <published>2026-09-07T11:00:00Z</published><summary>Adds agent controls.</summary></entry>
+      <entry><title>MCP authorization update</title><link href='https://example.com/mcp'/>
+      <published>2026-09-07T11:00:00Z</published><summary>Adds protocol controls.</summary></entry>
+      </feed>"""
+    events, health = collect_official_feeds([{
+        "url": "https://example.com/feed", "product": "GitHub Developer Tools",
+        "product_rules": [
+            {"product": "GitHub Copilot", "include": ["copilot"]},
+            {"product": "Model Context Protocol", "include": ["mcp"]},
+        ],
+    }], session=Session(atom), now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc))
+    assert [item.product for item in events] == ["GitHub Copilot", "Model Context Protocol"]
+    assert health["feed:https://example.com/feed"] == "ok:2"
+
+
+def test_feed_with_only_matching_malformed_entries_is_degraded():
+    atom = b"""<feed xmlns='http://www.w3.org/2005/Atom'>
+      <entry><title>Copilot agent update</title>
+      <summary>Adds a supported agent workflow.</summary></entry></feed>"""
+    events, health = collect_official_feeds(
+        [{"url": "https://example.com/feed", "product": "Copilot", "include": ["agent"]}],
+        session=Session(atom),
+        now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc),
+    )
+    assert events == []
+    assert health["feed:https://example.com/feed"] == "degraded:0"
+
+
 def test_feed_cleanup_decodes_entities_and_removes_known_blog_trailer():
     rss = b"""<rss><channel><item><title>Agent &amp;amp; approvals</title>
       <link>https://github.blog/update</link><pubDate>Mon, 07 Sep 2026 11:00:00 GMT</pubDate>

@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
-from typing import Dict, List
+from typing import Dict, Iterable, List
 from urllib.parse import urlencode, urlsplit
 
 from ..schema import SourceEvent
@@ -63,6 +63,7 @@ def _value(entry: ET.Element, name: str) -> str:
 def collect_research_papers(
     config: dict,
     *,
+    covered_paper_ids: Iterable[str] = (),
     session=None,
     now: datetime | None = None,
 ) -> tuple[List[SourceEvent], Dict[str, str]]:
@@ -72,6 +73,7 @@ def collect_research_papers(
     key = "research:arxiv"
     events: List[SourceEvent] = []
     health: Dict[str, str] = {}
+    covered = set(covered_paper_ids)
     try:
         days = bounded_int(config, "lookback_days", 30, 1, 30)
         max_results = bounded_int(config, "max_results", 5, 1, 20)
@@ -126,6 +128,9 @@ def collect_research_papers(
                     raise ValueError("invalid_paper_dates")
                 if published < cutoff:
                     health[candidate_key] = "rejected:outside_first_publication_window"
+                    continue
+                if paper_id in covered:
+                    health[candidate_key] = "not_fetched:already_covered"
                     continue
                 if attempted >= max_papers:
                     health[candidate_key] = "not_fetched:candidate_limit"

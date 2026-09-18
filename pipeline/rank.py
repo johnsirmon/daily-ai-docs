@@ -41,7 +41,7 @@ def score_event(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Dict[
     penalty = 0.0
     if event.channel == "prerelease":
         penalty += 12.0
-    if _NOISE.search(text):
+    if is_noise(event):
         penalty += 24.0
     velocity = float(event.metadata.get("star_velocity", 0) or 0)
     youtube_trend = float(event.metadata.get("trend_score", 0) or 0)
@@ -59,17 +59,17 @@ def score_event(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Dict[
     }
 
 
-def _identity(event: SourceEvent) -> Tuple[str, str]:
+def _identity(event: SourceEvent) -> Tuple[str, str, str]:
     if event.source_type == "research_paper":
-        return event.source_type, str(event.metadata.get("paper_id") or event.event_id)
+        return event.source_type, str(event.metadata.get("paper_id") or event.event_id), "research"
     version = str(event.metadata.get("version") or event.metadata.get("canonical_event") or event.title)
     version = re.sub(r"\s+", " ", version.strip().lower())
-    return event.product.strip().lower(), version
+    return event.product.strip().lower(), version, event.channel
 
 
 def dedupe_events(events: Sequence[SourceEvent]) -> List[SourceEvent]:
     """Dedupe event-level coverage while preserving distinct product versions."""
-    chosen: Dict[Tuple[str, str], SourceEvent] = {}
+    chosen: Dict[Tuple[str, str, str], SourceEvent] = {}
     for event in events:
         event.validate()
         key = _identity(event)
@@ -77,16 +77,32 @@ def dedupe_events(events: Sequence[SourceEvent]) -> List[SourceEvent]:
         if current is None:
             chosen[key] = event
             continue
-        if current.authority != "primary" and event.authority == "primary":
-            chosen[key] = event
-            continue
-        if event.authority == current.authority and event.published_at > current.published_at:
+        current_quality = (
+            current.authority == "primary", has_substantive_evidence(current),
+            len(" ".join(current.evidence.split())), current.published_at, current.event_id,
+        )
+        event_quality = (
+            event.authority == "primary", has_substantive_evidence(event),
+            len(" ".join(event.evidence.split())), event.published_at, event.event_id,
+        )
+        if event_quality > current_quality:
             chosen[key] = event
     return list(chosen.values())
 
 
 def is_noise(event: SourceEvent) -> bool:
-    return bool(_NOISE.search(f"{event.title} {event.evidence}"))
+    text = f"{event.title}. {event.evidence}"
+    sentences = [sentence.strip() for sentence in re.split(r"[.!?\n]+", text) if sentence.strip()]
+    noisy = [sentence for sentence in sentences if _NOISE.search(sentence)]
+    if not noisy:
+        return False
+    substantive = any(
+        not _NOISE.search(sentence)
+        and re.search(r"\b(?:added|adds?|fixed|fixes|enables?|introduced|improved|removed)\b", sentence, re.I)
+        and len(sentence.split()) >= 5
+        for sentence in sentences
+    )
+    return not substantive
 
 
 def select_events(
@@ -96,6 +112,7 @@ def select_events(
     limit: int = 7,
     minimum_score: float = 75.0,
     max_per_source_type: Dict[str, int] | None = None,
+    max_per_product: int | None = None,
 ) -> Tuple[List[SourceEvent], List[str]]:
     """Select novel high-signal events and return human-readable skipped notes."""
     seen = set(seen_event_ids)
@@ -105,6 +122,9 @@ def select_events(
         scores = score_event(event, seen)
         if event.event_id in seen:
             continue
+        if event.source_type != "youtube_video" and not has_substantive_evidence(event):
+            noise_notes.append(f"Excluded {event.product}: no substantive change evidence.")
+            continue
         if scores["total"] >= minimum_score:
             ranked.append((scores["total"], event))
         elif scores["noise_penalty"]:
@@ -112,13 +132,19 @@ def select_events(
     ranked.sort(key=lambda pair: (pair[0], pair[1].published_at), reverse=True)
     selected: List[SourceEvent] = []
     counts: Dict[str, int] = {}
+    product_counts: Dict[str, int] = {}
     limits = max_per_source_type or {}
     for _, event in ranked:
         source_limit = limits.get(event.source_type, limit)
         if counts.get(event.source_type, 0) >= source_limit:
             continue
+        product_key = event.product.casefold()
+        if max_per_product is not None and product_counts.get(product_key, 0) >= max_per_product:
+            noise_notes.append(f"Limited {event.product}: additional same-product updates omitted.")
+            continue
         selected.append(event)
         counts[event.source_type] = counts.get(event.source_type, 0) + 1
+        product_counts[product_key] = product_counts.get(product_key, 0) + 1
         if len(selected) == limit:
             break
     return selected, list(dict.fromkeys(noise_notes))[:3]

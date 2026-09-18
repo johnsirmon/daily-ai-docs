@@ -45,6 +45,59 @@ description: >
 - When the user redirects the workflow, stop the superseded API attempts and
   update the plan rather than running both paths.
 
+## Claim-level editorial acceptance
+
+Use a claim worksheet for every consequential spoken or written claim:
+
+| Claim | Event ID and primary URL | Exact support | Scope/quantity/eligibility/date | Verdict or correction |
+|---|---|---|---|---|
+
+- Inspect the primary HTML or visible page when simplified extraction may have
+  omitted a qualification. Record the fallback used.
+- Exact quote matching is necessary but not semantic entailment. Check that the
+  source supports the asserted actor, action, population, timeframe, quantity,
+  and recommendation.
+- Require each number to be supported by the same claim's evidence. Do not borrow
+  quantitative context from another claim or a release title.
+- For research, retain method, evaluation setting, limitations, and
+  author-reported/not-independently-reproduced status.
+- Distinguish schema-2 independent model verification from schema-3 human/assistant
+  transcript-to-source review. Never upgrade provenance labels to make an artifact
+  eligible.
+- Material errors require correction before publication. Preserve the exact
+  correction and its provenance when the contract supports an audible prefix.
+
+## Unpublished preview acceptance
+
+1. Run mocked provider, schema, and preview tests before consuming quota.
+2. Require explicit free-tier/quota authorization before live generation. Use a
+   fresh output directory and current production history in a separate read-only
+   checkout.
+3. Evaluate story/event coverage, claim-local quantities, eligibility limits,
+   research caveats, action labels, and script budget independently of style.
+4. Validate actual audio bytes: checksum, full decode, measured duration, and media
+   metadata. A duration label or successful generation is not audio acceptance.
+5. Verify `data/`, `podcast.xml`, and `README.md` remain unchanged.
+6. Classify provider availability, schema, grounding, audio, and delivery errors
+   separately. Never add `[editorial-preview]` merely to rerun ordinary CI or weaken
+   factual validators to obtain a sample.
+7. Keep signed-in Notebook browser mechanics in `notebook-podcast`; do not duplicate
+   them here.
+
+## Instruction and workflow drift
+
+For documentation, workflow, CLI, configuration, or agent-instruction changes:
+
+- Inventory referenced commands, files, workflow names, triggers, permissions, and
+  side effects; compare them with current code and `--help` output.
+- Label each command offline, networked, quota-consuming, state-writing, or
+  publishing. Do not let a safe-looking example conceal production effects.
+- Run `tests/test_workflows.py`, `pipeline.publish_check`, and
+  `pipeline.drift_check`; note that these checks do not prove complete semantic
+  agreement among manifests, README, state, and receipts.
+- Report stale legacy instructions separately from product defects and fix the
+  authoritative source rather than copying corrected prose into several skills.
+
 ## Reporting
 
 - State what was inspected and what was not: scripts are not listened-to audio;

@@ -26,6 +26,12 @@ def test_publishers_share_non_cancelling_concurrency(name):
     assert workflow(name)["concurrency"] == {"group": "podcast-publisher", "cancel-in-progress": "false"}
 
 
+@pytest.mark.parametrize("name", ["pages.yml", "update-radar.yml", "youtube-trends.yml"])
+def test_publishers_always_operate_from_current_main(name):
+    checkout = next(step for step in steps(name) if step.get("uses") == "actions/checkout@v4")
+    assert checkout["with"]["ref"] == "main"
+
+
 def test_pages_retains_push_and_manual_recovery():
     document = workflow("pages.yml")
     assert "workflow_dispatch" in document["on"]
@@ -49,6 +55,8 @@ def test_delivery_workflow_binds_candidate_and_downloaded_release():
     assert "gh release download" in upload
     assert "--pattern episode-manifest.json" in upload
     assert "--pattern daily-ai-brief.mp3" in upload
+    install = by_name["Install dependencies and media tools"]["run"]
+    assert "command -v ffmpeg" in install and "command -v ffprobe" in install
 
 
 def test_reviewed_release_uses_existing_locked_publisher_without_regeneration():
@@ -67,6 +75,10 @@ def test_reviewed_release_uses_existing_locked_publisher_without_regeneration():
     assert "daily prepare" not in reviewed_branch
     assert "${{ inputs.reviewed_episode }}" not in prepare["run"]
     assert "^daily-" in reviewed_branch
+    upload = next(step for step in steps("update-radar.yml")
+                  if step.get("name") == "Upload or resume immutable release assets")
+    assert upload["env"]["REVIEWED_EPISODE"] == "${{ inputs.reviewed_episode }}"
+    assert "test -s .cache/daily-ai-brief.mp3" in upload["run"]
 
 
 def test_independent_monitor_remains_age_sensitive():
@@ -76,7 +88,7 @@ def test_independent_monitor_remains_age_sensitive():
     assert "--allow-editorial-skips" in monitor
 
 
-def test_editorial_skip_guards_every_publication_step():
+def test_skip_guards_every_publication_step_and_persists_receipt():
     all_steps = steps("update-radar.yml")
     first = next(index for index, step in enumerate(all_steps)
                  if step.get("name") == "Upload or resume immutable release assets")
@@ -84,7 +96,8 @@ def test_editorial_skip_guards_every_publication_step():
                 if step.get("name") == "Commit publication receipt and state")
     for step in all_steps[first:last + 1]:
         assert step.get("if") == "steps.prepare.outputs.outcome == 'publish'"
-    skipped = next(step for step in all_steps if step.get("name") == "Persist editorial skip receipt")
+    skipped = next(step for step in all_steps if step.get("name") == "Persist skip receipt")
+    assert skipped["if"] == "steps.prepare.outputs.outcome == 'skipped'"
     assert "data/runs/latest.json" in skipped["run"]
     failed = next(step for step in all_steps if step.get("name") == "Persist failed editorial run")
     assert "failure()" in failed["if"] and "fail-run" in failed["run"]

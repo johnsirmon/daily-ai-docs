@@ -200,6 +200,19 @@ def test_fulltext_request_cap_counts_failed_candidates():
     assert health["research:arxiv:2609.12347"] == "not_fetched:candidate_limit"
 
 
+def test_covered_paper_does_not_consume_full_text_attempt_budget():
+    session = Session(atom(entry(), entry("2609.12346v1")), fulltext())
+    events, health = collect_research_papers(
+        {"enabled": True, "max_papers": 1},
+        covered_paper_ids={"2609.12345"},
+        session=session,
+        now=NOW,
+    )
+    assert [item.metadata["paper_id"] for item in events] == ["2609.12346"]
+    assert health["research:arxiv:2609.12345"] == "not_fetched:already_covered"
+    assert len(session.calls) == 2
+
+
 @pytest.mark.parametrize("config", [
     {"lookback_days": 31}, {"max_results": 1000}, {"max_papers": 0},
     {"max_full_text_chars": 60001}, {"queries": []}, {"queries": ["x\" OR all:*"]},
