@@ -159,15 +159,22 @@ def _request_editorial(client, *, model: str, instructions: str, payload: dict,
             messages=[{"role": "system", "content": instructions}, {"role": "user", "content": serialized}],
             response_format={"type": "json_object"},
             max_tokens=max_output_tokens,
+            reasoning_effort="low",
             temperature=0,
             timeout=timeout,
         )
     except Exception as exc:
         # Provider exceptions may include credentials or source text; do not echo them.
-        raise EditorialProviderError("Gemini editorial request failed; no publication fallback") from exc
+        status = getattr(exc, "status_code", None)
+        detail = f" (HTTP {status})" if type(status) is int and 100 <= status <= 599 else ""
+        raise EditorialProviderError(f"Gemini editorial request failed{detail}; no publication fallback") from exc
     try:
-        if len(response.choices) != 1 or response.choices[0].finish_reason != "stop":
-            raise EditorialProviderError("Gemini editorial response was refused, truncated, or incomplete")
+        if len(response.choices) != 1:
+            raise EditorialProviderError("Gemini editorial response incomplete: expected one choice")
+        finish = response.choices[0].finish_reason
+        if finish != "stop":
+            safe_finish = finish if finish in {"length", "content_filter", "tool_calls", "function_call"} else "unknown"
+            raise EditorialProviderError(f"Gemini editorial response incomplete (finish_reason={safe_finish})")
         message = response.choices[0].message
         if getattr(message, "refusal", None) or getattr(message, "tool_calls", None):
             raise EditorialProviderError("Gemini editorial response contained a refusal or tool call")

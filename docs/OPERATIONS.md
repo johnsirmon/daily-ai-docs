@@ -76,6 +76,11 @@ The free Gemini API tier may use submitted content to improve Google's products.
 and public episode history may be sent. Authentication, quota, timeout, schema, grounding, or verification failures stop
 publication and retain the last good feed.
 
+Both Gemini requests explicitly use the documented `reasoning_effort=low` setting rather than inheriting the model's
+default thinking level. Draft and verification output remain capped at 4,000 and 2,500 tokens respectively, with no
+automatic retries. Incomplete responses still fail; diagnostics record only allowlisted finish reasons and numeric
+HTTP statuses, never raw provider responses or credentials.
+
 `daily.editorial` in [topics.yaml](../topics/topics.yaml) controls grouping and script budgets. Daily evaluation does
 not promise daily audio. A short urgent-alert exception and research-only editions are not enabled.
 

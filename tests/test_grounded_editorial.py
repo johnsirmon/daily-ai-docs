@@ -171,6 +171,7 @@ def test_grounded_editorial_uses_two_independent_bounded_requests():
     calls = client.chat.completions.create.call_args_list
     assert len(calls) == 2
     assert [call.kwargs["max_tokens"] for call in calls] == [4000, 2500]
+    assert all(call.kwargs["reasoning_effort"] == "low" for call in calls)
     assert all(call.kwargs["timeout"] <= 45 for call in calls)
     assert all([message["role"] for message in call.kwargs["messages"]] == ["system", "user"] for call in calls)
     assert "Independently audit" in calls[1].kwargs["messages"][0]["content"]
@@ -610,9 +611,32 @@ def test_incomplete_provider_output_cannot_be_accepted(finish_reason):
     client = MagicMock()
     client.chat.completions.create.return_value = response(draft(), finish_reason)
     with patch("pipeline.synthesis.get_editorial_client", return_value=client):
-        with pytest.raises(EditorialProviderError, match="incomplete"):
+        with pytest.raises(EditorialProviderError, match="incomplete") as caught:
             refine_editorial([event()], [base_story([event()])], [])
+    expected = finish_reason or "unknown"
+    assert f"finish_reason={expected}" in str(caught.value)
     assert client.chat.completions.create.call_count == 1
+
+
+def test_provider_diagnostics_do_not_echo_unknown_finish_reason():
+    client = MagicMock()
+    client.chat.completions.create.return_value = response(draft(), "unexpected-sensitive-provider-text")
+    with patch("pipeline.synthesis.get_editorial_client", return_value=client):
+        with pytest.raises(EditorialProviderError, match="finish_reason=unknown") as caught:
+            refine_editorial([event()], [base_story([event()])], [])
+    assert "unexpected-sensitive-provider-text" not in str(caught.value)
+
+
+def test_provider_diagnostics_include_only_safe_http_status():
+    class ProviderFailure(RuntimeError):
+        status_code = 503
+
+    client = MagicMock()
+    client.chat.completions.create.side_effect = ProviderFailure("unexpected-sensitive-provider-text")
+    with patch("pipeline.synthesis.get_editorial_client", return_value=client):
+        with pytest.raises(EditorialProviderError, match="HTTP 503") as caught:
+            refine_editorial([event()], [base_story([event()])], [])
+    assert "unexpected-sensitive-provider-text" not in str(caught.value)
 
 
 @pytest.mark.parametrize("content", [
