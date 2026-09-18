@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import logging
+import math
 import os
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -432,9 +433,18 @@ def _validate_reviewed_audio_file(manifest: EpisodeManifest, path: Path) -> None
         path, min_duration_secs=300, max_duration_secs=480,
         expected_word_count=len(manifest.narration.split()),
     )
-    for field in ("size_bytes", "duration_secs", "sha256", "codec", "sample_rate", "channels"):
+    for field in ("size_bytes", "sha256", "codec", "sample_rate", "channels"):
         if manifest.audio.get(field) != measured[field]:
             raise RuntimeError(f"reviewed release audio {field} does not match its manifest")
+    # FFprobe versions differ in whether MP3 priming/padding frames count toward duration.
+    tolerance = 2 * 1152 / measured["sample_rate"] + 0.001
+    expected, actual = manifest.audio["duration_secs"], measured["duration_secs"]
+    if not math.isclose(expected, actual, rel_tol=0, abs_tol=tolerance):
+        raise RuntimeError(
+            f"reviewed release audio duration_secs does not match its manifest: "
+            f"expected {expected:.3f}s, measured {actual:.3f}s"
+        )
+    logger.info("Reviewed MP3 duration: manifest %.3fs, decoded metadata %.3fs", expected, actual)
 
 
 def resume_reviewed_release(episode_id: str, directory: Path = _CACHE_DIR) -> Dict[str, Any]:

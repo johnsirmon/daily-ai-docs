@@ -224,6 +224,10 @@ manifest/MP3, verifies identity and local media again, then uses the normal remo
 subscriber GUID, and confirmation steps. An empty input retains the normal daily preparation path. This manual import
 does not activate scheduled Notebook generation or change the configured model/TTS provider.
 
+Byte length and SHA-256 must match exactly. Re-measured duration may differ by at most two MP3 frames plus one millisecond
+of rounding across FFprobe versions; both measurements must independently satisfy 300-480 seconds. Larger differences
+fail explicitly. This tolerance never authorizes replacing released bytes or relaxing checksum verification.
+
 For recovery, rerun the same workflow with the same release tag. Do not rebuild or replace its media. A pending different
 candidate blocks the import until recovered. A confirmed episode must not be promoted again as a new episode.
 

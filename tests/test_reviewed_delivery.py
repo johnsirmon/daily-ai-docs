@@ -110,6 +110,23 @@ def test_resume_reviewed_rejects_wrong_measured_duration(release):
         daily.resume_reviewed_release(manifest.episode_id)
 
 
+@pytest.mark.parametrize("delta", [0.026, -0.026, 0.052, -0.052])
+def test_resume_accepts_bounded_mp3_frame_estimation_difference(release, delta):
+    manifest, path, _, _ = release
+    manifest.audio["duration_secs"] += delta
+    path.write_text(json.dumps(manifest.to_dict()))
+    assert daily.resume_reviewed_release(manifest.episode_id)["outcome"] == "publish"
+
+
+@pytest.mark.parametrize("delta", [0.055, -0.055])
+def test_resume_rejects_duration_difference_beyond_frame_tolerance(release, delta):
+    manifest, path, _, _ = release
+    manifest.audio["duration_secs"] += delta
+    path.write_text(json.dumps(manifest.to_dict()))
+    with pytest.raises(RuntimeError, match="duration_secs"):
+        daily.resume_reviewed_release(manifest.episode_id)
+
+
 def test_resume_reviewed_rejects_another_pending_candidate(release):
     manifest, _, _, _ = release
     pending_id = "daily-2026-09-18-notebook-abcdef12"

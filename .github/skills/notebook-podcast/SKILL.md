@@ -58,6 +58,9 @@ description: >
 
 - Preserve the original. Record size, codec, measured duration, and SHA-256.
 - Full-decode with FFmpeg, fail on errors, and assert 300-480 seconds explicitly.
+- Bind media bytes with exact size and checksum. Cross-version FFprobe duration
+  estimates may differ by MP3 priming/padding frames; use the publisher's bounded
+  tested tolerance, not exact floating-point equality or an unbounded exception.
 - Transcribe locally when needed; do not send unpublished recordings to an
   unapproved service. Mark automatic transcription as such, including its errors.
 - Compare spoken claims with primary evidence. The saved prompt is not proof of
