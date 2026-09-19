@@ -37,8 +37,6 @@ body:
       options:
         - gemini-notebook-web
         - edge
-        - kokoro
-        - piper
       default: 0
     validations:
       required: true

@@ -11,7 +11,7 @@ import re
 from typing import Any
 
 
-PROVIDERS = ("gemini-notebook-web", "edge", "kokoro", "piper")
+PROVIDERS = ("gemini-notebook-web", "edge")
 STATUSES = (
     "queued", "researching", "awaiting-notebook", "awaiting-download", "reviewing",
     "ready", "publishing", "published", "blocked", "cancelled",

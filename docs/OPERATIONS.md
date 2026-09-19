@@ -310,32 +310,13 @@ Existing Edge TTS accepts `EDGE_TTS_VOICE`, `EDGE_TTS_RATE` (bounded +/-50%), `E
 `EDGE_TTS_VOLUME` (+/-50%). Defaults stay unchanged. Use natural sentence/paragraph boundaries and compare actual
 listening samples before changing the show's voice. Edge is networked and best-effort, not a guaranteed service.
 
-Kokoro/Piper adapters are **experimental auditions, not approved production defaults**. Packages, model downloads,
-license review, Windows compatibility, and actual listening evaluation are separate prerequisites; ordinary tests
-do not download them. No validated optional dependency lock or voice recommendation is provided until those
-prerequisites are completed in an approved environment. Never work around IT policy or silently use another provider.
-
-An operator-installed candidate uses `TTS_PROVIDER=kokoro` or `piper` and a `TTS_LOCAL_PROFILE` JSON file with:
-`provider`, exact installed `version`, voice `name`, `license_reviewed: true`, local `model`/`config` paths, and their
-`model_sha256`/`config_sha256`. Kokoro also requires a local `voice` tensor path and `voice_sha256`.
-Use trusted, hash-pinned upstream assets. Current Piper software is GPLv3; each voice has separate model-card terms.
-Kokoro weights are Apache-licensed; review all component obligations rather than assume every asset has identical rights.
-Local providers load their model once per invocation and do not intentionally fetch models.
-Kokoro's G2P/runtime assets must already be provisioned; offline environment flags do not substitute for a
-network-isolation acceptance test. Missing prerequisites fail explicitly.
-
-Local-provider manifest voice provenance records `name`, `version`, and `model_sha256`; Edge records `name`,
-`rate`, and `pitch`. Record actual settings, never fabricated listening or licensing approval.
+Edge manifest voice provenance records `name`, `rate`, and `pitch`. Record actual settings, never fabricated
+listening approval.
 Re-voicing is a new reviewed recording. Published enclosure bytes are never replaced.
-For an explicit Edge/local-provider request, `pipeline.adhoc synthesize --request PATH --script SCRIPT --output NEW.mp3`
+For an explicit Edge request, `pipeline.adhoc synthesize --request PATH --script SCRIPT --output NEW.mp3`
 creates unpublished audio and a matching `.voice.json` sidecar for the review packet. It never finalizes or publishes.
 The Notebook provider rejects this command and continues to use the browser technique. Review the actual recording
 and ASR transcript before `prepare`, even when its source script was already reviewed.
-After approved local setup, `python -m pipeline.local_voice --provider kokoro --script SCRIPT --output NEW.mp3`
-(or `--provider piper`) records generation time including validation/model initialization, measured duration,
-real-time factor, and exact script/model/audio
-identity in `NEW.audition.json`. Use the same public technical script for both voices. Listening and peak-memory
-assessment remain explicitly unperformed until separately measured; an audition never authorizes publication.
 
 ## Local commands
 

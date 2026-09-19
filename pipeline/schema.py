@@ -470,11 +470,6 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
             _exact_fields(voice, {"name", "rate", "pitch"}, "Edge voice")
             for key in voice:
                 _text(voice[key], f"voice.{key}", limit=120)
-        else:
-            _exact_fields(voice, {"name", "version", "model_sha256"}, "local voice")
-            _text(voice["name"], "voice.name", limit=120)
-            _text(voice["version"], "voice.version", limit=120)
-            _sha256(voice["model_sha256"], "voice.model_sha256")
         from .audio_quality import repetition_findings, validate_quality_report
         if repetition_findings(manifest.narration):
             raise SchemaError("adjacent repeated speech requires editorial review")

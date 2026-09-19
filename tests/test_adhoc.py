@@ -211,11 +211,9 @@ def test_adhoc_confirmation_preserves_daily_cadence_and_run(monkeypatch, tmp_pat
     assert len(list(Path("data/receipts").glob("*.json"))) == 1
 
 
-def test_local_voice_requires_explicit_setup(monkeypatch):
-    from pipeline.local_voice import load_profile
-    monkeypatch.delenv("TTS_LOCAL_PROFILE", raising=False)
-    with pytest.raises(ValueError, match="TTS_LOCAL_PROFILE"):
-        load_profile("kokoro")
+def test_unsupported_voice_provider_is_rejected():
+    with pytest.raises(ValueError, match="unsupported requested audio provider"):
+        request(provider="local")
 
 
 def mixed_history(tmp_path, *, status="skipped"):

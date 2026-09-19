@@ -138,9 +138,6 @@ def generate_audio(text: str) -> Optional[bytes]:
         audio = _generate_edge_tts(text)
     elif provider == "openai":
         audio = _generate_openai_tts(text)
-    elif provider in {"kokoro", "piper"}:
-        from .local_voice import generate_local_audio
-        audio = generate_local_audio(text, provider=provider)
     else:
         logger.error("Unsupported TTS_PROVIDER: %s", provider)
         return None

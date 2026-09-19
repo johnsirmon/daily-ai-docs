@@ -198,16 +198,11 @@ def synthesize(request: PodcastRequest, script: Path, output: Path) -> None:
     text = script.read_text(encoding="utf-8")
     if len(text) > 60000 or len(text.split()) > 6000 or repetition_findings(text):
         raise ValueError("script exceeds the long-form budget or repeats adjacent passages")
-    if request.provider == "edge":
-        voice = {
-            "name": os.environ.get("EDGE_TTS_VOICE", _EDGE_VOICE),
-            "rate": os.environ.get("EDGE_TTS_RATE", "+0%"),
-            "pitch": os.environ.get("EDGE_TTS_PITCH", "+0Hz"),
-        }
-    else:
-        from .local_voice import load_profile
-        profile = load_profile(request.provider)
-        voice = {key: profile[key] for key in ("name", "version", "model_sha256")}
+    voice = {
+        "name": os.environ.get("EDGE_TTS_VOICE", _EDGE_VOICE),
+        "rate": os.environ.get("EDGE_TTS_RATE", "+0%"),
+        "pitch": os.environ.get("EDGE_TTS_PITCH", "+0Hz"),
+    }
     previous = os.environ.get("TTS_PROVIDER")
     os.environ["TTS_PROVIDER"] = request.provider
     try:
@@ -232,7 +227,7 @@ def main() -> None:
     create.add_argument("--topic", required=True)
     create.add_argument("--audience", default="AI developers")
     create.add_argument("--lookback-days", type=int, default=60)
-    create.add_argument("--provider", choices=["gemini-notebook-web", "edge", "kokoro", "piper"],
+    create.add_argument("--provider", choices=["gemini-notebook-web", "edge"],
                         default="gemini-notebook-web")
     create.add_argument("--publish-now", action="store_true")
     issue = sub.add_parser("issue")

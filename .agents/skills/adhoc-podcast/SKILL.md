@@ -62,7 +62,5 @@ Report the release/episode identity and feed receipt. Apple app refresh and devi
 
 ## Voice alternatives
 
-Notebook is the default. Edge presets and optional Kokoro/Piper auditions synthesize a newly reviewed script;
-they do not secretly change Notebook hosts. Local providers require approved installed packages, licensed
-hash-pinned assets, and actual listening/platform evaluation. Never install around an IT block or silently
-switch providers. Record unavailable prerequisites as blockers.
+Notebook is the default. Edge presets can synthesize a newly reviewed script; they do not secretly change
+Notebook hosts. Review the actual recording and never silently switch providers.
