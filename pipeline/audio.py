@@ -70,7 +70,7 @@ def analyze_audio(
             [ffmpeg, "-v", "error", "-xerror", "-i", str(audio), "-f", "null", "-"],
             check=False,
             capture_output=True,
-            timeout=120,
+            timeout=max(120, min(900, int(duration * 2))),
         )
         if decoded.returncode != 0:
             raise AudioValidationError("audio failed full decode")
@@ -82,8 +82,10 @@ def analyze_audio(
             check=False,
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=max(120, min(900, int(duration * 2))),
         )
+        if silence.returncode:
+            raise AudioValidationError("silence measurement failed")
         silence_durations = [
             float(value)
             for value in re.findall(r"silence_duration:\s*([0-9.]+)", silence.stderr)

@@ -66,6 +66,7 @@ def collect_research_papers(
     covered_paper_ids: Iterable[str] = (),
     session=None,
     now: datetime | None = None,
+    max_lookback_days: int = 30,
 ) -> tuple[List[SourceEvent], Dict[str, str]]:
     """Return unreviewed full-text candidates and explicit discovery/rejection health."""
     if config.get("enabled") is not True:
@@ -75,7 +76,9 @@ def collect_research_papers(
     health: Dict[str, str] = {}
     covered = set(covered_paper_ids)
     try:
-        days = bounded_int(config, "lookback_days", 30, 1, 30)
+        if type(max_lookback_days) is not int or max_lookback_days not in {30, 365}:
+            raise DetailError("invalid_lookback_policy")
+        days = bounded_int(config, "lookback_days", 30, 1, max_lookback_days)
         max_results = bounded_int(config, "max_results", 5, 1, 20)
         max_papers = bounded_int(config, "max_papers", 3, 1, 5)
         max_chars = bounded_int(config, "max_full_text_chars", 60000, 1000, 60000)

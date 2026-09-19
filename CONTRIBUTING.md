@@ -44,7 +44,8 @@ credentials. Preparation writes `.cache/episode-manifest.json` and `.cache/publi
 
 Install `ffmpeg` and `ffprobe` for live audio preparation. Live source collection, synthesis, TTS, and delivery checks
 can make external requests; they are not part of the network-free dry-run. Do not run `finalize`, `confirm`, or publisher
-workflows as a routine contribution check. Ad-hoc publication is currently paused.
+workflows as a routine contribution check. Ad-hoc specials require the request-bound reviewed-audio workflow;
+the legacy direct-feed ad-hoc command is disabled.
 
 Use [`requirements.lock`](requirements.lock) for reproducible environments, not just the unpinned requirements file.
 If changing dependencies, update [`requirements.txt`](requirements.txt), regenerate the lock, and rerun the checks:

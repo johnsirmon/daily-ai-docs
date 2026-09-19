@@ -361,7 +361,7 @@ def manifest_to_narration(manifest) -> str:
         validate_editorial_stories(manifest.source_events, manifest.stories)
         return editorial_narration(manifest.stories, manifest.generation)
     manifest.validate(require_audio=False)
-    if manifest.schema_version == 3:
+    if manifest.schema_version in {3, 4}:
         return manifest.narration
     date_text = manifest.published_at[:10]
     failed_sources = [

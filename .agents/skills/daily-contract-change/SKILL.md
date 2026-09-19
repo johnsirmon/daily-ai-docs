@@ -19,6 +19,7 @@ Classify each change before editing:
 - schema 1: legacy/deterministic episodes;
 - schema 2: independently drafted and verified grounded editorial episodes;
 - schema 3: reviewed Notebook audio with transcript/source review provenance.
+- schema 4: request-bound long-form specials with measured mastering and explicit audio-provider provenance.
 
 Do not relabel one contract as another. In particular, reviewed browser audio is not a
 two-call Gemini API result, and legacy deterministic output is not a fallback for failed

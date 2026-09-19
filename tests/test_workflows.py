@@ -88,6 +88,28 @@ def test_independent_monitor_remains_age_sensitive():
     assert "--allow-editorial-skips" in monitor
 
 
+def test_adhoc_intake_cannot_publish_or_execute_issue_body():
+    document = workflow("adhoc-podcast.yml")
+    assert document["permissions"]["contents"] == "read"
+    assert document["concurrency"]["group"] != "podcast-publisher"
+    runs = "\n".join(step.get("run", "") for step in steps("adhoc-podcast.yml"))
+    assert "pipeline.adhoc issue" in runs
+    assert "issue.body" not in runs
+    assert "gh release" not in runs and "pipeline.daily" not in runs
+    assert "workflow" not in runs
+
+
+def test_adhoc_bundle_authorized_before_locked_promotion():
+    all_steps = steps("update-radar.yml")
+    prepare = next(step["run"] for step in all_steps if step.get("id") == "prepare")
+    assert "pipeline.adhoc verify --directory .cache" in prepare
+    upload = next(step["run"] for step in all_steps
+                  if step.get("name") == "Upload or resume immutable release assets")
+    assert '--draft=false' in upload
+    failure = next(step for step in all_steps if step.get("name") == "Persist failed editorial run")
+    assert "!startsWith(inputs.reviewed_episode, 'adhoc-')" in failure["if"]
+
+
 def test_skip_guards_every_publication_step_and_persists_receipt():
     all_steps = steps("update-radar.yml")
     first = next(index for index, step in enumerate(all_steps)
@@ -165,5 +187,5 @@ def test_workflow_yaml_and_shell_syntax_without_execution(path):
         pytest.skip("bash is not installed")
     for step in steps(path.name):
         if "run" in step:
-            result = subprocess.run([bash, "-n"], input=step["run"], text=True, capture_output=True)
+            result = subprocess.run([bash, "-n"], input=step["run"].encode("utf-8"), capture_output=True)
             assert result.returncode == 0, f"{path.name}: {result.stderr}"

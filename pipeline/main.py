@@ -9,7 +9,7 @@ Options:
     --podcast       Also generate audio (radar.mp3) and update podcast.xml.
                     Reads PUBLISH_PODCAST=1 env var as an alternative to the flag.
     --config        Path to topics YAML (default: topics/topics.yaml).
-    --adhoc-topic   Research a topic on demand and publish an ad-hoc podcast episode.
+    --adhoc-topic   Disabled legacy entry; use pipeline.adhoc request instead.
                     Skips the full pipeline and generates a single episode.
 """
 
@@ -23,7 +23,6 @@ from pathlib import Path
 
 import yaml
 
-from .adhoc import run_adhoc
 from .blurbs import generate_topic_meta, generate_repo_deepdive
 from .enrich import enrich_items
 from .narrate import readme_to_narration
@@ -264,8 +263,7 @@ def main() -> None:
         "--adhoc-topic",
         type=str,
         default=None,
-        help="Research a topic on demand and publish an ad-hoc podcast episode. "
-             "Skips the full pipeline.",
+        help="Disabled legacy entry; use python -m pipeline.adhoc request --topic TOPIC.",
     )
     args = parser.parse_args()
 
@@ -273,14 +271,7 @@ def main() -> None:
     mp3_url_template = f"https://github.com/{repo}/releases/download/{{tag}}/radar.mp3"
 
     if args.adhoc_topic:
-        adhoc_mp3_tpl = f"https://github.com/{repo}/releases/download/{{tag}}/adhoc-episode.mp3"
-        result = run_adhoc(
-            topic=args.adhoc_topic,
-            dry_run=args.dry_run,
-            mp3_url_template=adhoc_mp3_tpl,
-        )
-        logger.info("Ad-hoc episode complete: %s", result["episode"]["guid"])
-        return
+        parser.error("Legacy ad-hoc publication is disabled. Use python -m pipeline.adhoc request --topic TOPIC.")
 
     if args.podcast_only:
         readme_path = Path("README.md")
@@ -302,4 +293,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

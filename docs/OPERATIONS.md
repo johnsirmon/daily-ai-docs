@@ -234,6 +234,109 @@ fail explicitly. This tolerance never authorizes replacing released bytes or rel
 For recovery, rerun the same workflow with the same release tag. Do not rebuild or replace its media. A pending different
 candidate blocks the import until recovered. A confirmed episode must not be promoted again as a new episode.
 
+## Ad-hoc long-form specials
+
+Use the **Request a podcast** issue form or ask Copilot in this repository to create a special.
+Issue intake checks the author's repository write permission and queues operator-assisted work.
+It does not start a signed-in browser in Actions. Topic text is public data, never shell instructions.
+
+The default is 20-30 measured minutes using evidence originally published in the 60 days ending at request creation.
+An explicit `--lookback-days` override accepts 1-365 days. Unknown/future dates and out-of-window material are rejected;
+a new article update or paper revision is not a new original publication. A thin evidence set is a blocker, not filler.
+
+These commands are run from the repository root. Request/issue intake contacts GitHub through your signed-in `gh`;
+brief and prepare are local. The paper collector is explicitly networked. `publish` uploads a draft release and
+dispatches the live shared publisher, so use it only with an authorized publish-now request.
+
+```powershell
+uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.adhoc request `
+  --topic "Coding-agent evaluation" --lookback-days 60 --publish-now
+
+# Alternatively, consume a maintainer-authored request from the issue queue.
+uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.adhoc issue --number 123
+
+# Use the request path printed above. These files stay in this request's staging directory.
+uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.adhoc brief `
+  --request .cache\adhoc\<request-id>\request.json --packet .cache\adhoc\<request-id>\packet.json
+
+uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.adhoc prepare `
+  --request .cache\adhoc\<request-id>\request.json --packet .cache\adhoc\<request-id>\packet.json `
+  --transcript .cache\adhoc\<request-id>\transcript.txt --review .cache\adhoc\<request-id>\review.json `
+  --audio .cache\adhoc\<request-id>\original.m4a --output .cache\adhoc\<request-id>\prepared
+
+uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.adhoc publish `
+  --directory .cache\adhoc\<request-id>\prepared
+```
+
+Replace the placeholder request directory with the returned path; do not paste placeholder commands unchanged.
+The `adhoc-podcast` skill prepares the evidence packet and review files with the operator. The packet contains
+`source_events`, `stories`, `source_health`, `show_notes`, and optional `noise_notes` using existing schema fields.
+Review JSON contains `transcript` (`engine`, `model`), `review` (method, reviewer, timestamp, exact spoken claims,
+matching source quotes, and limitations), and `voice` (`{}` for Notebook). Full papers and third-party transcripts
+must not be archived in the publication packet.
+
+Use the same Notebook browser technique, selecting English Deep Dive / Longer. Actual duration is not guaranteed.
+Preserve the original download, record any native Save handoff, transcribe locally, and review the spoken claims.
+An unavailable browser/transcriber or unresolved claim blocks the request. At most one deliberate regeneration
+within the authorized account allowance is permitted; never manufacture length with repetition or silence.
+
+Schema 4 binds the exact request revision, provider, transcript/source review, input hash, measured mastering report,
+and final MP3. It retains the existing immutable release media name and requires 1200-1800 seconds. Schemas 1-3
+retain their original constraints. Normalization targets -16 LKFS +/-1 dB and true peak at most -1 dBFS; the final
+encoded recording is measured again. Decoding and automated repetition checks do not constitute a listening review.
+For future daily TTS episodes and new schema-3 imports, `PODCAST_AUDIO_POLISH=1` explicitly opts into the same
+mastering gate while preserving their original duration budgets. Existing defaults and released audio stay unchanged.
+Daily generated source audio is retained beside its working output under a checksum-qualified filename.
+
+`publish` rechecks current issue authorization and stages a **draft** release. The existing daily publisher validates
+the bundle under the shared lock, promotes it, builds the candidate feed, deploys Pages, verifies exact delivery,
+and writes `data/requests/<request-id>.json`. If dispatch fails after upload, dispatch `update-radar.yml` with the
+existing ad-hoc release tag; do not reupload/regenerate. The latest `main` must contain this feature before dispatch.
+Closing/editing an issue invalidates its pending authorization. A new request revision gets a new immutable identity.
+
+Preview requests can prepare audio but cannot finalize. `pipeline.adhoc status --request PATH` reads a confirmed
+request receipt when present, otherwise the local stage status. Refresh production history before reporting status.
+An issue's intake comment is not proof of completion.
+
+Mixed feeds retain global last-confirmed delivery separately from the last daily publication. Ad-hoc confirmation
+does not overwrite daily evaluation receipts or consume the daily same-day slot. Monitoring still rejects stale or
+failed daily evaluations and verifies the actual latest feed item. Do not hand-edit the versioned state migration.
+
+### Voice and delivery polish
+
+Notebook remains the default. Its host voices are not documented as selectable. To use another voice, explicitly
+request a newly narrated and source-reviewed script; do not relabel it as Notebook generation.
+Existing Edge TTS accepts `EDGE_TTS_VOICE`, `EDGE_TTS_RATE` (bounded +/-50%), `EDGE_TTS_PITCH` (+/-20Hz), and
+`EDGE_TTS_VOLUME` (+/-50%). Defaults stay unchanged. Use natural sentence/paragraph boundaries and compare actual
+listening samples before changing the show's voice. Edge is networked and best-effort, not a guaranteed service.
+
+Kokoro/Piper adapters are **experimental auditions, not approved production defaults**. Packages, model downloads,
+license review, Windows compatibility, and actual listening evaluation are separate prerequisites; ordinary tests
+do not download them. No validated optional dependency lock or voice recommendation is provided until those
+prerequisites are completed in an approved environment. Never work around IT policy or silently use another provider.
+
+An operator-installed candidate uses `TTS_PROVIDER=kokoro` or `piper` and a `TTS_LOCAL_PROFILE` JSON file with:
+`provider`, exact installed `version`, voice `name`, `license_reviewed: true`, local `model`/`config` paths, and their
+`model_sha256`/`config_sha256`. Kokoro also requires a local `voice` tensor path and `voice_sha256`.
+Use trusted, hash-pinned upstream assets. Current Piper software is GPLv3; each voice has separate model-card terms.
+Kokoro weights are Apache-licensed; review all component obligations rather than assume every asset has identical rights.
+Local providers load their model once per invocation and do not intentionally fetch models.
+Kokoro's G2P/runtime assets must already be provisioned; offline environment flags do not substitute for a
+network-isolation acceptance test. Missing prerequisites fail explicitly.
+
+Local-provider manifest voice provenance records `name`, `version`, and `model_sha256`; Edge records `name`,
+`rate`, and `pitch`. Record actual settings, never fabricated listening or licensing approval.
+Re-voicing is a new reviewed recording. Published enclosure bytes are never replaced.
+For an explicit Edge/local-provider request, `pipeline.adhoc synthesize --request PATH --script SCRIPT --output NEW.mp3`
+creates unpublished audio and a matching `.voice.json` sidecar for the review packet. It never finalizes or publishes.
+The Notebook provider rejects this command and continues to use the browser technique. Review the actual recording
+and ASR transcript before `prepare`, even when its source script was already reviewed.
+After approved local setup, `python -m pipeline.local_voice --provider kokoro --script SCRIPT --output NEW.mp3`
+(or `--provider piper`) records generation time including validation/model initialization, measured duration,
+real-time factor, and exact script/model/audio
+identity in `NEW.audition.json`. Use the same public technical script for both voices. Listening and peak-memory
+assessment remain explicitly unperformed until separately measured; an audition never authorizes publication.
+
 ## Local commands
 
 ```bash
@@ -349,8 +452,8 @@ It never publishes the legacy deterministic fallback when a required editorial s
   while freshness still alarms; the next scheduled run should collect a new edition. Do not raise the monitoring
   deadline or use a candidate for routine freshness monitoring.
 
-Ad-hoc publication is intentionally paused. It must be migrated to the same evidence manifest and transactional
-confirmation flow before it can publish again.
+The legacy ad-hoc publisher is disabled. Use the request-bound long-form path above; do not restore direct RSS writes
+through `pipeline.main --adhoc-topic`.
 
 Rollback: revert the generated feed/manifest/state commit. Do not delete or overwrite release assets that may already be
 referenced by podcast clients.

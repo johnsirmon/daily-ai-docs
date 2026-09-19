@@ -57,7 +57,8 @@ description: >
 ## Validate the actual recording
 
 - Preserve the original. Record size, codec, measured duration, and SHA-256.
-- Full-decode with FFmpeg, fail on errors, and assert 300-480 seconds explicitly.
+- Full-decode with FFmpeg and fail on errors. Daily schema-3 audio must measure 300-480 seconds;
+  schema-4 ad-hoc requests use 1200-1800 seconds. Do not change a daily contract to fit a longer recording.
 - Bind media bytes with exact size and checksum. Cross-version FFprobe duration
   estimates may differ by MP3 priming/padding frames; use the publisher's bounded
   tested tolerance, not exact floating-point equality or an unbounded exception.
@@ -86,3 +87,7 @@ description: >
   that Apple has refreshed every listener's app.
 - Record the result and the manual Save step honestly. Native-dialog involvement
   means this is operator-assisted, not unattended browser automation.
+
+For requested long-form specials, start with `adhoc-podcast`, which owns request authorization,
+recency, staging, and the shared-publisher handoff. Use the same signed-in Notebook technique,
+selecting Longer rather than Short. Notebook does not guarantee exact duration or selectable voices.

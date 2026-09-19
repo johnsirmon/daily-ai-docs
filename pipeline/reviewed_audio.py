@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -55,9 +56,13 @@ def prepare_reviewed_audio(
     if manifest_path == audio_path:
         raise ValueError("manifest and source audio must be distinct files")
     manifest = EpisodeManifest.from_dict(json.loads(manifest_path.read_text(encoding="utf-8")))
-    if manifest.schema_version != 3 or manifest.status != "draft":
-        raise SchemaError("reviewed audio import requires a schema-3 draft, not a reusable release")
+    if manifest.schema_version not in {3, 4} or manifest.status != "draft":
+        raise SchemaError("reviewed audio import requires a schema-3 or schema-4 draft, not a reusable release")
     expected_hash = manifest.generation["source_audio_sha256"]
+    if manifest.schema_version == 4 or os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
+        from .audio_quality import repetition_findings
+        if repetition_findings(manifest.narration):
+            raise SchemaError("adjacent repeated narration requires editorial review")
     if _file_sha256(audio_path) != expected_hash:
         raise SchemaError("source audio SHA-256 does not match reviewed provenance")
     ffmpeg = shutil.which("ffmpeg")
@@ -65,20 +70,16 @@ def prepare_reviewed_audio(
         raise RuntimeError("ffmpeg is required for reviewed audio import")
     output.mkdir(parents=False, exist_ok=False)
     destination = output / "daily-ai-brief.mp3"
-    subprocess.run(
-        [
-            ffmpeg, "-nostdin", "-hide_banner", "-loglevel", "error", "-xerror", "-n",
-            "-protocol_whitelist", "file", "-i", str(audio_path),
-            "-map", "0:a:0", "-vn", "-sn", "-dn", "-map_metadata", "-1", "-map_chapters", "-1",
-            "-c:a", "libmp3lame", "-b:a", "128k", "-ar", "44100", "-ac", "2",
-            "-f", "mp3", str(destination),
-        ],
-        check=True, capture_output=True, text=True, timeout=600,
-    )
+    if manifest.schema_version == 4 or os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
+        from .audio_quality import master_audio
+        manifest.generation["quality"] = master_audio(audio_path, destination)
+    else:
+        _transcode(ffmpeg, audio_path, destination)
     if _file_sha256(audio_path) != expected_hash:
         raise SchemaError("source audio changed during import")
+    minimum, maximum = (1200, 1800) if manifest.schema_version == 4 else (300, 480)
     analysis = analyze_audio(
-        destination, min_duration_secs=300, max_duration_secs=480,
+        destination, min_duration_secs=minimum, max_duration_secs=maximum,
         full_decode=True, expected_word_count=len(manifest.narration.split()),
     )
     manifest.audio.update({key: value for key, value in analysis.items() if key != "path"})
@@ -97,6 +98,19 @@ def prepare_reviewed_audio(
     _write_json(prepared_manifest, manifest.to_dict())
     _write_json(output / "publication.json", publication)
     return publication
+
+
+def _transcode(ffmpeg: str, audio_path: Path, destination: Path) -> None:
+    subprocess.run(
+        [
+            ffmpeg, "-nostdin", "-hide_banner", "-loglevel", "error", "-xerror", "-n",
+            "-protocol_whitelist", "file", "-i", str(audio_path),
+            "-map", "0:a:0", "-vn", "-sn", "-dn", "-map_metadata", "-1", "-map_chapters", "-1",
+            "-c:a", "libmp3lame", "-b:a", "128k", "-ar", "44100", "-ac", "2",
+            "-f", "mp3", str(destination),
+        ],
+        check=True, capture_output=True, text=True, timeout=600,
+    )
 
 
 def main(argv: list[str] | None = None) -> int:

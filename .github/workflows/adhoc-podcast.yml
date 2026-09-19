@@ -1,14 +1,44 @@
-name: Ad Hoc Podcast (Paused)
+name: Ad Hoc Podcast Requests
 
 on:
+  issues:
+    types: [opened, edited, reopened]
   workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Podcast request issue number
+        required: true
+        type: string
 
 permissions:
   contents: read
+  issues: write
+
+concurrency:
+  group: podcast-request-${{ github.event.issue.number || inputs.issue_number }}
+  cancel-in-progress: false
 
 jobs:
-  paused:
+  intake:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.issue.title, '[Podcast]')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - run: |
-          echo "Ad-hoc publication is paused until it uses the same evidence manifest and transactional publisher as the daily edition."
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate and queue trusted request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: python -m pipeline.adhoc issue --number "$ISSUE_NUMBER"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: podcast-request-${{ github.event.issue.number || inputs.issue_number }}
+          path: |
+            .cache/adhoc/*/request.json
+            .cache/adhoc/*/status.json
+          retention-days: 30

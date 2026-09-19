@@ -223,6 +223,15 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "## Today's signal",
         "",
     ]
+    if manifest.schema_version == 4:
+        request = manifest.generation["request"]
+        lines[0] = f"# Daily AI Developer Brief — Special: {request['topic']}"
+        lines += [
+            f"Long-form special for {request['audience']}.",
+            f"Evidence window: {request['lookback_days']} days ending {request['cutoff']}.",
+            f"Audio provider: {manifest.generation['provider']}; transcript/source reviewed, not Gemini API verification.",
+            "",
+        ]
     if not manifest.stories:
         failed = [status for status in manifest.source_health.values() if not status.startswith("ok:")]
         quiet_message = (
@@ -283,7 +292,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "- Product-change claims require public primary evidence.",
         (
             "- This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings."
-            if manifest.schema_version == 3
+            if manifest.schema_version in {3, 4}
             else "- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation."
         ),
         "- Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.",

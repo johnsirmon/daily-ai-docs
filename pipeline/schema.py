@@ -433,16 +433,59 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     if manifest.status not in {"draft", "ready", "candidate", "published"}:
         raise SchemaError("reviewed audio requires a publication status")
     generation = manifest.generation
+    long_form = manifest.schema_version == 4
     if generation.get("preview_only") is True:
         raise SchemaError("preview-only audio cannot be published")
     generation_fields = {
         "edition", "provider", "approved_at", "source_audio_sha256", "transcript", "review",
     }
+    if long_form:
+        generation_fields |= {"request", "request_sha256", "quality", "voice"}
+    elif "quality" in generation:
+        generation_fields.add("quality")
     if "editing" in generation:
         generation_fields.add("editing")
     _exact_fields(generation, generation_fields, "reviewed generation")
-    if generation["edition"] != "notebook" or generation["provider"] != "gemini-notebook-web":
+    if not long_form and (generation["edition"] != "notebook" or generation["provider"] != "gemini-notebook-web"):
         raise SchemaError("reviewed audio requires the gemini-notebook-web notebook provider")
+    if long_form:
+        from .podcast_request import PodcastRequest, utc_timestamp
+        try:
+            request = PodcastRequest.from_dict(generation["request"])
+            request.validate_sources(manifest.source_events)
+        except (ValueError, KeyError) as exc:
+            raise SchemaError(f"invalid ad-hoc request: {exc}") from exc
+        if (generation["edition"] != "adhoc" or generation["provider"] != request.provider
+                or generation["request_sha256"] != request.revision
+                or manifest.episode_id != request.episode_id):
+            raise SchemaError("ad-hoc identity must match the exact requested revision and provider")
+        if utc_timestamp(request.cutoff) > utc_timestamp(manifest.published_at):
+            raise SchemaError("request research cutoff cannot be after publication")
+        if not isinstance(generation["voice"], dict):
+            raise SchemaError("voice provenance must be an object")
+        voice = generation["voice"]
+        if request.provider == "gemini-notebook-web":
+            _exact_fields(voice, set(), "Notebook voice")
+        elif request.provider == "edge":
+            _exact_fields(voice, {"name", "rate", "pitch"}, "Edge voice")
+            for key in voice:
+                _text(voice[key], f"voice.{key}", limit=120)
+        else:
+            _exact_fields(voice, {"name", "version", "model_sha256"}, "local voice")
+            _text(voice["name"], "voice.name", limit=120)
+            _text(voice["version"], "voice.version", limit=120)
+            _sha256(voice["model_sha256"], "voice.model_sha256")
+        from .audio_quality import repetition_findings, validate_quality_report
+        if repetition_findings(manifest.narration):
+            raise SchemaError("adjacent repeated speech requires editorial review")
+        validate_quality_report(generation["quality"], final=manifest.status != "draft",
+                                audio_sha256=manifest.audio.get("sha256"))
+        if manifest.status in {"candidate", "published"} and not request.publish_now:
+            raise SchemaError("preview request cannot be published")
+    elif "quality" in generation:
+        from .audio_quality import validate_quality_report
+        validate_quality_report(generation["quality"], final=manifest.status != "draft",
+                                audio_sha256=manifest.audio.get("sha256"))
     _timestamp(generation["approved_at"], "generation.approved_at")
     _sha256(generation["source_audio_sha256"], "generation.source_audio_sha256")
     if "editing" in generation:
@@ -470,7 +513,7 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     _sha256(transcript["sha256"], "transcript.sha256")
     if transcript["sha256"] != hashlib.sha256(manifest.narration.encode("utf-8")).hexdigest():
         raise SchemaError("transcript.sha256 must hash the exact UTF-8 narration")
-    if len(manifest.narration) > 16000:
+    if len(manifest.narration) > (60000 if long_form else 16000):
         raise SchemaError("narration exceeds 16000 characters")
     review = generation["review"]
     _exact_fields(review, {"method", "reviewed_at", "reviewer", "claims", "notes"}, "review")
@@ -481,7 +524,7 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         raise SchemaError("review.notes must be a bounded non-empty list of review and ASR limitations")
     for note in review["notes"]:
         _text(note, "review.note", limit=1600)
-    if not isinstance(review["claims"], list) or not 1 <= len(review["claims"]) <= 100:
+    if not isinstance(review["claims"], list) or not 1 <= len(review["claims"]) <= (300 if long_form else 100):
         raise SchemaError("review.claims must be a bounded non-empty list")
     events = {event.event_id: event for event in manifest.source_events}
     paper_fields = {
@@ -508,7 +551,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         raise SchemaError("reviewed audio requires one to seven stories")
     mapped_events: set[str] = set()
     for story in manifest.stories:
-        if len(set(story.event_ids)) != len(story.event_ids) or mapped_events.intersection(story.event_ids):
+        if (len(set(story.event_ids)) != len(story.event_ids)
+                or (not long_form and mapped_events.intersection(story.event_ids))):
             raise SchemaError("reviewed stories must map each source exactly once")
         mapped_events.update(story.event_ids)
         papers = [events[event_id] for event_id in story.event_ids
@@ -563,6 +607,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
             raise SchemaError("claim.text must occur verbatim in the ASR narration")
         if claim["quote"] not in events[event_id].evidence:
             raise SchemaError("claim.quote must occur verbatim in the referenced event evidence")
+        if long_form:
+            validate_quantities(claim["text"], claim["quote"], "reviewed claim")
         key = (event_id, claim["text"])
         if key in claim_keys:
             raise SchemaError("duplicate reviewed claim")
@@ -586,9 +632,10 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         if type(manifest.audio["size_bytes"]) is not int or manifest.audio["size_bytes"] < 10_000:
             raise SchemaError("reviewed audio size must be a measured positive integer")
         duration = manifest.audio["duration_secs"]
+        lower, upper = (1200, 1800) if long_form else (300, 480)
         if (type(duration) not in (int, float) or not math.isfinite(duration)
-                or not 300 <= duration <= 480):
-            raise SchemaError("reviewed audio duration must be within 300-480 seconds")
+                or not lower <= duration <= upper):
+            raise SchemaError(f"reviewed audio duration must be within {lower}-{upper} seconds")
         if (manifest.audio["codec"] != "mp3" or type(manifest.audio["sample_rate"]) is not int
                 or manifest.audio["sample_rate"] != 44100
                 or type(manifest.audio["channels"]) is not int or manifest.audio["channels"] != 2):
@@ -612,7 +659,7 @@ class EpisodeManifest:
     audio: Dict[str, Any]
 
     def validate(self, *, require_audio: bool | None = None) -> "EpisodeManifest":
-        if self.schema_version not in {1, 2, 3}:
+        if self.schema_version not in {1, 2, 3, 4}:
             raise SchemaError("unsupported manifest schema_version")
         _text(self.episode_id, "episode_id", limit=200)
         _timestamp(self.published_at, "published_at")
@@ -643,13 +690,17 @@ class EpisodeManifest:
                 raise SchemaError("story source URLs must match referenced evidence")
         if not isinstance(self.noise_notes, list) or not all(isinstance(x, str) for x in self.noise_notes):
             raise SchemaError("noise_notes must be a string list")
-        narration = _text(self.narration, "narration", limit=16000)
-        if len(narration.split()) > 1500:
+        narration = _text(self.narration, "narration", limit=60000 if self.schema_version == 4 else 16000)
+        if len(narration.split()) > (6000 if self.schema_version == 4 else 1500):
             raise SchemaError("narration exceeds the ten-minute word budget")
         _text(self.show_notes, "show_notes", limit=24000)
         if not isinstance(self.generation, dict) or not isinstance(self.audio, dict):
             raise SchemaError("generation and audio must be objects")
-        if self.schema_version == 3:
+        if self.schema_version in {1, 2} and "quality" in self.generation:
+            from .audio_quality import validate_quality_report
+            validate_quality_report(self.generation["quality"], final=True,
+                                    audio_sha256=self.audio.get("sha256"))
+        if self.schema_version in {3, 4}:
             validate_reviewed_audio(self)
         if self.schema_version == 2:
             validate_editorial_stories(self.source_events, self.stories)

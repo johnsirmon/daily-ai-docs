@@ -55,11 +55,15 @@ def _save_json(path: Path, data: Any) -> None:
 
 def load_state(path: Path = _STATE_PATH) -> Dict[str, Any]:
     state = _load_json(path, {"schema_version": 1, "seen_event_ids": [], "last_publication": None})
-    if not isinstance(state, dict) or state.get("schema_version") != 1:
+    if not isinstance(state, dict) or state.get("schema_version") not in {1, 2}:
         raise ValueError("invalid daily state file")
     seen = state.get("seen_event_ids")
     if not isinstance(seen, list) or not all(isinstance(item, str) for item in seen):
         raise ValueError("state seen_event_ids must be a string list")
+    if state["schema_version"] == 2:
+        for field in ("last_daily_episode_id", "last_daily_publication"):
+            if field not in state or (state[field] is not None and not isinstance(state[field], str)):
+                raise ValueError(f"mixed-feed state requires {field}")
     return state
 
 
@@ -297,7 +301,9 @@ def _prepare(
             }
             _save_json(_PUBLICATION_PATH, publication)
             return publication
-    last_publication = str(state.get("last_publication") or "")
+    last_publication = str(state.get(
+        "last_daily_publication", state.get("last_publication"),
+    ) or "")
     if not dry_run and not force and last_publication[:10] == now.astimezone(timezone.utc).date().isoformat():
         raise RuntimeError(f"a daily episode was already published on {last_publication[:10]}")
     history, paper_ids, published_events = ([], set(), [])
@@ -384,6 +390,10 @@ def _prepare(
         audio={"url": audio_url},
     )
     manifest.narration = manifest_to_narration(manifest)
+    if os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
+        from .audio_quality import repetition_findings
+        if repetition_findings(manifest.narration):
+            raise ValueError("adjacent repeated narration requires editorial review")
     if use_editorial:
         if len(manifest.narration.split()) < minimum_words:
             return _skip(now=now, reason="insufficient_substantive_material", health=health,
@@ -399,6 +409,10 @@ def _prepare(
         produced = write_audio(manifest.narration, path=str(audio_path))
         if produced is None:
             raise RuntimeError("TTS failed; candidate feed was not modified")
+        if os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
+            from .audio_quality import polish_generated_audio
+            manifest.generation["source_audio_sha256"] = hashlib.sha256(produced.read_bytes()).hexdigest()
+            manifest.generation["quality"] = polish_generated_audio(produced)
         edition = manifest.generation["edition"]
         minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
         maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
@@ -445,8 +459,9 @@ def prepare(
 
 
 def _validate_reviewed_audio_file(manifest: EpisodeManifest, path: Path) -> None:
+    minimum, maximum = (1200, 1800) if manifest.schema_version == 4 else (300, 480)
     measured = analyze_audio(
-        path, min_duration_secs=300, max_duration_secs=480,
+        path, min_duration_secs=minimum, max_duration_secs=maximum,
         expected_word_count=len(manifest.narration.split()),
     )
     for field in ("size_bytes", "sha256", "codec", "sample_rate", "channels"):
@@ -461,13 +476,18 @@ def _validate_reviewed_audio_file(manifest: EpisodeManifest, path: Path) -> None
             f"expected {expected:.3f}s, measured {actual:.3f}s"
         )
     logger.info("Reviewed MP3 duration: manifest %.3fs, decoded metadata %.3fs", expected, actual)
+    if "quality" in manifest.generation:
+        from .audio_quality import loudness
+        levels = loudness(path)
+        if not -17 <= levels["input_i"] <= -15 or levels["input_tp"] > -1:
+            raise RuntimeError("reviewed release fails measured loudness/peak gate")
 
 
 def resume_reviewed_release(episode_id: str, directory: Path = _CACHE_DIR) -> Dict[str, Any]:
     """Resume approved external audio from downloaded immutable release assets."""
     manifest_path = directory / "episode-manifest.json"
     manifest = EpisodeManifest.from_dict(_load_json(manifest_path, {}))
-    if manifest.schema_version != 3 or manifest.episode_id != episode_id:
+    if manifest.schema_version not in {3, 4} or manifest.episode_id != episode_id:
         raise RuntimeError("reviewed release identity or schema does not match the requested episode")
     if manifest.status not in {"ready", "candidate"} or manifest.generation.get("preview_only"):
         raise RuntimeError("reviewed release must be approved publication media, not a preview")
@@ -501,8 +521,13 @@ def finalize(
     if manifest.generation.get("preview_only") is True:
         raise RuntimeError("unpublished preview artifacts cannot be finalized")
     manifest.validate(require_audio=True)
-    if manifest.schema_version == 3 and publication_path is None:
+    if manifest.schema_version in {3, 4} and publication_path is None:
         raise RuntimeError("reviewed audio finalization requires downloaded release reconciliation")
+    if manifest.schema_version == 4:
+        from .podcast_request import PodcastRequest
+        request = PodcastRequest.from_dict(manifest.generation["request"])
+        if not request.publish_now:
+            raise RuntimeError("preview request cannot be finalized")
     if publication_path is not None:
         publication = _load_json(publication_path, {})
         if (publication.get("episode_id") != manifest.episode_id
@@ -513,7 +538,7 @@ def finalize(
         if (len(audio) != int(manifest.audio["size_bytes"])
                 or hashlib.sha256(audio).hexdigest() != manifest.audio["sha256"]):
             raise RuntimeError("downloaded release audio does not match manifest")
-        if manifest.schema_version == 3:
+        if manifest.schema_version in {3, 4}:
             _validate_reviewed_audio_file(manifest, Path(publication["audio_path"]))
     existing_path = Path("data/episodes") / f"{manifest.episode_id}.json"
     if existing_path.exists():
@@ -533,6 +558,8 @@ def finalize(
         )
     episode = {
         "title": (
+            f"Special: {manifest.generation['request']['topic']}"
+            if manifest.schema_version == 4 else
             f"Daily AI Developer Brief — {manifest.published_at[:10]}"
             + (" — Notebook edition" if manifest.schema_version == 3 else "")
         ),
@@ -574,8 +601,11 @@ def confirm(episode_id: str, *, verify_remote: bool = True) -> EpisodeManifest:
         )
     if (manifest.status == "published" and receipt_path.exists()
             and set(e.event_id for e in manifest.source_events).issubset(state["seen_event_ids"])):
-        _record_run("published", now=datetime.now(timezone.utc), reason="subscriber_confirmed",
-                    health=manifest.source_health)
+        if manifest.schema_version != 4:
+            _record_run("published", now=datetime.now(timezone.utc), reason="subscriber_confirmed",
+                        health=manifest.source_health)
+        else:
+            _record_adhoc_confirmation(manifest, _load_json(receipt_path, {})["confirmed_at"])
         return manifest
     manifest.status = "published"
     manifest.validate(require_audio=True)
@@ -589,22 +619,46 @@ def confirm(episode_id: str, *, verify_remote: bool = True) -> EpisodeManifest:
         if repo and stars:
             snapshots[repo] = {"stars": stars, "fetched_at": event.fetched_at}
     confirmed_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-    _save_json(_STATE_PATH, {
+    next_state = {
         "schema_version": 1,
         "seen_event_ids": seen[-2000:],
         "last_publication": manifest.published_at,
         "last_episode_id": manifest.episode_id,
         "repo_snapshots": snapshots,
-    })
+    }
+    if manifest.schema_version == 4 or state["schema_version"] == 2:
+        next_state["schema_version"] = 2
+        next_state["last_daily_episode_id"] = (
+            state.get("last_daily_episode_id", state.get("last_episode_id"))
+            if manifest.schema_version == 4 else manifest.episode_id
+        )
+        next_state["last_daily_publication"] = (
+            state.get("last_daily_publication", state.get("last_publication"))
+            if manifest.schema_version == 4 else manifest.published_at
+        )
+    _save_json(_STATE_PATH, next_state)
     _save_json(Path("data/receipts") / f"{episode_id}.json", {
         "episode_id": episode_id,
         "confirmed_at": confirmed_at,
         "feed": feed_result,
         "audio_sha256": manifest.audio["sha256"],
     })
-    _record_run("published", now=datetime.now(timezone.utc), reason="subscriber_confirmed",
-                health=manifest.source_health)
+    if manifest.schema_version == 4:
+        _record_adhoc_confirmation(manifest, confirmed_at)
+    else:
+        _record_run("published", now=datetime.now(timezone.utc), reason="subscriber_confirmed",
+                    health=manifest.source_health)
     return manifest
+
+
+def _record_adhoc_confirmation(manifest: EpisodeManifest, confirmed_at: str) -> None:
+    from .podcast_request import PodcastRequest
+    request = PodcastRequest.from_dict(manifest.generation["request"])
+    _save_json(Path("data/requests") / f"{request.request_id}.json", {
+        "schema_version": 1, "request": request.to_dict(), "request_sha256": request.revision,
+        "status": "published", "episode_id": manifest.episode_id, "confirmed_at": confirmed_at,
+        "audio_sha256": manifest.audio["sha256"],
+    })
 
 
 def _print_github_output(publication: Dict[str, Any]) -> None:

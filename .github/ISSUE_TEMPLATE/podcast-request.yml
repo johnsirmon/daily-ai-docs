@@ -1,0 +1,54 @@
+name: Request a podcast
+description: Queue an operator-assisted Notebook special for the existing podcast feed.
+title: "[Podcast] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a public request queue, not an unattended browser service.
+        A repository maintainer must authorize the request. Sources and topics must be public.
+        Notebook generation and download happen in an active local session.
+  - type: input
+    id: topic
+    attributes:
+      label: Topic
+      description: One focused subject for a 20-30 minute special.
+    validations:
+      required: true
+  - type: input
+    id: audience
+    attributes:
+      label: Audience
+      value: AI developers
+    validations:
+      required: true
+  - type: input
+    id: window
+    attributes:
+      label: Evidence window (days)
+      value: "60"
+      description: Original publication dates only; choose 1-365 days.
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Audio provider
+      options:
+        - gemini-notebook-web
+        - edge
+        - kokoro
+        - piper
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: publication
+    attributes:
+      label: Publication
+      options:
+        - Preview only
+        - Publish when all gates pass
+      default: 0
+    validations:
+      required: true

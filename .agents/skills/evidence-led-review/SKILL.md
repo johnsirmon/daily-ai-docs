@@ -100,6 +100,11 @@ For documentation, workflow, CLI, configuration, or agent-instruction changes:
 
 ## Reporting
 
+For audio-quality work, assess repetition, time to the first useful point, actionable takeaways,
+pronunciation, pacing, joins, and source fidelity separately. Compare the same reviewed script when
+auditioning voices. Record actual listening separately from ASR/metadata/automated measurements.
+Do not claim that a pronunciation was heard incorrectly merely because ASR misspelled a product name.
+
 - State what was inspected and what was not: scripts are not listened-to audio;
   metadata is not full decode; decode is not semantic fact-checking.
 - Preserve user-authored commits and unrelated changes.

@@ -71,9 +71,20 @@ def _generate_edge_tts(text: str) -> Optional[bytes]:
         import edge_tts  # noqa: PLC0415
 
         async def _run() -> bytes:
+            prosody = {}
+            for name, unit, maximum in (("rate", "%", 50), ("pitch", "Hz", 20), ("volume", "%", 50)):
+                value = os.environ.get(f"EDGE_TTS_{name.upper()}")
+                if value is not None:
+                    if not value.endswith(unit):
+                        raise ValueError(f"EDGE_TTS_{name.upper()} requires {unit}")
+                    number = int(value[:-len(unit)])
+                    if not -maximum <= number <= maximum:
+                        raise ValueError(f"EDGE_TTS_{name.upper()} is outside the allowed range")
+                    prosody[name] = f"{number:+d}{unit}"
             communicate = edge_tts.Communicate(
                 text,
                 os.environ.get("EDGE_TTS_VOICE", _EDGE_VOICE),
+                **prosody,
             )
             chunks = []
             async for chunk in communicate.stream():
@@ -127,6 +138,9 @@ def generate_audio(text: str) -> Optional[bytes]:
         audio = _generate_edge_tts(text)
     elif provider == "openai":
         audio = _generate_openai_tts(text)
+    elif provider in {"kokoro", "piper"}:
+        from .local_voice import generate_local_audio
+        audio = generate_local_audio(text, provider=provider)
     else:
         logger.error("Unsupported TTS_PROVIDER: %s", provider)
         return None
