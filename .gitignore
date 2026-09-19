@@ -58,3 +58,6 @@ radar-script.txt
 
 # Local Hermes plans/reviews are working artifacts, not product output.
 .hermes/
+
+# Maintainer-only operating notes.
+INTERNAL_README.md
