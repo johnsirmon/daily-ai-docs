@@ -194,6 +194,8 @@ methods, limitations, and an author-reported/not-reproduced qualification. Full 
 account details, and browser cookies must not enter the release manifest.
 
 Review the actual recording before preparing the draft manifest. Local ASR can assist, but disclose its uncertainties.
+Use the [audio production review procedure](../.agents/skills/audio-production-review/SKILL.md) for ASR prerequisites,
+the illustrative review-packet shape, final-byte mastering checks, and an honest record of actual listening.
 Correct material errors before publication. An optional, explicitly recorded spoken editorial prefix can clarify an error
 in the otherwise intact conversation; its exact text and audio hash are retained separately from the original recording.
 Keep the original download unchanged. The final audio must remain within 300-480 seconds.
@@ -210,6 +212,8 @@ uv run --with-requirements requirements.lock python -m pipeline.reviewed_audio \
 The importer validates provenance, converts to MP3 once, performs full media checks, and writes `daily-ai-brief.mp3`,
 `episode-manifest.json`, and local `publication.json`. It makes no model, TTS, upload, feed, or state changes. It refuses
 preview flags, mismatched source hashes, and reused output directories, including directories from failed imports.
+Supply the original recording or explicitly reviewed correction composite, not a manually preconverted MP3.
+The importer owns conversion and any opted-in mastering; do not add a separate encoding pass before it.
 
 After all tests pass and the reviewed-audio code is on `main`, create a **new** public release named exactly as the
 manifest's episode ID, attaching only the prepared MP3 and manifest. Never use `gh release upload --clobber`. If the
@@ -297,6 +301,10 @@ Closing/editing an issue invalidates its pending authorization. A new request re
 Preview requests can prepare audio but cannot finalize. `pipeline.adhoc status --request PATH` reads a confirmed
 request receipt when present, otherwise the local stage status. Refresh production history before reporting status.
 An issue's intake comment is not proof of completion.
+`pipeline.adhoc verify --directory PATH` validates the manifest and rechecks GitHub publication authorization;
+it does not decode audio, measure loudness, or verify subscriber delivery. The publisher performs those distinct gates.
+The [ad-hoc skill](../.agents/skills/adhoc-podcast/SKILL.md#command-boundaries) lists all command side effects and safe
+help-only discovery examples.
 
 Mixed feeds retain global last-confirmed delivery separately from the last daily publication. Ad-hoc confirmation
 does not overwrite daily evaluation receipts or consume the daily same-day slot. Monitoring still rejects stale or

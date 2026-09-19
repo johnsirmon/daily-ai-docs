@@ -17,6 +17,9 @@ uv run --python 3.11 --with-requirements requirements.lock python -m pytest -q t
 # Static workflow contracts; does not dispatch or execute publishing steps.
 uv run --python 3.11 --with-requirements requirements.lock python -m pytest -q tests/test_workflows.py
 
+# Skill metadata, links, test references, offline CLI help, and example review shape.
+uv run --python 3.11 --with-requirements requirements.lock python -m pytest -q tests/test_skills.py
+
 # Network-free daily smoke test; writes only under .cache/.
 uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.daily prepare --dry-run --no-audio
 
@@ -114,6 +117,8 @@ Use the narrowest matching repository skill and read current code/workflows befo
   [evidence-led-review](../.agents/skills/evidence-led-review/SKILL.md).
 - For Notebook generation, download, transcript review, and imported audio, follow
   [notebook-podcast](../.agents/skills/notebook-podcast/SKILL.md).
+- For local ASR, review packets, mastering, listening evidence, or voice comparisons,
+  follow [audio-production-review](../.agents/skills/audio-production-review/SKILL.md).
 - Consult [recorded session lessons](../docs/SESSION_LESSONS.md) before repeating those workflows.
 - Browser tools may not control a native Save As dialog. Record the operator's Save step; do not treat a missing download event as a failed generation or retry downloads blindly.
 - Publication readiness requires review of actual spoken claims, not only a good prompt, an audio duration label, or passing unit tests.

@@ -18,7 +18,7 @@ Classify each change before editing:
 
 - schema 1: legacy/deterministic episodes;
 - schema 2: independently drafted and verified grounded editorial episodes;
-- schema 3: reviewed Notebook audio with transcript/source review provenance.
+- schema 3: reviewed Notebook audio with transcript/source review provenance;
 - schema 4: request-bound long-form specials with measured mastering and explicit audio-provider provenance.
 
 Do not relabel one contract as another. In particular, reviewed browser audio is not a
@@ -56,8 +56,12 @@ fixtures, and recovery paths before deleting or renaming a field.
 - Full papers and model context may be used transiently but must not enter saved
   manifests. Preserve only bounded supporting excerpts, provenance hashes, and verified
   paraphrases.
-- Schema 3 preserves exact transcript, input-audio, final-audio, and correction identity
+- Schemas 3 and 4 preserve exact transcript, input-audio, final-audio, and correction identity
   as required by the reviewed-audio contract.
+- Schema 4 also binds the exact request revision, provider/voice settings, and final-byte
+  mastering report. Preserve the request receipt and separate daily cadence fields when
+  tracing confirmation and recovery. Use
+  [audio-production-review](../audio-production-review/SKILL.md) for measured media acceptance.
 - Existing episode IDs, GUIDs, enclosure URLs, timestamps, and media checksums remain
   immutable.
 
@@ -74,7 +78,14 @@ Test the changed contract against:
 7. unsupported or quantitatively mismatched claim;
 8. tampered excerpt, transcript, manifest, media, or archived evidence;
 9. old confirmed manifest/release read and repeat recovery;
-10. privacy boundary: no full paper, private metadata, raw provider response, or secret.
+10. privacy boundary: no full paper, private metadata, raw provider response, or secret;
+11. accepted schema-4 preparation, 1200-1800-second media, and unchanged-bundle recovery;
+12. changed/closed issue, revoked write permission, wrong actor, or tampered request/provider;
+13. preview-only request rejected before candidate or publication writes;
+14. mixed-feed confirmation preserving daily cadence/evaluation and creating a request receipt,
+    including repeat confirmation after an interrupted request-receipt write;
+15. mastering report tampering, checksum mismatch, nonfinite measurements, and out-of-range
+    loudness/peak; unchanged defaults for daily audio unless polish is explicitly enabled.
 
 The daily dry-run explicitly disables grounded editorial mode. It is useful, but it does
 not satisfy grounded-contract acceptance by itself.
@@ -86,6 +97,7 @@ uv run --python 3.11 --with-requirements requirements.lock python -m pytest -q \
   tests/test_schema.py tests/test_grounded_editorial.py tests/test_editorial.py \
   tests/test_evidence_archive.py tests/test_selective_publication.py \
   tests/test_reviewed_audio.py tests/test_reviewed_delivery.py \
+  tests/test_adhoc.py tests/test_audio_quality.py \
   tests/test_narrate.py tests/test_render.py tests/test_daily.py tests/test_recovery.py
 ```
 

@@ -24,6 +24,8 @@ pushes, publication, rollback, and state changes require explicit authorization.
    - `data/receipts/<episode>.json`;
    - `data/runs/latest.json` and `data/state.json`;
    - subscriber-facing feed GUID and enclosure.
+   For schema 4, also gather the embedded request/revision, current issue authorization
+   when applicable, `data/requests/<request-id>.json`, and the request-local status.
 4. Treat workflow success, release existence, candidate commit, Pages deployment,
    delivery confirmation, and freshness as separate states. Do not infer a later state
    from an earlier one.
@@ -57,12 +59,37 @@ Before candidate writes or confirmation, require all applicable values to agree:
 - manifest schema and status transition;
 - audio byte length and SHA-256 exactly;
 - full media decode and duration budget;
-- reviewed-audio input/transcript/correction hashes when schema 3 is used;
+- reviewed-audio input/transcript/correction hashes for schemas 3 and 4;
+- schema-4 request revision/hash, requested provider and voice provenance, and
+  final-byte-bound mastering report;
 - publication timestamp and accepted candidate identity;
 - subscriber-visible latest GUID, enclosure, range support, checksum, and artwork.
 
 FFprobe duration may use only the repository's tested MP3-frame-sized tolerance. It
 never permits replacing released bytes or relaxing checksum identity.
+
+## Schema-4 special recovery
+
+1. Read the request from the stored manifest, not a newly generated request. Recheck
+   current write permission and the exact open issue revision, or the authorizing actor
+   for local requests. Closed/edited issues, revoked permission, or preview-only intent
+   block publication; do not edit authorization fields in an existing bundle.
+2. Ad-hoc transport releases may still be drafts. The shared publisher validates and
+   authorizes them before promotion; schema-3 daily imports require public releases.
+   After upload/dispatch failure, dispatch `update-radar.yml` on current `main` with
+   the same `reviewed_episode` tag only when recovery is authorized.
+3. Resume immutable manifest/MP3 bytes. Require 1200-1800 measured seconds, exact hashes,
+   and re-measured loudness/peak acceptance. Follow
+   [audio-production-review](../audio-production-review/SKILL.md) for media gates;
+   never remaster an existing release to make recovery pass.
+4. Confirm both the episode delivery receipt and `data/requests/<request-id>.json`.
+   An intake comment, draft release, or local `publishing` status is not completion.
+   Refresh production history before using `pipeline.adhoc status`.
+5. Inspect feed-head state separately from `last_daily_episode_id`,
+   `last_daily_publication`, and the daily evaluation receipt. A confirmed special
+   must not consume the daily slot or mask failed/stale daily evaluation. Do not
+   hand-edit state or create a request receipt to repair an interrupted confirmation;
+   use the existing idempotent confirmation path.
 
 ## Targeted reproduction
 
@@ -71,7 +98,8 @@ Use CI's interpreter and locked dependencies. Begin with the tests matching the 
 ```sh
 uv run --python 3.11 --with-requirements requirements.lock python -m pytest -q \
   tests/test_recovery.py tests/test_reviewed_delivery.py tests/test_publish.py \
-  tests/test_audio.py tests/test_podcast.py tests/test_daily.py
+  tests/test_audio.py tests/test_podcast.py tests/test_daily.py \
+  tests/test_adhoc.py tests/test_audio_quality.py
 ```
 
 Use temporary-directory fixtures and mocked HTTP/provider sessions. Never regenerate

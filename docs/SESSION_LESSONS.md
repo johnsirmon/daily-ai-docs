@@ -25,6 +25,8 @@ the browser workflow is fully automated.
 - [Schema and editorial contract changes](../.agents/skills/daily-contract-change/SKILL.md)
 - [CI failure diagnosis](../.agents/skills/ci-failure-debug/SKILL.md)
 - [Notebook generation, download, review, and publication](../.agents/skills/notebook-podcast/SKILL.md)
+- [Ad-hoc requests and long-form specials](../.agents/skills/adhoc-podcast/SKILL.md)
+- [Local transcription, mastering, and listening evidence](../.agents/skills/audio-production-review/SKILL.md)
 - [Evidence-led repository, claim, and model review](../.agents/skills/evidence-led-review/SKILL.md)
 - [Current operations](OPERATIONS.md)
 

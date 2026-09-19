@@ -26,7 +26,11 @@ description: >
    practical consequence, next step, and essential caveat. Preserve eligibility
    limits and distinguish recommendations from measured results.
 3. Use the existing shared browser page. Inspect accessible controls before acting.
-   Configure a concise English Deep Dive and request 5-8 minutes.
+   Choose the contract before configuring English Deep Dive:
+   - Daily schema 3: select Short and request 5-8 minutes.
+   - Request-bound schema 4: start with [adhoc-podcast](../adhoc-podcast/SKILL.md),
+     select Longer, and request 20-30 minutes using its validated brief.
+   Length controls express preferences, not guaranteed output durations.
 4. Submit once. While generation runs, do independent preparation. Reuse pending
    tool operation IDs rather than repeating the action. Inspect completion once
    the generation state changes.
@@ -39,22 +43,30 @@ description: >
    may need to click Save. Browser tools may not expose or capture that dialog.
 2. A missing Playwright download event is not proof of a failed download. Do not
    generate again, click Download repeatedly, or overwrite an existing file.
-3. If the user reports saving the file, inspect that exact file. In WSL, resolve
-   the Windows Downloads known folder rather than assuming the Linux Downloads
-   folder, username casing, or a path inferred from a screenshot.
+3. If the user reports saving the file, inspect that exact file. Prefer the operator's
+   exact saved path. Otherwise resolve the Windows Downloads known folder rather than
+   assuming a username or a path inferred from a screenshot. This is local read-only
+   discovery, not permission to enumerate unrelated downloads.
 
-   ```bash
-   powershell.exe -NoProfile -NonInteractive -Command \
-     "[Environment]::ExpandEnvironmentVariables((Get-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders').'{374DE290-123F-4565-9164-39C4925E467B}')"
+   In native Windows PowerShell:
+
+   ```powershell
+   $folders = Get-ItemProperty -LiteralPath `
+     'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders'
+   [Environment]::ExpandEnvironmentVariables($folders.'{374DE290-123F-4565-9164-39C4925E467B}')
    ```
 
-4. Convert the returned Windows path with `wslpath`, then inspect only the expected
-   filename. Avoid broad searches of unrelated user files.
+4. On native Windows, use the returned Windows path directly; do not run `wslpath`.
+   Only in WSL, invoke the same read-only query through `powershell.exe`, then translate
+   the returned path with `wslpath`. Inspect only the expected filename in either shell.
 5. Signed media links may expire or be IP-bound. An unauthenticated request may
    return a sign-in HTML page with HTTP 200. Do not save that as a successful audio
    artifact, extract cookies, or keep retrying protected URLs.
 
 ## Validate the actual recording
+
+Use [audio-production-review](../audio-production-review/SKILL.md) for the local ASR
+handoff, review-packet example, mastering, and listening record.
 
 - Preserve the original. Record size, codec, measured duration, and SHA-256.
 - Full-decode with FFmpeg and fail on errors. Daily schema-3 audio must measure 300-480 seconds;
@@ -77,8 +89,11 @@ description: >
 - Use the repository's explicit reviewed-audio contract and import commands.
   Do not relabel Notebook output as legacy deterministic narration or two verified
   Gemini API calls.
-- The publisher currently requires MP3: perform a documented conversion once,
-  then validate the final bytes. Do not rename M4A to MP3.
+- The publisher requires MP3. Pass the preserved original recording to
+  `pipeline.reviewed_audio` for schema 3, or `pipeline.adhoc prepare` for schema 4.
+  The importer owns conversion/mastering and final-byte validation; do not manually
+  convert first or rename M4A to MP3. Explicit correction composites are documented
+  inputs, not permission for an extra encoding pass.
 - Use a new episode identity and immutable release. Resume from stored release
   bytes after a failure, never regenerate or replace an existing enclosure.
 - Use the shared `podcast-publisher` workflow lock. Require remote HEAD, byte
@@ -88,6 +103,5 @@ description: >
 - Record the result and the manual Save step honestly. Native-dialog involvement
   means this is operator-assisted, not unattended browser automation.
 
-For requested long-form specials, start with `adhoc-podcast`, which owns request authorization,
-recency, staging, and the shared-publisher handoff. Use the same signed-in Notebook technique,
-selecting Longer rather than Short. Notebook does not guarantee exact duration or selectable voices.
+The ad-hoc skill owns long-form request authorization, recency, staging, and the shared-publisher
+handoff. Notebook does not guarantee exact duration or selectable voices.

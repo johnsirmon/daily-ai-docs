@@ -47,14 +47,17 @@ Guides the agent through diagnosing and fixing a failing CI run in this reposito
    | Source/health/ranking | `test_sources`, `test_source_text`, `test_rank`, `test_selective_publication` |
    | Provider availability or schema | `test_providers`, `test_synthesis`, `test_grounded_editorial`, `test_preview` |
    | Evidence/claim rejection | `test_editorial`, `test_grounded_editorial`, `test_evidence_archive` |
-   | Audio or reviewed import | `test_audio`, `test_reviewed_audio`, `test_reviewed_delivery` |
-   | Candidate/recovery/delivery | `test_daily`, `test_publish`, `test_recovery`, `test_podcast` |
-   | Workflow/configuration | `test_workflows`, `pipeline.drift_check`, YAML and shell syntax checks |
+   | Audio or reviewed import | `test_audio`, `test_audio_quality`, `test_reviewed_audio`, `test_reviewed_delivery` |
+   | Ad-hoc/request authorization | `test_adhoc`, `test_workflows`, `test_audio_quality` |
+   | Candidate/recovery/delivery | `test_daily`, `test_publish`, `test_recovery`, `test_podcast`, `test_adhoc` |
+   | Workflow/skill/configuration | `test_workflows`, `test_skills`, `pipeline.drift_check`, YAML/shell syntax |
 
    Provider outage, grounding rejection, media mismatch, workflow syntax, generated
    drift, and live delivery failure are distinct classes. Do not cure one by changing
    the policy for another. Use `publication-recovery` for any incident that reached
    release, candidate, deployment, or subscriber-facing state.
+   For local ASR, mastering, or listening evidence, follow
+   [audio-production-review](../audio-production-review/SKILL.md).
 
 5. **Apply the fix**
    - Make the minimal change required (prefer editing one file over many).

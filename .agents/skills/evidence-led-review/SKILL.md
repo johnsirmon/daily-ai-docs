@@ -61,7 +61,7 @@ Use a claim worksheet for every consequential spoken or written claim:
   quantitative context from another claim or a release title.
 - For research, retain method, evaluation setting, limitations, and
   author-reported/not-independently-reproduced status.
-- Distinguish schema-2 independent model verification from schema-3 human/assistant
+- Distinguish schema-2 independent model verification from schema-3/4
   transcript-to-source review. Never upgrade provenance labels to make an artifact
   eligible.
 - Material errors require correction before publication. Preserve the exact
@@ -92,9 +92,12 @@ For documentation, workflow, CLI, configuration, or agent-instruction changes:
   side effects; compare them with current code and `--help` output.
 - Label each command offline, networked, quota-consuming, state-writing, or
   publishing. Do not let a safe-looking example conceal production effects.
-- Run `tests/test_workflows.py`, `pipeline.publish_check`, and
+- Run `tests/test_skills.py`, `tests/test_workflows.py`, `pipeline.publish_check`, and
   `pipeline.drift_check`; note that these checks do not prove complete semantic
   agreement among manifests, README, state, and receipts.
+- Skill checks cover metadata, local link targets, referenced test files, safe CLI-help
+  examples, and the illustrative review-packet shape. They do not run live generation,
+  ASR, source collection, or publishing commands, or prove editorial correctness.
 - Report stale legacy instructions separately from product defects and fix the
   authoritative source rather than copying corrected prose into several skills.
 
@@ -104,6 +107,8 @@ For audio-quality work, assess repetition, time to the first useful point, actio
 pronunciation, pacing, joins, and source fidelity separately. Compare the same reviewed script when
 auditioning voices. Record actual listening separately from ASR/metadata/automated measurements.
 Do not claim that a pronunciation was heard incorrectly merely because ASR misspelled a product name.
+Use [audio-production-review](../audio-production-review/SKILL.md) for the shared local
+recording, ASR, mastering, and listening procedure rather than duplicating it here.
 
 - State what was inspected and what was not: scripts are not listened-to audio;
   metadata is not full decode; decode is not semantic fact-checking.

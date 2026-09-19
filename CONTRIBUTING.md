@@ -73,6 +73,10 @@ Legacy weekly radar modules remain for compatibility. New product behavior belon
 - Add or update tests for pipeline logic changes and run the complete suite before committing.
 - Run the offline artifact and README checks above. CI also validates source configuration, RSS, and cover artwork.
 - For Markdown changes, use the repository's `.markdownlint.json` and `.markdownlintignore` configuration.
+- For operating-skill changes, run `python -m pytest -q tests/test_skills.py` in the locked environment.
+  These checks validate metadata, relative link targets, referenced test files, allowlisted offline CLI-help
+  examples, and the synthetic review-packet shape. They do not execute generation or publication commands
+  and cannot prove semantic agreement with every production contract.
 - For generated README changes, update `pipeline/render.py` and its tests rather than only editing generated output.
 - Do not commit `.cache/`, credentials, private source material, or full YouTube transcripts.
 - Do not hand-edit publication state or episode history as part of unrelated changes. Keep existing GUIDs and enclosure
