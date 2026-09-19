@@ -28,6 +28,8 @@ doc_updater.log
 .DS_Store
 .idea/
 .vscode/
+!.vscode/
+!.vscode/mcp.json
 *.swp
 Thumbs.db
 
