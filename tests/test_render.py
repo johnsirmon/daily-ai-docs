@@ -148,6 +148,35 @@ def test_manifest_readme_explains_browser_pilot_and_brand():
     assert "publishing-approved-notebook-audio" in out
 
 
+def test_manifest_readme_explains_publishing_topology_and_confirmation():
+    manifest = EpisodeManifest(
+        1, "daily-test", "2026-09-07T12:00:00Z", "draft",
+        {"github:tool": "ok:0"}, [], [], [],
+        "A quiet daily brief with enough words to validate.", "No updates.",
+        {"edition": "quiet"}, {},
+    )
+    feed_url = "https://example.com/brief/podcast.xml"
+    out = render_manifest_readme(manifest, feed_url=feed_url)
+    assert out.count("```mermaid\n") == 1
+    diagram = out.split("```mermaid\n", 1)[1].split("```", 1)[0]
+    assert diagram.startswith("flowchart TD\n")
+    for edge in (
+        "validate --> release", "release --> candidate", "candidate --> pages",
+        "pages -->|Discover episodes| clients", "release -->|Stream or download MP3| clients",
+        "delivery --> confirmed", "prepare -->|Healthy thin-news day| skip",
+        "reviewed[", "clients --> carplay",
+    ):
+        assert edge in diagram
+    assert "## When and where it publishes" in out
+    assert f"[RSS feed]({feed_url})" in out
+    assert "does not host episode MP3s or the rendered README" in out
+    assert "unconfirmed candidate visible" in out
+    assert "HTTP delivery checks do not certify iPhone or CarPlay playback" in out
+    assert "no scheduled push directly to Apple or CarPlay" in out
+    assert "`confirmed_at` records successful verification" in out
+    assert "`podcast-publisher` lock" in out
+
+
 # ---------------------------------------------------------------------------
 # New narrative sections
 # ---------------------------------------------------------------------------

@@ -31,6 +31,9 @@ doc_updater.log
 *.swp
 Thumbs.db
 
+# Local troubleshooting screenshots
+screenshots/
+
 # Secrets / environment
 .env
 *.env

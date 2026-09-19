@@ -88,6 +88,27 @@ def test_independent_monitor_remains_age_sensitive():
     assert "--allow-editorial-skips" in monitor
 
 
+@pytest.mark.parametrize(("name", "cron", "documented_time"), [
+    ("update-radar.yml", "17 10 * * *", "Daily **10:17 UTC** (06:17 EDT / 05:17 EST)"),
+    ("feed-health.yml", "47 12 * * *", "Daily **12:47 UTC** (08:47 EDT / 07:47 EST)"),
+    ("youtube-trends.yml", "23 11 * * 0", "Sunday **11:23 UTC** (07:23 EDT / 06:23 EST)"),
+])
+def test_readme_schedule_table_matches_workflow(name, cron, documented_time):
+    from pipeline.render import render_manifest_readme
+    from pipeline.schema import EpisodeManifest
+
+    manifest = EpisodeManifest(
+        1, "daily-test", "2026-09-07T12:00:00Z", "draft",
+        {"github:tool": "ok:0"}, [], [], [],
+        "A quiet daily brief with enough words to validate.", "No updates.",
+        {"edition": "quiet"}, {},
+    )
+    assert workflow(name)["on"]["schedule"] == [{"cron": cron}]
+    for readme in (render_manifest_readme(manifest), (ROOT / "README.md").read_text(encoding="utf-8")):
+        row = next(line for line in readme.splitlines() if f"](.github/workflows/{name})" in line)
+        assert documented_time in row
+
+
 def test_adhoc_intake_cannot_publish_or_execute_issue_body():
     document = workflow("adhoc-podcast.yml")
     assert document["permissions"]["contents"] == "read"

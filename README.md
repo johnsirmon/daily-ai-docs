@@ -25,7 +25,48 @@ See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment statu
 4. Narration or reviewed browser audio is validated before an immutable release is created.
 5. Publication is confirmed only after the feed serves the exact expected episode and media bytes.
 
-A failed collection, generation, media check, or delivery check preserves the last good feed. A healthy thin-news day can intentionally skip publication.
+A healthy thin-news day can intentionally skip publication. Failures before candidate publication leave the existing subscriber feed untouched. A delivery failure after deployment can leave an unconfirmed candidate visible; it must be recovered without replacing its audio or advancing novelty state.
+
+```mermaid
+flowchart TD
+    schedule["Daily schedule or manual run"] --> prepare["Collect and select public evidence"]
+    config["topics/topics.yaml"] --> prepare
+    weekly["Weekly YouTube digest"] --> prepare
+    prepare -->|Healthy thin-news day| skip["Record skip; keep existing feed"]
+    prepare -->|Selected stories| script["Episode manifest and narration"]
+    script -->|Text to speech| validate["Validate media, duration and checksum"]
+    reviewed["Operator-reviewed Notebook audio or special"] --> validate
+    validate --> release["GitHub Release: immutable MP3 and manifest"]
+    release --> candidate["Verify release; commit candidate RSS, README and manifest"]
+    candidate --> pages["Deploy RSS and artwork to GitHub Pages"]
+    pages -->|Discover episodes| clients["Apple Podcasts and other RSS apps"]
+    release -->|Stream or download MP3| clients
+    clients --> carplay["CarPlay through the iPhone app"]
+    pages --> delivery["Check exact public GUID, audio bytes and artwork"]
+    release --> delivery
+    delivery --> confirmed["Confirm receipt and advance novelty state"]
+```
+
+Approved manual imports join the same serialized publisher; issue intake and unpublished previews do not publish episodes. The diagram shows the successful publication path and intentional skip; validation failures stop the run. HTTP delivery checks do not certify iPhone or CarPlay playback.
+
+## When and where it publishes
+
+| Process | Trigger / target time | Result |
+| --- | --- | --- |
+| [Daily publisher](.github/workflows/update-radar.yml) | Daily **10:17 UTC** (06:17 EDT / 05:17 EST), or manual | Evaluates new evidence; publishes only when gates pass. |
+| [Reviewed imports and specials](docs/OPERATIONS.md#publishing-approved-notebook-audio) | Manual, after review and authorization | Uses the daily publisher with a `reviewed_episode` release tag. |
+| [Pages recovery](.github/workflows/pages.yml) | Relevant pushes to `main`, or manual | Redeploys the existing feed and artwork; does not generate audio. |
+| [Feed health](.github/workflows/feed-health.yml) | Daily **12:47 UTC** (08:47 EDT / 07:47 EST), or manual | Checks delivery and a 25-hour freshness budget; accepts verified intentional skips and reports failures in an issue. |
+| [YouTube discovery](.github/workflows/youtube-trends.yml) | Sunday **11:23 UTC** (07:23 EDT / 06:23 EST), or manual | Updates an input digest, not a standalone podcast episode. |
+
+These are GitHub Actions schedule targets, not guaranteed release times. Publication requires preparation, release upload, Pages deployment, and subscriber-facing verification. Apple Podcasts refreshes and downloads independently; there is no scheduled push directly to Apple or CarPlay.
+
+- **Discovery:** [RSS feed](https://johnsirmon.github.io/daily-ai-docs/podcast.xml) and show artwork on GitHub Pages. The Pages site does not host episode MP3s or the rendered README.
+- **Audio:** [GitHub Releases](https://github.com/johnsirmon/daily-ai-docs/releases), using a permanent, unique enclosure URL for each episode. Released bytes and GUIDs are never replaced.
+- **Written brief:** this README on the repository's `main` branch, generated from the episode manifest.
+- **Audit trail:** [`data/episodes`](data/episodes), [`data/receipts`](data/receipts), [`data/runs/latest.json`](data/runs/latest.json), and [`data/state.json`](data/state.json). The manifest/RSS timestamp is assigned before delivery; `confirmed_at` records successful verification.
+
+Daily publishing, standalone Pages deployment, and weekly digest writes share the non-cancelling `podcast-publisher` lock. The daily job deploys Pages inline rather than waiting on another locked job. See [publishing review and optimization priorities](docs/OPERATIONS.md#publishing-review-and-optimization-priorities).
 
 ## Try the Notebook browser pilot
 
