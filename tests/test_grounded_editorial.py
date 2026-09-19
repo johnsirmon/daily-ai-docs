@@ -232,6 +232,11 @@ def test_parent_v2_pending_draft_renders_then_validates_and_roundtrips(include_r
     loaded = EpisodeManifest.from_dict(saved)
     assert loaded.to_dict() == saved
     assert manifest_to_narration(loaded) == script
+    from pipeline.podcast_metadata import manifest_presentation
+    presentation = manifest_presentation(loaded)
+    assert presentation["description"].endswith(loaded.show_notes)
+    assert len(presentation["title"]) <= 90
+    assert loaded.to_dict() == saved
     if include_research:
         reviewed = next(story for story in loaded.stories if story.kind == "research")
         review = reviewed.editorial["paper_review"]

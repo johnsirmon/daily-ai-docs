@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - podcast.xml
-      - assets/podcast-cover.jpg
+      - assets/podcast-cover*.jpg
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir -p _site/assets
           cp podcast.xml _site/podcast.xml
-          cp assets/podcast-cover.jpg _site/assets/podcast-cover.jpg
+          cp assets/podcast-cover*.jpg _site/assets/
           printf '%s\n' 'Daily AI Developer Brief podcast feed' > _site/index.html
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5

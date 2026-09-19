@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import os
+import html
+import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import format_datetime, parsedate_to_datetime
@@ -13,10 +15,14 @@ _ITUNES_NS = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 _CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 _CHANNEL_TITLE = "Daily AI Developer Brief"
 _CHANNEL_DESCRIPTION = (
-    "A concise daily briefing of source-backed AI developer-tool changes, "
-    "with clear act, watch, or skip guidance."
+    "Keep up with AI coding tools without reading every changelog. "
+    "Get source-backed updates on GitHub Copilot, Claude Code, OpenAI Codex, "
+    "agent workflows, and developer tooling: what changed, why it matters, "
+    "and what to act on, watch, or skip. Short daily briefs and occasional "
+    "deep dives, with primary-source links and clearly labeled research. "
+    "Created by John Sirmon with AI-generated narration."
 )
-_CHANNEL_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover.jpg"
+_CHANNEL_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v2.jpg"
 _CHANNEL_LINK = "https://github.com/johnsirmon/daily-ai-docs"
 
 ET.register_namespace("itunes", _ITUNES_NS)
@@ -29,6 +35,57 @@ def _itunes(tag: str) -> str:
 
 def _content(tag: str) -> str:
     return f"{{{_CONTENT_NS}}}{tag}"
+
+
+def _set_text(parent: ET.Element, tag: str, text: str) -> None:
+    node = parent.find(tag)
+    if node is None:
+        node = ET.SubElement(parent, tag)
+    node.text = text
+
+
+def description_html(description: str) -> str:
+    """Escape prose before adding paragraphs and public-source hyperlinks."""
+    def paragraph(text: str) -> str:
+        parts = []
+        end = 0
+        for match in re.finditer(r"https://[^\s<>\"']+", text):
+            url = match.group().rstrip(".,;)")
+            parts.append(html.escape(text[end:match.start()]))
+            escaped = html.escape(url, quote=True)
+            parts.append(f'<a href="{escaped}">{escaped}</a>')
+            end = match.start() + len(url)
+        parts.append(html.escape(text[end:]))
+        return "<p>" + "".join(parts).replace("\n", "<br />") + "</p>"
+
+    return "\n".join(paragraph(part) for part in description.split("\n\n") if part.strip())
+
+
+def set_episode_presentation(item: ET.Element, title: str, description: str) -> None:
+    """Change display copy only; identity, media and publication date stay intact."""
+    _set_text(item, "title", title)
+    if item.find(_itunes("title")) is not None:
+        _set_text(item, _itunes("title"), title)
+    _set_text(item, "description", description)
+    _set_text(item, _itunes("summary"), description)
+    _set_text(item, _content("encoded"), description_html(description))
+
+
+def set_show_presentation(channel: ET.Element, channel_link: str = _CHANNEL_LINK) -> None:
+    image_url = os.environ.get("PODCAST_IMAGE_URL", _CHANNEL_IMAGE)
+    _set_text(channel, "title", _CHANNEL_TITLE)
+    _set_text(channel, "link", channel_link)
+    _set_text(channel, "description", _CHANNEL_DESCRIPTION)
+    _set_text(channel, _itunes("summary"), _CHANNEL_DESCRIPTION)
+    image = channel.find(_itunes("image"))
+    if image is None:
+        image = ET.SubElement(channel, _itunes("image"))
+    image.set("href", image_url)
+    rss_image = channel.find("image")
+    if rss_image is None:
+        rss_image = ET.SubElement(channel, "image")
+    for tag, value in (("url", image_url), ("title", _CHANNEL_TITLE), ("link", channel_link)):
+        _set_text(rss_image, tag, value)
 
 
 def _parse_duration(value: str | int | float | None) -> int:
@@ -91,17 +148,13 @@ def _coerce_pubdate(value: str) -> str:
 def render_feed(episodes: List[Dict], channel_link: str = _CHANNEL_LINK) -> str:
     rss = ET.Element("rss", {"version": "2.0"})
     channel = ET.SubElement(rss, "channel")
-    ET.SubElement(channel, "title").text = _CHANNEL_TITLE
-    ET.SubElement(channel, "link").text = channel_link
-    ET.SubElement(channel, "description").text = _CHANNEL_DESCRIPTION
+    set_show_presentation(channel, channel_link)
     ET.SubElement(channel, "language").text = "en-us"
     ET.SubElement(channel, "generator").text = "daily-ai-docs"
     ET.SubElement(channel, _itunes("author")).text = "John Sirmon"
-    ET.SubElement(channel, _itunes("summary")).text = _CHANNEL_DESCRIPTION
     ET.SubElement(channel, _itunes("explicit")).text = "false"
     ET.SubElement(channel, _itunes("type")).text = "episodic"
     ET.SubElement(channel, _itunes("category"), {"text": "Technology"})
-    ET.SubElement(channel, _itunes("image"), {"href": os.environ.get("PODCAST_IMAGE_URL", _CHANNEL_IMAGE)})
     if os.environ.get("PODCAST_MIGRATE_FEED") == "1":
         ET.SubElement(channel, _itunes("new-feed-url")).text = os.environ.get(
             "PODCAST_FEED_URL", "https://johnsirmon.github.io/daily-ai-docs/podcast.xml"
@@ -123,12 +176,10 @@ def render_feed(episodes: List[Dict], channel_link: str = _CHANNEL_LINK) -> str:
         seen_urls.add(url)
 
         item = ET.SubElement(channel, "item")
-        ET.SubElement(item, "title").text = str(episode.get("title") or "")
+        set_episode_presentation(
+            item, str(episode.get("title") or ""), str(episode.get("description") or ""),
+        )
         ET.SubElement(item, "guid", {"isPermaLink": "false"}).text = guid
-        description = str(episode.get("description") or "")
-        ET.SubElement(item, "description").text = description
-        ET.SubElement(item, _itunes("summary")).text = description
-        ET.SubElement(item, _content("encoded")).text = description
         ET.SubElement(item, "pubDate").text = _coerce_pubdate(str(episode.get("pub_date") or ""))
         ET.SubElement(item, "enclosure", {
             "url": url,

@@ -26,5 +26,5 @@ jobs:
         run: python -m pipeline.drift_check
       - name: Validate committed podcast feed
         run: python -c "from pipeline.publish import validate_feed_file; print(validate_feed_file('podcast.xml'))"
-      - name: Validate artwork dimensions and mode
-        run: python -c "from PIL import Image; im=Image.open('assets/podcast-cover.jpg'); assert im.size == (3000,3000) and im.mode == 'RGB'"
+      - name: Validate feed and current artwork
+        run: python -m pipeline.publish_check

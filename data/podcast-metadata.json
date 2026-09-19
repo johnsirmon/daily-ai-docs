@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "episodes": {
+    "daily-2026-09-19-d6ff21f1": {
+      "title": "Claude Code auto-mode billing, Codex defaults, and Copilot model retirements",
+      "summary": "Claude Code shifts auto mode toward a server-side classifier without classifier-overhead charges, with warnings on billed fallback. Codex restores reasoning summaries to off for new local terminal sessions unless explicitly configured. Copilot model retirements scheduled for October 19 and code-review updates round out the briefing; assess applicability before changing workflows.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/247484093a602353b9c7b682c730a9f2c90857ab/data/episodes/daily-2026-09-19-d6ff21f1.json"
+    },
+    "daily-2026-09-18-notebook-cde95bbf": {
+      "title": "Local agents, Copilot budget approvals, and SWE-bench ranking uncertainty",
+      "summary": "VS Code Dev Containers and Codex session continuity frame a workflow discussion, not measured performance gains. Copilot budget approval changes the requesting member's budget, not the organization's overall budget, and supplies no free credits. A historical SWE-bench audit cautions against overreading small rank differences; its findings are author-reported and not independently reproduced.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/045d6e33e6eacbaa88d8c404fb8f3d6501ff2c6b/data/episodes/daily-2026-09-18-notebook-cde95bbf.json"
+    },
+    "daily-2026-09-17-1711ce11": {
+      "title": "Claude Code MCP startup controls and Copilot budget requests",
+      "summary": "Claude Code adds critical-memory warnings and a configurable wait for MCP servers on the first non-interactive turn. The briefing also covers general availability of Copilot budget-increase requests and tracks Codex prereleases, with guidance to check applicability before changing workflows.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/51f194554a57e00a249bbe8cba3998caf7247200/data/episodes/daily-2026-09-17-1711ce11.json"
+    },
+    "daily-2026-09-16-82a47114": {
+      "title": "VS Code 1.138, Claude Code gateway diagnostics, and Copilot property suggestions",
+      "summary": "VS Code 1.138 is the release headline, alongside Claude Code's opt-in gateway request hints and MCP disconnect notices. Copilot's organization custom-property suggestions are in public preview; assess applicability before changing configuration.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/b50c764a1263d505e12e892d0afdf8a937207678/data/episodes/daily-2026-09-16-82a47114.json"
+    },
+    "daily-2026-09-15-9f5a149a": {
+      "title": "Copilot cost-quality tiers and Claude Code remote fast mode",
+      "summary": "Copilot auto model selection offers efficiency, balance, and intelligence tiers for weighing cost, quality, and response time. Claude Code adds fast mode to remote sessions where organization policy allows it, alongside reliability updates and Codex prerelease entries.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/a0ab4b8d6e210f1802fa10f9b80cdf2fabfeebbc/data/episodes/daily-2026-09-15-9f5a149a.json"
+    },
+    "daily-2026-09-14-ca0e448f": {
+      "title": "Hermes Agent gateway sign-in fixes and a Codex alpha",
+      "summary": "Remote-gateway sign-in fixes lead Hermes Agent's v0.21.3 patch release, alongside a Codex alpha entry. The guidance is to review the release evidence for relevance before changing a workflow.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/4aa99101bcd671449655836ca19d925e9ef0396a/data/episodes/daily-2026-09-14-ca0e448f.json"
+    },
+    "daily-2026-09-12-eeccde22": {
+      "title": "Claude Code fixes unexpected permission prompts for read-only Git commands",
+      "summary": "Claude Code v2.1.270 fixes a regression that made read-only Git commands in Bash unexpectedly request permission after a session had been running for a while. This single-update briefing recommends checking the primary release notes for applicability.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/eda0f7b99ee7c4604409884e519eed0d43944316/data/episodes/daily-2026-09-12-eeccde22.json"
+    },
+    "daily-2026-09-11-b18bb3f4": {
+      "title": "Claude Code plugin evaluations, Copilot metrics, and Hermes database fixes",
+      "summary": "Claude Code adds plugin evaluations and output-style controls, while Copilot expands VS Code Agents usage metrics and code-review auto-resolution. Hermes Agent's patch addresses session-database fragility; the briefing recommends reviewing primary sources before changing workflows.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/dc45c57d05f6df01849bdc617555bac41d5c8367/data/episodes/daily-2026-09-11-b18bb3f4.json"
+    },
+    "daily-2026-09-11-aa65a29c": {
+      "title": "Codex Python turn controls, Claude gateway pricing, and MAI-Code retirement",
+      "summary": "Codex Python adds reasoning-effort options and external messages that carry tool-level authority, not user authorization. Claude gateway pricing synchronization requires configured pricing, while GitHub announces MAI-Code-1-Flash's Copilot retirement. Review the primary release notes before adapting integrations.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/519ba2122aed82d39b7daea96d535feb61624b65/data/episodes/daily-2026-09-11-aa65a29c.json"
+    },
+    "daily-2026-09-09-68cfca8a": {
+      "title": "Codex experimental worktrees and enterprise Copilot permissions",
+      "summary": "Codex introduces experimental worktrees for isolated sessions, while Copilot Business and Enterprise administrators gain central controls over agent operations. The briefing also covers Claude Code effort caps and JetBrains sandbox policies, with watch guidance rather than an automatic upgrade recommendation.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/d08b18b2b6d8574dc61377aeac90c79bba422899/data/episodes/daily-2026-09-09-68cfca8a.json"
+    },
+    "radar-2026-09-07": {
+      "title": "MCP server releases, Semantic Kernel .NET, and OpenCursor",
+      "summary": "This archived weekly digest covers MCP server listings, Activepieces, Omnigent, and the OpenCursor and Twinny editor projects. Its release tables include MCP servers 2026.8.31, Semantic Kernel .NET 1.80.1, GitHub CLI 2.100.0, and VS Code 1.136.1.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/43d5fd793badd5941f86d3fc630a9866a9389236/README.md"
+    },
+    "radar-2026-08-31": {
+      "title": "Codebase Memory MCP, Orca, and Semantic Kernel .NET",
+      "summary": "This archived weekly digest covers Codebase Memory MCP, PostHog, CopilotKit, Context Mode, and Orca among its project listings. It also lists MCP server releases, Semantic Kernel .NET 1.80.0, and VS Code 1.135.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/1dd050393f284aa8f9452aa4ca48ee57d13d94de/README.md"
+    },
+    "radar-2026-08-24": {
+      "title": "Context Mode, Paseo, and MCP server releases",
+      "summary": "This archived weekly digest covers Context Mode, Paseo, Dify, PostHog, and Ouroboros across its Copilot, MCP, and agent-workflow listings. The release snapshot includes MCP servers 2026.8.18, Semantic Kernel .NET 1.80.0, and VS Code 1.134.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/ac0cdc1acf9393b1c2f960095c9a9fffa41d6c50/README.md"
+    },
+    "radar-2026-08-17": {
+      "title": "Orca, OpenCursor, and Semantic Kernel Python",
+      "summary": "This archived weekly digest covers Awesome Copilot, Context Mode, Dify, Orca, and OpenCursor. It also lists Semantic Kernel Python 1.44.1 and VS Code 1.133.0, alongside LiteLLM and LibreChat in the Azure AI section.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/b740b103f38832803ef9adc97ee775da71879ecb/README.md"
+    },
+    "radar-2026-08-10": {
+      "title": "CowAgent, the MCP Python SDK, and Ouroboros",
+      "summary": "This archived weekly digest covers CowAgent, the MCP Python SDK, Context Mode, and Ouroboros. Release listings include the MCP specification's 2026-07-28 tag, Semantic Kernel Python 1.44.1, GitHub CLI 2.97.0, and VS Code 1.132.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/565ab46b5a68f3e8a891b4017ebf1da402bc8c47/README.md"
+    },
+    "radar-2026-08-03": {
+      "title": "OpenMontage, ToolHive, and the MCP specification",
+      "summary": "This archived weekly digest covers OpenMontage, CopilotKit, ToolHive, Dify, and Orca. It also lists the MCP specification's 2026-07-28 tag, a LiteLLM development release, GitHub CLI 2.97.0, and VS Code 1.131.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/46a57fc0a4bfc0cd70dabcaea177d31d7e89c445/README.md"
+    },
+    "radar-2026-07-27": {
+      "title": "Paseo, Copilot SDK, and OpenCursor",
+      "summary": "This archived weekly digest covers Paseo, GitHub's Copilot SDK, Dify, and Oh My OpenAgent, with OpenCursor and SpecStory in its editor listings. The release snapshot includes a LiteLLM development tag and VS Code 1.130.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/c24eeecdb9c301bc3389b6101b62b753abf120df/README.md"
+    },
+    "radar-2026-07-20": {
+      "title": "CopilotKit, Haystack, and MCP server releases",
+      "summary": "This archived weekly digest covers CopilotKit, Context Mode, PostHog, Activepieces, Dify, and Haystack. It also lists MCP servers 2026.7.10, Semantic Kernel Python 1.44.0, and VS Code 1.129.1.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/41d7cd29ec68ff8b9d1964d7b039525da4230e1b/README.md"
+    },
+    "radar-2026-07-13": {
+      "title": "The MCP registry, Haystack, and GitHub CLI",
+      "summary": "This archived weekly digest covers the MCP registry, Awesome MCP Servers, Paseo, Dify, and Haystack. Its release tables include MCP servers 2026.7.10, Semantic Kernel Python 1.44.0, GitHub CLI 2.96.0, and VS Code 1.128.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/97cb8433c304e5dfce9104e77b04e357e44aaf6e/README.md"
+    },
+    "radar-2026-07-06": {
+      "title": "CowAgent, LobsterAI, and the MCP Go SDK",
+      "summary": "This archived weekly digest covers CowAgent, LobsterAI, Paseo, and the MCP Go SDK, with OpenCursor among its editor projects. It also lists MCP servers 2026.7.4, a LiteLLM release candidate, and VS Code 1.127.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/7ec0f00b31ac5155ad1366219c17ca8aa611df78/README.md"
+    },
+    "radar-2026-06-29": {
+      "title": "The MCP Python SDK, FastGPT, and VS Code 1.126",
+      "summary": "This archived weekly digest covers the MCP Python SDK, LobsterAI, Open Design, Dify, and FastGPT. Release listings include Semantic Kernel Python 1.43.1, GitHub CLI 2.95.0, and VS Code 1.126.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/01e7b6c6df2c5147b6fbfde7c581009b3e49b630/README.md"
+    },
+    "radar-2026-06-22": {
+      "title": "UI UX Pro Max, Deer Flow, and Semantic Kernel Python",
+      "summary": "This archived weekly digest covers UI UX Pro Max Skill, Open Design, the MCP Python SDK, Oh My Pi, and Deer Flow. It also lists Semantic Kernel Python 1.43.1, GitHub CLI 2.95.0, and VS Code 1.125.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/d3464b1bb42b0b2bc72bf805155bd7b49d64eaf4/README.md"
+    },
+    "radar-2026-06-15": {
+      "title": "Context Mode, the MCP TypeScript SDK, and GitHub CLI",
+      "summary": "This archived weekly digest covers Context Mode, Open Design, the MCP TypeScript SDK, Oh My Pi, and Oh My OpenAgent. Its release tables include Semantic Kernel Python 1.43.0, GitHub CLI 2.94.0, and VS Code 1.124.2.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/2f0223b6242ffefa69c8eb7104129b8f9b9cadca/README.md"
+    },
+    "radar-2026-06-08": {
+      "title": "CopilotKit, ToolJet, and MATLAB's MCP server",
+      "summary": "This archived weekly digest covers CopilotKit, Open Design, Activepieces, MCP for Beginners, and ToolJet. MATLAB's MCP server and dbt Power User appear in the editor section, alongside release listings for Semantic Kernel Python 1.43.0 and VS Code 1.123.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/362a893e3dd1a8273e47b3f9925868d618033c1b/README.md"
+    },
+    "radar-2026-06-01": {
+      "title": "LangChain4j, Trigger.dev, and MATLAB's MCP server",
+      "summary": "This archived weekly digest covers LangChain4j, Oh My Pi, Easy Vibe, and Trigger.dev. MATLAB's MCP server and Tiledesk Design Studio appear in the editor listings; the release snapshot includes Semantic Kernel .NET 1.77.0 and VS Code 1.122.1.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/8fb7c4195031ea002887e2d69133c885ef9b1cbb/README.md"
+    },
+    "radar-2026-05-25": {
+      "title": "Open Design, IBM MCP Context Forge, and Langflow",
+      "summary": "This archived weekly digest covers Open Design, Activepieces, IBM MCP Context Forge, Langflow, and Dify. It also lists Semantic Kernel Python 1.42.0 and VS Code 1.121.0, with LiteLLM and Uni API in the Azure AI section.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/3d25cd97a1301aca2c15bb6c9f8fb5d5a67651f8/README.md"
+    },
+    "radar-2026-05-18": {
+      "title": "Unity MCP, the MCP C# SDK, and Azure chat-with-data",
+      "summary": "This archived weekly digest covers Unity MCP, the MCP C# SDK, Open Design, and Context Mode. Azure's Chat with Your Data solution accelerator appears alongside LiteLLM, with release listings for Semantic Kernel Python 1.42.0 and VS Code 1.120.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/1fc91a773f653f7df73db1431b8d003531e0cc86/README.md"
+    },
+    "radar-2026-05-11": {
+      "title": "Open Design, LangChain4j, and Deer Flow",
+      "summary": "This archived weekly digest covers Open Design, Paseo, LangChain4j, Webiny, Dify, and Deer Flow. Its release tables include Semantic Kernel .NET 1.76.0, GitHub CLI 2.92.0, and VS Code 1.119.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/54abe37a4157dc13f1b86334f512b4f5ab071a4b/README.md"
+    },
+    "radar-2026-05-04": {
+      "title": "Awesome Copilot, Deer Flow, and Superset",
+      "summary": "This archived weekly digest covers Awesome Copilot, Open Design, Activepieces, MCP for Beginners, Deer Flow, and Superset. It also lists Semantic Kernel .NET 1.75.0, GitHub CLI 2.92.0, and VS Code 1.118.1.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/de45904f31c23b0ecec7029c7993d9d2766af573/README.md"
+    },
+    "radar-2026-04-27": {
+      "title": "Telegram MCP, Lean Ctx, and CopilotKit",
+      "summary": "This archived weekly digest covers Telegram MCP, Lean Ctx, CopilotKit, Context Mode, and Oh My OpenAgent. Cockpit Tools and Paseo appear in its CLI listings, alongside a LiteLLM nightly release and GitHub CLI 2.91.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/3c07e82ba26da2abda764014be83a06a35e9a817/README.md"
+    },
+    "radar-2026-04-20": {
+      "title": "AWS MCP, MCP Go, and FastGPT",
+      "summary": "This archived weekly digest covers AWS Labs' MCP repository, Mark3 Labs' MCP Go, Awesome Copilot, Context Mode, and FastGPT. It also lists Semantic Kernel Python 1.41.2 and GitHub CLI 2.90.0, with LiteLLM and LibreChat in the Azure AI section.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/e93a0f3e0bf28abf27f8a0b17201db380f52a2c5/README.md"
+    },
+    "radar-2026-04-13": {
+      "title": "Graphify, Nexent, and Semantic Kernel Python",
+      "summary": "This archived weekly digest covers Graphify, Context Mode, Webiny, Nexent, Dify, and LobeHub. It also lists Semantic Kernel Python 1.41.2 and VS Code 1.115.0, with GitHub's gh-aw project in the CLI section.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/9e58566def0fcd49847046e600d3a719b1443927/README.md"
+    },
+    "radar-2026-04-06": {
+      "title": "Composio, CrewAI, and GitHub agentic workflows",
+      "summary": "This archived weekly digest covers Composio, Activepieces, Oh My OpenAgent, CrewAI, and GitHub's gh-aw project. Its release tables include Semantic Kernel Python 1.41.1, GitHub CLI 2.89.0, and VS Code 1.114.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/054737c92e9e148c86a34aec3b3ce58f5d96edf8/README.md"
+    },
+    "radar-2026-03-30": {
+      "title": "Serena, CopilotKit, and GitHub CLI",
+      "summary": "This archived weekly digest covers Serena, CopilotKit, Context Mode, Activepieces, Dify, and LobeHub. It also lists Semantic Kernel Python 1.41.1, GitHub CLI 2.89.0, and VS Code 1.113.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/35bfcac786a21dfa54b17b4b6d07d03c6e88136f/README.md"
+    },
+    "radar-2026-03-23": {
+      "title": "TaskWeaver, Astron RPA, and Semantic Kernel VectorData",
+      "summary": "This archived weekly digest covers TaskWeaver, Awesome Copilot, Awesome MCP Servers, Astron RPA, Dify, and ToolJet. Release listings include Semantic Kernel's VectorData .NET 10.1.0, GitHub CLI 2.88.1, and VS Code 1.112.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/86d9e5446eca8d24abcf6655a37dd983a76ba619/README.md"
+    },
+    "radar-2026-03-16": {
+      "title": "CopilotKit, MCP for Beginners, and VS Code 1.111",
+      "summary": "This archived weekly digest covers CopilotKit, Awesome Copilot, MCP for Beginners, Astron RPA, Dify, and LobeHub. It also lists Semantic Kernel Python 1.41.0, GitHub CLI 2.88.1, and VS Code 1.111.0.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/ca45d3a28d7813e4a46044128bbba7cfba6d5d82/README.md"
+    },
+    "radar-2026-03-09": {
+      "title": "Copilot SDK, the MCP TypeScript SDK, and ToolJet",
+      "summary": "This archived weekly digest covers GitHub's Copilot SDK, Awesome Copilot, CC Switch, the MCP TypeScript SDK, Dify, and ToolJet. Its release tables include Semantic Kernel's VectorData .NET 10.0.1, GitHub CLI 2.87.3, and VS Code 1.110.1.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/7bf80b3eedc33e78ce5d87bb7197e1c74e7d493a/README.md"
+    },
+    "radar-2026-03-05": {
+      "title": "Copilot CLI, Activepieces, and Klavis",
+      "summary": "This archived weekly digest covers GitHub's Copilot CLI and SDK, Activepieces, Klavis, Dify, and Oh My OpenCode. It also lists Semantic Kernel's VectorData .NET 10.0.1, GitHub CLI 2.87.3, and the VS Code 1.110 release.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/f5fc3dd4a7fe5500d0ec7aef60cd7093a5a4a3f3/README.md"
+    },
+    "adhoc-how-to-interact-with-existing-browser-se-2026-03-02": {
+      "title": "Existing browser sessions and complex web forms in Copilot Chat and VS Code",
+      "summary": "This archived special was requested as a discussion of interacting with existing browser sessions from Copilot Chat and VS Code to capture or automate complex web-form processes. The original publication preserves the topic, but no research packet or transcript is archived in that commit, so specific supported integrations cannot be verified here.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/29033450b2444d9252b80a7508ef0de97302914d/podcast.xml"
+    },
+    "adhoc-github-copilot-chat-updated-from-last-2-2026-03-02": {
+      "title": "Copilot Chat updates from the original two-week retrospective",
+      "summary": "This archived special was requested as a look at GitHub Copilot Chat updates from the preceding two weeks and what they do. The original publication preserves that topic but no research packet or transcript, so individual features are not reconstructed from today's documentation.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/bbea007b6f6ae41ca41f5509247c7650c83c200f/podcast.xml"
+    },
+    "radar-2026-03-02": {
+      "title": "GenAI Toolbox, Astron RPA, and UI UX Pro Max",
+      "summary": "This archived weekly digest covers GenAI Toolbox, Astron RPA, UI UX Pro Max Skill, Awesome Copilot, Dify, and LobeHub. Its release listings include Semantic Kernel's VectorData .NET 10.0.0 and VS Code 1.109.5.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/946322d0cc1ecfa9f22ef8dc21505f8269925785/README.md"
+    },
+    "radar-2026-03-01": {
+      "title": "Langflow, Dify, and MCP server discovery",
+      "summary": "This archived weekly digest covers Langflow, Dify, Awesome MCP Servers, and the MCP server repository. Its learning themes include Copilot CLI, TypeScript MCP servers, and Azure OpenAI with Azure AI Search, alongside Semantic Kernel VectorData and VS Code release listings.",
+      "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/0d9c58bc1efdedb1f750010a69b96887e9e33f65/README.md"
+    }
+  }
+}

@@ -155,4 +155,8 @@ def test_finalize_reviewed_rechecks_audio_and_does_not_advance_state(release):
     assert result.status == "candidate"
     assert len(calls) == 2
     assert "Notebook edition" in Path("podcast.xml").read_text()
+    from pipeline.podcast import load_episodes
+    episode = load_episodes()[0]
+    assert episode["title"] == "Retain session context"
+    assert episode["description"].endswith(manifest.show_notes)
     assert not Path("data/state.json").exists()

@@ -18,6 +18,7 @@ from .audio import analyze_audio
 from .evidence_archive import publication_evidence
 from .narrate import manifest_to_narration
 from .podcast import prepend_episode
+from .podcast_metadata import manifest_presentation
 from .publish import validate_feed_file, verify_remote_audio, verify_remote_feed
 from .rank import event_to_story, group_editorial_stories, select_editorial_events, select_events
 from .render import write_manifest_readme
@@ -557,15 +558,9 @@ def finalize(
             expected_sha256=manifest.audio["sha256"],
         )
     episode = {
-        "title": (
-            f"Special: {manifest.generation['request']['topic']}"
-            if manifest.schema_version == 4 else
-            f"Daily AI Developer Brief — {manifest.published_at[:10]}"
-            + (" — Notebook edition" if manifest.schema_version == 3 else "")
-        ),
+        **manifest_presentation(manifest),
         "guid": manifest.episode_id,
         "pub_date": manifest.published_at,
-        "description": manifest.show_notes,
         "mp3_url": manifest.audio["url"],
         "file_size_bytes": int(manifest.audio["size_bytes"]),
         "duration_secs": float(manifest.audio["duration_secs"]),

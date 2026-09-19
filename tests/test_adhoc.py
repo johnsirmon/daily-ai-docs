@@ -267,6 +267,17 @@ def test_paper_daily_policy_is_not_widened():
     assert not events and health["research:arxiv"].startswith("error:")
 
 
+def test_special_display_copy_does_not_change_reviewed_contract():
+    from pipeline.podcast_metadata import manifest_presentation
+    manifest = EpisodeManifest.from_dict(long_draft(ready=True, publish_now=True))
+    before = manifest.to_dict()
+    presentation = manifest_presentation(manifest)
+    assert presentation["title"] == manifest.generation["request"]["topic"]
+    assert "Special episode" in presentation["description"]
+    assert presentation["description"].endswith(manifest.show_notes)
+    assert manifest.to_dict() == before
+
+
 def test_duplicate_issue_form_fields_rejected():
     with pytest.raises(ValueError, match="duplicate"):
         request_from_issue({"body": "### Topic\nA\n### Topic\nB"})

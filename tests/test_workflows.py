@@ -42,6 +42,13 @@ def test_pages_retains_push_and_manual_recovery():
     assert any(step.get("uses") == "actions/deploy-pages@v4" for step in steps("update-radar.yml"))
 
 
+@pytest.mark.parametrize("name", ["pages.yml", "update-radar.yml"])
+def test_pages_deploys_versioned_and_previous_show_artwork(name):
+    runs = "\n".join(step.get("run", "") for step in steps(name))
+    assert "cp assets/podcast-cover*.jpg _site/assets/" in runs
+    assert "assets/podcast-cover*.jpg" in workflow("pages.yml")["on"]["push"]["paths"]
+
+
 def test_delivery_workflow_binds_candidate_and_downloaded_release():
     by_name = {step.get("name"): step for step in steps("update-radar.yml")}
     finalize = by_name["Verify audio and build candidate feed"]["run"]
