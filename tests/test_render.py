@@ -131,6 +131,23 @@ def test_quiet_manifest_calls_healthy_empty_sources_a_quiet_day():
     assert "healthy quiet day" in render_manifest_readme(manifest)
 
 
+def test_manifest_readme_explains_browser_pilot_and_brand():
+    manifest = EpisodeManifest(
+        1, "daily-test", "2026-09-07T12:00:00Z", "draft",
+        {"github:tool": "ok:0"}, [], [], [],
+        "A quiet daily brief with enough words to validate.", "No updates.",
+        {"edition": "quiet"}, {},
+    )
+    out = render_manifest_readme(manifest)
+    assert 'src="assets/ai-update-wave.png"' in out
+    assert "without being flattened by the update wave" in out
+    assert "## How it works" in out
+    assert "## Try the Notebook browser pilot" in out
+    assert "Generate once, download once" in out
+    assert "does not authorize a paid upgrade" in out
+    assert "publishing-approved-notebook-audio" in out
+
+
 # ---------------------------------------------------------------------------
 # New narrative sections
 # ---------------------------------------------------------------------------

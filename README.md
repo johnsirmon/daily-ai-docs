@@ -1,5 +1,10 @@
 # Daily AI Developer Brief — 2026-09-18
 
+<p align="center">
+  <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
+</p>
+<p align="center"><em>Keep up with AI developer technology without being flattened by the update wave.</em></p>
+
 A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.
 
 ## Podcast
@@ -11,6 +16,27 @@ Publication is confirmed only after the subscriber feed, audio, and artwork pass
 Once the feed is live, open Apple Podcasts on iPhone → Library → Follow a Show by URL and paste it. CarPlay uses the followed show through Apple Podcasts; device playback still requires verification.
 
 See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment status and setup.
+
+## How it works
+
+1. Public primary sources are collected with per-source health reporting.
+2. Ranking and editorial checks reject repeats, routine noise, and unsupported claims.
+3. The episode manifest binds every selected story to its evidence and becomes the source of truth.
+4. Narration or reviewed browser audio is validated before an immutable release is created.
+5. Publication is confirmed only after the feed serves the exact expected episode and media bytes.
+
+A failed collection, generation, media check, or delivery check preserves the last good feed. A healthy thin-news day can intentionally skip publication.
+
+## Try the Notebook browser pilot
+
+1. Sign in to Gemini Notebook and create a dedicated notebook for the pilot.
+2. Add only the selected public primary-source URLs; include full methods and limitations for research.
+3. Configure an English Deep Dive targeting 5–8 minutes with concrete changes, implications, and caveats.
+4. Generate once, download once, and complete the native Save dialog manually if the browser cannot.
+5. Preserve the original file, fully decode it, measure its duration, and record its size and SHA-256.
+6. Review the transcript and consequential spoken claims against the imported primary sources.
+
+The pilot uses the signed-in account's existing allowance. It does not authorize a paid upgrade, cookie export, unattended browser automation, or publication. Approved recordings use the separate [reviewed-audio handoff](docs/OPERATIONS.md#publishing-approved-notebook-audio).
 
 ### Editorial correction
 
@@ -63,8 +89,8 @@ Sources: [1](https://arxiv.org/abs/2609.17394), [2](https://arxiv.org/pdf/2609.1
 - An Edge-TTS editorial correction precedes the retained Notebook conversation; the manifest records both component hashes and the exact correction text.
 
 - Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.
-- Up to seven actionable stories, with shorter alerts and healthy quiet-day editions.
-- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs and skips thin-news days without changing the feed.
+- Up to seven actionable stories, capped per product for variety; thin-news runs skip publication.
+- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.
 - Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.
 - Product-change claims require public primary evidence.
 - This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings.
@@ -88,7 +114,7 @@ Each edition manifest distinguishes healthy no-news results from source outages.
 `collect → select → manifest → narrate/audio → validate → publish → verify delivery → confirm`
 
 The versioned episode manifest is the source of truth for narration, show notes, and this README. Preparation and failed delivery do not advance novelty state.
-In grounded mode, intentional skips have durable run receipts. Monitoring still verifies the last confirmed feed, audio, and artwork and rejects failed or stale evaluations.
+All intentional skips have durable run receipts. Monitoring still verifies the last confirmed feed, audio, and artwork and rejects failed or stale evaluations.
 
 ## Weekly YouTube signal
 

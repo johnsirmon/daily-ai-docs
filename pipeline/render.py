@@ -202,6 +202,12 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
     lines = [
         f"# Daily AI Developer Brief — {manifest.published_at[:10]}",
         "",
+        '<p align="center">',
+        '  <img src="assets/ai-update-wave.png" width="560" '
+        'alt="An exhausted developer outrunning a tidal wave of AI tools and updates">',
+        "</p>",
+        '<p align="center"><em>Keep up with AI developer technology without being flattened by the update wave.</em></p>',
+        "",
         "A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.",
         "",
         "## Podcast",
@@ -213,6 +219,30 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "Once the feed is live, open Apple Podcasts on iPhone → Library → Follow a Show by URL and paste it. CarPlay uses the followed show through Apple Podcasts; device playback still requires verification.",
         "",
         "See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment status and setup.",
+        "",
+        "## How it works",
+        "",
+        "1. Public primary sources are collected with per-source health reporting.",
+        "2. Ranking and editorial checks reject repeats, routine noise, and unsupported claims.",
+        "3. The episode manifest binds every selected story to its evidence and becomes the source of truth.",
+        "4. Narration or reviewed browser audio is validated before an immutable release is created.",
+        "5. Publication is confirmed only after the feed serves the exact expected episode and media bytes.",
+        "",
+        "A failed collection, generation, media check, or delivery check preserves the last good feed. "
+        "A healthy thin-news day can intentionally skip publication.",
+        "",
+        "## Try the Notebook browser pilot",
+        "",
+        "1. Sign in to Gemini Notebook and create a dedicated notebook for the pilot.",
+        "2. Add only the selected public primary-source URLs; include full methods and limitations for research.",
+        "3. Configure an English Deep Dive targeting 5–8 minutes with concrete changes, implications, and caveats.",
+        "4. Generate once, download once, and complete the native Save dialog manually if the browser cannot.",
+        "5. Preserve the original file, fully decode it, measure its duration, and record its size and SHA-256.",
+        "6. Review the transcript and consequential spoken claims against the imported primary sources.",
+        "",
+        "The pilot uses the signed-in account's existing allowance. It does not authorize a paid upgrade, "
+        "cookie export, unattended browser automation, or publication. Approved recordings use the separate "
+        "[reviewed-audio handoff](docs/OPERATIONS.md#publishing-approved-notebook-audio).",
         "",
         *([
             "### Editorial correction",
