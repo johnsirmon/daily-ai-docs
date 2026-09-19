@@ -369,6 +369,23 @@ do not claim every historical episode has the reported defects.
 
 ### Phase 2: Improve the existing spoken paths
 
+**Implemented, 2026-09-19 (bounded text-contract scope):** Fresh schema-1 preparation opts into
+`generation.narration_style: explanatory-v1`; historical unmarked rendering and candidate recovery remain unchanged.
+The marked path removes generated relevance/advice, duplicate lead announcements, spoken action labels, and written
+excerpt notices. It retains complete bounded source evidence so late versions and conditions survive, with explicit
+prerelease/learning qualifications and fail-closed word/character budgets. It does not fabricate explanatory context,
+strip versions globally, or substitute product names with pronouns.
+Fresh marked scripts are checked before TTS against the intersection of existing edition and narration-plausibility
+duration gates. Insufficient material uses the existing healthy-skip receipt without padding or relaxing minima.
+Measured media validation remains mandatory for viable scripts; provider failures remain failures.
+
+Schema-2 drafting and independent verification now jointly require supported before/after context, necessary jargon
+definitions, concrete supported workflows, limitations, unambiguous references, and necessity-only version speech.
+Known producer directives are rejected before verification across newly authored prose, not source quotes or historical
+manifests. Verified schema-2 narration and imported schema-3/4 transcripts are not rewritten. Focused fixtures cover
+legacy byte equality, marked round-trip/preparation, unchanged candidate recovery, conditions/versions, instruction
+rejection, legitimate listener advice, and paper question/result rendering. No listening improvement is claimed.
+
 **Extend:** [rank.py](pipeline/rank.py), [narrate.py](pipeline/narrate.py),
 [synthesis.py](pipeline/synthesis.py), and existing spoken-text validation.
 
@@ -397,6 +414,13 @@ Test positive listener advice as well as negative instruction leaks. Keep strict
 retroactively invalidating immutable historical manifests.
 
 ### Phase 3: Improve evidence use before adding discovery
+
+**Implemented subset:** Existing `paper_review.question` and `paper_review.result` are exposed in daily show notes
+and rendered briefs; presentation guidance now treats schema 2 and marked schema 1 as non-label-reciting narration.
+**Deferred:** Prior-capability source collection, adapter enrichment changes, automated background/secondary-source
+contracts, and live audio evaluation. Prompt improvements use only evidence already supplied and do not establish
+that additional research was performed. No new dependency, provider/quota activation, research-only daily edition,
+or weakened evidence/media gate is part of this change.
 
 **Extend:** Existing article enrichment, evidence payloads, claim review, and written notes.
 

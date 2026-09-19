@@ -14,10 +14,10 @@ def main() -> None:
     if not daily_sources.get("github_releases") and not daily_sources.get("feeds"):
         raise SystemExit("no authoritative daily sources configured")
     result = validate_feed_file("podcast.xml")
-    image = Image.open("assets/podcast-cover-v2.jpg")
+    image = Image.open("assets/podcast-cover-v3.jpg")
     if image.size != (3000, 3000) or image.mode != "RGB" or image.format != "JPEG":
         raise SystemExit("podcast cover must be a 3000x3000 RGB JPEG")
-    if Path("assets/podcast-cover-v2.jpg").stat().st_size > 1_000_000:
+    if Path("assets/podcast-cover-v3.jpg").stat().st_size > 1_000_000:
         raise SystemExit("podcast cover is unexpectedly large")
     print({**result, "artwork": f"{image.width}x{image.height} {image.mode}"})
 

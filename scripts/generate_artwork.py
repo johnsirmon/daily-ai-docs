@@ -3,10 +3,11 @@
 import argparse
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 SIZE = 3000
-OUTPUT = Path("assets/podcast-cover-v2.jpg")
+OUTPUT = Path("assets/podcast-cover-v3.jpg")
+BACKGROUND = Path(__file__).resolve().parents[1] / "assets/podcast-background-v3.png"
 BOLD = (
     Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
     Path("C:/Windows/Fonts/arialbd.ttf"),
@@ -19,28 +20,22 @@ def _font(candidates: tuple[Path, ...], size: int) -> ImageFont.FreeTypeFont:
 
 
 def create_cover() -> Image.Image:
-    image = Image.new("RGB", (SIZE, SIZE), (8, 20, 37))
+    with Image.open(BACKGROUND) as source:
+        image = ImageOps.fit(source.convert("RGB"), (SIZE, SIZE))
     draw = ImageDraw.Draw(image)
     mint = (60, 235, 200)
     white = (245, 249, 252)
     draw.rounded_rectangle((250, 280, 830, 340), radius=30, fill=mint)
     for text, top, maximum, color in (
-        ("DAILY AI", 600, 480, white),
-        ("DEVELOPER", 1200, 340, mint),
-        ("BRIEF", 1580, 660, white),
+        ("DAILY AI", 520, 480, white),
+        ("DEVELOPER", 1120, 340, mint),
+        ("BRIEF", 1530, 660, white),
     ):
         font = _font(BOLD, maximum)
         while draw.textbbox((0, 0), text, font=font)[2] > 2500:
             maximum -= 2
             font = _font(BOLD, maximum)
         draw.text((250, top), text, font=font, anchor="lt", fill=color)
-    heights = (80, 140, 260, 180, 420, 300, 540, 240, 380, 160, 280, 120, 80)
-    for index, height in enumerate(heights):
-        x = 270 + index * 190
-        draw.rounded_rectangle(
-            (x, 2490 - height // 2, x + 64, 2490 + height // 2),
-            radius=32, fill=mint if index % 3 else (87, 155, 255),
-        )
     return image
 
 

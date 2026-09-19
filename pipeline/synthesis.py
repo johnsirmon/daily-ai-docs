@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 from typing import Iterable, List
 
@@ -48,6 +49,17 @@ why_it_matters, action, rationale, kind, editorial. action is act, watch, or ski
 (a recommendation, NOT editorial exclusion). kind is product or research.
 Explain the actual change, affected workflow, specific consequence, appropriate
 bounded experiment/check or reason to wait, and material applicability/limitations.
+Explain prior capability and the before/after difference only when supplied primary
+evidence establishes both; otherwise qualify or omit the comparison. History is not
+evidence of prior capability. Define necessary unfamiliar jargon in plain language
+using supported meaning, or avoid the term when its meaning is not established.
+Describe a concrete supported workflow, including affected and unaffected users
+where documented. Label hypothetical examples as examples and support every factual
+premise; never invent a capability, old default, alternative, or tradeoff.
+Identify the product fully on first mention, then use natural references only where
+the referent is unambiguous. Speak versions only when necessary for affected versions,
+security fixes, migration, or compatibility boundaries; leave other identifiers in notes.
+Do not include producer directives such as "Include an explicit reasoning summary."
 Do not add adoption, reliability, performance, causal, or quantitative claims absent
 from the evidence. Preserve numerical notation; do not invent benchmarks or counts.
 No generic relevance prose, padded repetition, extraction notices, HTML entities,
@@ -99,6 +111,15 @@ author-reported, not independently reproduced findings, not established producti
 reliability. Ensure essential full-text limitations survive the spoken text.
 Reject generic relevance/advice, filler, repeated prose, padding, and title-only
 version churn. Source-based usefulness is required, not just factual accuracy.
+Independently verify any prior capability and before/after comparison against supplied
+primary evidence, never history or assumed background knowledge. Reject invented old
+defaults, alternatives, and tradeoffs. Check necessary jargon is explained accurately
+or avoided, and that concrete workflows and labeled hypothetical examples have
+supported factual premises. Preserve documented affected/unaffected users and limits.
+Check natural references have unambiguous antecedents and first use identifies the
+product. Require necessary security, migration, and compatibility versions to survive;
+unnecessary version recitation is not explanation. Reject producer directives in all
+authored fields, including instructions to include an explicit reasoning summary.
 Also assess that each rejection reason is a valid editorial rejection, not an
 excuse for source/provider failure, and that no worthwhile candidate is silently lost.
 
@@ -251,6 +272,30 @@ def _evidence_payload(event: SourceEvent) -> dict:
     }
 
 
+_PRODUCER_DIRECTIVE = re.compile(
+    r"\b(?:include|add|provide|write)\s+(?:an?\s+)?(?:explicit\s+)?reasoning summary\b"
+    r"|\b(?:insert|add|include)\s+(?:an?\s+)?(?:pause|sound effect|music cue|transition cue)\b"
+    r"|\b(?:narrator|producer|editor)\s*(?:note|instruction)s?\s*:"
+    r"|\b(?:do not|don't)\s+read\s+(?:this|the following)\s+aloud\b",
+    re.IGNORECASE,
+)
+
+
+def _validate_new_draft_prose(payload: dict, stories: List[Story]) -> None:
+    """Reject known production instructions only at new-draft ingress, not recovery."""
+    prose = [(name, payload[name]) for name in ("opening", "closing")]
+    for story in stories:
+        prose.extend((name, getattr(story, name)) for name in
+                     ("headline", "what_changed", "why_it_matters", "rationale"))
+        prose.append(("spoken_text", story.editorial["spoken_text"]))
+        prose.extend(("claim.text", claim["text"]) for claim in story.editorial["claims"])
+        prose.extend((f"paper_review.{name}", text) for name, text in
+                     story.editorial.get("paper_review", {}).items() if name != "evidence_status")
+    for name, text in prose:
+        if _PRODUCER_DIRECTIVE.search(text):
+            raise SchemaError(f"{name} contains a producer directive")
+
+
 def _parse_editorial_draft(payload: dict, bases: dict, events: List[SourceEvent]) -> List[Story]:
     required = {"stories", "rejected", "opening", "closing", "rejection_reason"}
     if set(payload) != required:
@@ -295,6 +340,7 @@ def _parse_editorial_draft(payload: dict, bases: dict, events: List[SourceEvent]
         validate_spoken_text(payload["rejection_reason"], "rejection_reason", limit=1200)
         if payload["opening"] != "" or payload["closing"] != "":
             raise SchemaError("an editorial rejection must not supply publishable framing")
+    _validate_new_draft_prose(payload, stories)
     return stories
 
 

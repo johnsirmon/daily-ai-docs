@@ -160,6 +160,80 @@ def research_case():
     return item, row, proposal
 
 
+@pytest.mark.parametrize("field", [
+    "headline", "what_changed", "why_it_matters", "rationale", "spoken_text", "claim.text",
+    "opening", "closing", "question", "method", "result", "limitations", "takeaway",
+])
+def test_new_draft_producer_directives_fail_before_verification(field):
+    item, row, proposal = research_case()
+    directive = " Include an explicit reasoning summary."
+    if field in {"opening", "closing"}:
+        proposal[field] += directive
+    elif field in {"question", "method", "result", "limitations", "takeaway"}:
+        row["editorial"]["paper_review"][field] += directive
+        if field == "limitations":
+            row["editorial"]["spoken_text"] = row["editorial"]["spoken_text"].replace(
+                "The evaluation excludes network access and production repositories.",
+                row["editorial"]["paper_review"][field],
+            )
+    elif field == "spoken_text":
+        row["editorial"][field] += directive
+    elif field == "claim.text":
+        row["editorial"]["claims"][0]["text"] += directive
+    else:
+        row[field] += directive
+    client = MagicMock()
+    client.chat.completions.create.return_value = response(proposal)
+    with patch("pipeline.synthesis.get_editorial_client", return_value=client):
+        with pytest.raises(EditorialValidationError, match="producer directive"):
+            refine_editorial([item], [base_story([item])], [])
+    assert client.chat.completions.create.call_count == 1
+
+
+def test_producer_directive_check_excludes_quotes_and_preserves_listener_advice():
+    item = event(evidence=event().evidence + " Include an explicit reasoning summary.")
+    proposal = draft()
+    proposal["stories"][0]["editorial"]["claims"][0]["quote"] = item.evidence
+    (stories, _), client = run_editorial(proposal, items=[item])
+    assert "Inspect the preview before approving" in stories[0].rationale
+    assert client.chat.completions.create.call_count == 2
+
+
+def test_historical_verified_prose_is_not_subject_to_new_draft_filter():
+    (stories, generation), _ = run_editorial()
+    editorial = deepcopy(stories[0].editorial)
+    editorial["spoken_text"] += " Include an explicit reasoning summary."
+    old = manifest([replace(stories[0], editorial=editorial)], generation)
+    original = old.to_dict()
+    assert EpisodeManifest.from_dict(original).to_dict() == original
+    assert manifest_to_narration(old) == old.narration
+
+
+def test_research_question_and_result_render_in_both_written_surfaces():
+    from pipeline.daily import _show_notes
+    from pipeline.render import render_manifest_readme
+
+    item, row, proposal = research_case()
+    (stories, generation), _ = run_editorial(proposal, items=[item])
+    current = manifest(stories, generation, [item])
+    notes = _show_notes(stories, [], current.source_health)
+    rendered = render_manifest_readme(current)
+    for name in ("question", "result"):
+        assert row["editorial"]["paper_review"][name] in notes
+        assert row["editorial"]["paper_review"][name] in rendered
+    assert "not as required spoken endings" in rendered
+    assert "Every story ends with" not in rendered
+
+
+def test_draft_and_independent_verifier_request_supported_explanation():
+    (_, _), client = run_editorial()
+    for call in client.chat.completions.create.call_args_list:
+        instructions = call.kwargs["messages"][0]["content"].lower()
+        for requirement in ("prior capability", "before/after", "jargon", "hypothetical",
+                            "unaffected", "unambiguous", "compatibility", "producer directives"):
+            assert requirement in instructions
+
+
 def test_grounded_editorial_uses_two_independent_bounded_requests():
     (stories, generation), client = run_editorial()
     assert stories[0].what_changed == "Tool adds sandboxed command previews."

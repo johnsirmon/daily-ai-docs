@@ -15,14 +15,14 @@ _ITUNES_NS = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 _CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 _CHANNEL_TITLE = "Daily AI Developer Brief"
 _CHANNEL_DESCRIPTION = (
-    "Keep up with AI coding tools without reading every changelog. "
-    "Get source-backed updates on GitHub Copilot, Claude Code, OpenAI Codex, "
-    "agent workflows, and developer tooling: what changed, why it matters, "
-    "and what to act on, watch, or skip. Short daily briefs and occasional "
-    "deep dives, with primary-source links and clearly labeled research. "
+    "Understand AI developer tools, not just their release notes. "
+    "Source-backed explanations of coding assistants, agent workflows, and "
+    "developer tooling: what changed, who it affects, and where the limits are. "
+    "Short daily briefs and occasional deep dives connect primary sources "
+    "with practical workflows, tradeoffs, and clearly labeled research. "
     "Created by John Sirmon with AI-generated narration."
 )
-_CHANNEL_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v2.jpg"
+_CHANNEL_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v3.jpg"
 _CHANNEL_LINK = "https://github.com/johnsirmon/daily-ai-docs"
 
 ET.register_namespace("itunes", _ITUNES_NS)

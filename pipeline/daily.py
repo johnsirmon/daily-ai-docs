@@ -14,7 +14,7 @@ from typing import Any, Dict, Iterable, List
 
 import yaml
 
-from .audio import analyze_audio
+from .audio import analyze_audio, narration_duration_bounds
 from .evidence_archive import publication_evidence
 from .narrate import manifest_to_narration
 from .podcast import prepend_episode
@@ -228,7 +228,8 @@ def _show_notes(stories, noise_notes: Iterable[str], source_health: Dict[str, st
             review = story.editorial["paper_review"]
             section += (
                 f"\nResearch evidence: {review['evidence_status']}\n"
-                f"Method: {review['method']}\nLimitations: {review['limitations']}\n"
+                f"Question: {review['question']}\nMethod: {review['method']}\n"
+                f"Result: {review['result']}\nLimitations: {review['limitations']}\n"
                 f"Experiment to try: {review['takeaway']}"
             )
         sections.append(section)
@@ -361,6 +362,8 @@ def _prepare(
         stories, generation = deterministic, {"provider": "deterministic", "calls": 0, "dry_run": True}
     elif not use_editorial:
         stories, generation = refine_stories(selected, deterministic)
+    if not use_editorial:
+        generation = {**generation, "narration_style": "explanatory-v1"}
     identity_material = "\n".join(event.event_id for event in selected) or "quiet"
     if use_editorial:
         identity_material = "editorial-v2\n" + identity_material
@@ -402,6 +405,18 @@ def _prepare(
         if len(manifest.narration.split()) > maximum_words:
             raise ValueError("editorial narration exceeds the configured word budget")
     manifest.validate(require_audio=False)
+    edition = manifest.generation["edition"]
+    minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
+    maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
+    if not dry_run and manifest.generation.get("narration_style") == "explanatory-v1":
+        plausible_minimum, plausible_maximum = narration_duration_bounds(len(manifest.narration.split()))
+        if plausible_maximum < minimum_duration:
+            return _skip(
+                now=now, reason="insufficient_substantive_material", health=health,
+                minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes,
+            )
+        if plausible_minimum > maximum_duration:
+            raise ValueError("narration cannot fit the edition's maximum audio duration")
     _save_json(_MANIFEST_PATH, manifest.to_dict())
 
     # The basename must match the immutable enclosure URL used by GitHub Releases.
@@ -414,9 +429,6 @@ def _prepare(
             from .audio_quality import polish_generated_audio
             manifest.generation["source_audio_sha256"] = hashlib.sha256(produced.read_bytes()).hexdigest()
             manifest.generation["quality"] = polish_generated_audio(produced)
-        edition = manifest.generation["edition"]
-        minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
-        maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
         analysis = analyze_audio(
             produced,
             min_duration_secs=minimum_duration,

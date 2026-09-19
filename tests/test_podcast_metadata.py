@@ -164,7 +164,7 @@ def test_later_prepends_keep_catalog_copy_and_rich_notes(tmp_path):
     assert load_episodes(str(feed))[1] == old
     channel = ET.parse(feed).find("channel")
     assert channel is not None
-    assert channel.find(ITUNES + "image").get("href").endswith("podcast-cover-v2.jpg")
+    assert channel.find(ITUNES + "image").get("href").endswith("podcast-cover-v3.jpg")
     assert channel.findtext("image/url") == channel.find(ITUNES + "image").get("href")
     assert channel.findall("item")[1].findtext(CONTENT + "encoded").startswith("<p>")
 
@@ -256,8 +256,9 @@ def test_committed_catalog_covers_retained_history():
 def test_show_artwork_has_small_screen_safe_format_and_quiet_background():
     image = create_cover()
     assert image.size == (3000, 3000) and image.mode == "RGB"
-    assert image.getpixel((0, 0)) == (8, 20, 37)
-    with Image.open(ROOT / "assets/podcast-cover-v2.jpg") as saved:
+    assert max(image.getpixel((0, 0))) < 60
+    with Image.open(ROOT / "assets/podcast-cover-v3.jpg") as saved:
         assert saved.format == "JPEG" and saved.mode == "RGB" and saved.size == image.size
         assert saved.getpixel((0, 0))[0] < 12
-    assert (ROOT / "assets/podcast-cover-v2.jpg").stat().st_size < 1_000_000
+    assert (ROOT / "assets/podcast-cover-v3.jpg").stat().st_size < 1_000_000
+    assert (ROOT / "assets/podcast-cover-v2.jpg").is_file()

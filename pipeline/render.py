@@ -351,7 +351,11 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             lines += [
                 f"**Research evidence:** {review['evidence_status']}",
                 "",
+                f"**Question:** {review['question']}",
+                "",
                 f"**Method:** {review['method']}",
+                "",
+                f"**Result:** {review['result']}",
                 "",
                 f"**Limitations:** {review['limitations']}",
                 "",
@@ -380,7 +384,8 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "- Product-change claims require public primary evidence.",
         (
             "- This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings."
-            if manifest.schema_version in {3, 4}
+            if manifest.schema_version in {2, 3, 4}
+            or manifest.generation.get("narration_style") == "explanatory-v1"
             else "- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation."
         ),
         "- Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.",

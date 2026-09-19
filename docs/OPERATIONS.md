@@ -467,6 +467,38 @@ event IDs, and all output is schema-validated. `AI_SYNTHESIS=required` fails clo
 Grounded editorial mode has a different, versioned contract with a bounded draft and independent verification.
 It never publishes the legacy deterministic fallback when a required editorial stage fails.
 
+### Explanatory narration compatibility
+
+Fresh schema-1 preparations record `generation.narration_style: explanatory-v1` before rendering narration.
+This marker removes the duplicate lead announcement, generated relevance/advice, spoken action labels, and
+written-excerpt instructions from the spoken path. Written recommendations remain available. Narration retains
+the complete bounded source evidence, including late affected-version conditions, rather than silently dropping
+qualifications at the written excerpt boundary. Prerelease and learning-pick qualifications remain explicit.
+If that evidence exceeds the existing narration budget, preparation fails rather than truncating it.
+Before TTS, fresh marked preparations also compare the script's plausible duration interval with the unchanged
+edition limits, using the same helper as measured audio validation. A script too short to satisfy both gates records
+the existing `insufficient_substantive_material` skip; it does not synthesize, pad, or change publication state.
+Scripts too long for the edition fail. Feasible scripts still require measured acceptance; TTS/provider failures
+are errors, never converted into healthy skips.
+
+Unmarked schema-1 manifests retain the legacy renderer and serialization. Pending candidates and released bundles
+are resumed unchanged: recovery must not add the marker or regenerate media. The marker does not rewrite verified
+schema-2 prose or schema-3/4 transcripts, change episode identity, or relax any evidence or measured-media gate.
+
+Grounded drafting and independent verification both request supported prior capability/change, plain-language
+definitions of necessary jargon, concrete supported workflows, material limitations, clear product references,
+and necessary security/migration/compatibility versions. Unsupported comparisons must be qualified or omitted.
+History remains novelty-only; automated collection of prior-capability sources is deferred. No additional provider
+calls, dependencies, credentials, paid quota, or research-only daily editions are enabled.
+
+Known producer directives are rejected in **new grounded drafts only**, before the independent verifier call.
+Checks cover authored story prose, claims, spoken text, opening/closing, and paper-review prose; exact source quotes
+are excluded. Existing historical manifest validation is unchanged. Paper questions and results now appear alongside
+method, limitations, and experimental takeaway in both show notes and the rendered brief.
+
+These are text-contract changes verified with offline fixtures, not evidence of listening quality. Actual audio still
+requires the existing decode, duration, provenance, transcript/source review, and publication checks.
+
 ## Audio and RSS policy
 
 - Final audio must be an MP3, at least 10 KB, free of decode errors/effective silence, and plausible for the narration

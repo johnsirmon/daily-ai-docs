@@ -15,6 +15,12 @@ class AudioValidationError(ValueError):
     pass
 
 
+def narration_duration_bounds(word_count: int) -> tuple[float, float]:
+    """Return the existing plausible duration interval for a spoken word count."""
+    expected_duration = word_count / 155 * 60
+    return expected_duration * 0.55, expected_duration * 1.8
+
+
 def analyze_audio(
     path: str | Path,
     *,
@@ -57,8 +63,8 @@ def analyze_audio(
             f"duration {duration:.1f}s is outside {min_duration_secs:.0f}-{max_duration_secs:.0f}s"
         )
     if expected_word_count:
-        expected_duration = expected_word_count / 155 * 60
-        if duration < expected_duration * 0.55 or duration > expected_duration * 1.8:
+        plausible_minimum, plausible_maximum = narration_duration_bounds(expected_word_count)
+        if duration < plausible_minimum or duration > plausible_maximum:
             raise AudioValidationError(
                 f"duration {duration:.1f}s is implausible for {expected_word_count} narration words"
             )

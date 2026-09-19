@@ -2,7 +2,7 @@
 
 ## What listeners should see
 
-- **Show cover:** a high-contrast navy, mint, and white title with a simple audio mark, not a detailed poster.
+- **Show cover:** a high-contrast navy, mint, and white title with an original sculptural waveform, not a detailed poster.
   There is no small-print slogan. The same recognizable cover applies to the entire feed.
 - **Episode title:** the subject first, not the show name and publication date repeated on every row.
   The editorial target is at most 90 characters, not an Apple or CarPlay visibility guarantee.
@@ -62,9 +62,17 @@ uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.pu
 uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.drift_check
 ```
 
-The current image is `assets/podcast-cover-v2.jpg`: 3000 x 3000, RGB, JPEG, no transparency, under the repository's
+The current image is `assets/podcast-cover-v3.jpg`: 3000 x 3000, RGB, JPEG, no transparency, under the repository's
 1 MB budget. `scripts/generate_artwork.py` uses installed DejaVu Sans Bold or Arial Bold, measures text width,
 and keeps the title within a generous safe margin. Glyph shapes may vary between operating systems.
+The generated background is retained in `assets/podcast-background-v3.png`; all title text is rendered
+locally for exact spelling and reproducibility. The 594-pixel background is an image-only crop of the
+loaded browser rendering after Save did not expose a download. It is a rendered pixel capture, not
+original-download bytes; the final title typography is rendered directly at 3000 pixels.
+The public design brief requested a midnight-navy square,
+ample empty space for the title, and a mint/ice-blue sculptural waveform in the bottom-right quadrant,
+without text, logos, robots, circuitry, or small details. Earlier cover URLs remain hosted for cached feeds.
+The show name and all historical audio identities are unchanged.
 When changing the cover design again, use a new filename and update the feed default and artwork checks.
 Both Pages paths copy the versioned and previous JPEGs so cached feeds retain working image URLs.
 

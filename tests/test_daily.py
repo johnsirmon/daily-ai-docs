@@ -5,7 +5,7 @@ import pytest
 
 from pipeline.daily import collect_events, confirm, finalize, prepare
 from pipeline.publish import PublicationError
-from pipeline.schema import EpisodeManifest
+from pipeline.schema import EpisodeManifest, SourceEvent
 
 
 _CONFIG = """
@@ -17,6 +17,97 @@ daily:
     github_releases: []
     feeds: []
 """
+
+
+def _deterministic_sources(count, *, substantive=False):
+    evidence = "Tool adds a command approval preview. Existing approvals remain required."
+    if substantive:
+        evidence += (
+            " Only explicitly approved commands execute in the workspace."
+            " Remote execution remains disabled for projects without an existing permission grant."
+            " The command preview lists the requested arguments and target directory before approval."
+            " Administrators can retain existing project settings while reviewing the proposed operation."
+            " Denied requests do not launch a process or change files."
+            " Audit entries record the requested command and its approval outcome."
+        )
+    return [
+        SourceEvent(
+            f"e{index}", "announcement", f"Tool {index} approval update",
+            f"https://example.com/change-{index}", f"Tool {index}", "Coding",
+            "2026-09-19T10:00:00Z", "2026-09-19T11:00:00Z", evidence,
+        )
+        for index in range(count)
+    ]
+
+
+@pytest.mark.parametrize("count", range(3, 8))
+def test_short_marked_editions_skip_before_tts_and_preserve_publication_state(monkeypatch, tmp_path, count):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AI_EDITORIAL", "off")
+    monkeypatch.setenv("AI_SYNTHESIS", "off")
+    monkeypatch.setenv("PODCAST_AUDIO_POLISH", "0")
+    config = tmp_path / "topics.yaml"
+    config.write_text(_CONFIG, encoding="utf-8")
+    (tmp_path / "podcast.xml").write_text("last-good-feed")
+    state = {"schema_version": 1, "seen_event_ids": [], "last_publication": None}
+    (tmp_path / "data").mkdir()
+    state_path = tmp_path / "data/state.json"
+    state_path.write_text(json.dumps(state))
+    monkeypatch.setattr(
+        "pipeline.daily.collect_events",
+        lambda *args, **kwargs: (_deterministic_sources(count), {"source": f"ok:{count}"}),
+    )
+    monkeypatch.setattr(
+        "pipeline.daily.write_audio",
+        lambda *args, **kwargs: pytest.fail("infeasible narration must not reach TTS"),
+    )
+    result = prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
+    assert result["outcome"] == "skipped"
+    assert result["reason"] == "insufficient_substantive_material"
+    receipt = json.loads((tmp_path / "data/runs/latest.json").read_text())
+    assert receipt["status"] == "skipped" and receipt["reason"] == result["reason"]
+    assert receipt["source_health"] == {"source": f"ok:{count}"}
+    assert json.loads(state_path.read_text()) == state
+    assert (tmp_path / "podcast.xml").read_text() == "last-good-feed"
+    assert not (tmp_path / ".cache/episode-manifest.json").exists()
+    assert not (tmp_path / "data/episodes").exists()
+
+
+@pytest.mark.parametrize("tts_available", [True, False])
+def test_viable_marked_script_reaches_unchanged_media_gates(monkeypatch, tmp_path, tts_available):
+    from pipeline.audio import narration_duration_bounds
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AI_EDITORIAL", "off")
+    monkeypatch.setenv("AI_SYNTHESIS", "off")
+    monkeypatch.setenv("PODCAST_AUDIO_POLISH", "0")
+    config = tmp_path / "topics.yaml"
+    config.write_text(_CONFIG, encoding="utf-8")
+    monkeypatch.setattr("pipeline.daily.collect_events",
+                        lambda *args, **kwargs: (_deterministic_sources(4, substantive=True), {"source": "ok:4"}))
+    scripts = []
+    def synthesize(text, *, path):
+        scripts.append(text)
+        return path if tts_available else None
+    monkeypatch.setattr("pipeline.daily.write_audio", synthesize)
+    def measured(path, *, min_duration_secs, max_duration_secs, expected_word_count):
+        assert (min_duration_secs, max_duration_secs) == (180, 600)
+        lower, upper = narration_duration_bounds(expected_word_count)
+        assert lower <= 200 <= upper
+        return {"size_bytes": 12000, "duration_secs": 200, "sha256": "b" * 64,
+                "codec": "mp3", "sample_rate": 24000, "channels": 1}
+    monkeypatch.setattr("pipeline.daily.analyze_audio", measured)
+    if tts_available:
+        result = prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
+        assert result["outcome"] == "publish"
+        manifest = EpisodeManifest.from_dict(json.loads((tmp_path / result["manifest_path"]).read_text()))
+        assert manifest.status == "ready" and manifest.narration == scripts[0]
+    else:
+        with pytest.raises(RuntimeError, match="TTS failed"):
+            prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
+        assert not (tmp_path / "data/runs/latest.json").exists()
+        assert not (tmp_path / ".cache/publication.json").exists()
+    assert len(scripts) == 1
 
 
 def test_prepare_dry_run_is_network_and_audio_free(monkeypatch, tmp_path):
@@ -32,6 +123,8 @@ def test_prepare_dry_run_is_network_and_audio_free(monkeypatch, tmp_path):
     )
     manifest = EpisodeManifest.from_dict(json.loads((tmp_path / publication["manifest_path"]).read_text()))
     assert manifest.stories
+    assert manifest.generation["narration_style"] == "explanatory-v1"
+    assert "The call is" not in manifest.narration
     assert "What changed" not in manifest.narration
     assert "http" not in manifest.narration
     assert publication["audio_path"] == ""
@@ -93,6 +186,9 @@ def test_prepare_resumes_pending_candidate_without_collection(monkeypatch, tmp_p
     result = prepare(config, now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc))
     assert result["episode_id"] == manifest.episode_id
     assert result["resumed"] is True
+    resumed = json.loads((tmp_path / result["manifest_path"]).read_text())
+    assert resumed == manifest.to_dict()
+    assert "narration_style" not in resumed["generation"]
 
 
 def test_finalize_writes_feed_manifest_state_and_readme(monkeypatch, tmp_path):

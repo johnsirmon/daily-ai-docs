@@ -4,7 +4,15 @@ import json
 
 import pytest
 
-from pipeline.audio import AudioValidationError, analyze_audio
+from pipeline.audio import AudioValidationError, analyze_audio, narration_duration_bounds
+
+
+@pytest.mark.parametrize("words,feasible", [(211, False), (258, False), (259, True), (407, True)])
+def test_normal_edition_feasibility_uses_existing_plausibility_bounds(words, feasible):
+    minimum, maximum = narration_duration_bounds(words)
+    assert minimum == words / 155 * 60 * 0.55
+    assert maximum == words / 155 * 60 * 1.8
+    assert (max(minimum, 180) <= min(maximum, 600)) is feasible
 
 
 @pytest.mark.parametrize("duration,accepted", [(299.999, False), (300, True), (480, True), (480.001, False)])

@@ -268,3 +268,98 @@ def test_build_closing_is_non_empty():
     closing = build_closing()
     assert len(closing) > 20
     assert "week" in closing.lower()
+
+
+def _daily_manifest(*, marked=False, evidence=None, channel="stable", source_type="github_release"):
+    from pipeline.rank import event_to_story
+    from pipeline.schema import EpisodeManifest, SourceEvent
+
+    source = SourceEvent(
+        "example", source_type, "Tool approval update", "https://example.com/change",
+        "Tool", "Coding", "2026-09-19T10:00:00Z", "2026-09-19T11:00:00Z",
+        evidence or "Tool adds a command approval preview. Existing approvals remain required.",
+        channel=channel,
+    )
+    return EpisodeManifest(
+        1, "daily-example", "2026-09-19T12:00:00Z", "draft", {"source": "ok:1"},
+        [source], [event_to_story(source)], [], "pending", "Source notes.",
+        {"narration_style": "explanatory-v1"} if marked else {}, {},
+    )
+
+
+def test_unmarked_daily_narration_remains_byte_exact():
+    from pipeline.narrate import manifest_to_narration
+    from pipeline.schema import EpisodeManifest
+
+    manifest = _daily_manifest()
+    expected = (
+        "This is your Daily AI Developer Brief for 2026-09-19. "
+        "Today's lead is Tool approval update. I filtered the rest down to 1 update worth your attention.\n\n"
+        "Here is the lead: Tool approval update. Tool adds a command approval preview. "
+        "Existing approvals remain required. This is relevant to developers tracking Coding. "
+        "The call is watch. Read the primary source and assess applicability before changing your workflow.\n\n"
+        "That is the useful signal for today. Source links and exact versions are in the episode notes. "
+        "Keep building, and I will be back tomorrow."
+    )
+    assert manifest_to_narration(manifest) == expected
+    manifest.narration = expected
+    original = manifest.to_dict()
+    assert EpisodeManifest.from_dict(original).to_dict() == original
+    assert "narration_style" not in original["generation"]
+
+
+def test_marked_daily_narration_omits_generated_filler_but_keeps_late_security_conditions():
+    from pipeline.narrate import manifest_to_narration
+    from pipeline.schema import EpisodeManifest
+
+    evidence = (
+        "Tool fixes a security vulnerability. Approval previews remain available. "
+        "Remote execution still requires approval. Only versions 1.2.0 through 1.2.3 are affected. "
+        "Version 1.2.4 contains the fix; installations with remote execution disabled are unaffected."
+    )
+    manifest = _daily_manifest(marked=True, evidence=evidence)
+    assert "[Excerpt;" in manifest.stories[0].what_changed
+    text = manifest_to_narration(manifest)
+    assert text.count("Tool approval update") == 1
+    assert evidence in text
+    for unwanted in ("Today's lead", "Here is the lead", "The call is", "This is relevant",
+                     "assess applicability", "[Excerpt;", "see source for full details"):
+        assert unwanted not in text
+    manifest.narration = text
+    assert EpisodeManifest.from_dict(manifest.to_dict()).narration == text
+
+
+def test_marked_daily_narration_preserves_prerelease_and_learning_qualifications():
+    from pipeline.narrate import manifest_to_narration
+
+    manifest = _daily_manifest(marked=True, channel="prerelease",
+                               evidence="Tool 2.0.0-rc1 adds previews for opted-in users only.")
+    text = manifest_to_narration(manifest)
+    assert "not a stable release" in text
+    assert "Tool 2.0.0-rc1" in text and "opted-in users only" in text
+    learning = manifest_to_narration(_daily_manifest(marked=True, source_type="youtube_video"))
+    assert "not verified product-change evidence" in learning
+
+
+def test_presentation_distinguishes_marked_and_unmarked_daily_narration():
+    from pipeline.render import render_manifest_readme
+
+    assert "Every story ends with" in render_manifest_readme(_daily_manifest())
+    marked = render_manifest_readme(_daily_manifest(marked=True))
+    assert "not as required spoken endings" in marked
+    assert "Every story ends with" not in marked
+
+
+def test_marked_daily_narration_fails_instead_of_truncating_over_budget_evidence():
+    import pytest
+    from dataclasses import replace
+    from pipeline.narrate import manifest_to_narration
+    from pipeline.rank import event_to_story
+
+    manifest = _daily_manifest(marked=True, evidence="Tool adds approval previews. " * 120)
+    manifest.source_events = [
+        replace(manifest.source_events[0], event_id=f"e{index}") for index in range(7)
+    ]
+    manifest.stories = [event_to_story(source) for source in manifest.source_events]
+    with pytest.raises(ValueError, match="budget"):
+        manifest_to_narration(manifest)

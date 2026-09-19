@@ -341,6 +341,7 @@ def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path):
         "codec": "mp3", "sample_rate": 44100, "channels": 2,
     }
     monkeypatch.setattr("pipeline.audio_quality.master_audio", master)
+    monkeypatch.setattr("pipeline.reviewed_audio.shutil.which", lambda name: "ffmpeg" if name == "ffmpeg" else None)
     monkeypatch.setattr("pipeline.reviewed_audio.analyze_audio", lambda *args, **kwargs: metrics)
     monkeypatch.setattr("pipeline.daily.analyze_audio", lambda *args, **kwargs: metrics)
     monkeypatch.setattr("pipeline.audio_quality.loudness", lambda *args: {"input_i": -16, "input_tp": -1.1})

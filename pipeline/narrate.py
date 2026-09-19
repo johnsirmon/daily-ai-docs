@@ -363,6 +363,8 @@ def manifest_to_narration(manifest) -> str:
     manifest.validate(require_audio=False)
     if manifest.schema_version in {3, 4}:
         return manifest.narration
+    if manifest.generation.get("narration_style") == "explanatory-v1" and manifest.stories:
+        return _explanatory_narration(manifest)
     date_text = manifest.published_at[:10]
     failed_sources = [
         name for name, status in manifest.source_health.items() if not status.startswith("ok:")
@@ -422,5 +424,35 @@ def manifest_to_narration(manifest) -> str:
     narration = "\n\n".join(paragraphs)
     words = narration.split()
     if len(words) > 1500:
+        raise ValueError("manifest narration exceeds the ten-minute budget")
+    return narration
+
+
+def _explanatory_narration(manifest) -> str:
+    """Render new deterministic editions without rewriting historical scripts."""
+    events = {event.event_id: event for event in manifest.source_events}
+    paragraphs = [f"This is your Daily AI Developer Brief for {manifest.published_at[:10]}."]
+    for story in manifest.stories:
+        sources = [events[event_id] for event_id in story.event_ids]
+        qualifications = []
+        if any(source.channel == "prerelease" for source in sources):
+            qualifications.append("This is prerelease information, not a stable release.")
+        if any(source.source_type == "youtube_video" for source in sources):
+            qualifications.append("This is a learning pick, not verified product-change evidence.")
+        # Use the complete bounded source evidence, not the written excerpt: later
+        # sentences may contain affected versions, conditions, or limitations.
+        evidence = " ".join(" ".join(source.evidence.split()) for source in sources)
+        paragraphs.append(" ".join([
+            _normalise_sentence(story.headline), *qualifications, evidence,
+        ]))
+    failed = sum(not status.startswith("ok:") for status in manifest.source_health.values())
+    if failed:
+        paragraphs.append(
+            f"Coverage note. {failed} tracked source"
+            f"{'s were' if failed != 1 else ' was'} unavailable, so this edition is incomplete."
+        )
+    paragraphs.append("Source links and written recommendations are in the episode notes. See you tomorrow.")
+    narration = "\n\n".join(paragraphs)
+    if len(narration.split()) > 1500 or len(narration) > 16000:
         raise ValueError("manifest narration exceeds the ten-minute budget")
     return narration
