@@ -1,13 +1,20 @@
 {
   "schema_version": 1,
   "status": "published",
-  "evaluated_at": "2026-09-18T01:12:53.050295Z",
+  "evaluated_at": "2026-09-19T13:58:17.658809Z",
   "reason": "subscriber_confirmed",
   "source_health": {
-    "manual:vscode": "ok:1",
-    "manual:copilot": "ok:1",
-    "manual:research": "ok:1"
+    "github:openai/codex": "ok:8",
+    "github:anthropics/claude-code": "ok:3",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:0",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:3",
+    "youtube:weekly-digest": "error:ValueError"
   },
   "minimum_source_health": 0.6,
-  "last_episode_id": "daily-2026-09-18-notebook-cde95bbf"
+  "last_episode_id": "daily-2026-09-19-d6ff21f1"
 }
