@@ -1,4 +1,4 @@
-When I listen to the daily ai podcasts it reads out versions, 
+When I listen to the daily ai podcasts it reads out versions, and the exact transcript which is robotic and doesn't really provide useful insights to humans.  here are some of problems
 
 repeat "claude code" numerous time, refers to terms like bedrock,... with no context.  
 
