@@ -385,7 +385,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         (
             "- This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings."
             if manifest.schema_version in {2, 3, 4}
-            or manifest.generation.get("narration_style") == "explanatory-v1"
+            or manifest.generation.get("narration_style") in {"explanatory-v1", "explanatory-v2"}
             else "- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation."
         ),
         "- Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.",

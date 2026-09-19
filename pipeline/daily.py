@@ -15,6 +15,7 @@ from typing import Any, Dict, Iterable, List
 import yaml
 
 from .audio import analyze_audio, narration_duration_bounds
+from .disclosure import AI_NARRATION_DISCLOSURE
 from .evidence_archive import publication_evidence
 from .narrate import manifest_to_narration
 from .podcast import prepend_episode
@@ -32,7 +33,7 @@ from .sources import (
 from .synthesis import refine_editorial, refine_stories
 from .tts import write_audio
 from .run_health import RUN_PATH
-from .source_health import primary_source_health
+from .source_health import failed_source_health, primary_source_health
 
 logger = logging.getLogger(__name__)
 _CACHE_DIR = Path(".cache")
@@ -211,10 +212,18 @@ def collect_events(
 
 
 def _show_notes(stories, noise_notes: Iterable[str], source_health: Dict[str, str]) -> str:
-    failed = [name for name, status in source_health.items() if not status.startswith("ok:")]
+    failed_primary, failed_supplementary = failed_source_health(source_health)
     if not stories:
-        if failed:
-            return "No update cleared the threshold, but coverage was incomplete. Failed sources: " + ", ".join(failed)
+        if failed_primary:
+            return (
+                "No update cleared the threshold, but primary-source coverage was incomplete. "
+                "Failed primary sources: " + ", ".join(failed_primary)
+            )
+        if failed_supplementary:
+            return (
+                "Primary sources were healthy and no update cleared the actionability threshold today. "
+                "Unavailable supplementary sources: " + ", ".join(failed_supplementary)
+            )
         return "Tracked sources were healthy, but no update cleared the actionability threshold today."
     sections = []
     for story in stories:
@@ -236,8 +245,12 @@ def _show_notes(stories, noise_notes: Iterable[str], source_health: Dict[str, st
     notes = list(noise_notes)
     if notes:
         sections.append("High noise / low signal\n" + "\n".join(f"- {note}" for note in notes))
-    if failed:
-        sections.append("Coverage gaps\n" + "\n".join(f"- {name}" for name in failed))
+    if failed_primary:
+        sections.append("Primary-source coverage gaps\n" + "\n".join(f"- {name}" for name in failed_primary))
+    if failed_supplementary:
+        sections.append(
+            "Supplementary coverage gaps\n" + "\n".join(f"- {name}" for name in failed_supplementary)
+        )
     return "\n\n".join(sections)
 
 
@@ -362,8 +375,10 @@ def _prepare(
         stories, generation = deterministic, {"provider": "deterministic", "calls": 0, "dry_run": True}
     elif not use_editorial:
         stories, generation = refine_stories(selected, deterministic)
-    if not use_editorial:
-        generation = {**generation, "narration_style": "explanatory-v1"}
+    if use_editorial:
+        generation = {**generation, "production_disclosure": AI_NARRATION_DISCLOSURE}
+    else:
+        generation = {**generation, "narration_style": "explanatory-v2"}
     identity_material = "\n".join(event.event_id for event in selected) or "quiet"
     if use_editorial:
         identity_material = "editorial-v2\n" + identity_material
@@ -408,7 +423,7 @@ def _prepare(
     edition = manifest.generation["edition"]
     minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
     maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
-    if not dry_run and manifest.generation.get("narration_style") == "explanatory-v1":
+    if not dry_run and manifest.generation.get("narration_style") in {"explanatory-v1", "explanatory-v2"}:
         plausible_minimum, plausible_maximum = narration_duration_bounds(len(manifest.narration.split()))
         if plausible_maximum < minimum_duration:
             return _skip(

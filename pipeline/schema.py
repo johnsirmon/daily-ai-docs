@@ -11,6 +11,8 @@ import re
 from typing import Any, Dict, List
 from urllib.parse import urlparse
 
+from .disclosure import AI_NARRATION_DISCLOSURE
+
 
 class SchemaError(ValueError):
     """Raised when pipeline data does not satisfy the publication contract."""
@@ -376,7 +378,15 @@ def editorial_narration(stories: List[Story], generation: Dict[str, Any]) -> str
     support = "\n".join(claim["quote"] for story in stories for claim in story.editorial["claims"])
     validate_quantities(opening, support, "generation.opening")
     validate_quantities(closing, support, "generation.closing")
-    text = "\n\n".join([opening, *(story.editorial["spoken_text"] for story in stories), closing])
+    disclosure = generation.get("production_disclosure")
+    if disclosure is not None and disclosure != AI_NARRATION_DISCLOSURE:
+        raise SchemaError("generation.production_disclosure must use the approved production disclosure")
+    text = "\n\n".join([
+        *([AI_NARRATION_DISCLOSURE] if disclosure else []),
+        opening,
+        *(story.editorial["spoken_text"] for story in stories),
+        closing,
+    ])
     _text(text, "editorial narration", limit=16000)
     if len(text.split()) > 1500:
         raise SchemaError("editorial narration exceeds the 1500-word budget")

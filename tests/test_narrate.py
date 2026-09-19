@@ -270,7 +270,8 @@ def test_build_closing_is_non_empty():
     assert "week" in closing.lower()
 
 
-def _daily_manifest(*, marked=False, evidence=None, channel="stable", source_type="github_release"):
+def _daily_manifest(*, marked=False, evidence=None, channel="stable", source_type="github_release",
+                    narration_style=None):
     from pipeline.rank import event_to_story
     from pipeline.schema import EpisodeManifest, SourceEvent
 
@@ -283,7 +284,7 @@ def _daily_manifest(*, marked=False, evidence=None, channel="stable", source_typ
     return EpisodeManifest(
         1, "daily-example", "2026-09-19T12:00:00Z", "draft", {"source": "ok:1"},
         [source], [event_to_story(source)], [], "pending", "Source notes.",
-        {"narration_style": "explanatory-v1"} if marked else {}, {},
+        {"narration_style": narration_style or "explanatory-v1"} if marked else {}, {},
     )
 
 
@@ -339,6 +340,27 @@ def test_marked_daily_narration_preserves_prerelease_and_learning_qualifications
     assert "Tool 2.0.0-rc1" in text and "opted-in users only" in text
     learning = manifest_to_narration(_daily_manifest(marked=True, source_type="youtube_video"))
     assert "not verified product-change evidence" in learning
+
+
+def test_prospective_daily_narration_discloses_ai_and_scopes_optional_outage():
+    from pipeline.narrate import manifest_to_narration
+
+    manifest = _daily_manifest(marked=True, narration_style="explanatory-v2")
+    manifest.source_health = {"github:tool": "ok:1", "youtube:weekly": "error:stale"}
+    text = manifest_to_narration(manifest)
+    assert "Production note: This episode uses AI-generated narration." in text
+    assert "Supplementary learning coverage was unavailable" in text
+    assert "edition is incomplete" not in text
+
+
+def test_prospective_daily_narration_identifies_primary_outage():
+    from pipeline.narrate import manifest_to_narration
+
+    manifest = _daily_manifest(marked=True, narration_style="explanatory-v2")
+    manifest.source_health = {"github:tool": "error:timeout", "youtube:weekly": "ok:1"}
+    text = manifest_to_narration(manifest)
+    assert "Primary-source coverage note" in text
+    assert "edition is incomplete" in text
 
 
 def test_presentation_distinguishes_marked_and_unmarked_daily_narration():

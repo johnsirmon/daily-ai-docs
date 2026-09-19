@@ -72,7 +72,10 @@ def test_candidates_with_no_usable_transcripts_are_degraded(fault, monkeypatch, 
     youtube.write_digest(payload, path)
     events, statuses = collect_youtube_digest({"digest_path": str(path)}, now=NOW)
     assert events == [] and statuses == {"youtube:weekly-digest": "degraded:0"}
-    assert "coverage was incomplete" in _show_notes(events, [], statuses)
+    notes = _show_notes(events, [], statuses)
+    assert "Primary sources were healthy" in notes
+    assert "Unavailable supplementary sources" in notes
+    assert "coverage was incomplete" not in notes
 
 
 def test_partial_transcript_failure_preserves_usable_events_and_reports_gap(tmp_path):

@@ -71,6 +71,7 @@ def test_future_copy_is_topic_first_and_does_not_mutate_manifest():
     result = manifest_presentation(manifest)
     assert result["title"] == "Tool: Added a visible warning when memory usage is critical."
     assert "What's changed" not in result["description"].split("\n\n")[0]
+    assert "Production disclosure: This episode uses AI-generated narration" in result["description"]
     assert result["description"].endswith(manifest.show_notes)
     assert manifest.to_dict() == before
 
@@ -92,7 +93,8 @@ def test_quiet_historical_episode_keeps_coverage_disclosure():
     manifest.stories = []
     manifest.show_notes = "No update cleared the threshold, but coverage was incomplete."
     result = manifest_presentation(manifest)
-    assert result["description"] == manifest.show_notes
+    assert result["description"].endswith(manifest.show_notes)
+    assert result["description"].startswith("Production disclosure:")
 
 
 def test_link_only_evidence_does_not_become_a_title():

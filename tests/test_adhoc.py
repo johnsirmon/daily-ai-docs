@@ -11,6 +11,7 @@ import pytest
 from pipeline import daily
 from pipeline.adhoc import authorize, write_brief
 from pipeline.audio_quality import repetition_findings, validate_quality_report
+from pipeline.disclosure import AI_NARRATION_DISCLOSURE
 from pipeline.podcast_request import PodcastRequest, record_status, request_from_issue, save_request
 from pipeline.schema import EpisodeManifest, SchemaError, SourceEvent
 from tests.test_reviewed_audio import draft, TIMESTAMP, CLAIM
@@ -324,7 +325,7 @@ def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path):
         "source_events", "source_health", "stories", "show_notes",
     )}), encoding="utf-8")
     transcript = tmp_path / "transcript.txt"
-    transcript.write_text(CLAIM, encoding="utf-8")
+    transcript.write_text(AI_NARRATION_DISCLOSURE + "\n\n" + CLAIM, encoding="utf-8")
     review = tmp_path / "review.json"
     review.write_text(json.dumps({
         "transcript": {"engine": "faster-whisper", "model": "small.en"},

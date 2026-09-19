@@ -25,6 +25,7 @@ import subprocess
 from typing import Any
 
 from .audio import analyze_audio
+from .disclosure import AI_NARRATION_DISCLOSURE
 from .schema import EpisodeManifest, SchemaError
 
 
@@ -58,6 +59,8 @@ def prepare_reviewed_audio(
     manifest = EpisodeManifest.from_dict(json.loads(manifest_path.read_text(encoding="utf-8")))
     if manifest.schema_version not in {3, 4} or manifest.status != "draft":
         raise SchemaError("reviewed audio import requires a schema-3 or schema-4 draft, not a reusable release")
+    if AI_NARRATION_DISCLOSURE not in manifest.narration:
+        raise SchemaError("reviewed audio narration must contain the approved production disclosure")
     expected_hash = manifest.generation["source_audio_sha256"]
     if manifest.schema_version == 4 or os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
         from .audio_quality import repetition_findings

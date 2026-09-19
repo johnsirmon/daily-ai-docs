@@ -8,6 +8,9 @@ compelling without reading raw markdown artifacts aloud.
 import re
 from typing import List
 
+from .disclosure import AI_NARRATION_DISCLOSURE
+from .source_health import failed_source_health
+
 # Rotating spoken phrases for topic and repo transitions (deterministic — index
 # is incremented per call so repeated topics don't all sound identical).
 _TOPIC_TRANSITIONS = [
@@ -363,7 +366,7 @@ def manifest_to_narration(manifest) -> str:
     manifest.validate(require_audio=False)
     if manifest.schema_version in {3, 4}:
         return manifest.narration
-    if manifest.generation.get("narration_style") == "explanatory-v1" and manifest.stories:
+    if manifest.generation.get("narration_style") in {"explanatory-v1", "explanatory-v2"} and manifest.stories:
         return _explanatory_narration(manifest)
     date_text = manifest.published_at[:10]
     failed_sources = [
@@ -431,7 +434,11 @@ def manifest_to_narration(manifest) -> str:
 def _explanatory_narration(manifest) -> str:
     """Render new deterministic editions without rewriting historical scripts."""
     events = {event.event_id: event for event in manifest.source_events}
-    paragraphs = [f"This is your Daily AI Developer Brief for {manifest.published_at[:10]}."]
+    prospective = manifest.generation.get("narration_style") == "explanatory-v2"
+    opening = f"This is your Daily AI Developer Brief for {manifest.published_at[:10]}."
+    if prospective:
+        opening += " " + AI_NARRATION_DISCLOSURE
+    paragraphs = [opening]
     for story in manifest.stories:
         sources = [events[event_id] for event_id in story.event_ids]
         qualifications = []
@@ -445,11 +452,17 @@ def _explanatory_narration(manifest) -> str:
         paragraphs.append(" ".join([
             _normalise_sentence(story.headline), *qualifications, evidence,
         ]))
-    failed = sum(not status.startswith("ok:") for status in manifest.source_health.values())
-    if failed:
+    failed_primary, failed_supplementary = failed_source_health(manifest.source_health)
+    if failed_primary:
         paragraphs.append(
-            f"Coverage note. {failed} tracked source"
-            f"{'s were' if failed != 1 else ' was'} unavailable, so this edition is incomplete."
+            f"Primary-source coverage note. {len(failed_primary)} tracked source"
+            f"{'s were' if len(failed_primary) != 1 else ' was'} unavailable, "
+            "so this edition is incomplete."
+        )
+    if failed_supplementary:
+        paragraphs.append(
+            "Supplementary learning coverage was unavailable; "
+            "primary-source coverage remained sufficient for this edition."
         )
     paragraphs.append("Source links and written recommendations are in the episode notes. See you tomorrow.")
     narration = "\n\n".join(paragraphs)

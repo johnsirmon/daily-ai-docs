@@ -21,13 +21,16 @@ Listening feedback identifies these problems:
 - Phrases such as "read the primary source and assess" sound like production instructions, not finished analysis.
 - Stories lack the broader context needed to judge usefulness or understand what is genuinely new.
 
-These are listener observations, not a completed technical diagnosis or a claim that every episode has these problems.
-Some research and quiet-day functionality may already exist. Its implementation and effectiveness are unverified
-in this brief; check existing behavior before proposing new components.
+These are listener observations, not a claim that every episode has these problems. The September 19 launch-readiness
+review reproduced raw-source reading in the deterministic path and confirmed that schema-2 drafting has stronger
+explanation and verification contracts but remains opt-in. Research, thin-news skips, immutable recovery, reviewed
+audio, and source-health separation are implemented; their existence does not establish editorial or listening
+acceptance.
 
-This document defines desired outcomes. It does not change pipeline behavior, publication policy,
-or historical episodes. Section 9 maps the brief to the current implementation and plans dependency-free
-improvements; those changes are not yet implemented.
+This document defines desired outcomes and records implemented subsets in section 9. It does not authorize a provider,
+change production settings, approve historical episodes, or establish launch readiness. Remaining work includes an
+authorized unpublished schema-2 preview, complete listening and claim review, and owner decisions described in the
+operations launch gate.
 
 ## 1. Explain the change and its consequences
 

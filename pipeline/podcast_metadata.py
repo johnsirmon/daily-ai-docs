@@ -9,6 +9,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from .disclosure import episode_metadata_disclosure
 from .podcast import _coerce_pubdate, _parse_duration, set_episode_presentation, set_show_presentation
 from .publish import validate_feed_file
 from .schema import EpisodeManifest, Story
@@ -37,8 +38,12 @@ def _change(story: Story) -> str:
 def manifest_presentation(manifest: EpisodeManifest) -> dict[str, str]:
     """Use extractive previews; all qualifications remain in the complete notes."""
     manifest.validate(require_audio=False)
+    disclosure = episode_metadata_disclosure(manifest.schema_version)
     if not manifest.stories:
-        return {"title": "No actionable updates in this brief", "description": manifest.show_notes}
+        return {
+            "title": "No actionable updates in this brief",
+            "description": "\n\n".join(part for part in (disclosure, manifest.show_notes) if part),
+        }
     lead = manifest.stories[0]
     headline = lead.headline
     by_id = {event.event_id: event for event in manifest.source_events}
@@ -69,7 +74,7 @@ def manifest_presentation(manifest: EpisodeManifest) -> dict[str, str]:
         3: "Notebook edition. Reviewed AI-generated conversation.",
         4: "Special episode. Reviewed long-form audio.",
     }.get(manifest.schema_version, "")
-    parts = [summary, edition, manifest.show_notes]
+    parts = [summary, disclosure, edition, manifest.show_notes]
     return {"title": title, "description": "\n\n".join(part for part in parts if part)}
 
 

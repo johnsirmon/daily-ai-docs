@@ -30,7 +30,10 @@ def main() -> None:
     parser.add_argument("--retries", type=int, default=1)
     parser.add_argument("--delay-seconds", type=float, default=15)
     args = parser.parse_args()
-    candidate = EpisodeManifest.from_dict(json.loads(args.candidate.read_text())) if args.candidate else None
+    candidate = (
+        EpisodeManifest.from_dict(json.loads(args.candidate.read_text(encoding="utf-8")))
+        if args.candidate else None
+    )
     if args.allow_editorial_skips and candidate is None:
         candidate = skip_candidate(max_age_hours=args.max_age_hours)
     last_error = None

@@ -123,7 +123,8 @@ def test_prepare_dry_run_is_network_and_audio_free(monkeypatch, tmp_path):
     )
     manifest = EpisodeManifest.from_dict(json.loads((tmp_path / publication["manifest_path"]).read_text()))
     assert manifest.stories
-    assert manifest.generation["narration_style"] == "explanatory-v1"
+    assert manifest.generation["narration_style"] == "explanatory-v2"
+    assert "This episode uses AI-generated narration" in manifest.narration
     assert "The call is" not in manifest.narration
     assert "What changed" not in manifest.narration
     assert "http" not in manifest.narration
@@ -151,6 +152,24 @@ def test_collection_outage_is_not_published_as_quiet_day(monkeypatch):
             dry_run=False,
             now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc),
         )
+
+
+def test_show_notes_distinguish_supplementary_and_primary_outages():
+    from pipeline.daily import _show_notes
+    from pipeline.rank import event_to_story
+
+    story = event_to_story(_deterministic_sources(1)[0])
+    supplementary = _show_notes(
+        [story], [], {"github:tool": "ok:1", "youtube:weekly": "error:stale"},
+    )
+    assert "Supplementary coverage gaps" in supplementary
+    assert "Primary-source coverage gaps" not in supplementary
+
+    primary = _show_notes(
+        [story], [], {"github:tool": "error:timeout", "youtube:weekly": "ok:1"},
+    )
+    assert "Primary-source coverage gaps" in primary
+    assert "Supplementary coverage gaps" not in primary
 
 
 def test_prepare_refuses_second_same_day_publication(monkeypatch, tmp_path):

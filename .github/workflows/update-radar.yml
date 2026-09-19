@@ -29,6 +29,7 @@ env:
   AI_EDITORIAL: ${{ vars.AI_EDITORIAL || 'off' }}
   GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.8-flash' }}
   TTS_PROVIDER: ${{ vars.TTS_PROVIDER || 'edge' }}
+  PODCAST_AUDIO_POLISH: ${{ vars.PODCAST_AUDIO_POLISH || '0' }}
 
 jobs:
   publish:

@@ -79,6 +79,9 @@ canonical feed and will not emit migration metadata while the destination is una
    - `TTS_PROVIDER`: `edge` (default, no key) or `openai`.
    - `AI_SYNTHESIS`: `off` (default deterministic), `optional`, or `required`.
    - `AI_MODEL`: model name for the configured OpenAI-compatible endpoint.
+   - `PODCAST_AUDIO_POLISH`: `0` (default) or `1`. The scheduled publisher maps this value but does not enable
+     mastering by default. Enable it only after the same reviewed recording passes an unpublished before/after
+     listening comparison.
 5. Optional secrets:
    - `OPENAI_API_KEY`: required when `TTS_PROVIDER=openai`; can also back synthesis.
    - `AI_API_KEY`: dedicated synthesis key when it should differ from TTS.
@@ -518,8 +521,9 @@ requires the existing decode, duration, provenance, transcript/source review, an
 
 ## Failure recovery
 
-- Collection: if every source fails or health falls below the configured threshold, do not publish. Partial coverage is
-  disclosed; healthy no-news runs publish a quiet-day edition.
+- Collection: if every primary source fails or primary-source health falls below the configured threshold, do not
+  publish. Primary and supplementary coverage gaps are labeled separately. Healthy no-news runs write an evaluation
+  receipt and skip TTS, release creation, RSS changes, and novelty-state advancement.
 - Model: deterministic mode continues; required mode fails without changing the feed.
 - TTS/audio: fail before release or RSS changes.
 - Release upload: an orphaned release is safe; reruns download and resume the accepted manifest/audio from that release.
@@ -548,21 +552,38 @@ requires the existing decode, duration, provenance, transcript/source review, an
 The legacy ad-hoc publisher is disabled. Use the request-bound long-form path above; do not restore direct RSS writes
 through `pipeline.main --adhoc-topic`.
 
-Rollback: revert the generated feed/manifest/state commit. Do not delete or overwrite release assets that may already be
-referenced by podcast clients.
+Display-only rollback and publication recovery are different operations. A reviewed metadata refresh can be reverted
+only while preserving every GUID, enclosure URL, publication date, and released byte. Do not blindly revert a
+confirmed feed/manifest/state commit: a failed publication resumes the pending candidate from its exact released
+manifest and audio, verifies subscriber delivery, and then confirms state. Never delete, overwrite, or regenerate
+release assets that may already be referenced by podcast clients.
+
+A same-day `a daily episode was already published` error is replay protection after a confirmed daily publication.
+It is not evidence of subscriber delivery failure and must not be converted into a skip receipt or bypassed with
+`--force`.
 
 ## Apple Podcasts and CarPlay acceptance
 
 Direct feed following is the first release path; Apple directory submission is optional.
 
-1. Wait for the Pages workflow and confirm the feed URL returns HTTP 200.
+1. Wait for the daily publisher's inline Pages deployment (or an explicitly initiated standalone recovery deployment)
+   and confirm the exact feed URL returns HTTP 200.
 2. On iPhone: Podcasts → Library → Follow a Show by URL.
 3. Verify cover art, show notes, latest date, duration, streaming, download, seeking, speed control, and offline
 playback.
-4. Connect CarPlay and verify discovery, play/pause, rewind, forward, resume after reconnect, and next-day discovery.
-5. Record subscriber-visible publication time for seven consecutive days, including one quiet day or simulated missed
-run.
-6. Submit the feed through Apple Podcasts Connect only after this pilot if public directory listing is desired.
+4. While parked, or with a passenger operating controls, verify CarPlay discovery, play/pause, rewind, forward,
+   resume after reconnect, and next-day discovery.
+5. Accept at least three distinct new-code episodes, including a news-rich edition, through complete listening and
+   consequential-claim review. A healthy thin-day skip is required as an additional case and does not count as one of
+   the three episodes.
+6. Record seven consecutive days of evaluation, publication or legitimate skip, exact subscriber delivery, and device
+   discovery time. Include a quiet day or isolated missed-run simulation without deliberately breaking the public feed.
+7. Before directory submission, record the owner's decisions for the retained legacy catalog, content and voice
+   rights, explicit-content status, contact details, regions, transcript settings, and release timing. Every submitted
+   episode must have verified in-content AI disclosure and prominent metadata disclosure.
+8. Validate and submit the exact feed through Apple Podcasts Connect only after the three-episode and seven-day gates
+   both pass and the owner records a go decision. Submitted, technically valid, approved, and publicly discoverable
+   are separate states.
 
 ## Current limitations requiring owner action
 
@@ -570,3 +591,7 @@ run.
 - A supported paid TTS provider requires an owner-supplied API key; consumer ChatGPT/Copilot subscriptions do not supply
   a general workflow API key.
 - Apple Podcasts, CarPlay, automatic downloads, and the seven-day pilot require the owner's iPhone and vehicle.
+- Existing released audio must not be edited to add a disclosure. Retaining or excluding legacy items from a directory
+  submission requires an explicit owner decision and, where needed, current guidance from Apple.
+- Human listening, source-rights review, provider/quota authorization, and Apple Podcasts Connect settings cannot be
+  satisfied by automated repository tests.

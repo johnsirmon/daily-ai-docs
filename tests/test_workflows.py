@@ -66,6 +66,11 @@ def test_delivery_workflow_binds_candidate_and_downloaded_release():
     assert "command -v ffmpeg" in install and "command -v ffprobe" in install
 
 
+def test_scheduled_audio_polish_is_explicit_and_defaults_off():
+    environment = workflow("update-radar.yml")["env"]
+    assert environment["PODCAST_AUDIO_POLISH"] == "${{ vars.PODCAST_AUDIO_POLISH || '0' }}"
+
+
 def test_reviewed_release_uses_existing_locked_publisher_without_regeneration():
     document = workflow("update-radar.yml")
     assert document["jobs"]["publish"]["if"] == "github.ref == 'refs/heads/main'"

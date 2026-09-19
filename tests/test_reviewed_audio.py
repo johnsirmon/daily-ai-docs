@@ -11,6 +11,7 @@ from unittest.mock import Mock
 import pytest
 
 from pipeline.audio import AudioValidationError
+from pipeline.disclosure import AI_NARRATION_DISCLOSURE
 from pipeline.narrate import manifest_to_narration
 from pipeline.render import render_manifest_readme
 from pipeline.reviewed_audio import main, prepare_reviewed_audio
@@ -26,7 +27,7 @@ def digest(data):
 
 
 def draft(source=b"original recording"):
-    narration = "\n  " + CLAIM + " " + (
+    narration = "\n  " + AI_NARRATION_DISCLOSURE + "\n\n" + CLAIM + " " + (
         "Review the command before granting execution in your workspace. " * 80
     ) + "\n"
     return {
@@ -440,6 +441,19 @@ def test_import_binds_measured_audio_without_mutating_sources(inputs, mocked_aud
     assert set(path.name for path in output.iterdir()) == {
         "daily-ai-brief.mp3", "episode-manifest.json", "publication.json",
     }
+
+
+def test_import_rejects_audio_without_spoken_production_disclosure(inputs, mocked_audio):
+    manifest_path, _, output = inputs
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    data["narration"] = data["narration"].replace(AI_NARRATION_DISCLOSURE + "\n\n", "")
+    data["generation"]["transcript"]["sha256"] = digest(data["narration"].encode("utf-8"))
+    manifest_path.write_text(json.dumps(data), encoding="utf-8")
+
+    with pytest.raises(SchemaError, match="production disclosure"):
+        prepare_reviewed_audio(*inputs)
+
+    assert not output.exists()
 
 
 def test_import_transcodes_supplied_composite_without_assembling_components(inputs, mocked_audio):
