@@ -217,6 +217,53 @@ AI_EDITORIAL=required TTS_PROVIDER=edge GEMINI_MODEL=gemini-3.8-flash \
   --history-root . --output-dir .cache/preview --free-tier-confirmed
 ```
 
+#### Review and approve in the local browser
+
+After a preview or reviewed-audio import has produced a `ready` bundle, start the local approval UI from the repository
+root. On Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.review_ui --directory .cache\preview
+```
+
+Replace `.cache\preview` with the exact new output directory when reviewing a Notebook or ad-hoc prepared bundle.
+The command binds only to `127.0.0.1`, opens a tokenized local URL, and serves the bundle's MP3 with byte-range support
+for seeking. It does not contact a provider, modify the feed, upload media, change repository settings, or publish.
+Use `--no-open` to print the URL without opening the default browser, and `--port 0` to select an available local port.
+
+The page displays the exact audio, transcript, show notes, story evidence, and SHA-256 identities. The approval button
+remains disabled until measured browser playback covers at least 98% of the recording, every listening and factual
+review checkbox is selected, and the reviewer enters a name. Seeking over a section does not count that section as
+listened. Approval creates `listening-approval.json` in the reviewed directory using exclusive creation; it will not
+overwrite an earlier decision. The record binds the reviewer, timestamp, checks, notes, duration, measured playback
+coverage, and exact audio, transcript, and manifest hashes.
+
+`listening-approval.json` records `publication_authorized: false`. It proves only that the identified local bytes passed
+the stated human review. It does not authorize provider spending, mastering a different file, changing production
+variables, uploading a release, publishing to RSS, or submitting to Apple. Any edit, re-voice, correction, or mastering
+pass changes the bytes and requires a new bundle and a new listening approval. Press Ctrl+C in the terminal to stop the
+local server.
+
+The UI keeps publication disabled by default. For an actual reviewed schema-3 or schema-4 bundle—not a schema-2 preview—
+restart it with the explicit publication capability:
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.review_ui `
+  --directory .cache\reviewed-release --allow-publish
+```
+
+After listening approval, **Publish approved recording** asks for a final browser confirmation. It writes a separate
+hash-bound `publication-authorization.json`, requires authenticated `gh`, a clean tracked worktree on `main`, and a
+local HEAD equal to the current GitHub `main` commit. Schema-4 requests are reauthorized against current issue state and
+actor permissions. The action creates the immutable release when absent, or verifies every existing release byte before
+recovery, then dispatches `update-radar.yml` with the exact `reviewed_episode` tag. It never publishes schema-1/2
+artifacts or a manifest marked `preview_only`.
+
+A successful click writes `publication-queue.json` and means only that GitHub Actions accepted the dispatch. The normal
+publisher must still revalidate the release, create and deploy the candidate feed, verify subscriber-visible audio and
+artwork, and confirm state. Use the workflow link shown by the UI to distinguish queued, running, failed, and confirmed
+delivery. Do not click repeatedly or replace release assets while a run is pending.
+
 ### Notebook references, not dependencies
 
 [notebooklm-py](https://github.com/teng-lin/notebooklm-py) and

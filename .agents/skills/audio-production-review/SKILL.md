@@ -148,3 +148,21 @@ Report original/final identity, transcript engine/model/hash, claim-review outco
 decode/duration/loudness results, actual listening scope, and remaining blockers.
 Hand the accepted bundle back to the authorized workflow; neither this report nor
 passing tests confirms subscriber delivery.
+
+For a validated unpublished `ready` bundle, use the local review UI so the human
+listener can play the exact MP3, inspect transcript and claim evidence, complete the
+listening checklist, and bind approval to the audio, transcript, and manifest hashes:
+
+```sh
+python -m pipeline.review_ui --directory PATH_TO_READY_BUNDLE
+```
+
+The UI binds only to loopback and writes `listening-approval.json` beside the bundle.
+That record explicitly does not authorize publication. Any changed audio or transcript
+requires a new bundle and a new approval.
+
+For an actual reviewed schema-3/4 bundle, the operator may restart the UI with
+`--allow-publish`. This exposes a second, explicit action only after listening approval.
+It remains unavailable for preview manifests and rechecks GitHub authentication, exact
+remote `main`, release identity, and schema-4 request authorization before dispatching
+the shared publisher. A queued workflow is not subscriber-confirmed publication.
