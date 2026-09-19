@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-19-d6ff21f1",
+  "published_at": "2026-09-19T13:57:49.385299Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:8",
+    "github:anthropics/claude-code": "ok:3",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:0",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:3",
+    "youtube:weekly-digest": "error:ValueError"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:369721da4af03abec430",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.278",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.278",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-19T03:10:40Z",
+      "fetched_at": "2026-09-19T13:57:49.385299Z",
+      "evidence": "What's changed\nChanged auto mode for Claude API and Enterprise users, and on Bedrock, Vertex, Foundry and gateways, to default to the server-side classifier, which does not charge for classifier overhead (CLAUDE_CODE_AUTO_MODE_SERVER=0 opts out on Bedrock, Vertex, Foundry and gateways); warns on billed fallback. See https://code.claude.com/docs/en/auto-mode-classifier-billing\nAdded an Auto mode server row to /status showing whether this session's auto mode classifier runs on the server",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.278",
+        "priority": 18,
+        "stars": 146550,
+        "private": false,
+        "draft": false,
+        "evidence_status": "release_body",
+        "star_delta": 722,
+        "star_velocity": 369.25,
+        "momentum_window_days": 1.96
+      }
+    },
+    {
+      "event_id": "ghrel:028ae8f2158c4c5c7625",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.155.1",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.155.1",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-18T20:03:04Z",
+      "fetched_at": "2026-09-19T13:57:49.385299Z",
+      "evidence": "Bug Fixes\nNew local TUI sessions now leave reasoning summaries disabled by default, fixing request rejection by providers that do not support them. Explicit reasoning-summary settings remain respected. (#46467)\nChangelog\nFull Changelog: https://github.com/openai/codex/compare/rust-v0.155.0...rust-v0.155.1\n#46467 Restore none as the TUI reasoning summary default (@celia-oai)",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.155.1",
+        "priority": 20,
+        "stars": 125270,
+        "private": false,
+        "draft": false,
+        "evidence_status": "release_body",
+        "star_delta": 352,
+        "star_velocity": 180.02,
+        "momentum_window_days": 1.96
+      }
+    },
+    {
+      "event_id": "feed:4cbf947485c627798e6c",
+      "source_type": "official_feed",
+      "title": "Upcoming deprecation of selected GitHub Copilot models in mid-October",
+      "url": "https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october",
+      "product": "GitHub Copilot",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-18T19:00:00Z",
+      "fetched_at": "2026-09-19T13:57:49.385299Z",
+      "evidence": "We will deprecate the following models across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) on October 19th, 2026:\nModel Deprecation date Suggested alternative Gemini 3.7 Flash 2026-10-19 Gemini 3.8 Flash GPT-5.5 2026-10-19 GPT-5.6 Sol GPT-5.4 2026-10-19 GPT-5.6 Sol GPT-5.4 mini 2026-10-19 GPT-5.6 Luna GPT-5 mini 2026-10-19 GPT-5.6 Luna Grok 4.5 2026-10-19 Grok 4.6\nPlease update your workflows and integrations to use the supported models before this date. Under default model enablement, the suggested alternatives are automatically enabled for Copilot Enterprise and Copilot Business customers unless an administrator has turned off the global default or explicitly disabled the model. If you’ve turned off the global default, you can enable access to the alternative models through their model policies in Copilot settings.\nOnce enabled, users will see the model in the Copilot Chat model selector in supported GitHub Copilot experiences.\nNo action is required to remove the models after they have been deprecated.\nGitHub Enterprise customers with questions or concerns are encouraged to contact their account team for assistance.\nShare your feedback\nTo learn more about the models available in Copilot, see our documentation on supported models.\nJoin the GitHub Community to share your feedback.",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/",
+        "evidence_status": "feed_summary"
+      }
+    },
+    {
+      "event_id": "ghrel:01cd6a498d377caff37a",
+      "source_type": "github_release",
+      "title": "Claude Code v2.1.277",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.277",
+      "product": "Claude Code",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-18T18:06:32Z",
+      "fetched_at": "2026-09-19T13:57:49.385299Z",
+      "evidence": "What's changed\nAdded AGENTS.md support: in a project with no CLAUDE.md, Claude Code reads AGENTS.md instead; change it under \"Project instructions\" in /config (not yet on Bedrock, Vertex or Foundry)\nAdded CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY=1 for Claude apps gateways whose only egress is a forward proxy: every outbound request hands the proxy the hostname instead of resolving it locally\nAdded an optional headers: map on Claude apps gateway upstreams, to send static headers to a proxy you run in front of a provider\nAdded a line saying a background task's update is waiting when it finishes while a panel such as /tasks is open\nFixed claude -p and Agent SDK sessions that could hang with no result after an internal error; they now report the error and exit with code 1\nFixed conversations failing every request with \"text content blocks must be non-empty\" when an earlier assistant turn held an empty text block beside other content, including after --resume\nFixed being unexpectedly logged out when an older Claude Code build (for example an IDE extension's bundled CLI) runs on the same machine as the current one\nFixed interactive start-up hanging or showing an error for ANTHROPIC_API_KEY users when ~/.claude.json holds a malformed customApiKeyResponses value\nFixed update checks erroring every 30 minutes, and claude update hanging when a minimum or maximum version is set, if a proxy returns an invalid version; a malformed minimumVersion is now ignored\nFixed claude update on winget- or apk-managed installs reporting \"up to date\" when the version lookup failed\nFixed claude plugin install sometimes failing and breaking the installed copy when reinstalling a plugin version that a session or another program was using; an unchanged copy is now left alone\nFixed Grep and Glob reporting no matches when the search could not start because the system was out of processes, memory or file handles; they now return an error saying so\nFixed the Write tool silently ending the turn as a declined permission when the target path is an existing directory; it now reports a clear error\nFixed the Edit tool treating an escaped backslash followed by uXXXX text as a \\uXXXX escape, which could make an edit of a non-ASCII character rewrite an escaped backslash sequence instead\nFixed the Edit tool reporting \"Invalid regular expression: regular expression too large\" instead of \"String not found in file\" when a very large edit containing non-ASCII text did not match the file\nFixed a turn ending early with \"Path contains null bytes\" when a tool call's file path contained \\u0000 written as an escape sequence; escaped control characters now stay as literal text\nFixed background sessions (claude --bg) exiting when a plugin's LSP server exited or closed its stdin\nFixed a crash (\"Type error\") when opening /mcp or /plugin manage with a malformed claudeAiMcpEverConnected value in ~/.claude.json\nFixed a crash at launch when ~/.claude.json holds a malformed theme value\nFixed a crash (\"unrecoverable interface error\") when the prompt held text containing terminal color codes, for example a prompt recalled from history or text loaded from the external editor\nFixed a crash when resuming a session whose saved history holds an assistant message stored as a plain string\nFixed sessions on slow or heavily loaded machines sometimes exiting with \"Claude Code exited after an unrecoverable interface error\" when the first spinner appeared\nFixed a rare case where the screen could stop updating for the rest of the session after an internal rendering error\nFixed a rare case on Windows where a turn could stop with an error such as \"Out of memory\" right after Claude replied, so that reply's tool calls never ran\nFixed sessions continued after /clear (restart, --continue, --resume) missing part of their first message when a SessionStart hook printed output, causing a full prompt-cache miss",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "anthropics/claude-code",
+        "version": "v2.1.277",
+        "priority": 18,
+        "stars": 146550,
+        "private": false,
+        "draft": false,
+        "evidence_status": "release_body",
+        "star_delta": 722,
+        "star_velocity": 369.25,
+        "momentum_window_days": 1.96
+      }
+    },
+    {
+      "event_id": "feed:90422616cebb86f46f0a",
+      "source_type": "official_feed",
+      "title": "Copilot code review: An improved review experience",
+      "url": "https://github.blog/changelog/2026-09-18-copilot-code-review-an-improved-review-experience",
+      "product": "GitHub Copilot",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-18T20:17:22Z",
+      "fetched_at": "2026-09-19T13:57:49.385299Z",
+      "evidence": "Copilot code review now gives you a clearer view of how a review changes over time, more intelligently auto-resolves its own suggestions, and generates useful commit messages when you accept eligible suggestions in a batch. These updates help you focus on findings that still need attention and make the resulting commits easier to understand. These updates are now generally available.\n🔍 Clearer review progress at a glance\nThe refreshed overview comment shows Copilot’s current assessment of your pull request, the review effort level it used, and lists a summary of the findings it identified in its review. Findings are now grouped into:\nOpen: Issues that have not been addressed yet. These may have a new label, indicating that they were introduced by a new commit.\nResolved since last review: Copilot has validated that you’ve fixed those issues it found earlier.\nEach finding includes its severity and a link to the corresponding inline comment, so you can quickly move from the overview to the relevant code.\nPreviously missed: Issues not introduced by a new commit, but newly found in your existing changes by Copilot’s subsequent review. This section includes the exact details of those comments, as they are not commented anywhere else on your pull request.\nAs you push additional commits and request another review, the overview preserves your progress and logs Copilot’s findings. The prior pull request summary and per-file summaries also remain available.\nComment titles\nEach Copilot code review comment now contains a title concisely describing what was found. These titles are used in the aforementioned overview comment’s issue list and as at-a-glance descriptors of Copilot findings. This way you can prioritize the findings you want to look into first.\nComments are now auto-resolved more intelligently\nNew auto-resolution capabilities allow GitHub Copilot to resolve its own comments based on whether they were addressed between reviews. These capabilities have now been improved:\nWhen a Copilot code review comment gets a reply to leave the issue open, it honors that reply.\nCopilot now resolves comments with a resolution reason, either Won't Fix or Incorrect, based on your subsequent commits.\n✍️ Smart commit messages for batch suggestions\nWhen you commit an eligible, complete batch of Copilot code review suggestions, Copilot now generates a relevant commit title and an optional description based on the selected changes. Batches can also contain non-Copilot comments and will still receive smart commit messages.",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "priority": 20,
+        "feed_url": "https://github.blog/changelog/feed/",
+        "evidence_status": "feed_summary"
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:369721da4af03abec430",
+      "event_ids": [
+        "ghrel:369721da4af03abec430"
+      ],
+      "headline": "Claude Code v2.1.278",
+      "what_changed": "What's changed Changed auto mode for Claude API and Enterprise users, and on Bedrock, Vertex, Foundry and gateways, to default to the server-side classifier, which does not charge for classifier overhead (CLAUDE_CODE_AUTO_MODE_SERVER=0 opts out on Bedrock, Vertex, Foundry and gateways); warns on billed fallback. See https://code.claude.com/docs/en/auto-mode-classifier-billing Added an Auto mode server row to /status showing whether this session's auto mode classifier runs on the server",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.278"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 16.4,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 100.4
+      }
+    },
+    {
+      "story_id": "story:ghrel:028ae8f2158c4c5c7625",
+      "event_ids": [
+        "ghrel:028ae8f2158c4c5c7625"
+      ],
+      "headline": "OpenAI Codex rust-v0.155.1",
+      "what_changed": "Bug Fixes New local TUI sessions now leave reasoning summaries disabled by default, fixing request rejection by providers that do not support them. Explicit reasoning-summary settings remain respected. (#46467) Changelog Full Changelog: https://github.com/openai/codex/compare/rust-v0.155.0...rust-v0.155.1 #46467 Restore none as the TUI reasoning summary default (@celia-oai)",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.155.1"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 14.03,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 100.03
+      }
+    },
+    {
+      "story_id": "story:feed:4cbf947485c627798e6c",
+      "event_ids": [
+        "feed:4cbf947485c627798e6c"
+      ],
+      "headline": "Upcoming deprecation of selected GitHub Copilot models in mid-October",
+      "what_changed": "We will deprecate the following models across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) on October 19th, 2026: Model Deprecation date Suggested alternative Gemini 3.7 Flash 2026-10-19 Gemini 3.8 Flash GPT-5.5 2026-10-19 GPT-5.6 Sol GPT-5.4 2026-10-19 GPT-5.6 Sol GPT-5.4 mini 2026-10-19 GPT-5.6 Luna GPT-5 mini 2026-10-19 GPT-5.6 Luna Grok 4.5 2026-10-19 Grok 4.6 Please update your workflows and integrations to use the supported models before this date. Under default model enablement, the suggested alternatives are automatically enabled for Copilot Enterprise and Copilot Business customers unless an administrator has turned off the global default or explicitly disabled the model. … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 13.68,
+        "impact": 15.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 98.68
+      }
+    },
+    {
+      "story_id": "story:ghrel:01cd6a498d377caff37a",
+      "event_ids": [
+        "ghrel:01cd6a498d377caff37a"
+      ],
+      "headline": "Claude Code v2.1.277",
+      "what_changed": "What's changed Added AGENTS.md support: in a project with no CLAUDE.md, Claude Code reads AGENTS.md instead; change it under \"Project instructions\" in /config (not yet on Bedrock, Vertex or Foundry) Added CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY=1 for Claude apps gateways whose only egress is a forward proxy: every outbound request hands the proxy the hostname instead of resolving it locally Added an optional headers: map on Claude apps gateway upstreams, to send static headers to a proxy you run in front of a provider Added a line saying a background task's update is waiting when it finishes while a panel such as /tasks is open Fixed claude -p and Agent SDK sessions that could … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.277"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 18.0,
+        "novelty": 25.0,
+        "recency": 13.38,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 97.38
+      }
+    },
+    {
+      "story_id": "story:feed:90422616cebb86f46f0a",
+      "event_ids": [
+        "feed:90422616cebb86f46f0a"
+      ],
+      "headline": "Copilot code review: An improved review experience",
+      "what_changed": "Copilot code review now gives you a clearer view of how a review changes over time, more intelligently auto-resolves its own suggestions, and generates useful commit messages when you accept eligible suggestions in a batch. These updates help you focus on findings that still need attention and make the resulting commits easier to understand. These updates are now generally available. … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI coding agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-18-copilot-code-review-an-improved-review-experience"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 14.11,
+        "impact": 6.0,
+        "momentum": 0.0,
+        "noise_penalty": 0.0,
+        "total": 90.11
+      }
+    }
+  ],
+  "noise_notes": [
+    "Excluded OpenAI Codex: no substantive change evidence.",
+    "Excluded Gemini CLI: no substantive change evidence.",
+    "Limited Claude Code: additional same-product updates omitted."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-19. Today's lead is Claude Code v2.1.278. I filtered the rest down to 5 updates worth your attention.\n\nHere is the lead: Claude Code v2.1.278. What's changed Changed auto mode for Claude API and Enterprise users, and on Bedrock, Vertex, Foundry and gateways, to default to the server-side classifier, which does not charge for classifier overhead (CLAUDE_CODE_AUTO_MODE_SERVER=0 opts out on Bedrock, Vertex, Foundry and gateways); warns on billed fallback. See https://code.claude.com/docs/en/auto-mode-classifier-billing Added an Auto mode server row to /status showing whether this session's auto mode classifier runs on the server This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nNext: OpenAI Codex rust-v0.155.1. Bug Fixes New local TUI sessions now leave reasoning summaries disabled by default, fixing request rejection by providers that do not support them. Explicit reasoning-summary settings remain respected. (#46467) Changelog Full Changelog: https://github.com/openai/codex/compare/rust-v0.155.0...rust-v0.155.1 #46467 Restore none as the TUI reasoning summary default (@celia-oai) This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nAlso: Upcoming deprecation of selected GitHub Copilot models in mid-October. We will deprecate the following models across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) on October 19th, 2026: Model Deprecation date Suggested alternative Gemini 3.7 Flash 2026-10-19 Gemini 3.8 Flash GPT-5.5 2026-10-19 GPT-5.6 Sol GPT-5.4 2026-10-19 GPT-5.6 Sol GPT-5.4 mini 2026-10-19 GPT-5.6 Luna GPT-5 mini 2026-10-19 GPT-5.6 Luna Grok 4.5 2026-10-19 Grok 4.6 Please update your workflows and integrations to use the supported models before this date. Under default model enablement, the suggested alternatives are automatically enabled for Copilot Enterprise and Copilot Business customers unless an administrator has turned off the global default or explicitly disabled the model. … [Excerpt; see source for full details.] This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nAfter that: Claude Code v2.1.277. What's changed Added AGENTS.md support: in a project with no CLAUDE.md, Claude Code reads AGENTS.md instead; change it under \"Project instructions\" in /config (not yet on Bedrock, Vertex or Foundry) Added CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY=1 for Claude apps gateways whose only egress is a forward proxy: every outbound request hands the proxy the hostname instead of resolving it locally Added an optional headers: map on Claude apps gateway upstreams, to send static headers to a proxy you run in front of a provider Added a line saying a background task's update is waiting when it finishes while a panel such as /tasks is open Fixed claude -p and Agent SDK sessions that could … [Excerpt; see source for full details.] This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nOne more: Copilot code review: An improved review experience. Copilot code review now gives you a clearer view of how a review changes over time, more intelligently auto-resolves its own suggestions, and generates useful commit messages when you accept eligible suggestions in a batch. These updates help you focus on findings that still need attention and make the resulting commits easier to understand. These updates are now generally available. … [Excerpt; see source for full details.] This is relevant to developers tracking AI coding agents. The call is watch. Read the primary source and assess applicability before changing your workflow.\n\nHigh noise, low signal. Excluded OpenAI Codex: no substantive change evidence. Excluded Gemini CLI: no substantive change evidence.\n\nCoverage note. 1 tracked source was unavailable, so this edition is incomplete.\n\nThat is the useful signal for today. Source links and exact versions are in the episode notes. Keep building, and I will be back tomorrow.",
+  "show_notes": "Claude Code v2.1.278\nWhat changed: What's changed Changed auto mode for Claude API and Enterprise users, and on Bedrock, Vertex, Foundry and gateways, to default to the server-side classifier, which does not charge for classifier overhead (CLAUDE_CODE_AUTO_MODE_SERVER=0 opts out on Bedrock, Vertex, Foundry and gateways); warns on billed fallback. See https://code.claude.com/docs/en/auto-mode-classifier-billing Added an Auto mode server row to /status showing whether this session's auto mode classifier runs on the server\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.278\n\nOpenAI Codex rust-v0.155.1\nWhat changed: Bug Fixes New local TUI sessions now leave reasoning summaries disabled by default, fixing request rejection by providers that do not support them. Explicit reasoning-summary settings remain respected. (#46467) Changelog Full Changelog: https://github.com/openai/codex/compare/rust-v0.155.0...rust-v0.155.1 #46467 Restore none as the TUI reasoning summary default (@celia-oai)\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.155.1\n\nUpcoming deprecation of selected GitHub Copilot models in mid-October\nWhat changed: We will deprecate the following models across all GitHub Copilot experiences (including Copilot Chat, inline edits, ask and agent modes, and code completions) on October 19th, 2026: Model Deprecation date Suggested alternative Gemini 3.7 Flash 2026-10-19 Gemini 3.8 Flash GPT-5.5 2026-10-19 GPT-5.6 Sol GPT-5.4 2026-10-19 GPT-5.6 Sol GPT-5.4 mini 2026-10-19 GPT-5.6 Luna GPT-5 mini 2026-10-19 GPT-5.6 Luna Grok 4.5 2026-10-19 Grok 4.6 Please update your workflows and integrations to use the supported models before this date. Under default model enablement, the suggested alternatives are automatically enabled for Copilot Enterprise and Copilot Business customers unless an administrator has turned off the global default or explicitly disabled the model. … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october\n\nClaude Code v2.1.277\nWhat changed: What's changed Added AGENTS.md support: in a project with no CLAUDE.md, Claude Code reads AGENTS.md instead; change it under \"Project instructions\" in /config (not yet on Bedrock, Vertex or Foundry) Added CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY=1 for Claude apps gateways whose only egress is a forward proxy: every outbound request hands the proxy the hostname instead of resolving it locally Added an optional headers: map on Claude apps gateway upstreams, to send static headers to a proxy you run in front of a provider Added a line saying a background task's update is waiting when it finishes while a panel such as /tasks is open Fixed claude -p and Agent SDK sessions that could … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/anthropics/claude-code/releases/tag/v2.1.277\n\nCopilot code review: An improved review experience\nWhat changed: Copilot code review now gives you a clearer view of how a review changes over time, more intelligently auto-resolves its own suggestions, and generates useful commit messages when you accept eligible suggestions in a batch. These updates help you focus on findings that still need attention and make the resulting commits easier to understand. These updates are now generally available. … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI coding agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.blog/changelog/2026-09-18-copilot-code-review-an-improved-review-experience\n\nHigh noise / low signal\n- Excluded OpenAI Codex: no substantive change evidence.\n- Excluded Gemini CLI: no substantive change evidence.\n- Limited Claude Code: additional same-product updates omitted.\n\nCoverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "edition": "normal"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-19-d6ff21f1/daily-ai-brief.mp3",
+    "size_bytes": 2134368,
+    "duration_secs": 355.728,
+    "sha256": "49bbc524b9322cdaef2d813580b85b8e018737fd7a22d50182b1ff9ebe1bbeab",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}
