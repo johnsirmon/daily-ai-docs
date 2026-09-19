@@ -61,6 +61,9 @@ command is a routine validation command.
 ## Research and outline
 
 1. Freeze the request's UTC evidence window. Discover public primary URLs, then inspect their actual content.
+   Exa may be supplied as an MCP tool by the active agent host (including VS Code or Hermes); it is discovery
+   assistance, not a Python pipeline dependency or evidence authority. Do not require Exa when another bounded
+   discovery path is available, and never treat search snippets as approved evidence.
 2. Verify original publication dates, not search snippets, page-update timestamps, or an old paper's revision date.
 3. Use `source-onboarding` retrieval boundaries and `evidence-led-review` claim worksheets. Research requires
    full-text method/limitations review; archive no more than the allowed excerpts and provenance hashes.

@@ -82,7 +82,6 @@ canonical feed and will not emit migration metadata while the destination is una
 5. Optional secrets:
    - `OPENAI_API_KEY`: required when `TTS_PROVIDER=openai`; can also back synthesis.
    - `AI_API_KEY`: dedicated synthesis key when it should differ from TTS.
-   - `EXA_API_KEY`: only for public ad-hoc research.
 6. Weekly video discovery secret:
    - `YOUTUBE_API_KEY`: a Google Cloud key with YouTube Data API v3 enabled. Restrict it to that API. The four
 configured searches use roughly 400 search quota units per weekly run, plus low-cost detail requests.
@@ -93,6 +92,10 @@ secret, and delete the old key. Repository-side controls cannot revoke a disclos
 
 The retired GitHub Models endpoint and `GITHUB_TOKEN` are not used for inference. `GITHUB_TOKEN` is limited to GitHub
 collection and publication.
+
+`EXA_API_KEY` belongs to the local agent host when Exa MCP discovery is enabled; it is not required by Actions or the
+Python pipeline. Keep it in the host's private environment (for example, the environment consumed by VS Code or
+Hermes), never in repository files, issue text, command examples, or logs.
 
 Keep `TTS_PROVIDER=edge` for the existing no-key deployment. It is treated as best-effort and must pass full decode,
 duration, and size checks before publication. `TTS_PROVIDER=openai` is an optional paid alternative requiring a supported
@@ -310,6 +313,12 @@ a new article update or paper revision is not a new original publication. A thin
 These commands are run from the repository root. Request/issue intake contacts GitHub through your signed-in `gh`;
 brief and prepare are local. The paper collector is explicitly networked. `publish` uploads a draft release and
 dispatches the live shared publisher, so use it only with an authorized publish-now request.
+
+Public URL discovery may use Exa through MCP when the active agent host provides it. VS Code reads the repository's
+MCP declaration; Hermes uses its user-level MCP configuration. The Python pipeline does not import the Exa SDK or
+depend on an MCP client. In either host, Exa results are discovery leads only: inspect the public primary page,
+verify its original publication date and evidence window, and include only validated source events in the packet.
+Do not commit host configuration, credentials, raw search results, or search snippets as publication evidence.
 
 ```powershell
 uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.adhoc request `

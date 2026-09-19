@@ -93,7 +93,9 @@ authenticated collection; Actions does not automatically provide one to your she
 - Weekly discovery uses `YOUTUBE_API_KEY`, restricted to YouTube Data API v3.
 - The default Edge TTS path needs no key but is best-effort. `TTS_PROVIDER=openai` requires `OPENAI_API_KEY`.
 - Synthesis is off by default. Optional or required synthesis uses a dedicated `AI_API_KEY` or `OPENAI_API_KEY`.
-- `EXA_API_KEY` is only for public ad-hoc research, not the scheduled daily pipeline.
+- `EXA_API_KEY` is only for host-provided Exa MCP discovery during public ad-hoc research, not a Python dependency
+  or scheduled daily-pipeline secret. VS Code can use the repository MCP declaration; Hermes keeps its MCP
+  configuration in the user's profile. Do not commit or copy host credentials into this repository.
 
 Store workflow credentials in GitHub Actions secrets, never in tracked files, issues, logs, or command examples with real
 values. See [GitHub setup](docs/OPERATIONS.md#github-setup) and [SECURITY.md](SECURITY.md) for permissions and key rotation.
