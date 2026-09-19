@@ -26,7 +26,8 @@ Some research and quiet-day functionality may already exist. Its implementation 
 in this brief; check existing behavior before proposing new components.
 
 This document defines desired outcomes. It does not change pipeline behavior, publication policy,
-or historical episodes.
+or historical episodes. Section 9 maps the brief to the current implementation and plans dependency-free
+improvements; those changes are not yet implemented.
 
 ## 1. Explain the change and its consequences
 
@@ -281,6 +282,224 @@ In particular, inspect the existing quiet-day research path before proposing a r
 Preserve the manifest as the source of truth, traceable claims, publication safeguards, and historical episode identity.
 Do not loosen evidence checks to obtain more conversational narration.
 Later schema, provider, ranking, or publication-policy changes need their own scoped implementation and validation.
+
+## 9. Dependency-free implementation plan
+
+### Scope and non-goals
+
+Extend the manifest-driven daily pipeline, not the legacy README-to-podcast path.
+Keep [requirements.txt](requirements.txt) and [requirements.lock](requirements.lock) unchanged.
+Use the existing Python standard library, installed packages, pytest fixtures, source adapters, model client,
+and audio tools. Do not add an NLP package, crawler, vector store, database, service, or model/provider.
+Existing dependencies still need to be available in the execution environment; no new ones are required.
+
+Keep these boundaries throughout implementation:
+
+- No automatic activation of grounded editorial mode, new credentials, extra model calls, or increased quotas.
+  Dependency-free does not mean network-free or cost-free.
+- No new required manifest fields or replacement editorial framework. Prefer the existing story fields,
+  `editorial.spoken_text`, `editorial.claims`, and `paper_review`.
+- No post-verification prose rewriting. Changes to generated speech happen before independent verification.
+- No weakening of claim-local quantity checks, full-text requirements, source-health checks, or media validation.
+- No edits to historical episodes, release media, GUIDs, publication receipts, state, or generated output.
+- No automatic research-only episode or shorter grounded-episode policy. Those require separate approval.
+
+### Inspected baseline and gaps
+
+This mapping is based on source and test inspection at commit `7045cfe`, not a listening review.
+Deployed repository-variable overrides, live source availability, and current episode quality were not audited.
+"Already effective" below means an explicit implementation safeguard with regression coverage, not proven
+listener satisfaction. Behavioral changes still require rerunning the relevant tests.
+
+| Requirement | Classification | Existing behavior and gap |
+| --- | --- | --- |
+| Change and relevance | Present but ineffective in fallback | Generic relevance/advice is emitted verbatim. |
+| Grounded explanatory writing | Present; effectiveness unverified | Drafting and verification already request impact. |
+| Earlier capability and comparisons | Missing end-to-end | Article completion is not comparative research. |
+| Grouping and noise filtering | Present; effectiveness unverified | Grounded grouping exists; default mode differs. |
+| Natural references and jargon | Missing targeted checks | Passage duplication checks do not assess explanation. |
+| Claims and quantities | Already effective structural safeguards | Semantic entailment still needs verification. |
+| Attention versus adoption | Present, partial; unverified | Star deltas exist; wider comparable signals do not. |
+| Full-text paper review | Present; effectiveness unverified | Collection and structured review already exist. |
+| Research-only quiet-day coverage | Missing by explicit policy | Papers supplement product stories, not replace them. |
+| Healthy skips versus failures | Already effective safeguard | Failed coverage/provider stages cannot become success. |
+| Same-source listening comparison | Unverified for this brief | No before/after listening evidence collected here. |
+
+Concrete implementation anchors:
+
+- [daily.py](pipeline/daily.py) selects deterministic or grounded processing.
+  [topics.yaml](topics/topics.yaml) disables grounded editorial by default; the
+  [daily publisher](.github/workflows/update-radar.yml) also defaults `AI_EDITORIAL` to `off`.
+  `AI_SYNTHESIS` only reorders/relabels deterministic stories; it does not write richer explanations.
+- [rank.py](pipeline/rank.py), `event_to_story`, supplies the exact generic "Read the primary source and assess"
+  rationale. [narrate.py](pipeline/narrate.py), `manifest_to_narration`, speaks it in schema 1.
+  Changing only the grounded prompt would leave this path unchanged.
+- [synthesis.py](pipeline/synthesis.py) already drafts and separately verifies schema-2 prose in two requests.
+  [schema.py](pipeline/schema.py) already checks evidence IDs, exact quotations, quantities, research limitations,
+  and repeated sentences. Its primary-only contract does not admit independent commentary as equivalent evidence.
+- [detail.py](pipeline/sources/detail.py) completes short or excerpted articles through bounded, allowlisted fetches.
+  It does not retrieve prior capability or alternatives just because a story lacks context.
+- [papers.py](pipeline/sources/papers.py) collects recent, unreviewed arXiv HTML full text.
+  [text.py](pipeline/sources/text.py) rejects missing or oversized full text rather than silently truncating it.
+  Selection permits one paper only alongside product news; preparation also rejects research-only output.
+- [audio_quality.py](pipeline/audio_quality.py) detects adjacent repeated passages of at least 12 words,
+  not repeated product names in otherwise different sentences. Its preparation check is opt-in.
+- [evidence_archive.py](pipeline/evidence_archive.py) already retains bounded claim excerpts and provenance hashes.
+  [preview.py](pipeline/preview.py) already isolates preparation from publication and exports review artifacts.
+  Neither needs a replacement subsystem.
+
+### Phase 1: Establish a reproducible editorial baseline
+
+**Extend:** [editorial fixtures](tests/fixtures/editorial.json),
+[grounded tests](tests/test_grounded_editorial.py), and
+[selective-publication tests](tests/test_selective_publication.py).
+
+1. Add small synthetic or bounded public-source cases for news-rich coverage, thin news with a suitable paper,
+   paper-only candidates, a source outage, a jargon-heavy change, and a limited-novelty integration.
+2. Include repeated product names, routine patch churn, a material security fix requiring an exact version,
+   unsupported benefit claims, and the producer-directive examples from this brief.
+3. Freeze the event content, timestamps, confirmed history, configuration, and mocked model outputs.
+   Compare old and revised behavior against the same inputs in both schema-1 and schema-2 paths.
+4. Record per-story pass/fail against section 7. Separate automated findings from semantic review and actual listening.
+   Use existing test helpers and preview artifacts, not a new evaluation framework.
+
+**Acceptance:** Every failure has a reproducible case and expected outcome. Tests use no live provider,
+search, TTS, or source calls. The baseline records which feedback is reproduced and which remains unverified;
+do not claim every historical episode has the reported defects.
+
+### Phase 2: Improve the existing spoken paths
+
+**Extend:** [rank.py](pipeline/rank.py), [narrate.py](pipeline/narrate.py),
+[synthesis.py](pipeline/synthesis.py), and existing spoken-text validation.
+
+1. In deterministic narration, remove generic relevance filler, producer-like advice, repetitive lead announcements,
+   and spoken action-label recitation. Keep source-backed change wording, applicability warnings, and written
+   recommendations. Do not fabricate explanatory context to make deterministic output sound researched.
+2. Strengthen the existing draft and verifier instructions together: explain the before/after difference, define
+   necessary unfamiliar terms, identify affected and unaffected workflows, and retain material limitations.
+   Use a concrete hypothetical workflow only when its factual premises are supported; label it as an example.
+3. Keep full product identification at first use. Request natural later references only where the referent is clear.
+   Keep exact versions when needed for a fix, migration, or compatibility boundary; leave other identifiers in notes.
+4. Add targeted checks for known producer directives, including "Include an explicit reasoning summary."
+   Reject new grounded drafts containing those directives rather than silently deleting already verified text.
+   Preserve legitimate listener advice such as checking dependence on a documented old default.
+5. Reuse the existing repetition helper for diagnostics. Treat adjacent product-name repetition and unexplained
+   terminology as review findings, not blanket regex bans. Do not build a new NLP detector or automatic synonymizer.
+
+**Acceptance:** Fixture narration has zero producer directives, retains every necessary version/condition,
+and does not add unsupported capabilities or quantities. Grounded explanations pass the existing independent
+verification step within the same two-call budget. No verified or imported transcript is rewritten afterward.
+Deterministic output improves in clarity without claiming the analytical depth of grounded mode.
+
+**Tests:** Extend [test_narrate.py](tests/test_narrate.py), [test_editorial.py](tests/test_editorial.py),
+[test_grounded_editorial.py](tests/test_grounded_editorial.py), and [test_schema.py](tests/test_schema.py).
+Test positive listener advice as well as negative instruction leaks. Keep stricter new-draft checks from
+retroactively invalidating immutable historical manifests.
+
+### Phase 3: Improve evidence use before adding discovery
+
+**Extend:** Existing article enrichment, evidence payloads, claim review, and written notes.
+
+1. First use context already present in the collected primary evidence. Require the draft to explain supported
+   prior behavior and tradeoffs rather than repeat release-note fragments. If evidence does not establish a
+   comparison, qualify or omit it; history remains a novelty check, not a factual source.
+2. For sources whose existing enrichment loses necessary context, improve article extraction or bounded
+   detail retention through the current adapter. Retain the actual detail URL and provenance, request/byte limits,
+   host allowlists, explicit failure diagnostics, and publication excerpt limits.
+   A URL in `corroboration_urls` alone is not proof that its contents were fetched or support a claim.
+3. During operator-assisted review, use already available search/page-fetch tools to investigate prior capability,
+   alternatives, affiliations, and contrary evidence. Record source dates and distinguish older background from news.
+   Do not add Exa or another search SDK, CI secret, or mandatory automated search stage.
+4. Keep independent commentary attributed in the operator's review material. Do not relabel it as primary,
+   concatenate unrelated pages into an unattributed event, or bypass the primary-only schema-2 verifier.
+   Automated use of cross-source background or secondary opinions needs the separately scoped contract below.
+5. Update [daily show notes](pipeline/daily.py) and [README rendering](pipeline/render.py) together to expose
+   existing supported context, conclusions, research results, and limitations without internal instructions.
+   Correct mode-specific presentation text: schema-2 narration is conversational, not required to recite action labels.
+
+**Acceptance:** Every added spoken fact remains traceable through the existing claim/event/quote relationship.
+Archiving preserves enough exact support to validate the manifest after full text is removed.
+Missing context is visible in review findings, not disguised as completed research.
+Historical serialization and recovery continue to work without new required fields.
+
+**Tests:** Extend [source-text tests](tests/test_source_text.py), [grounded tests](tests/test_grounded_editorial.py),
+[archive tests](tests/test_evidence_archive.py), [render tests](tests/test_render.py),
+and [recovery tests](tests/test_recovery.py). Include missing context, misleading comparisons,
+enrichment failure, and archive round trips.
+
+### Phase 4: Refine usefulness and research within current policy
+
+**Extend:** [rank.py](pipeline/rank.py), [daily.py](pipeline/daily.py), and the existing paper-review prompts.
+
+1. Tune selection only against demonstrated fixture failures. Preserve substantive-evidence gating before scoring,
+   same-product limits, stable/prerelease distinctions, and evidence-based novelty checks.
+   Do not suppress a material fix merely because its version looks like a patch.
+2. Add vendor-neutral counterfactual tests: equivalent evidence, priority, dates, and measured signals must receive
+   equivalent eligibility and scoring regardless of product name. Audit configured priorities separately;
+   do not silently change weights, tracked sources, or product budgets under a narration fix.
+3. Keep measured star momentum as a bounded discovery signal, never a claim of adoption or quality.
+   Confirm valid observation dates and comparable baselines; do not infer acceleration from a single delta.
+   Current model evidence payloads omit momentum metadata, so do not instruct models to narrate those trends.
+   Leave them unspoken until source, window, baseline, and claim-level support can all be retained.
+4. Improve existing `paper_review` content: method and evaluation setting, author-reported result, prior-work
+   comparison when supported by the supplied paper, practical requirements, limitations, and proportionate takeaway.
+   A paper's account of prior work remains author-reported, not an independent comparison.
+5. Exercise thin product-news plus research, paper-only, insufficient full text, repeated papers, oversized papers,
+   and research-service failure. Retain the 30-day first-publication window and one-paper limit.
+   Healthy no-news still skips; source/provider failure must remain distinguishable from that outcome.
+
+**Acceptance:** Routine churn cannot outrank meaningful changes solely through attention signals.
+Valid security/compatibility fixes remain eligible. Research narration retains its exact reviewed limitations,
+author-reported/not-reproduced disclosure, and existing useful-word and measured-duration budgets.
+No research-only episode, filler, or automatic reduction of minimum episode length is introduced.
+
+**Tests:** Extend [test_rank.py](tests/test_rank.py), [test_papers.py](tests/test_papers.py),
+[test_selective_publication.py](tests/test_selective_publication.py), and
+[test_grounded_editorial.py](tests/test_grounded_editorial.py).
+
+### Phase 5: Verify quality and roll out without publication changes
+
+Implement phases in order, using small changesets with their regression tests. Then:
+
+1. Run the directly affected tests, followed by the full existing suite before committing.
+   Use the already provisioned Python 3.11 environment with locked dependencies; do not introduce test tooling.
+2. Run the offline operating contracts in [test_skills.py](tests/test_skills.py) and
+   [test_workflows.py](tests/test_workflows.py), plus `pipeline.publish_check` and `pipeline.drift_check`.
+   These inspect contracts/artifacts; they do not prove semantic quality or subscriber delivery.
+3. Review old/revised scripts using the same evidence and confirmed history.
+   Reuse test stubs for repeatable comparisons; a live preview recollects news and is not itself a controlled A/B test.
+4. Only after explicit authorization for existing provider access/quota, use the existing unpublished preview flow.
+   It is networked, may consume quota, and writes a fresh preview directory; it must not publish.
+   Keep current production history read-only and verify that data, README, and feed files remain unchanged.
+5. For each review case, record instruction-leak count, repeated-name findings, unexplained-term findings,
+   unnecessary-version findings, unsupported-claim count, and pass/fail for every explanatory criterion in section 7.
+   Passing requires zero instruction leaks and unsupported claims, and resolution of every material review finding.
+6. Listen to the complete representative news-rich sample and a thin-news sample that legitimately qualifies.
+   If thin news correctly skips, record that result and use the mocked thin-news script for textual checks instead.
+   Record listener identity, audio checksum, portions reviewed, and remaining gaps.
+   The listener must explain each main story's change, affected workflow, and principal limitation without notes.
+7. Update the directly affected [operations guide](docs/OPERATIONS.md) and generated presentation contracts
+   alongside implementation. Keep deployment flags unchanged until the owner accepts the preview.
+   Roll back code/configuration for future preparation if needed; never replace already published media.
+
+No implementation validation in this plan requires dispatching a publisher, calling `finalize` or `confirm`,
+or performing live collection, model generation, ASR, or TTS during ordinary tests.
+Actual audio acceptance is a separate authorized step and cannot be replaced by passing mocked tests.
+
+### Explicitly deferred decisions
+
+These remain visible gaps, not implied deliverables of the compatible changes above:
+
+- **Research-only quiet days:** Requires an approved publication-policy change across selection, preparation,
+  skip/health behavior, budgets, rendering, and tests. Extend the current paper path if approved; do not create
+  a second research pipeline.
+- **Automated background and independent comparisons:** Requires a scoped evidence/provenance contract for
+  dated background and attributed secondary interpretation. Define claim-to-source linkage and archive behavior
+  before expanding ingestion. Never weaken primary-source requirements just to satisfy a prompt.
+- **Broader trend metrics:** Contributor, download, dependency, governance, and discussion trends need comparable
+  history and coverage assessment. Do not add collectors or narrate adoption until that evidence exists.
+- **Provider or duration changes:** New voices, services, credentials, model calls, and shorter grounded editions
+  are unnecessary for the initial improvements and outside this plan's compatible rollout.
 
 ## Research informing this brief
 

@@ -42,6 +42,32 @@ Dependency installation may access the network. Once dependencies are installed,
 credentials. Preparation writes `.cache/episode-manifest.json` and `.cache/publication.json`; it does not rewrite
 `README.md`, `podcast.xml`, or publication state. Do not use the legacy `pipeline.main --dry-run` as the daily smoke test.
 
+### Persistent local environment
+
+For repeated development, use a repo-local Python 3.11 `.venv` instead of an unrelated global or conda environment.
+The environment is ignored by Git. On Windows, run this one-time setup from the repository root:
+
+```powershell
+uv venv --python 3.11 .venv
+uv pip sync --python .\.venv\Scripts\python.exe requirements.lock
+```
+
+Reuse an existing `.venv`; do not recreate or resync it for each task. Setup may download Python or locked packages.
+In VS Code, select `.venv\Scripts\python.exe` once for this workspace; on Linux/macOS select `.venv/bin/python`.
+Pass the same interpreter's absolute path to environment tools rather than invoking an environment picker again.
+Keep machine-specific editor settings local.
+
+On Windows, subsequent checks can run directly without shell activation or dependency resolution:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q tests\test_daily.py
+.\.venv\Scripts\python.exe -m pipeline.publish_check
+.\.venv\Scripts\python.exe -m pipeline.drift_check
+```
+
+These checks are offline and do not publish. Resync from the lockfile only when it changes or required packages
+are missing; do not add dependencies merely to configure the editor.
+
 Install `ffmpeg` and `ffprobe` for live audio preparation. Live source collection, synthesis, TTS, and delivery checks
 can make external requests; they are not part of the network-free dry-run. Do not run `finalize`, `confirm`, or publisher
 workflows as a routine contribution check. Ad-hoc specials require the request-bound reviewed-audio workflow;

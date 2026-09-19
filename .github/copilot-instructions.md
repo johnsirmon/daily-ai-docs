@@ -40,6 +40,9 @@ uv run --with pillow python scripts/generate_artwork.py
 Run commands from the repository root. Dependency resolution may access the network; the installed test suite and
 daily dry-run need no credentials. Live audio preparation requires `ffmpeg` and `ffprobe`. Do not use legacy
 `pipeline.main --dry-run` as the daily smoke test or run `finalize`, `confirm`, or publisher workflows as routine checks.
+Reuse the checkout's Python 3.11 `.venv` when present (`.venv\Scripts\python.exe` on Windows, `.venv/bin/python` elsewhere).
+Pass that interpreter's absolute path to environment tools; do not repeatedly select, recreate, or reinstall an environment.
+See [persistent local setup](../CONTRIBUTING.md#persistent-local-environment) when provisioning is needed.
 The dry-run overwrites `.cache/episode-manifest.json` and `.cache/publication.json`; use a separate checkout if those
 files belong to an unresolved preparation or recovery.
 
