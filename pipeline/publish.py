@@ -13,6 +13,7 @@ from typing import Any, Dict
 import requests
 from PIL import Image
 
+from .podcast import episode_image_url, validate_episode_image_url
 from .schema import EpisodeManifest
 
 _ITUNES_NS = "http://www.itunes.com/dtds/podcast-1.0.dtd"
@@ -63,7 +64,33 @@ def verify_remote_audio(
     }
 
 
-def validate_feed_file(path: str | Path) -> Dict[str, Any]:
+def validate_episode_artwork(content: bytes) -> str:
+    """Decode the exact bytes; an extension or HTTP success is not image evidence."""
+    if not content or len(content) >= 1_000_000:
+        raise PublicationError("episode artwork must be nonempty and under 1 MB")
+    try:
+        with Image.open(io.BytesIO(content)) as image:
+            width, height = image.size
+            if (image.format != "JPEG" or image.mode != "RGB"
+                    or width != height or not 1400 <= width <= 3000):
+                raise PublicationError("episode artwork must be a 1400-3000 square RGB JPEG without alpha")
+            image.load()
+    except PublicationError:
+        raise
+    except Exception as exc:
+        raise PublicationError("episode artwork is not a decodable image") from exc
+    return f"{width}x{height} RGB JPEG"
+
+
+def validate_local_episode_artwork(image_url: str, root: Path) -> str:
+    validate_episode_image_url(image_url)
+    asset = root / "assets" / "episodes" / image_url.rsplit("/", 1)[1]
+    if not asset.resolve().is_relative_to(root.resolve()) or not asset.is_file():
+        raise PublicationError(f"episode artwork is missing or outside the site: {asset}")
+    return validate_episode_artwork(asset.read_bytes())
+
+
+def validate_feed_file(path: str | Path, *, artwork_root: Path | None = None) -> Dict[str, Any]:
     try:
         root = ET.parse(path)
     except ET.ParseError as exc:
@@ -78,6 +105,12 @@ def validate_feed_file(path: str | Path) -> Dict[str, Any]:
     guids: set[str] = set()
     urls: set[str] = set()
     for item in items:
+        try:
+            image_url = episode_image_url(item)
+        except ValueError as exc:
+            raise PublicationError(str(exc)) from exc
+        if image_url is not None and artwork_root is not None:
+            validate_local_episode_artwork(image_url, artwork_root)
         guid = item.findtext("guid") or ""
         enclosure = item.find("enclosure")
         if not guid or guid in guids or enclosure is None:
@@ -175,6 +208,18 @@ def verify_remote_feed(
         raise PublicationError("show artwork is not a decodable image") from exc
     if width != height or not 1400 <= width <= 3000 or artwork.mode not in {"RGB", "L"}:
         raise PublicationError(f"show artwork is not Apple-compatible: {width}x{height} {artwork.mode}")
+    try:
+        episode_url = episode_image_url(items[0])
+    except ValueError as exc:
+        raise PublicationError(str(exc)) from exc
+    episode_artwork = None
+    if episode_url is not None:
+        episode_response = session.get(episode_url, timeout=30, allow_redirects=False)
+        if episode_response.status_code != 200:
+            raise PublicationError(f"episode artwork returned {episode_response.status_code}")
+        if episode_response.headers.get("Content-Type", "").split(";", 1)[0].lower() != "image/jpeg":
+            raise PublicationError("episode artwork must be served as image/jpeg")
+        episode_artwork = validate_episode_artwork(episode_response.content)
     return {
         "status": "ok",
         "latest_guid": latest_guid,
@@ -185,4 +230,5 @@ def verify_remote_feed(
         "candidate_verified": candidate is not None,
         "sha256_verified": candidate is not None,
         "artwork": f"{width}x{height} {artwork.mode}",
+        **({"episode_artwork": episode_artwork, "episode_image_url": episode_url} if episode_url else {}),
     }

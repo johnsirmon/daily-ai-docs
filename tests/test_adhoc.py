@@ -434,6 +434,21 @@ def test_special_display_copy_does_not_change_reviewed_contract():
     assert manifest.to_dict() == before
 
 
+def test_special_reserved_art_is_display_only(tmp_path):
+    from pipeline.podcast_metadata import manifest_presentation
+    manifest = EpisodeManifest.from_dict(long_draft(ready=True, publish_now=True))
+    before = manifest.to_dict()
+    image_url = "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/special-v1.jpg"
+    catalog = tmp_path / "catalog.json"
+    catalog.write_text(json.dumps({
+        "schema_version": 1, "episodes": {manifest.episode_id: {"image_url": image_url}},
+    }))
+    presentation = manifest_presentation(manifest, metadata_path=catalog)
+    assert presentation["image_url"] == image_url
+    assert "Special episode" in presentation["description"]
+    assert manifest.to_dict() == before
+
+
 def test_duplicate_issue_form_fields_rejected():
     with pytest.raises(ValueError, match="duplicate"):
         request_from_issue({"body": "### Topic\nA\n### Topic\nB"})

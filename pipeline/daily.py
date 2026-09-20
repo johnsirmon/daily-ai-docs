@@ -20,7 +20,7 @@ from .evidence_archive import publication_evidence
 from .narrate import manifest_to_narration
 from .podcast import prepend_episode
 from .podcast_metadata import manifest_presentation
-from .publish import validate_feed_file, verify_remote_audio, verify_remote_feed
+from .publish import validate_feed_file, validate_local_episode_artwork, verify_remote_audio, verify_remote_feed
 from .rank import event_to_story, group_editorial_stories, select_editorial_events, select_events
 from .render import write_manifest_readme
 from .schema import EpisodeManifest, SourceEvent
@@ -595,6 +595,10 @@ def finalize(
         "file_size_bytes": int(manifest.audio["size_bytes"]),
         "duration_secs": float(manifest.audio["duration_secs"]),
     }
+    if feed_path.exists():
+        validate_feed_file(feed_path, artwork_root=feed_path.parent)
+    if "image_url" in episode:
+        validate_local_episode_artwork(episode["image_url"], feed_path.parent)
     prepend_episode(episode, path=str(feed_path))
     validate_feed_file(feed_path)
     manifest.status = "candidate"

@@ -10,8 +10,11 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from .disclosure import episode_metadata_disclosure
-from .podcast import _coerce_pubdate, _parse_duration, set_episode_presentation, set_show_presentation
-from .publish import validate_feed_file
+from .podcast import (
+    _coerce_pubdate, _parse_duration, set_episode_image, set_episode_presentation,
+    set_show_presentation, validate_episode_image_url,
+)
+from .publish import validate_feed_file, validate_local_episode_artwork
 from .schema import EpisodeManifest, Story
 from .sources.text import bounded_text, clean_source_text
 
@@ -35,7 +38,7 @@ def _change(story: Story) -> str:
     return text.lstrip("- ").strip()
 
 
-def manifest_presentation(manifest: EpisodeManifest) -> dict[str, str]:
+def _manifest_copy(manifest: EpisodeManifest) -> dict[str, str]:
     """Use extractive previews; all qualifications remain in the complete notes."""
     manifest.validate(require_audio=False)
     disclosure = episode_metadata_disclosure(manifest.schema_version)
@@ -78,6 +81,22 @@ def manifest_presentation(manifest: EpisodeManifest) -> dict[str, str]:
     return {"title": title, "description": "\n\n".join(part for part in parts if part)}
 
 
+def manifest_presentation(
+    manifest: EpisodeManifest, *, metadata_path: Path | None = Path("data/podcast-metadata.json"),
+) -> dict[str, str]:
+    """Apply optional reviewed presentation without changing serialized manifests."""
+    presentation = _manifest_copy(manifest)
+    if metadata_path is not None and metadata_path.exists():
+        entry = load_catalog(metadata_path).get(manifest.episode_id, {})
+        if "title" in entry:
+            presentation = {
+                "title": entry["title"], "description": entry["summary"] + "\n\n" + manifest.show_notes,
+            }
+        if "image_url" in entry:
+            presentation["image_url"] = entry["image_url"]
+    return presentation
+
+
 def load_catalog(path: Path) -> dict[str, dict[str, str]]:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or set(data) != {"schema_version", "episodes"} or data["schema_version"] != 1:
@@ -88,8 +107,13 @@ def load_catalog(path: Path) -> dict[str, dict[str, str]]:
     for guid, entry in entries.items():
         if not isinstance(guid, str) or not guid or not isinstance(entry, dict):
             raise ValueError("invalid podcast metadata entry")
-        if set(entry) != {"title", "summary", "evidence_url"}:
-            raise ValueError(f"{guid}: title, summary and evidence_url are required")
+        copy_fields = {"title", "summary", "evidence_url"}
+        if set(entry) not in (copy_fields, copy_fields | {"image_url"}, {"image_url"}):
+            raise ValueError(f"{guid}: require title, summary and evidence_url, or image_url only; unknown fields forbidden")
+        if "image_url" in entry:
+            validate_episode_image_url(entry["image_url"])
+        if "title" not in entry:
+            continue
         for key, limit in (("title", TITLE_LIMIT), ("summary", SUMMARY_LIMIT), ("evidence_url", 500)):
             value = entry[key]
             if not isinstance(value, str) or not value.strip() or len(value) > limit:
@@ -111,10 +135,14 @@ def refresh_catalog(
     manifest_dir: Path,
     *,
     write: bool = False,
+    artwork_only: bool = False,
 ) -> dict[str, int]:
     """Explicit, atomic, idempotent display-only migration of the retained feed."""
-    validate_feed_file(feed_path)
+    validate_feed_file(feed_path, artwork_root=feed_path.parent)
     entries = load_catalog(metadata_path)
+    for entry in entries.values():
+        if "image_url" in entry:
+            validate_local_episode_artwork(entry["image_url"], feed_path.parent)
     original = feed_path.read_bytes()
     root = ET.fromstring(original)
     channel = root.find("channel")
@@ -143,17 +171,23 @@ def refresh_catalog(
                     )
                 ):
                     raise ValueError(f"{guid}: accepted manifest does not match feed media or date")
-        if guid in entries:
-            entry = entries[guid]
+        entry = entries.get(guid, {})
+        if artwork_only or set(entry) == {"image_url"}:
+            presentation = None
+        elif "title" in entry:
             notes = manifest.show_notes if manifest else "Original publication: " + entry["evidence_url"]
             presentation = {"title": entry["title"], "description": entry["summary"] + "\n\n" + notes}
         elif manifest is not None:
-            presentation = manifest_presentation(manifest)
+            presentation = manifest_presentation(manifest, metadata_path=None)
         else:
             raise ValueError(f"{guid}: no accepted manifest or reviewed catalog copy; feed unchanged")
-        set_episode_presentation(item, **presentation)
+        if presentation is not None:
+            set_episode_presentation(item, **presentation)
+        if "image_url" in entry:
+            set_episode_image(item, entry["image_url"])
         count += 1
-    set_show_presentation(channel, channel.findtext("link") or "https://github.com/johnsirmon/daily-ai-docs")
+    if not artwork_only:
+        set_show_presentation(channel, channel.findtext("link") or "https://github.com/johnsirmon/daily-ai-docs")
     xml = b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding="utf-8") + b"\n"
     if write:
         # Validate the complete replacement before swapping; never leave a partial feed.
@@ -161,7 +195,7 @@ def refresh_catalog(
             temporary = Path(handle.name)
             handle.write(xml)
         try:
-            validate_feed_file(temporary)
+            validate_feed_file(temporary, artwork_root=feed_path.parent)
             if feed_path.read_bytes() != original:
                 raise RuntimeError("feed changed during metadata refresh; retry from current feed")
             temporary.replace(feed_path)
@@ -176,8 +210,9 @@ def main() -> None:
     parser.add_argument("--metadata", type=Path, default=Path("data/podcast-metadata.json"))
     parser.add_argument("--manifests", type=Path, default=Path("data/episodes"))
     parser.add_argument("--write", action="store_true", help="apply display-only changes; default is validation only")
+    parser.add_argument("--artwork-only", action="store_true", help="preserve all existing item and channel copy")
     args = parser.parse_args()
-    print(refresh_catalog(args.feed, args.metadata, args.manifests, write=args.write))
+    print(refresh_catalog(args.feed, args.metadata, args.manifests, write=args.write, artwork_only=args.artwork_only))
 
 
 if __name__ == "__main__":

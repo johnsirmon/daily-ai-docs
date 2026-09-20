@@ -13,9 +13,9 @@
 - **Historical editions:** reviewed display copy is separate from the accepted audio and manifest. Weekly entries
   describe the publication-time digest, not a newly reviewed recording.
 
-We intentionally use the show-cover fallback rather than putting dense titles on 42 separate episode images.
-Apple recommends avoiding logos and text in optional episode artwork. Unique, text-free illustrations can be
-added later if there is a meaningful visual subject; they are not required to make titles and notes useful.
+The show cover remains the fallback; selected episodes can use unique, text-free topic illustrations.
+Apple recommends avoiding logos and text in optional episode artwork. This is an operator-reviewed choice,
+not a bulk or automatic generation step for every episode.
 
 ## Evidence and compatibility
 
@@ -24,9 +24,19 @@ changes. It does not call a model, change story selection, or add new product cl
 end with an ellipsis; complete notes remain below. Reviewed editions retain their edition label in the description.
 
 `data/podcast-metadata.json` contains reviewed titles and opening summaries for the retained back catalog.
-Each entry cites an immutable public Git commit permalink to its original manifest, digest, or feed topic.
+Each copy entry cites an immutable public Git commit permalink to its original manifest, digest, or feed topic.
 Do not substitute today's documentation or a recent release note for what the historical episode covered.
 No listening review is implied by a digest-backed description.
+
+Schema 1 catalog entries may add `image_url` to the existing `title`, `summary`, and `evidence_url` fields.
+An entry containing only `image_url` is also supported: refresh preserves its existing copy; new daily/special episodes
+use the accepted manifest's derived copy. An exact future GUID may reserve art before publication; refresh only
+visits existing RSS items and never creates the reserved episode. Partial copy fields and unknown fields fail closed.
+Only `https://johnsirmon.github.io/daily-ai-docs/assets/episodes/<filename>.jpg` is supported. Filenames use lowercase
+letters, digits, hyphens, and underscores; query strings, credentials, fragments, escapes, subdirectories, and traversal
+are rejected. Use a unique versioned filename for each revision and retain previously referenced files.
+The repository deliberately supports RGB JPEG only (square, 1400-3000 pixels, under 1 MB), narrower than Apple's
+JPG/PNG allowance. No change to `EpisodeManifest` serialization or existing audio provenance is needed.
 
 All manifest versions remain unchanged:
 
@@ -34,8 +44,8 @@ All manifest versions remain unchanged:
 | --- | --- |
 | Collection, selection, schema 1-4 validation, evidence archive | Unchanged; accepted evidence remains authoritative |
 | Narration, transcript, mastering, release assets | Unchanged; no regeneration or retagging of published MP3s |
-| Finalize and new candidate feed | Derive title and introductory description from the validated manifest |
-| Historical RSS refresh | Apply reviewed copy; retain full daily show notes and archival evidence links |
+| Finalize and new candidate feed | Derive copy from the manifest, apply optional reviewed catalog copy/art |
+| Historical RSS refresh | Apply reviewed copy/art; retain daily notes, archival links, and existing item art |
 | Delivery receipts, state, confirmation, recovery | Unchanged; still bind GUID, date, enclosure, and audio hash |
 
 The migration preserves feed order, GUIDs, publication dates, enclosure URLs/types/lengths, durations, and other
@@ -57,6 +67,9 @@ uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.po
 # Explicit display-only refresh of existing entries. Does not publish an episode.
 uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.podcast_metadata --write
 
+# Art changes only: preserve every existing item and channel text field.
+uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.podcast_metadata --artwork-only --write
+
 # Local acceptance gates.
 uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.publish_check
 uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.drift_check
@@ -76,6 +89,25 @@ The show name and all historical audio identities are unchanged.
 When changing the cover design again, use a new filename and update the feed default and artwork checks.
 Both Pages paths copy the versioned and previous JPEGs so cached feeds retain working image URLs.
 
+For selected episode art, preserve the authenticated browser export privately and record provider/browser provenance;
+do not substitute an API generation. Label rendered captures honestly if original bytes were unavailable.
+Review the square source, including a thumbnail view, before converting it with the existing environment:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\generate_artwork.py `
+  --episode-source .cache\episode-artwork\reviewed-source.png `
+  --output assets\episodes\topic-v1.jpg
+```
+
+This path adds no typography, resizes to 3000 pixels, converts to RGB, and strips source metadata. It uses fixed
+JPEG quality 85 with optimization and chroma subsampling. It fails rather than silently cropping a non-square source,
+flattening transparency, exceeding 1 MB, or overwriting an existing destination. Review a simpler source if it exceeds
+the size budget. The 1400-pixel minimum applies to final exports, not square source images.
+Source PNGs and private staging are never copied into the Pages artifact. Refresh validates all
+configured artwork (including pending reservations) before replacing RSS; `publish_check` validates local feed/catalog
+assets, while live delivery validates the latest episode image's HTTP status, JPEG content type, and decoded bytes.
+Older entries' art survives load/render/prepend and recovery; omitted `image_url` does not remove existing art.
+
 Run refreshes from up-to-date publication history. Inspect the diff before merging generated RSS.
 Do not blindly rebase a stale generated feed over a newer episode; rerun the refresh against current `main`.
 The normal Pages workflow deploys the changed feed/artwork after merge. The publisher also ships those assets
@@ -89,7 +121,7 @@ and audio untouched. Leave previously referenced image files hosted. Never roll 
 | Topic | Verified guidance | Application here |
 | --- | --- | --- |
 | [Show Cover][show] | Required; prominent title, contrast, small-size legibility | Simplified typography |
-| [Episode Art][episode] | Optional; show-cover fallback; avoid logos and text | Consistent show cover |
+| [Episode Art][episode] | Optional; show-cover fallback; avoid logos and text | Reviewed topic art or show fallback |
 | [Artwork][artwork] | RGB JPG/PNG, 1400-3000 pixels for RSS; new URL for changed art | Versioned 3000-pixel JPEG |
 | [Presentation][present] | Omit repeated show name/date; lead with important information | Topic-first copy |
 | [Search][search] | Specific, unique titles; avoid repeated titles and emojis | No ranking promise |

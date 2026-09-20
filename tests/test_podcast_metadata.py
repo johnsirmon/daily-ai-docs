@@ -247,12 +247,14 @@ def test_committed_catalog_covers_retained_history():
     catalog = load_catalog(ROOT / "data/podcast-metadata.json")
     episodes = load_episodes(str(ROOT / "podcast.xml"))
     for episode in episodes:
-        if episode["guid"] in catalog:
+        if "title" in catalog.get(episode["guid"], {}):
             entry = catalog[episode["guid"]]
             assert episode["title"] == entry["title"]
             assert episode["description"].startswith(entry["summary"] + "\n\n")
         else:
             assert (ROOT / "data/episodes" / f"{episode['guid']}.json").exists()
+        if "image_url" in catalog.get(episode["guid"], {}):
+            assert episode["image_url"] == catalog[episode["guid"]]["image_url"]
 
 
 def test_show_artwork_has_small_screen_safe_format_and_quiet_background():
@@ -264,3 +266,187 @@ def test_show_artwork_has_small_screen_safe_format_and_quiet_background():
         assert saved.getpixel((0, 0))[0] < 12
     assert (ROOT / "assets/podcast-cover-v3.jpg").stat().st_size < 1_000_000
     assert (ROOT / "assets/podcast-cover-v2.jpg").is_file()
+
+
+EPISODE_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/topic-v1.jpg"
+
+
+def _add_art(tmp_path, metadata, *, only=False, guid="daily-test"):
+    asset = tmp_path / "assets/episodes/topic-v1.jpg"
+    asset.parent.mkdir(parents=True, exist_ok=True)
+    Image.new("RGB", (1400, 1400), "navy").save(asset)
+    data = json.loads(metadata.read_text())
+    entry = {} if only else data["episodes"].get(guid, {})
+    data["episodes"][guid] = {**entry, "image_url": EPISODE_IMAGE}
+    metadata.write_text(json.dumps(data))
+    return asset
+
+
+@pytest.mark.parametrize("only", [False, True])
+def test_catalog_art_refresh_roundtrips_without_changing_history(tmp_path, only):
+    feed, metadata, manifests = _setup(tmp_path)
+    _add_art(tmp_path, metadata, only=only)
+    original = load_episodes(str(feed))[0]
+    manifest_bytes = (manifests / "daily-test.json").read_bytes()
+    original_feed = feed.read_bytes()
+    assert load_catalog(metadata)["daily-test"]["image_url"] == EPISODE_IMAGE
+    refresh_catalog(feed, metadata, manifests)
+    assert feed.read_bytes() == original_feed
+    refresh_catalog(feed, metadata, manifests, write=True)
+    updated = load_episodes(str(feed))[0]
+    assert updated["image_url"] == EPISODE_IMAGE
+    if only:
+        assert updated == {**original, "image_url": EPISODE_IMAGE}
+    for key in ("guid", "mp3_url", "file_size_bytes", "pub_date", "duration_secs"):
+        assert updated[key] == original[key]
+    assert (manifests / "daily-test.json").read_bytes() == manifest_bytes
+    migrated = feed.read_bytes()
+    assert refresh_catalog(feed, metadata, manifests, write=True)["changed"] == 0
+    assert feed.read_bytes() == migrated
+    next_episode = {**original, "guid": "next", "mp3_url": "https://example.com/next.mp3"}
+    prepend_episode(next_episode, str(feed))
+    assert load_episodes(str(feed))[1] == updated
+    # Catalog copy updates do not remove artwork already published in RSS.
+    data = json.loads(metadata.read_text())
+    data["episodes"]["daily-test"].pop("image_url")
+    if only:
+        data["episodes"].pop("daily-test")
+    data["episodes"]["next"] = {
+        "title": "Next title", "summary": "Reviewed summary.",
+        "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/" + "a" * 40 + "/README.md",
+    }
+    metadata.write_text(json.dumps(data))
+    refresh_catalog(feed, metadata, manifests, write=True)
+    assert load_episodes(str(feed))[1]["image_url"] == EPISODE_IMAGE
+
+
+def test_artwork_only_legacy_entry_preserves_copy(tmp_path):
+    feed, metadata, manifests = _setup(tmp_path)
+    _add_art(tmp_path, metadata, only=True)
+    (manifests / "daily-test.json").unlink()
+    original = load_episodes(str(feed))[0]
+    refresh_catalog(feed, metadata, manifests, write=True)
+    assert load_episodes(str(feed))[0] == {**original, "image_url": EPISODE_IMAGE}
+
+
+def test_artwork_only_mode_preserves_every_text_field_and_channel(tmp_path):
+    feed, metadata, manifests = _setup(tmp_path)
+    _add_art(tmp_path, metadata)
+    root = ET.parse(feed).getroot()
+    channel = root.find("channel")
+    channel.find("title").text = "Existing show title"
+    item = channel.find("item")
+    ET.SubElement(item, ITUNES + "title").text = "Existing Apple title"
+    item.find(CONTENT + "encoded").text = "<p>Existing rich notes &amp; qualification</p>"
+    feed.write_bytes(ET.tostring(root))
+    before = ET.tostring(root)
+    refresh_catalog(feed, metadata, manifests, write=True, artwork_only=True)
+    after = ET.parse(feed).getroot()
+    updated = after.find("channel/item")
+    assert updated.find(ITUNES + "image").get("href") == EPISODE_IMAGE
+    updated.remove(updated.find(ITUNES + "image"))
+    assert ET.tostring(after) == before
+    assert refresh_catalog(feed, metadata, manifests, write=True, artwork_only=True)["changed"] == 0
+
+
+def test_pending_artwork_reservation_does_not_create_episode(tmp_path):
+    feed, metadata, manifests = _setup(tmp_path)
+    _add_art(tmp_path, metadata, only=True, guid="special-not-yet-published")
+    refresh_catalog(feed, metadata, manifests, write=True)
+    assert [episode["guid"] for episode in load_episodes(str(feed))] == ["daily-test"]
+    assert "image_url" not in load_episodes(str(feed))[0]
+
+
+@pytest.mark.parametrize("entry", [
+    {}, {"title": "partial"}, {"image_url": EPISODE_IMAGE, "title": "partial"},
+    {"image_url": EPISODE_IMAGE, "prompt": "unreviewed"},
+    {"title": "title", "summary": "summary", "evidence_url": "bad", "other": True},
+])
+def test_catalog_unknown_or_partial_fields_fail_without_feed_write(tmp_path, entry):
+    feed, metadata, manifests = _setup(tmp_path)
+    metadata.write_text(json.dumps({"schema_version": 1, "episodes": {"daily-test": entry}}))
+    before = feed.read_bytes()
+    with pytest.raises(ValueError):
+        refresh_catalog(feed, metadata, manifests, write=True)
+    assert feed.read_bytes() == before
+
+
+@pytest.mark.parametrize("fault", ["missing", "nonsquare", "alpha", "corrupt", "too-large"])
+def test_invalid_asset_fails_atomically_before_refresh(tmp_path, fault):
+    from pipeline.publish import PublicationError
+
+    feed, metadata, manifests = _setup(tmp_path)
+    asset = _add_art(tmp_path, metadata)
+    if fault == "missing":
+        asset.unlink()
+    elif fault == "nonsquare":
+        Image.new("RGB", (1400, 1500)).save(asset)
+    elif fault == "alpha":
+        Image.new("RGBA", (1400, 1400)).save(asset, format="PNG")
+    elif fault == "corrupt":
+        asset.write_bytes(asset.read_bytes()[:100])
+    else:
+        asset.write_bytes(b"x" * 1_000_000)
+    before = feed.read_bytes(), (manifests / "daily-test.json").read_bytes()
+    with pytest.raises(PublicationError):
+        refresh_catalog(feed, metadata, manifests, write=True)
+    assert (feed.read_bytes(), (manifests / "daily-test.json").read_bytes()) == before
+
+
+@pytest.mark.parametrize("value", [None, "", False, "https://example.com/image.jpg", EPISODE_IMAGE + "#fragment"])
+def test_catalog_rejects_invalid_optional_artwork(tmp_path, value):
+    feed, metadata, manifests = _setup(tmp_path)
+    data = json.loads(metadata.read_text())
+    data["episodes"]["daily-test"]["image_url"] = value
+    metadata.write_text(json.dumps(data))
+    before = feed.read_bytes()
+    with pytest.raises(ValueError, match="image_url"):
+        refresh_catalog(feed, metadata, manifests, write=True)
+    assert feed.read_bytes() == before
+
+
+def test_future_missing_asset_does_not_rewrite_feed_or_manifest(tmp_path, monkeypatch):
+    from pipeline import daily
+    from pipeline.publish import PublicationError
+
+    feed, metadata, manifests = _setup(tmp_path)
+    _add_art(tmp_path, metadata, only=True).unlink()
+    monkeypatch.chdir(tmp_path)
+    catalog = tmp_path / "data/podcast-metadata.json"
+    catalog.parent.mkdir()
+    catalog.write_bytes(metadata.read_bytes())
+    path = manifests / "daily-test.json"
+    before = feed.read_bytes(), path.read_bytes()
+    with pytest.raises(PublicationError, match="missing"):
+        daily.finalize(path, feed_path=feed, verify_remote=False)
+    assert (feed.read_bytes(), path.read_bytes()) == before
+    assert not (tmp_path / "data/episodes").exists()
+
+
+@pytest.mark.parametrize("only", [True, False])
+def test_future_episode_uses_reserved_art_without_manifest_fields(tmp_path, monkeypatch, only):
+    from pipeline import daily
+
+    feed, metadata, manifests = _setup(tmp_path)
+    _add_art(tmp_path, metadata, only=only)
+    monkeypatch.chdir(tmp_path)
+    catalog = tmp_path / "data/podcast-metadata.json"
+    catalog.parent.mkdir()
+    catalog.write_bytes(metadata.read_bytes())
+    manifest = _manifest()
+    manifest.status = "ready"
+    before = copy.deepcopy(manifest.to_dict())
+    presentation = manifest_presentation(manifest)
+    assert presentation["image_url"] == EPISODE_IMAGE
+    assert presentation["title"].startswith("Tool:" if only else "Tool memory warnings:")
+    assert manifest.to_dict() == before
+    path = tmp_path / "ready.json"
+    path.write_text(json.dumps(before))
+    feed.unlink()
+    daily.finalize(path, feed_path=feed, verify_remote=False)
+    assert load_episodes(str(feed))[0]["image_url"] == EPISODE_IMAGE
+    accepted = json.loads((tmp_path / "data/episodes/daily-test.json").read_text())
+    assert accepted == {**before, "status": "candidate"}
+    original_feed = feed.read_bytes()
+    daily.finalize(path, feed_path=feed, verify_remote=False)
+    assert feed.read_bytes() == original_feed

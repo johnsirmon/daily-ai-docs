@@ -24,6 +24,7 @@ _CHANNEL_DESCRIPTION = (
 )
 _CHANNEL_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v3.jpg"
 _CHANNEL_LINK = "https://github.com/johnsirmon/daily-ai-docs"
+_EPISODE_IMAGE_BASE = "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/"
 
 ET.register_namespace("itunes", _ITUNES_NS)
 ET.register_namespace("content", _CONTENT_NS)
@@ -61,8 +62,39 @@ def description_html(description: str) -> str:
     return "\n".join(paragraph(part) for part in description.split("\n\n") if part.strip())
 
 
-def set_episode_presentation(item: ET.Element, title: str, description: str) -> None:
-    """Change display copy only; identity, media and publication date stay intact."""
+def validate_episode_image_url(value: str) -> str:
+    """Only public, flat, versioned-by-operator JPEG assets are supported."""
+    if not isinstance(value, str) or not re.fullmatch(
+        re.escape(_EPISODE_IMAGE_BASE) + r"[a-z0-9][a-z0-9_-]{0,159}\.jpg", value,
+    ):
+        raise ValueError("episode image_url must be a public assets/episodes/<safe-filename>.jpg URL")
+    return value
+
+
+def episode_image_url(item: ET.Element) -> str | None:
+    images = item.findall(_itunes("image"))
+    if not images:
+        return None
+    if len(images) != 1 or set(images[0].attrib) != {"href"}:
+        raise ValueError("episode artwork requires one itunes:image with only href")
+    return validate_episode_image_url(images[0].get("href", ""))
+
+
+def set_episode_image(item: ET.Element, image_url: str) -> None:
+    validate_episode_image_url(image_url)
+    episode_image_url(item)
+    image = item.find(_itunes("image"))
+    if image is None:
+        image = ET.SubElement(item, _itunes("image"))
+    image.set("href", image_url)
+
+
+def set_episode_presentation(
+    item: ET.Element, title: str, description: str, image_url: str | None = None,
+) -> None:
+    """Change display copy/art only; identity, media and publication date stay intact."""
+    if image_url is not None:
+        set_episode_image(item, image_url)
     _set_text(item, "title", title)
     if item.find(_itunes("title")) is not None:
         _set_text(item, _itunes("title"), title)
@@ -163,6 +195,8 @@ def render_feed(episodes: List[Dict], channel_link: str = _CHANNEL_LINK) -> str:
     seen_guids: set[str] = set()
     seen_urls: set[str] = set()
     for episode in episodes:
+        if "image_url" in episode:
+            validate_episode_image_url(episode["image_url"])
         guid = str(episode.get("guid") or "").strip()
         url = str(episode.get("mp3_url") or "").strip()
         if not guid or guid in seen_guids:
@@ -178,6 +212,7 @@ def render_feed(episodes: List[Dict], channel_link: str = _CHANNEL_LINK) -> str:
         item = ET.SubElement(channel, "item")
         set_episode_presentation(
             item, str(episode.get("title") or ""), str(episode.get("description") or ""),
+            image_url=episode.get("image_url"),
         )
         ET.SubElement(item, "guid", {"isPermaLink": "false"}).text = guid
         ET.SubElement(item, "pubDate").text = _coerce_pubdate(str(episode.get("pub_date") or ""))
@@ -222,6 +257,9 @@ def load_episodes(path: str = "podcast.xml") -> List[Dict]:
             "duration_secs": _parse_duration(item.findtext(_itunes("duration"))),
             "description": item.findtext("description") or "",
         })
+        image_url = episode_image_url(item)
+        if image_url is not None:
+            episodes[-1]["image_url"] = image_url
     return episodes
 
 

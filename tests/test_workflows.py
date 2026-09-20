@@ -53,6 +53,17 @@ def test_pages_deploys_versioned_and_previous_show_artwork(name):
     assert "assets/podcast-cover*.jpg" in workflow("pages.yml")["on"]["push"]["paths"]
 
 
+@pytest.mark.parametrize("name", ["pages.yml", "update-radar.yml"])
+def test_pages_retains_only_public_episode_jpegs(name):
+    runs = "\n".join(step.get("run", "") for step in steps(name))
+    assert "mkdir -p _site/assets/episodes" in runs
+    assert 'for image in assets/episodes/*.jpg; do' in runs
+    assert '[ -f "$image" ] || continue' in runs
+    assert 'cp "$image" _site/assets/episodes/' in runs
+    assert "assets/episodes/*.jpg" in workflow("pages.yml")["on"]["push"]["paths"]
+    assert "cp -r assets" not in runs
+
+
 def test_delivery_workflow_binds_candidate_and_downloaded_release():
     by_name = {step.get("name"): step for step in steps("update-radar.yml")}
     finalize = by_name["Verify audio and build candidate feed"]["run"]

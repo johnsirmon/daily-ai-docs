@@ -1,6 +1,12 @@
 {
   "schema_version": 1,
   "episodes": {
+    "adhoc-2026-09-19-fdb65c39609a3f98125084ed": {
+      "image_url": "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/parallel-agents-64f22262f725.jpg"
+    },
+    "adhoc-2026-09-19-4237dfecd07a5795b65394b9": {
+      "image_url": "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/agent-evaluation-ae3e1d650bdb.jpg"
+    },
     "daily-2026-09-19-d6ff21f1": {
       "title": "Claude Code auto-mode billing, Codex defaults, and Copilot model retirements",
       "summary": "Claude Code shifts auto mode toward a server-side classifier without classifier-overhead charges, with warnings on billed fallback. Codex restores reasoning summaries to off for new local terminal sessions unless explicitly configured. Copilot model retirements scheduled for October 19 and code-review updates round out the briefing; assess applicability before changing workflows.",

@@ -81,6 +81,31 @@ def test_resume_reviewed_validates_bytes_without_changing_publication(release):
     assert not Path("data/state.json").exists()
 
 
+def test_reviewed_notebook_art_survives_finalize_and_recovery(release):
+    from PIL import Image
+    from pipeline.podcast import load_episodes
+
+    manifest, path, audio, _ = release
+    before = manifest.to_dict(), path.read_bytes(), audio.read_bytes()
+    asset = Path("assets/episodes/notebook-v1.jpg")
+    asset.parent.mkdir(parents=True)
+    Image.new("RGB", (1400, 1400)).save(asset)
+    catalog = Path("data/podcast-metadata.json")
+    catalog.parent.mkdir()
+    image_url = "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/notebook-v1.jpg"
+    catalog.write_text(json.dumps({
+        "schema_version": 1, "episodes": {manifest.episode_id: {"image_url": image_url}},
+    }))
+    daily.resume_reviewed_release(manifest.episode_id)
+    finalized = daily.finalize(path, verify_remote=False, publication_path=Path(".cache/publication.json"))
+    assert load_episodes()[0]["image_url"] == image_url
+    assert finalized.to_dict() == {**before[0], "status": "candidate"}
+    feed_bytes = Path("podcast.xml").read_bytes()
+    daily.finalize(path, verify_remote=False, publication_path=Path(".cache/publication.json"))
+    assert Path("podcast.xml").read_bytes() == feed_bytes
+    assert (path.read_bytes(), audio.read_bytes()) == before[1:]
+
+
 def test_resume_reviewed_rejects_wrong_identity(release):
     with pytest.raises(RuntimeError, match="identity"):
         daily.resume_reviewed_release("daily-2026-09-18-wrong")

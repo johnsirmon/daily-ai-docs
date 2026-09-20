@@ -32,6 +32,10 @@ class Delivery:
         image = io.BytesIO()
         Image.new("RGB", (1400, 1400)).save(image, format="JPEG")
         self.artwork = image.getvalue()
+        self.episode_artwork = self.artwork
+        self.episode_artwork_status = 200
+        self.episode_artwork_type = "image/jpeg"
+        self.episode_artwork_requests = []
 
     def head(self, url, **kwargs):
         return Response(status=self.head_status, headers={
@@ -45,6 +49,10 @@ class Delivery:
             return Response(status=self.range_status, headers={"Content-Range": "bytes 0-1023/12000"})
         if url.endswith(".mp3"):
             return Response(self.audio)
+        if "/assets/episodes/" in url:
+            self.episode_artwork_requests.append((url, kwargs))
+            return Response(self.episode_artwork, status=self.episode_artwork_status,
+                            headers={"Content-Type": self.episode_artwork_type})
         return Response(self.artwork)
 
 
@@ -169,6 +177,71 @@ def test_candidate_must_be_valid_and_bound_to_expected_guid(recovery):
     candidate.audio.pop("sha256")
     with pytest.raises(ValueError):
         verify_remote_feed("https://example.com/feed", candidate=candidate, session=delivery)
+
+
+def _episode_art_feed(delivery):
+    root = ET.fromstring(delivery.feed)
+    item = root.find("channel/item")
+    node = ET.SubElement(item, "{http://www.itunes.com/dtds/podcast-1.0.dtd}image", {
+        "href": "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/recovery-v1.jpg",
+    })
+    delivery.feed = ET.tostring(root)
+    return root, node
+
+
+def test_remote_latest_episode_artwork_is_decoded_and_reported(recovery):
+    candidate, delivery, _ = recovery
+    _episode_art_feed(delivery)
+    result = verify_remote_feed("https://example.com/feed", candidate=candidate, session=delivery)
+    assert result["episode_artwork"] == "1400x1400 RGB JPEG"
+    assert result["episode_image_url"].endswith("/recovery-v1.jpg")
+    assert delivery.episode_artwork_requests[0][1]["allow_redirects"] is False
+
+
+@pytest.mark.parametrize("fault", ["404", "redirect", "mime", "html", "alpha", "nonsquare", "unsafe"])
+def test_remote_episode_art_failure_blocks_confirmation_without_state_changes(recovery, monkeypatch, fault):
+    candidate, delivery, _ = recovery
+    root, node = _episode_art_feed(delivery)
+    if fault in {"404", "redirect"}:
+        delivery.episode_artwork_status = 404 if fault == "404" else 302
+    elif fault == "mime":
+        delivery.episode_artwork_type = "application/octet-stream"
+    elif fault == "html":
+        delivery.episode_artwork = b"<html>Sign in</html>"
+    elif fault in {"alpha", "nonsquare"}:
+        content = io.BytesIO()
+        Image.new("RGBA" if fault == "alpha" else "RGB",
+                  (1400, 1400) if fault == "alpha" else (1400, 1500)).save(
+                      content, format="PNG" if fault == "alpha" else "JPEG")
+        delivery.episode_artwork = content.getvalue()
+    else:
+        node.set("href", "https://localhost/private.jpg")
+        delivery.feed = ET.tostring(root)
+    before = Path(f"data/episodes/{candidate.episode_id}.json").read_bytes()
+    monkeypatch.setattr(daily, "verify_remote_feed", lambda url, **kw: verify_remote_feed(url, session=delivery, **kw))
+    with pytest.raises(PublicationError):
+        daily.confirm(candidate.episode_id)
+    assert Path(f"data/episodes/{candidate.episode_id}.json").read_bytes() == before
+    assert not Path("data/state.json").exists()
+    assert not Path("data/receipts").exists()
+    if fault == "unsafe":
+        assert not delivery.episode_artwork_requests
+
+
+def test_recovery_preserves_art_added_after_immutable_release(recovery):
+    candidate, delivery, path = recovery
+    root, _ = _episode_art_feed(delivery)
+    asset = Path("assets/episodes/recovery-v1.jpg")
+    asset.parent.mkdir(parents=True)
+    asset.write_bytes(delivery.episode_artwork)
+    Path("podcast.xml").write_bytes(ET.tostring(root))
+    released = candidate.to_dict()
+    released["status"] = "ready"
+    path.write_text(json.dumps(released))
+    before = Path("podcast.xml").read_bytes(), path.read_bytes()
+    daily.finalize(path, verify_remote=False)
+    assert (Path("podcast.xml").read_bytes(), path.read_bytes()) == before
+    assert "image_url" not in json.loads(Path(f"data/episodes/{candidate.episode_id}.json").read_text())
 
 
 @pytest.mark.parametrize("error", [requests.Timeout, requests.ConnectionError, PublicationError])

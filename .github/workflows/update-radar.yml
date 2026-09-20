@@ -160,6 +160,11 @@ jobs:
           mkdir -p _site/assets
           cp podcast.xml _site/podcast.xml
           cp assets/podcast-cover*.jpg _site/assets/
+          mkdir -p _site/assets/episodes
+          for image in assets/episodes/*.jpg; do
+            [ -f "$image" ] || continue
+            cp "$image" _site/assets/episodes/
+          done
           printf '%s\n' 'Daily AI Developer Brief podcast feed' > _site/index.html
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5

@@ -1,0 +1,9 @@
+Create ONE original square editorial illustration now using the image tool, for the specific podcast episode "Parallel coding agents in VS Code: useful delegation, shared-state risks, and verification."
+
+This is EPISODE artwork, not the generic show cover. Do not reuse the waveform/ribbon composition above. No text, no letters, no numbers, no logos, no watermark, no microphone, no robot head, no generic glowing AI brain.
+
+Art direction: a beautifully crafted, premium miniature engineering diorama. Three clearly separated workbenches sit on three independent dark floating platforms. Each workbench is building a different substantial piece of the SAME precision mechanical connector. Three clean paths bring those complementary pieces toward one central inspection-and-assembly fixture in the foreground. The scene should immediately communicate parallel work, deliberate isolation, coordination, and one verified integration, rather than three random computers or a network diagram. Use a few big, distinct shapes, not tiny interface details.
+
+Keep the show's palette: rich midnight navy #081425, electric mint, restrained ice-blue, and a small warm amber inspection light. Tangible matte materials with subtle luminous accents; sophisticated editorial 3D illustration, not stock sci-fi. Strong coherent directional light and excellent separation of silhouettes.
+
+Full-bleed 1:1 square. Let the topic-specific diorama occupy most of the composition, with generous safe margins. Clear focal hierarchy and recognizable at a 100-pixel thumbnail. No empty typography panel: Apple displays the episode title separately. Generate the image now, not design advice or a mockup.

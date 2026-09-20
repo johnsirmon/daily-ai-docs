@@ -1,0 +1,9 @@
+Create ONE new original square editorial illustration now using the image tool, for the specific podcast episode "Evaluating coding agents beyond benchmark headlines: methods, limitations, and real workflows," whose working title is "Why Your AI Coding Benchmarks Are Wrong."
+
+This is a distinct companion EPISODE artwork, not a variation of the parallel-workbench illustration and not a generic show cover. No text, letters, numbers, logos, watermark, microphone, robot head, or generic AI brain.
+
+Art direction: a premium miniature testing laboratory. A large elegant inspection lens in the foreground examines a substantial mechanical connector on a precise testing fixture; through the lens the connector's hidden misalignment is clearly visible. Behind it, a glossy gold award medal stands on a dark pedestal, attractive but secondary and out of focus. The immediate visual story is "look beyond the impressive score: inspect real behavior." Do not include charts, fabricated statistics, scores, or claims that every benchmark is invalid.
+
+Use the same refined family style as the preceding artwork: rich midnight navy #081425, electric mint and ice-blue testing apparatus, with restrained warm gold in the medal and a small amber diagnostic light. Tangible matte surfaces, clear silhouettes, crisp editorial 3D craft. A few large meaningful objects, not tiny interfaces or stock sci-fi clutter.
+
+Full-bleed 1:1 square, central composition within safe margins, topic-specific scene occupying most of the image, clear at a 100-pixel thumbnail. No typography panel; Apple displays the title separately. Generate the actual image now.

@@ -5,7 +5,8 @@ from pathlib import Path
 import yaml
 from PIL import Image
 
-from .publish import validate_feed_file
+from .podcast_metadata import load_catalog
+from .publish import validate_feed_file, validate_local_episode_artwork
 
 
 def main() -> None:
@@ -13,7 +14,10 @@ def main() -> None:
     daily_sources = (config.get("daily") or {}).get("sources") or {}
     if not daily_sources.get("github_releases") and not daily_sources.get("feeds"):
         raise SystemExit("no authoritative daily sources configured")
-    result = validate_feed_file("podcast.xml")
+    result = validate_feed_file("podcast.xml", artwork_root=Path("."))
+    for entry in load_catalog(Path("data/podcast-metadata.json")).values():
+        if "image_url" in entry:
+            validate_local_episode_artwork(entry["image_url"], Path("."))
     image = Image.open("assets/podcast-cover-v3.jpg")
     if image.size != (3000, 3000) or image.mode != "RGB" or image.format != "JPEG":
         raise SystemExit("podcast cover must be a 3000x3000 RGB JPEG")
