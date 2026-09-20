@@ -96,6 +96,7 @@ def write_brief(request: PodcastRequest, packet: dict, directory: Path) -> Path:
 
 def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
             review_path: Path, audio_path: Path, output: Path) -> dict:
+    from .audio import file_sha256
     from .audio_quality import repetition_findings
     from .reviewed_audio import prepare_reviewed_audio
     from .schema import EpisodeManifest
@@ -118,7 +119,7 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
         "generation": {
             "edition": "adhoc", "provider": request.provider,
             "approved_at": datetime.now(timezone.utc).isoformat(),
-            "source_audio_sha256": hashlib.sha256(audio_path.read_bytes()).hexdigest(),
+            "source_audio_sha256": file_sha256(audio_path),
             "transcript": {
                 **review["transcript"], "sha256": hashlib.sha256(narration.encode("utf-8")).hexdigest(),
             },
@@ -147,7 +148,7 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
         return resume_reviewed_release(request.episode_id, output)
     directory = request_path.parent
     record_status(directory, request, "reviewing")
-    draft_path = directory / f"draft-{hashlib.sha256(audio_path.read_bytes()).hexdigest()[:16]}.json"
+    draft_path = directory / f"draft-{file_sha256(audio_path)[:16]}.json"
     if draft_path.exists():
         saved_draft = json.loads(draft_path.read_text(encoding="utf-8"))
         draft["published_at"] = saved_draft["published_at"]

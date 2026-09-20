@@ -14,7 +14,7 @@ from typing import Any, Dict, Iterable, List
 
 import yaml
 
-from .audio import analyze_audio, narration_duration_bounds
+from .audio import analyze_audio, file_sha256, narration_duration_bounds
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .evidence_archive import publication_evidence
 from .narrate import manifest_to_narration
@@ -442,7 +442,7 @@ def _prepare(
             raise RuntimeError("TTS failed; candidate feed was not modified")
         if os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
             from .audio_quality import polish_generated_audio
-            manifest.generation["source_audio_sha256"] = hashlib.sha256(produced.read_bytes()).hexdigest()
+            manifest.generation["source_audio_sha256"] = file_sha256(produced)
             manifest.generation["quality"] = polish_generated_audio(produced)
         analysis = analyze_audio(
             produced,
