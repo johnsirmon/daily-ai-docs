@@ -11,7 +11,7 @@ from PIL import Image
 from pipeline.podcast import description_html, load_episodes, prepend_episode, write_feed
 from pipeline.podcast_metadata import load_catalog, manifest_presentation, refresh_catalog
 from pipeline.schema import EpisodeManifest, SourceEvent, Story
-from scripts.generate_artwork import create_cover
+from scripts.generate_artwork import SOURCE, create_cover, main
 
 ITUNES = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
 CONTENT = "{http://purl.org/rss/1.0/modules/content/}"
@@ -166,7 +166,7 @@ def test_later_prepends_keep_catalog_copy_and_rich_notes(tmp_path):
     assert load_episodes(str(feed))[1] == old
     channel = ET.parse(feed).find("channel")
     assert channel is not None
-    assert channel.find(ITUNES + "image").get("href").endswith("podcast-cover-v3.jpg")
+    assert channel.find(ITUNES + "image").get("href").endswith("podcast-cover-v4.jpg")
     assert channel.findtext("image/url") == channel.find(ITUNES + "image").get("href")
     assert channel.findall("item")[1].findtext(CONTENT + "encoded").startswith("<p>")
 
@@ -257,15 +257,50 @@ def test_committed_catalog_covers_retained_history():
             assert episode["image_url"] == catalog[episode["guid"]]["image_url"]
 
 
-def test_show_artwork_has_small_screen_safe_format_and_quiet_background():
+def test_show_artwork_preserves_reviewed_image_and_compatible_format(tmp_path, monkeypatch):
+    import sys
+
     image = create_cover()
     assert image.size == (3000, 3000) and image.mode == "RGB"
-    assert max(image.getpixel((0, 0))) < 60
-    with Image.open(ROOT / "assets/podcast-cover-v3.jpg") as saved:
+    with Image.open(SOURCE) as source:
+        expected = source.convert("RGB").resize(image.size, Image.Resampling.LANCZOS)
+        assert image.tobytes() == expected.tobytes()
+        assert not source.info and not source.getexif()
+    assert not image.info
+    output = tmp_path / "cover.jpg"
+    monkeypatch.setattr(sys, "argv", ["generate_artwork.py", "--output", str(output)])
+    main()
+    current = ROOT / "assets/podcast-cover-v4.jpg"
+    assert output.read_bytes() == current.read_bytes()
+    with Image.open(current) as saved:
+        saved.load()
         assert saved.format == "JPEG" and saved.mode == "RGB" and saved.size == image.size
-        assert saved.getpixel((0, 0))[0] < 12
-    assert (ROOT / "assets/podcast-cover-v3.jpg").stat().st_size < 1_000_000
+        assert not saved.getexif()
+    assert current.stat().st_size < 1_000_000
+    assert (ROOT / "assets/podcast-cover-v3.jpg").is_file()
     assert (ROOT / "assets/podcast-cover-v2.jpg").is_file()
+    channel = ET.parse(ROOT / "podcast.xml").find("channel")
+    assert channel.findtext("image/url").endswith(current.name)
+    assert channel.find(ITUNES + "image").get("href") == channel.findtext("image/url")
+
+
+def test_show_export_fails_size_budget_without_writing(tmp_path, monkeypatch):
+    import sys
+
+    from scripts import generate_artwork
+
+    output = tmp_path / "cover.jpg"
+    monkeypatch.setattr(sys, "argv", ["generate_artwork.py", "--output", str(output)])
+    monkeypatch.setattr(generate_artwork, "create_cover", lambda: Image.new("RGB", (100, 100)))
+
+    def oversized_save(self, stream, **kwargs):
+        assert kwargs == {"format": "JPEG", "quality": 80, "optimize": True, "subsampling": 2}
+        stream.write(b"x" * 1_000_000)
+
+    monkeypatch.setattr(generate_artwork.Image.Image, "save", oversized_save)
+    with pytest.raises(ValueError, match="show export exceeds 1 MB"):
+        main()
+    assert not output.exists()
 
 
 EPISODE_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/topic-v1.jpg"

@@ -2,8 +2,9 @@
 
 ## What listeners should see
 
-- **Show cover:** a high-contrast navy, mint, and white title with an original sculptural waveform, not a detailed poster.
-  There is no small-print slogan. The same recognizable cover applies to the entire feed.
+- **Show cover:** the operator-selected "Calm Listener Amid the Tech Wave" illustration: a headphone-wearing
+  developer in a warm listening bubble beside a blue wave of AI and developer tools. No typography is added.
+  The same cover applies to the entire feed.
 - **Episode title:** the subject first, not the show name and publication date repeated on every row.
   The editorial target is at most 90 characters, not an Apple or CarPlay visibility guarantee.
 - **Description:** an episode-specific introduction before the detailed notes. Corrections, recommendations,
@@ -75,17 +76,15 @@ uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.pu
 uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.drift_check
 ```
 
-The current image is `assets/podcast-cover-v3.jpg`: 3000 x 3000, RGB, JPEG, no transparency, under the repository's
-1 MB budget. `scripts/generate_artwork.py` uses installed DejaVu Sans Bold or Arial Bold, measures text width,
-and keeps the title within a generous safe margin. Glyph shapes may vary between operating systems.
-The generated background is retained in `assets/podcast-background-v3.png`; all title text is rendered
-locally for exact spelling and reproducibility. The 594-pixel background is an image-only crop of the
-loaded browser rendering after Save did not expose a download. It is a rendered pixel capture, not
-original-download bytes; the final title typography is rendered directly at 3000 pixels.
-The public design brief requested a midnight-navy square,
-ample empty space for the title, and a mint/ice-blue sculptural waveform in the bottom-right quadrant,
-without text, logos, robots, circuitry, or small details. Earlier cover URLs remain hosted for cached feeds.
-The show name and all historical audio identities are unchanged.
+The current image is `assets/podcast-cover-v4.jpg`: 3000 x 3000, RGB, JPEG, no transparency, under the repository's
+1 MB budget. On September 20, 2026, the operator downloaded and selected the ChatGPT browser-generated
+"Calm Listener Amid the Tech Wave" image. Its 1254-pixel square source is retained, with metadata removed and
+pixels unchanged, in `assets/podcast-source-v4.png`. The private original download is not modified.
+This is an original-download-derived export, not a screenshot, API generation, or native 3000-pixel source.
+`scripts/generate_artwork.py` resizes with Lanczos, adds no text or crop, and exports at JPEG quality 80 with
+optimization and chroma subsampling. It checks the size budget before writing; episode exports remain at quality 85.
+The source PNG is not copied into the Pages artifact. Earlier cover URLs remain hosted for cached feeds;
+the show name, episode-specific artwork, and all historical audio identities are unchanged.
 When changing the cover design again, use a new filename and update the feed default and artwork checks.
 Both Pages paths copy the versioned and previous JPEGs so cached feeds retain working image URLs.
 
@@ -120,7 +119,7 @@ and audio untouched. Leave previously referenced image files hosted. Never roll 
 
 | Topic | Verified guidance | Application here |
 | --- | --- | --- |
-| [Show Cover][show] | Required; prominent title, contrast, small-size legibility | Simplified typography |
+| [Show Cover][show] | Required; prominent title, contrast, small-size legibility | Operator selected image-only v4 |
 | [Episode Art][episode] | Optional; show-cover fallback; avoid logos and text | Reviewed topic art or show fallback |
 | [Artwork][artwork] | RGB JPG/PNG, 1400-3000 pixels for RSS; new URL for changed art | Versioned 3000-pixel JPEG |
 | [Presentation][present] | Omit repeated show name/date; lead with important information | Topic-first copy |

@@ -22,7 +22,7 @@ _CHANNEL_DESCRIPTION = (
     "with practical workflows, tradeoffs, and clearly labeled research. "
     "Created by John Sirmon with AI-generated narration."
 )
-_CHANNEL_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v3.jpg"
+_CHANNEL_IMAGE = "https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg"
 _CHANNEL_LINK = "https://github.com/johnsirmon/daily-ai-docs"
 _EPISODE_IMAGE_BASE = "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/"
 

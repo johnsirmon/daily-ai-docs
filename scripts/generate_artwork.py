@@ -1,43 +1,18 @@
-"""Generate high-contrast show artwork with a small-screen-safe title."""
+"""Export reviewed show and episode artwork as square RGB JPEGs."""
 
 import argparse
 import io
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image
 
 SIZE = 3000
-OUTPUT = Path("assets/podcast-cover-v3.jpg")
-BACKGROUND = Path(__file__).resolve().parents[1] / "assets/podcast-background-v3.png"
-BOLD = (
-    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
-    Path("C:/Windows/Fonts/arialbd.ttf"),
-)
-def _font(candidates: tuple[Path, ...], size: int) -> ImageFont.FreeTypeFont:
-    path = next((candidate for candidate in candidates if candidate.exists()), None)
-    if path is None:
-        raise FileNotFoundError(f"no supported artwork font found: {candidates}")
-    return ImageFont.truetype(path, size)
+OUTPUT = Path("assets/podcast-cover-v4.jpg")
+SOURCE = Path(__file__).resolve().parents[1] / "assets/podcast-source-v4.png"
 
 
 def create_cover() -> Image.Image:
-    with Image.open(BACKGROUND) as source:
-        image = ImageOps.fit(source.convert("RGB"), (SIZE, SIZE))
-    draw = ImageDraw.Draw(image)
-    mint = (60, 235, 200)
-    white = (245, 249, 252)
-    draw.rounded_rectangle((250, 280, 830, 340), radius=30, fill=mint)
-    for text, top, maximum, color in (
-        ("DAILY AI", 520, 480, white),
-        ("DEVELOPER", 1120, 340, mint),
-        ("BRIEF", 1530, 660, white),
-    ):
-        font = _font(BOLD, maximum)
-        while draw.textbbox((0, 0), text, font=font)[2] > 2500:
-            maximum -= 2
-            font = _font(BOLD, maximum)
-        draw.text((250, top), text, font=font, anchor="lt", fill=color)
-    return image
+    return create_episode_artwork(SOURCE)
 
 
 def create_episode_artwork(source_path: Path) -> Image.Image:
@@ -84,9 +59,14 @@ def main() -> None:
         print(f"wrote {args.output} ({SIZE}x{SIZE}, RGB JPEG, under 1 MB)")
         return
     image = create_cover()
+    encoded = io.BytesIO()
+    image.save(encoded, format="JPEG", quality=80, optimize=True, subsampling=2)
+    content = encoded.getvalue()
+    if len(content) >= 1_000_000:
+        raise ValueError("show export exceeds 1 MB; simplify the source and review again")
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    image.save(args.output, format="JPEG", quality=90, optimize=True, subsampling=0)
-    print(f"wrote {args.output} ({image.width}x{image.height}, RGB)")
+    args.output.write_bytes(content)
+    print(f"wrote {args.output} ({image.width}x{image.height}, RGB JPEG, under 1 MB)")
 
 
 if __name__ == "__main__":
