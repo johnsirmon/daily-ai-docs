@@ -46,6 +46,14 @@ See [persistent local setup](../CONTRIBUTING.md#persistent-local-environment) wh
 The dry-run overwrites `.cache/episode-manifest.json` and `.cache/publication.json`; use a separate checkout if those
 files belong to an unresolved preparation or recovery.
 
+On Windows, run tests directly with the existing `.venv`, without activation or dependency resolution:
+
+```powershell
+# Run one test file or one test node.
+.\.venv\Scripts\python.exe -m pytest -q tests\test_daily.py
+.\.venv\Scripts\python.exe -m pytest -q tests\test_daily.py::test_prepare_dry_run_is_network_and_audio_free
+```
+
 Markdown linting follows `.markdownlint.json` (ATX headings, two-space list indentation, 120-character lines) and
 `.markdownlintignore` (generated `README.md` is excluded). See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution
 commands and [OPERATIONS.md](../docs/OPERATIONS.md) for live credentials, deployment, and recovery.
@@ -57,7 +65,10 @@ commands and [OPERATIONS.md](../docs/OPERATIONS.md) for live credentials, deploy
 - `pipeline/sources/` converts explicitly configured public GitHub releases, official feeds, research papers, and the stored weekly YouTube digest into validated `SourceEvent` values. Source adapters return events and per-source health so an outage is not mistaken for healthy no-news.
 - `pipeline/schema.py` owns the persisted `SourceEvent`, `Story`, and `EpisodeManifest` contracts. `pipeline/rank.py` handles novelty, authority, relevance, impact, measured momentum, grouping, and noise rejection. `pipeline/synthesis.py` implements opt-in model drafting/refinement and separate verification.
 - The episode manifest is the source of truth. `pipeline/narrate.py` derives spoken text, `pipeline/render.py` derives the daily README, and `pipeline/podcast.py` derives RSS; do not parse generated README content back into the daily pipeline.
-- `pipeline/tts.py` produces audio and `pipeline/audio.py` verifies full decode, duration, size, codec, and checksum. `pipeline/reviewed_audio.py` is a separate schema-3 import path for explicitly approved Notebook audio and records its actual transcript/source-review provenance rather than API-generation provenance.
+- `pipeline/tts.py` produces audio and `pipeline/audio.py` verifies full decode, duration, size, codec, and checksum.
+  `pipeline/reviewed_audio.py` imports explicitly approved recordings from schema-3 daily Notebook drafts or
+  schema-4 request-bound long-form drafts, preserving their transcript/source-review provenance. Both use the
+  shared daily publisher after preparation.
 - `pipeline/daily.py` is a recoverable publication state machine. `prepare` creates or resumes preparation artifacts;
   after immutable release upload, `finalize` verifies hosted audio and writes a candidate manifest/feed/README.
   `confirm` independently checks exact subscriber delivery through `pipeline.publish.verify_remote_feed` before
@@ -66,6 +77,8 @@ commands and [OPERATIONS.md](../docs/OPERATIONS.md) for live credentials, deploy
   `data/runs/latest.json` distinguishes evaluations, and `data/state.json` prevents replay. `.cache/` is untracked
   staging, not automatically disposable: preserve prepared media and manifests until publication or recovery is resolved.
 - `.github/workflows/update-radar.yml` is the daily publisher despite its historical filename. Publisher workflows share the `podcast-publisher` concurrency group; the daily workflow deploys Pages inline before confirming delivery.
+- GitHub Pages serves the subscriber RSS feed and show artwork. GitHub Releases host immutable episode MP3s and
+  manifests; the generated written brief is `README.md` on `main`, not a Pages-hosted episode page.
 
 ## Repository-specific conventions
 
@@ -86,7 +99,9 @@ commands and [OPERATIONS.md](../docs/OPERATIONS.md) for live credentials, deploy
 - Preserve schema and serialized-manifest compatibility. Some default fields are intentionally omitted when serializing older manifest shapes; update schema, fixtures, renderers, recovery, and provenance checks together.
 - Generated daily README changes belong in `pipeline/render.py` and tests, not only in `README.md`. Do not hand-edit `data/state.json`, episode history, receipts, or generated feed content for unrelated work.
 - Tests use pytest fixtures such as `tmp_path`, `monkeypatch`, and provider/source stubs to keep ordinary tests network-free and credential-free. Workflow tests inspect YAML and shell syntax without dispatching publishing steps.
-- Do not silently degrade a required production stage. Source/model/TTS/upload/feed failure preserves the last good feed.
+- Do not silently degrade a required production stage. Failures before candidate publication leave the subscriber feed
+  unchanged. A delivery failure after Pages deployment can leave an unconfirmed candidate visible; recover it from
+  immutable release artifacts without replacing its audio or advancing novelty state before successful confirmation.
 - Never overwrite immutable release media or change an enclosure behind an existing GUID.
 - Resume a failed publication from the manifest and audio stored in its release; never regenerate bytes behind the same episode ID.
 - Validate full audio decode, measured duration/length, candidate RSS, remote HEAD/range support, and subscriber-facing GUID.
