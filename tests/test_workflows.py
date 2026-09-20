@@ -21,6 +21,10 @@ def steps(name):
     return [step for job in workflow(name)["jobs"].values() for step in job.get("steps", [])]
 
 
+def test_daily_publisher_has_memorable_actions_name():
+    assert workflow("update-radar.yml")["name"] == "Publish Daily AI Developer Brief"
+
+
 @pytest.mark.parametrize("name", ["pages.yml", "update-radar.yml", "youtube-trends.yml"])
 def test_publishers_share_non_cancelling_concurrency(name):
     assert workflow(name)["concurrency"] == {"group": "podcast-publisher", "cancel-in-progress": "false"}

@@ -331,7 +331,8 @@ After all tests pass and the reviewed-audio code is on `main`, create a **new** 
 manifest's episode ID, attaching only the prepared MP3 and manifest. Never use `gh release upload --clobber`. If the
 release already exists, download and reconcile its existing assets rather than regenerating them.
 
-Run **Actions -> Daily AI Developer Brief -> Run workflow** on `main`, setting `reviewed_episode` to that release tag.
+Run **Actions -> Publish Daily AI Developer Brief -> Run workflow** on `main`, setting `reviewed_episode` to that
+release tag.
 Equivalently:
 
 ```bash

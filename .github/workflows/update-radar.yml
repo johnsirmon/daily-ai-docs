@@ -1,4 +1,4 @@
-name: Daily AI Developer Brief
+name: Publish Daily AI Developer Brief
 
 on:
   workflow_dispatch:
