@@ -24,7 +24,7 @@ import shutil
 import subprocess
 from typing import Any
 
-from .audio import analyze_audio
+from .audio import analyze_audio, narration_duration_bounds
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .schema import EpisodeManifest, SchemaError
 
@@ -80,10 +80,13 @@ def prepare_reviewed_audio(
         _transcode(ffmpeg, audio_path, destination)
     if _file_sha256(audio_path) != expected_hash:
         raise SchemaError("source audio changed during import")
-    minimum, maximum = (1200, 1800) if manifest.schema_version == 4 else (300, 480)
+    word_count = len(manifest.narration.split())
+    minimum, maximum = (
+        narration_duration_bounds(word_count) if manifest.schema_version == 4 else (300, 480)
+    )
     analysis = analyze_audio(
         destination, min_duration_secs=minimum, max_duration_secs=maximum,
-        full_decode=True, expected_word_count=len(manifest.narration.split()),
+        full_decode=True, expected_word_count=word_count,
     )
     manifest.audio.update({key: value for key, value in analysis.items() if key != "path"})
     manifest.status = "ready"

@@ -79,7 +79,8 @@ Test the changed contract against:
 8. tampered excerpt, transcript, manifest, media, or archived evidence;
 9. old confirmed manifest/release read and repeat recovery;
 10. privacy boundary: no full paper, private metadata, raw provider response, or secret;
-11. accepted schema-4 preparation, 1200-1800-second media, and unchanged-bundle recovery;
+11. accepted schema-4 preparation and unchanged-bundle recovery below/inside/above the 20-30 minute
+    editorial target, with finite positive duration and transcript-word-count plausibility retained;
 12. changed/closed issue, revoked write permission, wrong actor, or tampered request/provider;
 13. preview-only request rejected before candidate or publication writes;
 14. mixed-feed confirmation preserving daily cadence/evaluation and creating a request receipt,

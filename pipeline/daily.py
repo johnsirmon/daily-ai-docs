@@ -487,10 +487,13 @@ def prepare(
 
 
 def _validate_reviewed_audio_file(manifest: EpisodeManifest, path: Path) -> None:
-    minimum, maximum = (1200, 1800) if manifest.schema_version == 4 else (300, 480)
+    word_count = len(manifest.narration.split())
+    minimum, maximum = (
+        narration_duration_bounds(word_count) if manifest.schema_version == 4 else (300, 480)
+    )
     measured = analyze_audio(
         path, min_duration_secs=minimum, max_duration_secs=maximum,
-        expected_word_count=len(manifest.narration.split()),
+        expected_word_count=word_count,
     )
     for field in ("size_bytes", "sha256", "codec", "sample_rate", "channels"):
         if manifest.audio.get(field) != measured[field]:

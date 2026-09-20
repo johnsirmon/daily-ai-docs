@@ -13,8 +13,9 @@ Use the current `pipeline.adhoc` commands and `docs/OPERATIONS.md`. Never use th
 ## Intake
 
 Normalize the user's public topic and audience into `pipeline.adhoc request`, or use
-`pipeline.adhoc issue --number N`. Default to 60 days and 20-30 minutes; only an explicit
-window override changes recency. Pass `--publish-now` only when the user requested publication.
+`pipeline.adhoc issue --number N`. Default to 60 days and an editorial target of 20-30 minutes, not a publication
+limit. Shorter or longer specials are allowed; only an explicit window override changes recency.
+Pass `--publish-now` only when the user requested publication.
 Both entry points check GitHub write permission. An issue is a queue, not an unattended browser worker.
 An edited issue is a changed request and invalidates the earlier authorization.
 
@@ -76,7 +77,8 @@ command is a routine validation command.
 ## Generate and review
 
 Use `notebook-podcast` for signed-in generation and the native Save handoff. Choose English Deep Dive / Longer.
-The duration preference is not a promise. Generate/download once, preserve the original, and measure actual bytes.
+The duration preference is not a promise or a fixed gate. Generate/download once, preserve the original,
+and measure actual bytes. Require a finite positive duration plausible for the reviewed transcript.
 Allow at most one deliberate regeneration inside the authorized account allowance; then report the blocker.
 
 Follow [audio-production-review](../audio-production-review/SKILL.md) for approved local ASR,

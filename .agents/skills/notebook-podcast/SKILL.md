@@ -29,7 +29,7 @@ description: >
    Choose the contract before configuring English Deep Dive:
    - Daily schema 3: select Short and request 5-8 minutes.
    - Request-bound schema 4: start with [adhoc-podcast](../adhoc-podcast/SKILL.md),
-     select Longer, and request 20-30 minutes using its validated brief.
+     select Longer, and target 20-30 minutes using its validated brief; this is not a publication limit.
    Length controls express preferences, not guaranteed output durations.
 4. Submit once. While generation runs, do independent preparation. Reuse pending
    tool operation IDs rather than repeating the action. Inspect completion once
@@ -69,8 +69,9 @@ Use [audio-production-review](../audio-production-review/SKILL.md) for the local
 handoff, review-packet example, mastering, and listening record.
 
 - Preserve the original. Record size, codec, measured duration, and SHA-256.
-- Full-decode with FFmpeg and fail on errors. Daily schema-3 audio must measure 300-480 seconds;
-  schema-4 ad-hoc requests use 1200-1800 seconds. Do not change a daily contract to fit a longer recording.
+- Full-decode with FFmpeg and fail on errors. Daily schema-3 audio must measure 300-480 seconds.
+  Schema-4 specials have no fixed minute range: require finite positive duration plausible for the reviewed
+  transcript. Do not change a daily contract to fit a longer recording.
 - Bind media bytes with exact size and checksum. Cross-version FFprobe duration
   estimates may differ by MP3 priming/padding frames; use the publisher's bounded
   tested tolerance, not exact floating-point equality or an unbounded exception.

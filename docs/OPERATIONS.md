@@ -357,7 +357,8 @@ Use the **Request a podcast** issue form or ask Copilot in this repository to cr
 Issue intake checks the author's repository write permission and queues operator-assisted work.
 It does not start a signed-in browser in Actions. Topic text is public data, never shell instructions.
 
-The default is 20-30 measured minutes using evidence originally published in the 60 days ending at request creation.
+The editorial target is 20-30 minutes, not a publication limit: shorter or longer specials are allowed.
+Use evidence originally published in the 60 days ending at request creation.
 An explicit `--lookback-days` override accepts 1-365 days. Unknown/future dates and out-of-window material are rejected;
 a new article update or paper revision is not a new original publication. A thin evidence set is a blocker, not filler.
 
@@ -404,12 +405,19 @@ An unavailable browser/transcriber or unresolved claim blocks the request. At mo
 within the authorized account allowance is permitted; never manufacture length with repetition or silence.
 
 Schema 4 binds the exact request revision, provider, transcript/source review, input hash, measured mastering report,
-and final MP3. It retains the existing immutable release media name and requires 1200-1800 seconds. Schemas 1-3
+and final MP3. It retains the existing immutable release media name and requires a finite positive measured duration,
+plausible for the reviewed transcript's word count, rather than a fixed minute range. Transcript-size bounds,
+full decode, silence/repetition detection, source review, and listening requirements remain unchanged. Schemas 1-3
 retain their original constraints. Normalization targets -16 LKFS +/-1 dB and true peak at most -1 dBFS; the final
 encoded recording is measured again. Decoding and automated repetition checks do not constitute a listening review.
 For future daily TTS episodes and new schema-3 imports, `PODCAST_AUDIO_POLISH=1` explicitly opts into the same
 mastering gate while preserving their original duration budgets. Existing defaults and released audio stay unchanged.
 Daily generated source audio is retained beside its working output under a checksum-qualified filename.
+
+Existing schema-4 requests and manifests need no migration or rehashing; their fields and identities are unchanged.
+Preparation, release recovery, and finalization apply the same transcript-based duration check. Deploy this policy
+to `main` before dispatching an out-of-target special: older publishers still reject media outside 1200-1800 seconds.
+After publishing such an episode, retain the new policy during recovery; never rewrite its media to support a rollback.
 
 `publish` rechecks current issue authorization and stages a **draft** release. The existing daily publisher validates
 the bundle under the shared lock, promotes it, builds the candidate feed, deploys Pages, verifies exact delivery,

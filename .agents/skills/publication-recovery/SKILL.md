@@ -78,8 +78,8 @@ never permits replacing released bytes or relaxing checksum identity.
    authorizes them before promotion; schema-3 daily imports require public releases.
    After upload/dispatch failure, dispatch `update-radar.yml` on current `main` with
    the same `reviewed_episode` tag only when recovery is authorized.
-3. Resume immutable manifest/MP3 bytes. Require 1200-1800 measured seconds, exact hashes,
-   and re-measured loudness/peak acceptance. Follow
+3. Resume immutable manifest/MP3 bytes. Require a finite positive duration plausible for the reviewed
+   transcript, exact hashes, and re-measured loudness/peak acceptance, not a fixed minute range. Follow
    [audio-production-review](../audio-production-review/SKILL.md) for media gates;
    never remaster an existing release to make recovery pass.
 4. Confirm both the episode delivery receipt and `data/requests/<request-id>.json`.

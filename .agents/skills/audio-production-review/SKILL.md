@@ -112,8 +112,9 @@ The import command without `--help` writes a new bundle; it is not a read-only c
 See [operating commands](../../../docs/OPERATIONS.md#publishing-approved-notebook-audio)
 for the required inputs.
 
-- Schema 4 always uses the existing two-pass FFmpeg mastering gate and requires
-  1200-1800 measured seconds.
+- Schema 4 always uses the existing two-pass FFmpeg mastering gate. The 20-30 minute range is an
+  editorial target, not a publication limit; measured duration must be finite, positive, and plausible
+  for the reviewed transcript's word count.
 - New schema-3 imports and daily generated TTS opt in only with
   `PODCAST_AUDIO_POLISH=1` for that invocation. Do not persistently change the environment
   or workflow defaults. Schema 3 remains 300-480 seconds; schema-1/2 edition budgets stay unchanged.

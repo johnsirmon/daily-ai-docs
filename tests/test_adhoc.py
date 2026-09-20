@@ -5,11 +5,13 @@ from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
 from pipeline import daily
 from pipeline.adhoc import authorize, write_brief
+from pipeline.audio import AudioValidationError, analyze_audio, narration_duration_bounds
 from pipeline.audio_quality import repetition_findings, validate_quality_report
 from pipeline.disclosure import AI_NARRATION_DISCLOSURE
 from pipeline.podcast_request import PodcastRequest, record_status, request_from_issue, save_request
@@ -102,15 +104,21 @@ def test_long_form_does_not_change_old_serialization():
     assert current.to_dict() == EpisodeManifest.from_dict(current.to_dict()).to_dict()
 
 
-@pytest.mark.parametrize("seconds,accepted", [(1199.999, False), (1200, True), (1800, True), (1800.001, False)])
-def test_long_form_measured_duration_contract(seconds, accepted):
+@pytest.mark.parametrize("seconds", [1, 1150.897, 1199.999, 1200, 1800, 1800.001, 1912.442, 2996])
+def test_long_form_measured_duration_contract(seconds):
     data = long_draft(ready=True)
     data["audio"]["duration_secs"] = seconds
-    if accepted:
+    manifest = EpisodeManifest.from_dict(data)
+    assert manifest.audio == data["audio"]
+    assert manifest.to_dict() == EpisodeManifest.from_dict(manifest.to_dict()).to_dict()
+
+
+@pytest.mark.parametrize("seconds", [0, -1, True, "1912.442", None, float("nan"), float("inf"), -float("inf")])
+def test_long_form_rejects_invalid_duration(seconds):
+    data = long_draft(ready=True)
+    data["audio"]["duration_secs"] = seconds
+    with pytest.raises(SchemaError, match="finite positive"):
         EpisodeManifest.from_dict(data)
-    else:
-        with pytest.raises(SchemaError, match="1200-1800"):
-            EpisodeManifest.from_dict(data)
 
 
 def test_long_form_request_and_provider_cannot_be_tampered():
@@ -164,7 +172,8 @@ def test_brief_is_source_bounded_and_request_local(tmp_path):
     req = request()
     path = save_request(req, tmp_path)
     brief = write_brief(req, draft(), path.parent)
-    assert "20-30 measured minutes" in brief.read_text()
+    assert "20-30 minutes as an editorial target, not a publication limit" in brief.read_text()
+    assert "A shorter or longer recording is acceptable" in brief.read_text()
     assert "2026-07-19" in brief.read_text()
     assert not (tmp_path / "episode-manifest.json").exists()
 
@@ -187,7 +196,8 @@ def test_quality_report_fails_closed(field, value):
         validate_quality_report(report, final=True, audio_sha256="a" * 64)
 
 
-def test_adhoc_confirmation_preserves_daily_cadence_and_run(monkeypatch, tmp_path):
+@pytest.mark.parametrize("seconds", [1150.897, 1200, 1912.442, 2996])
+def test_adhoc_confirmation_preserves_daily_cadence_and_run(monkeypatch, tmp_path, seconds):
     monkeypatch.chdir(tmp_path)
     state = {
         "schema_version": 1, "seen_event_ids": [], "last_episode_id": "daily-previous",
@@ -195,7 +205,9 @@ def test_adhoc_confirmation_preserves_daily_cadence_and_run(monkeypatch, tmp_pat
     }
     daily._save_json(Path("data/state.json"), state)
     daily._save_json(Path("data/runs/latest.json"), {"unchanged": True})
-    manifest = EpisodeManifest.from_dict(long_draft(ready=True, publish_now=True))
+    data = long_draft(ready=True, publish_now=True)
+    data["audio"]["duration_secs"] = seconds
+    manifest = EpisodeManifest.from_dict(data)
     manifest.status = "candidate"
     daily._save_json(Path("data/episodes") / f"{manifest.episode_id}.json", manifest.to_dict())
     daily.confirm(manifest.episode_id, verify_remote=False)
@@ -312,7 +324,11 @@ def test_request_receipt_recovers_after_confirmation_interruption(monkeypatch, t
     assert json.loads(receipt.read_text())["status"] == "published"
 
 
-def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path):
+@pytest.mark.parametrize("seconds,accepted", [
+    (1150.897, True), (1200, True), (1800, True), (1912.442, True), (2996, True),
+    (1, False), (10000, False),
+])
+def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path, seconds, accepted):
     from pipeline.adhoc import prepare
     monkeypatch.chdir(tmp_path)
     req = request(publish_now=True)
@@ -325,7 +341,10 @@ def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path):
         "source_events", "source_health", "stories", "show_notes",
     )}), encoding="utf-8")
     transcript = tmp_path / "transcript.txt"
-    transcript.write_text(AI_NARRATION_DISCLOSURE + "\n\n" + CLAIM, encoding="utf-8")
+    narration = AI_NARRATION_DISCLOSURE + "\n\n" + CLAIM + "\n\n" + " ".join(
+        f"word{index}" for index in range(5000)
+    )
+    transcript.write_text(narration, encoding="utf-8")
     review = tmp_path / "review.json"
     review.write_text(json.dumps({
         "transcript": {"engine": "faster-whisper", "model": "small.en"},
@@ -337,22 +356,57 @@ def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path):
     def master(source, target):
         target.write_bytes(content)
         return report
-    metrics = {
-        "size_bytes": len(content), "duration_secs": 1200.0, "sha256": digest,
-        "codec": "mp3", "sample_rate": 44100, "channels": 2,
-    }
+    commands = []
+    def media_run(command, **kwargs):
+        commands.append(command)
+        payload = {"format": {"duration": str(seconds)}, "streams": [
+            {"codec_name": "mp3", "sample_rate": 44100, "channels": 2},
+        ]}
+        return subprocess.CompletedProcess(
+            command, 0, stdout=json.dumps(payload) if command[0] == "ffprobe" else "", stderr="",
+        )
+    def measured(path, **kwargs):
+        assert (kwargs["min_duration_secs"], kwargs["max_duration_secs"]) == narration_duration_bounds(
+            len(narration.split()),
+        )
+        assert kwargs["expected_word_count"] == len(narration.split())
+        assert kwargs.get("full_decode", True)
+        return analyze_audio(path, **kwargs)
     monkeypatch.setattr("pipeline.audio_quality.master_audio", master)
-    monkeypatch.setattr("pipeline.reviewed_audio.shutil.which", lambda name: "ffmpeg" if name == "ffmpeg" else None)
-    monkeypatch.setattr("pipeline.reviewed_audio.analyze_audio", lambda *args, **kwargs: metrics)
-    monkeypatch.setattr("pipeline.daily.analyze_audio", lambda *args, **kwargs: metrics)
+    monkeypatch.setattr("pipeline.reviewed_audio.shutil.which", lambda name: name)
+    monkeypatch.setattr("pipeline.audio.subprocess.run", media_run)
+    monkeypatch.setattr("pipeline.reviewed_audio.analyze_audio", measured)
+    monkeypatch.setattr("pipeline.daily.analyze_audio", measured)
     monkeypatch.setattr("pipeline.audio_quality.loudness", lambda *args: {"input_i": -16, "input_tp": -1.1})
     target = tmp_path / "prepared"
+    if not accepted:
+        with pytest.raises(AudioValidationError, match="outside"):
+            prepare(request_path, packet, transcript, review, source, target)
+        assert not (target / "episode-manifest.json").exists()
+        assert not (target / "publication.json").exists()
+        assert not Path("podcast.xml").exists()
+        assert not Path("data/state.json").exists()
+        return
     first = prepare(request_path, packet, transcript, review, source, target)
+    manifest_bytes = (target / "episode-manifest.json").read_bytes()
     second = prepare(request_path, packet, transcript, review, source, target)
     assert first["episode_id"] == second["episode_id"] == req.episode_id
     assert second["resumed"]
     assert source.read_bytes() == b"original"
+    assert (target / "episode-manifest.json").read_bytes() == manifest_bytes
+    assert (target / "daily-ai-brief.mp3").read_bytes() == content
     assert not Path("podcast.xml").exists()
+    candidate = daily.finalize(
+        target / "episode-manifest.json", verify_remote=False,
+        publication_path=target / "publication.json",
+    )
+    assert candidate.audio["duration_secs"] == seconds
+    assert candidate.audio["sha256"] == digest
+    from pipeline.podcast import load_episodes
+    assert load_episodes()[0]["duration_secs"] == round(seconds)
+    assert sum("-xerror" in command for command in commands) == 3
+    assert sum("-af" in command for command in commands) == 3
+    assert not Path("data/state.json").exists()
 
 
 def test_explicit_voice_synthesis_preserves_provider_and_cannot_publish(monkeypatch, tmp_path):

@@ -115,7 +115,8 @@ commands and [OPERATIONS.md](../docs/OPERATIONS.md) for live credentials, deploy
 Legacy weekly radar modules remain for backward compatibility while the daily path stabilizes. New product behavior belongs in the manifest-driven daily pipeline, not additional README parsing or mandatory per-topic model calls.
 The `Legacy Narrator Polish` agent is only for `pipeline.main`; never substitute its free-form rewrite for validated
 daily narration. Ad-hoc specials use `pipeline.adhoc` and the shared publisher; the legacy `pipeline.main --adhoc-topic` is disabled.
-Schema-4 specials must measure 1200-1800 seconds and preserve daily cadence separately from feed-head state.
+Schema-4 specials target 20-30 minutes editorially, not as a publication limit. Require finite positive measured
+duration plausible for the reviewed transcript, and preserve daily cadence separately from feed-head state.
 
 ## Reusable operating skills
 

@@ -12,7 +12,7 @@ body:
     id: topic
     attributes:
       label: Topic
-      description: One focused subject for a 20-30 minute special.
+      description: One focused subject for a special. The 20-30 minute target is a preference, not a publication limit.
     validations:
       required: true
   - type: input

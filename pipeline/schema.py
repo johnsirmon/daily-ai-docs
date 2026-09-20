@@ -637,10 +637,11 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         if type(manifest.audio["size_bytes"]) is not int or manifest.audio["size_bytes"] < 10_000:
             raise SchemaError("reviewed audio size must be a measured positive integer")
         duration = manifest.audio["duration_secs"]
-        lower, upper = (1200, 1800) if long_form else (300, 480)
         if (type(duration) not in (int, float) or not math.isfinite(duration)
-                or not lower <= duration <= upper):
-            raise SchemaError(f"reviewed audio duration must be within {lower}-{upper} seconds")
+                or duration <= 0):
+            raise SchemaError("reviewed audio duration must be a finite positive number")
+        if not long_form and not 300 <= duration <= 480:
+            raise SchemaError("reviewed audio duration must be within 300-480 seconds")
         if (manifest.audio["codec"] != "mp3" or type(manifest.audio["sample_rate"]) is not int
                 or manifest.audio["sample_rate"] != 44100
                 or type(manifest.audio["channels"]) is not int or manifest.audio["channels"] != 2):
