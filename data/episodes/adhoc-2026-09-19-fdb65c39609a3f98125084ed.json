@@ -2,7 +2,7 @@
   "schema_version": 4,
   "episode_id": "adhoc-2026-09-19-fdb65c39609a3f98125084ed",
   "published_at": "2026-09-20T19:13:48.077647+00:00",
-  "status": "candidate",
+  "status": "published",
   "source_health": {
     "manual:code.visualstudio.com:dated-primary-events": "ok:5",
     "manual:github.blog:dated-corroboration": "ok:1",

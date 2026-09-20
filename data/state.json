@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "seen_event_ids": [
     "ghrel:2ec7a45fef458a79b70e",
     "feed:faa37362568657fbf7a1",
@@ -50,10 +50,15 @@
     "ghrel:028ae8f2158c4c5c7625",
     "feed:4cbf947485c627798e6c",
     "ghrel:01cd6a498d377caff37a",
-    "feed:90422616cebb86f46f0a"
+    "feed:90422616cebb86f46f0a",
+    "vscode:1.130:agent-worktree-approvals",
+    "vscode:1.131:subagent-visibility",
+    "vscode:1.132:side-chats-live-activity",
+    "vscode:2026-08-26:agent-host-architecture",
+    "vscode:1.138:reviewable-pr-handoff"
   ],
-  "last_publication": "2026-09-19T13:57:49.385299Z",
-  "last_episode_id": "daily-2026-09-19-d6ff21f1",
+  "last_publication": "2026-09-20T19:13:48.077647+00:00",
+  "last_episode_id": "adhoc-2026-09-19-fdb65c39609a3f98125084ed",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 125270,
@@ -71,5 +76,7 @@
       "stars": 245403,
       "fetched_at": "2026-09-14T16:24:09.494147Z"
     }
-  }
+  },
+  "last_daily_episode_id": "daily-2026-09-19-d6ff21f1",
+  "last_daily_publication": "2026-09-19T13:57:49.385299Z"
 }

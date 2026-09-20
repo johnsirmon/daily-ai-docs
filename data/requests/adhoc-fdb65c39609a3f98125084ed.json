@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "request": {
+    "topic": "Parallel coding agents in VS Code: useful delegation, shared-state risks, and verification",
+    "audience": "AI developers",
+    "cutoff": "2026-09-19T16:36:05.411476+00:00",
+    "lookback_days": 60,
+    "provider": "gemini-notebook-web",
+    "publish_now": true,
+    "actor": "johnsirmon",
+    "issue": null,
+    "schema_version": 1
+  },
+  "request_sha256": "fdb65c39609a3f98125084ed24b63d2907d2f3945a2abe9dfa7815b785bbf043",
+  "status": "published",
+  "episode_id": "adhoc-2026-09-19-fdb65c39609a3f98125084ed",
+  "confirmed_at": "2026-09-20T19:51:16.456331Z",
+  "audio_sha256": "864f7de71b3a204e0a2053b1c519b7470c595db7a5f44c89a2406c25c4f2f7e7"
+}
