@@ -49,17 +49,18 @@ authorization. No step here grants publication permission.
 3. Populate exact spoken claim text, its source-event ID, and the supporting source quote.
    Apply the linked claim worksheet to scope, quantities, eligibility, dates, and research
    limitations. Syntactic quote matching is not factual entailment.
-4. Keep the standalone ad-hoc review file to `transcript`, `review`, and `voice`.
-   `pipeline.adhoc prepare` binds the UTF-8 narration hash and original-audio hash.
+4. The standalone ad-hoc review file requires `transcript`, `review`, and `voice`,
+   with optional `editing` for an approved audible correction.
+   `pipeline.adhoc prepare` binds the complete UTF-8 narration hash and supplied-input audio hash.
    For schema 3, put transcript/review provenance in the draft's `generation` object;
    do not add schema-4-only request or voice fields.
 5. Material corrections require the explicit editing contract, not a rewritten transcript
    concealing the original error. Preserve original/component hashes, exact audible prefix,
-   combined transcript, and composite-input hash. The schema-3 importer accepts that reviewed
-   composite; it does not synthesize or assemble corrections. The current ad-hoc preparation
-   command does not expose editing provenance in its three-field review input. If a special
-   needs that handoff, stop for an explicit contract change rather than silently dropping
-   provenance or adding unsupported review fields.
+   combined transcript, and composite-input hash. Both schema-3 import and schema-4 ad-hoc
+   preparation accept the reviewed lossless composite; neither synthesizes nor assembles
+   corrections. For a special, preparation copies `editing` unchanged into `generation`.
+   Omit it for unedited recordings, never set it to null. Changing, adding, or removing
+   editing provenance cannot resume an existing bundle.
 
 ### Minimal review example
 
@@ -95,11 +96,33 @@ Notebook requires `voice: {}`. For an explicit Edge request, use the actual `nam
 volume in that object; do not invent extra fields or listening approval. Preserve any
 other synthesis settings in local operator notes.
 
+For an approved audible prefix, add this optional member to the review above. These
+hashes are fictional shape examples, not verified media. Replace them with the original
+and correction component hashes; prefix the full retained transcript with the exact
+`correction_text`. Do not replace the conversation with a summary or shorten it to fit a budget.
+
+```json
+{
+  "editing": {
+    "method": "prefixed_editorial_correction",
+    "original_audio_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "correction_text": "Editorial correction: approval changes the member's budget, not the organization's budget.",
+    "correction_audio_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "correction_provider": "edge"
+  }
+}
+```
+
+The correction provider does not change the requested provider or `voice`: a Notebook
+conversation with an Edge prefix still uses `voice: {}`. `source_audio_sha256` binds the
+supplied lossless composite, not either component. Component hashes record review
+provenance; the importer does not independently reconstruct or verify those components.
+
 ## Let preparation own conversion and mastering
 
 Pass the preserved original directly to `pipeline.reviewed_audio` for schema 3 or
-`pipeline.adhoc prepare` for schema 4. The schema-3 importer also accepts an explicitly
-reviewed correction composite with editing provenance. Do not preconvert to MP3 or
+`pipeline.adhoc prepare` for schema 4. Both accept an explicitly
+reviewed lossless correction composite with editing provenance. Do not preconvert to MP3 or
 run a separate mastering pass first.
 
 Safe offline CLI discovery with the repository's installed interpreter:
@@ -114,7 +137,8 @@ for the required inputs.
 
 - Schema 4 always uses the existing two-pass FFmpeg mastering gate. The 20-30 minute range is an
   editorial target, not a publication limit; measured duration must be finite, positive, and plausible
-  for the reviewed transcript's word count.
+  for the reviewed transcript's word count. The complete transcript, including any correction,
+  must fit 10,000 words and 60,000 characters; schema-1/2/3 narration budgets are unchanged.
 - New schema-3 imports and daily generated TTS opt in only with
   `PODCAST_AUDIO_POLISH=1` for that invocation. Do not persistently change the environment
   or workflow defaults. Schema 3 remains 300-480 seconds; schema-1/2 edition budgets stay unchanged.

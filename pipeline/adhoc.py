@@ -106,8 +106,9 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
     narration = transcript_path.read_text(encoding="utf-8")
     if repetition_findings(narration):
         raise ValueError("adjacent repeated speech requires editorial correction")
-    if set(review) != {"transcript", "review", "voice"}:
-        raise ValueError("review must contain transcript engine/model, claim review, and voice provenance")
+    review_fields = {"transcript", "review", "voice"}
+    if set(review) not in (review_fields, review_fields | {"editing"}):
+        raise ValueError("review requires transcript, review, and voice, with optional editing provenance")
     draft = {
         "schema_version": 4, "episode_id": request.episode_id,
         "published_at": datetime.now(timezone.utc).isoformat(), "status": "draft",
@@ -128,6 +129,8 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
             "url": f"https://github.com/{repository()}/releases/download/{request.episode_id}/daily-ai-brief.mp3",
         },
     }
+    if "editing" in review:
+        draft["generation"]["editing"] = review["editing"]
     draft = EpisodeManifest.from_dict(draft).to_dict()
     if output.exists():
         from .daily import resume_reviewed_release
@@ -138,6 +141,9 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
         for key in ("request_sha256", "source_audio_sha256", "transcript", "review", "voice"):
             if saved["generation"][key] != draft["generation"][key]:
                 raise ValueError("prepared bundle provenance changed")
+        if (("editing" in saved["generation"]) != ("editing" in draft["generation"])
+                or saved["generation"].get("editing") != draft["generation"].get("editing")):
+            raise ValueError("prepared bundle editing provenance changed")
         return resume_reviewed_release(request.episode_id, output)
     directory = request_path.parent
     record_status(directory, request, "reviewing")
@@ -191,13 +197,15 @@ def publish(directory: Path) -> None:
 def synthesize(request: PodcastRequest, script: Path, output: Path) -> None:
     """Create an unpublished voice sample/recording, never a verified publication."""
     from .audio_quality import repetition_findings
+    from .schema import MAX_LONG_FORM_NARRATION_CHARS, MAX_LONG_FORM_NARRATION_WORDS
     from .tts import _EDGE_VOICE, generate_audio
     if request.provider == "gemini-notebook-web":
         raise ValueError("Notebook audio must use the signed-in browser handoff")
     if output.exists() or output.with_suffix(".voice.json").exists():
         raise FileExistsError("voice output must be new")
     text = script.read_text(encoding="utf-8")
-    if len(text) > 60000 or len(text.split()) > 6000 or repetition_findings(text):
+    if (len(text) > MAX_LONG_FORM_NARRATION_CHARS or len(text.split()) > MAX_LONG_FORM_NARRATION_WORDS
+            or repetition_findings(text)):
         raise ValueError("script exceeds the long-form budget or repeats adjacent passages")
     voice = {
         "name": os.environ.get("EDGE_TTS_VOICE", _EDGE_VOICE),

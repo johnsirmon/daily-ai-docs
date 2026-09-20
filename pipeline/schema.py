@@ -19,6 +19,8 @@ class SchemaError(ValueError):
 
 
 MAX_PUBLIC_EXCERPT_WORDS = 180
+MAX_LONG_FORM_NARRATION_WORDS = 10000
+MAX_LONG_FORM_NARRATION_CHARS = 60000
 
 
 MAX_FULL_TEXT_CHARS = 80000
@@ -518,8 +520,9 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     _sha256(transcript["sha256"], "transcript.sha256")
     if transcript["sha256"] != hashlib.sha256(manifest.narration.encode("utf-8")).hexdigest():
         raise SchemaError("transcript.sha256 must hash the exact UTF-8 narration")
-    if len(manifest.narration) > (60000 if long_form else 16000):
-        raise SchemaError("narration exceeds 16000 characters")
+    character_limit = MAX_LONG_FORM_NARRATION_CHARS if long_form else 16000
+    if len(manifest.narration) > character_limit:
+        raise SchemaError(f"narration exceeds {character_limit} characters")
     review = generation["review"]
     _exact_fields(review, {"method", "reviewed_at", "reviewer", "claims", "notes"}, "review")
     if review["method"] != "transcript_source_comparison" or review["reviewer"] != "assistant":
@@ -696,8 +699,11 @@ class EpisodeManifest:
                 raise SchemaError("story source URLs must match referenced evidence")
         if not isinstance(self.noise_notes, list) or not all(isinstance(x, str) for x in self.noise_notes):
             raise SchemaError("noise_notes must be a string list")
-        narration = _text(self.narration, "narration", limit=60000 if self.schema_version == 4 else 16000)
-        if len(narration.split()) > (6000 if self.schema_version == 4 else 1500):
+        long_form = self.schema_version == 4
+        narration = _text(self.narration, "narration", limit=MAX_LONG_FORM_NARRATION_CHARS if long_form else 16000)
+        if len(narration.split()) > (MAX_LONG_FORM_NARRATION_WORDS if long_form else 1500):
+            if long_form:
+                raise SchemaError(f"narration exceeds the {MAX_LONG_FORM_NARRATION_WORDS}-word long-form budget")
             raise SchemaError("narration exceeds the ten-minute word budget")
         _text(self.show_notes, "show_notes", limit=24000)
         if not isinstance(self.generation, dict) or not isinstance(self.audio, dict):

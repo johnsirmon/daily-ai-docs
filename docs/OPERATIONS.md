@@ -396,8 +396,17 @@ Replace the placeholder request directory with the returned path; do not paste p
 The `adhoc-podcast` skill prepares the evidence packet and review files with the operator. The packet contains
 `source_events`, `stories`, `source_health`, `show_notes`, and optional `noise_notes` using existing schema fields.
 Review JSON contains `transcript` (`engine`, `model`), `review` (method, reviewer, timestamp, exact spoken claims,
-matching source quotes, and limitations), and `voice` (`{}` for Notebook). Full papers and third-party transcripts
-must not be archived in the publication packet.
+matching source quotes, and limitations), and `voice` (`{}` for Notebook), plus optional `editing`.
+For an approved audible correction, use the existing editing contract: `method: "prefixed_editorial_correction"`,
+`original_audio_sha256`, `correction_text`, `correction_audio_sha256`, and `correction_provider: "edge"`.
+See the [review example](../.agents/skills/audio-production-review/SKILL.md#minimal-review-example).
+Preserve the original recording and both component hashes. Supply a reviewed lossless correction composite to
+`--audio` and the exact prefix plus full retained conversation to `--transcript`; do not abbreviate the transcript.
+Preparation copies `editing` unchanged into `generation`, and `source_audio_sha256` binds the supplied composite.
+The importer owns final mastering; it does not assemble corrections or independently verify component hashes.
+Keep the requested Notebook provider and `voice: {}` for a Notebook recording with an Edge correction.
+Unedited reviews omit `editing`; null is not valid. Full papers and third-party transcripts must not be archived
+in the publication packet.
 
 Use the same Notebook browser technique, selecting English Deep Dive / Longer. Actual duration is not guaranteed.
 Preserve the original download, record any native Save handoff, transcribe locally, and review the spoken claims.
@@ -406,8 +415,9 @@ within the authorized account allowance is permitted; never manufacture length w
 
 Schema 4 binds the exact request revision, provider, transcript/source review, input hash, measured mastering report,
 and final MP3. It retains the existing immutable release media name and requires a finite positive measured duration,
-plausible for the reviewed transcript's word count, rather than a fixed minute range. Transcript-size bounds,
-full decode, silence/repetition detection, source review, and listening requirements remain unchanged. Schemas 1-3
+plausible for the reviewed transcript's word count, rather than a fixed minute range. The complete schema-4 narration
+is bounded at 10,000 words and 60,000 characters, including any correction. Full decode, silence/repetition detection,
+source review, and listening requirements remain unchanged. Schemas 1-3
 retain their original constraints. Normalization targets -16 LKFS +/-1 dB and true peak at most -1 dBFS; the final
 encoded recording is measured again. Decoding and automated repetition checks do not constitute a listening review.
 For future daily TTS episodes and new schema-3 imports, `PODCAST_AUDIO_POLISH=1` explicitly opts into the same
@@ -415,6 +425,10 @@ mastering gate while preserving their original duration budgets. Existing defaul
 Daily generated source audio is retained beside its working output under a checksum-qualified filename.
 
 Existing schema-4 requests and manifests need no migration or rehashing; their fields and identities are unchanged.
+Unedited manifests still omit `editing`. Resume requires identical editing presence and values as well as all other
+review inputs; adding, removing, or changing correction provenance requires a new preparation, never reused output.
+Deploy the expanded word budget and review-input contract to `main` before dispatching a corrected long transcript.
+After release, keep this contract available for recovery; never truncate a transcript or replace media for rollback.
 Preparation, release recovery, and finalization apply the same transcript-based duration check. Deploy this policy
 to `main` before dispatching an out-of-target special: older publishers still reject media outside 1200-1800 seconds.
 After publishing such an episode, retain the new policy during recovery; never rewrite its media to support a rollback.
@@ -450,6 +464,7 @@ listening approval.
 Re-voicing is a new reviewed recording. Published enclosure bytes are never replaced.
 For an explicit Edge request, `pipeline.adhoc synthesize --request PATH --script SCRIPT --output NEW.mp3`
 creates unpublished audio and a matching `.voice.json` sidecar for the review packet. It never finalizes or publishes.
+Its script uses the same schema-4 limits of 10,000 words and 60,000 characters.
 The Notebook provider rejects this command and continues to use the browser technique. Review the actual recording
 and ASR transcript before `prepare`, even when its source script was already reviewed.
 

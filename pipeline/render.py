@@ -307,7 +307,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             "",
             manifest.generation["editing"]["correction_text"],
             "",
-        ] if manifest.schema_version == 3 and "editing" in manifest.generation else []),
+        ] if manifest.schema_version in {3, 4} and "editing" in manifest.generation else []),
         "## Today's signal",
         "",
     ]
@@ -376,7 +376,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         *([
             "- An Edge-TTS editorial correction precedes the retained Notebook conversation; the manifest records both component hashes and the exact correction text.",
             "",
-        ] if manifest.schema_version == 3 and "editing" in manifest.generation else []),
+        ] if manifest.schema_version in {3, 4} and "editing" in manifest.generation else []),
         "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
         "- Up to seven actionable stories, capped per product for variety; thin-news runs skip publication.",
         "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.",

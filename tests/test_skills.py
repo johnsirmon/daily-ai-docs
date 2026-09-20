@@ -152,24 +152,31 @@ def test_documented_cli_help_is_current_and_writes_no_staging(tmp_path):
     assert not list(tmp_path.iterdir()), "help created files in the working directory"
 
 
-def _example_manifest() -> dict:
+def _example_manifest(*, corrected=False) -> dict:
     blocks = re.findall(r"```json\n(.*?)\n```", AUDIO_SKILL.read_text(encoding="utf-8"), re.DOTALL)
-    assert len(blocks) == 1, "expected one illustrative review packet"
+    assert len(blocks) == 2, "expected a review packet and its optional correction member"
     review = json.loads(blocks[0])
     assert set(review) == {"transcript", "review", "voice"}
     assert set(review["transcript"]) == {"engine", "model"}
     data = long_draft()
     data["generation"].update(review)
+    if corrected:
+        editing = json.loads(blocks[1])
+        assert set(editing) == {"editing"}
+        data["generation"].update(editing)
+        data["narration"] = editing["editing"]["correction_text"] + "\n\n" + data["narration"]
     data["generation"]["transcript"]["sha256"] = hashlib.sha256(data["narration"].encode("utf-8")).hexdigest()
     return data
 
 
-def test_audio_review_example_matches_draft_contract_not_publication():
-    manifest = EpisodeManifest.from_dict(_example_manifest())
+@pytest.mark.parametrize("corrected", [False, True])
+def test_audio_review_example_matches_draft_contract_not_publication(corrected):
+    manifest = EpisodeManifest.from_dict(_example_manifest(corrected=corrected))
     assert manifest.status == "draft"
     assert manifest.generation["request"]["publish_now"] is False
     assert manifest.generation["quality"] == {}
     assert manifest.generation["voice"] == {}
+    assert ("editing" in manifest.generation) == corrected
     with pytest.raises(SchemaError):
         manifest.validate(require_audio=True)
 

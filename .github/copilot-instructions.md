@@ -117,6 +117,9 @@ The `Legacy Narrator Polish` agent is only for `pipeline.main`; never substitute
 daily narration. Ad-hoc specials use `pipeline.adhoc` and the shared publisher; the legacy `pipeline.main --adhoc-topic` is disabled.
 Schema-4 specials target 20-30 minutes editorially, not as a publication limit. Require finite positive measured
 duration plausible for the reviewed transcript, and preserve daily cadence separately from feed-head state.
+Schema-4 narration is bounded at 10,000 words and 60,000 characters, including audible corrections.
+Ad-hoc reviews may carry optional `editing` provenance for a reviewed lossless correction composite; preparation
+preserves it exactly and rejects changed, added, or removed editing on resume. Daily narration budgets stay unchanged.
 
 ## Reusable operating skills
 

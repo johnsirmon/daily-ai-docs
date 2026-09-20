@@ -1,13 +1,14 @@
 """Offline handoff for user-authorized, transcript/source-reviewed Notebook audio.
 
 Run ``python -m pipeline.reviewed_audio --manifest draft.json --audio source.m4a
---output-dir NEW_DIRECTORY``. The schema-3 draft records the exact UTF-8 ASR
+--output-dir NEW_DIRECTORY``. The schema-3 or schema-4 draft records the exact UTF-8 ASR
 transcript hash, source audio hash, authorization timestamp and bounded public
 review evidence. No model, TTS, network, feed or novelty-state writes occur.
 Optional ``generation.editing`` records a parent-produced composite with an Edge
 editorial correction prefixed to the intact Notebook recording. Its component
 hashes are review provenance; this importer verifies the composite input hash
-and transcodes it unchanged, without assembling or regenerating either component.
+and preserves its content through conversion/mastering, without assembling or
+regenerating either component.
 
 The output directory is single-use, including after failure. Recovery of released
 episodes must reuse their immutable manifest and MP3, never rerun this importer.

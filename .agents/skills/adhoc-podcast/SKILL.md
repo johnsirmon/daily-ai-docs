@@ -87,12 +87,19 @@ Do not fabricate transcription or listening results. Review all consequential sp
 numbers, scope, research limitations, and repetition.
 The review JSON contains `transcript` (engine and model), `review` (the schema's transcript/source comparison),
 and `voice` (`{}` for Notebook). Claims must quote exact source excerpts and occur in the transcript.
+An optional `editing` object carries the existing `prefixed_editorial_correction` contract:
+`method`, `original_audio_sha256`, exact audible `correction_text`, `correction_audio_sha256`,
+and `correction_provider: "edge"`. Use the linked audio-review example; omit the member for unedited recordings.
+Retain the full conversation after the correction prefix. The complete schema-4 transcript is bounded at
+10,000 words and 60,000 characters, also enforced by the explicit Edge synthesis path.
 Resolve uncertainties before marking ready. A plain schema pass is not semantic review.
 
-Use `pipeline.adhoc prepare` with the request, packet, transcript, review, original audio, and a new output directory.
-Supply the original recording, not a manually preconverted MP3. Preparation owns conversion/mastering,
-checks the long-form contract, and writes the sealed publication bundle.
-An unchanged successful bundle can be resumed; failed outputs are preserved for diagnosis, not overwritten.
+Use `pipeline.adhoc prepare` with the request, packet, transcript, review, input audio, and a new output directory.
+Supply the original recording or explicitly reviewed lossless correction composite, not a manually preconverted MP3.
+Preparation copies editing provenance exactly, binds `source_audio_sha256` to that input, owns conversion/mastering,
+checks the long-form contract, and writes the sealed publication bundle. Component hashes remain review provenance.
+An unchanged successful bundle can be resumed; changed, added, or removed editing cannot reuse its bytes.
+Failed outputs are preserved for diagnosis, not overwritten.
 
 ## Publish and report
 

@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+from unittest.mock import Mock
 
 import pytest
 
@@ -16,7 +17,7 @@ from pipeline.audio_quality import repetition_findings, validate_quality_report
 from pipeline.disclosure import AI_NARRATION_DISCLOSURE
 from pipeline.podcast_request import PodcastRequest, record_status, request_from_issue, save_request
 from pipeline.schema import EpisodeManifest, SchemaError, SourceEvent
-from tests.test_reviewed_audio import draft, TIMESTAMP, CLAIM
+from tests.test_reviewed_audio import corrected_draft, draft, TIMESTAMP, CLAIM
 
 
 def request(**changes):
@@ -51,6 +52,36 @@ def long_draft(*, ready=False, **changes):
             "integrated_lufs": -16, "true_peak_dbtp": -1.1, "audio_sha256": "a" * 64,
         }
     return item
+
+
+def long_narration(word_count):
+    opening = AI_NARRATION_DISCLOSURE + "\n\n" + CLAIM + "\n\n"
+    return opening + " ".join(f"w{index}" for index in range(word_count - len(opening.split())))
+
+
+def prepare_inputs(tmp_path, *, corrected=False):
+    req = request(publish_now=True)
+    request_path = save_request(req, tmp_path)
+    source = tmp_path / "source.wav"
+    source.write_bytes(b"reviewed lossless composite" if corrected else b"original")
+    data = draft()
+    packet = tmp_path / "packet.json"
+    packet.write_text(json.dumps({key: data[key] for key in (
+        "source_events", "source_health", "stories", "show_notes",
+    )}), encoding="utf-8")
+    narration = long_narration(8885 if corrected else 5000)
+    review_data = {
+        "transcript": {"engine": "faster-whisper", "model": "small.en"},
+        "review": data["generation"]["review"], "voice": {},
+    }
+    if corrected:
+        review_data["editing"] = corrected_draft()["generation"]["editing"]
+        narration = review_data["editing"]["correction_text"] + "\n\n" + narration
+    transcript = tmp_path / "transcript.txt"
+    transcript.write_text(narration, encoding="utf-8")
+    review = tmp_path / "review.json"
+    review.write_text(json.dumps(review_data), encoding="utf-8")
+    return request_path, packet, transcript, review, source, tmp_path / "prepared"
 
 
 @pytest.mark.parametrize("days", [0, 366, True, 1.5, "60"])
@@ -98,10 +129,122 @@ def test_recency_rejects_future_unknown_and_secondary():
 
 
 def test_long_form_does_not_change_old_serialization():
-    legacy = EpisodeManifest.from_dict(draft())
-    assert legacy.to_dict() == EpisodeManifest.from_dict(legacy.to_dict()).to_dict()
-    current = EpisodeManifest.from_dict(long_draft())
-    assert current.to_dict() == EpisodeManifest.from_dict(current.to_dict()).to_dict()
+    for data in (draft(), long_draft()):
+        manifest = EpisodeManifest.from_dict(data)
+        serialized = manifest.to_dict()
+        assert serialized["generation"] == data["generation"]
+        assert EpisodeManifest.from_dict(serialized).to_dict() == serialized
+        assert "editing" not in manifest.generation
+
+
+@pytest.mark.parametrize("words", [10000, 10001])
+def test_long_form_narration_word_boundary(words):
+    data = long_draft()
+    data["narration"] = long_narration(words)
+    assert len(data["narration"].split()) == words
+    assert len(data["narration"]) < 60000
+    data["generation"]["transcript"]["sha256"] = hashlib.sha256(data["narration"].encode()).hexdigest()
+    if words == 10001:
+        with pytest.raises(SchemaError, match="10000-word long-form budget"):
+            EpisodeManifest.from_dict(data)
+    else:
+        assert EpisodeManifest.from_dict(data).narration == data["narration"]
+
+
+@pytest.mark.parametrize("characters", [60000, 60001])
+@pytest.mark.parametrize("padding", ["x", " "])
+def test_long_form_narration_character_boundary(characters, padding):
+    data = long_draft()
+    data["narration"] += padding * (characters - len(data["narration"]))
+    data["generation"]["transcript"]["sha256"] = hashlib.sha256(data["narration"].encode()).hexdigest()
+    if characters == 60001:
+        with pytest.raises(SchemaError, match="narration exceeds 60000 characters"):
+            EpisodeManifest.from_dict(data)
+    else:
+        assert EpisodeManifest.from_dict(data).narration == data["narration"]
+
+
+@pytest.mark.parametrize("schema", [1, 2, 3])
+@pytest.mark.parametrize("narration,error", [
+    (long_narration(1501), "ten-minute word budget"),
+    ("x" * 16001, "narration exceeds 16000 characters"),
+], ids=["1501-words", "16001-characters"])
+def test_daily_narration_budgets_are_not_widened(schema, narration, error):
+    data = draft()
+    data.update(schema_version=schema, narration=narration)
+    with pytest.raises(SchemaError, match=error):
+        EpisodeManifest.from_dict(data)
+
+
+@pytest.mark.parametrize("schema", [1, 3])
+@pytest.mark.parametrize("narration", [
+    long_narration(1500), CLAIM + "x" * (16000 - len(CLAIM)),
+], ids=["1500-words", "16000-characters"])
+def test_daily_narration_boundaries_remain_accepted(schema, narration):
+    data = draft()
+    data.update(schema_version=schema, narration=narration)
+    data["generation"]["transcript"]["sha256"] = hashlib.sha256(narration.encode()).hexdigest()
+    assert EpisodeManifest.from_dict(data).narration == narration
+
+
+@pytest.mark.parametrize("output_exists", [False, True])
+@pytest.mark.parametrize("field,value", [
+    ("method", "trimmed_conversation"), ("correction_provider", "gemini"),
+    ("original_audio_sha256", "invalid"), ("original_audio_sha256", "A" * 64),
+    ("correction_audio_sha256", None), ("correction_audio_sha256", "f" * 63),
+    ("correction_text", ""), ("correction_text", "not the actual prefix"),
+    ("correction_text", "x" * 1601), ("verified", True),
+])
+def test_prepare_rejects_invalid_editing_before_import_or_resume(
+        monkeypatch, tmp_path, output_exists, field, value):
+    from pipeline.adhoc import prepare
+    inputs = prepare_inputs(tmp_path, corrected=True)
+    review = json.loads(inputs[3].read_text())
+    review["editing"][field] = value
+    inputs[3].write_text(json.dumps(review), encoding="utf-8")
+    if output_exists:
+        inputs[-1].mkdir()
+    importer, resume = Mock(), Mock()
+    monkeypatch.setattr("pipeline.reviewed_audio.prepare_reviewed_audio", importer)
+    monkeypatch.setattr("pipeline.daily.resume_reviewed_release", resume)
+    with pytest.raises(SchemaError):
+        prepare(*inputs)
+    importer.assert_not_called()
+    resume.assert_not_called()
+    assert not list(inputs[0].parent.glob("draft-*.json"))
+
+
+@pytest.mark.parametrize("editing", [None, [], {}, {"method": "prefixed_editorial_correction"}])
+def test_prepare_rejects_incomplete_editing(monkeypatch, tmp_path, editing):
+    from pipeline.adhoc import prepare
+    inputs = prepare_inputs(tmp_path, corrected=True)
+    review = json.loads(inputs[3].read_text())
+    review["editing"] = editing
+    inputs[3].write_text(json.dumps(review), encoding="utf-8")
+    importer = Mock()
+    monkeypatch.setattr("pipeline.reviewed_audio.prepare_reviewed_audio", importer)
+    with pytest.raises(SchemaError, match="generation.editing"):
+        prepare(*inputs)
+    importer.assert_not_called()
+    assert not inputs[-1].exists()
+
+
+@pytest.mark.parametrize("field", ["transcript", "review", "voice", "unsupported"])
+def test_prepare_keeps_review_fields_exact(monkeypatch, tmp_path, field):
+    from pipeline.adhoc import prepare
+    inputs = prepare_inputs(tmp_path)
+    review = json.loads(inputs[3].read_text())
+    if field == "unsupported":
+        review[field] = {}
+    else:
+        review.pop(field)
+    inputs[3].write_text(json.dumps(review), encoding="utf-8")
+    importer = Mock()
+    monkeypatch.setattr("pipeline.reviewed_audio.prepare_reviewed_audio", importer)
+    with pytest.raises(ValueError, match="review requires"):
+        prepare(*inputs)
+    importer.assert_not_called()
+    assert not inputs[-1].exists()
 
 
 @pytest.mark.parametrize("seconds", [1, 1150.897, 1199.999, 1200, 1800, 1800.001, 1912.442, 2996])
@@ -324,36 +467,24 @@ def test_request_receipt_recovers_after_confirmation_interruption(monkeypatch, t
     assert json.loads(receipt.read_text())["status"] == "published"
 
 
-@pytest.mark.parametrize("seconds,accepted", [
-    (1150.897, True), (1200, True), (1800, True), (1912.442, True), (2996, True),
-    (1, False), (10000, False),
+@pytest.mark.parametrize("seconds,accepted,corrected", [
+    (1150.897, True, False), (1200, True, False), (1800, True, False),
+    (1912.442, True, False), (2996, True, False), (2996, True, True),
+    (1, False, False), (10000, False, False),
 ])
-def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path, seconds, accepted):
+def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path, seconds, accepted, corrected):
     from pipeline.adhoc import prepare
     monkeypatch.chdir(tmp_path)
     req = request(publish_now=True)
-    request_path = save_request(req, tmp_path)
-    source = tmp_path / "source.m4a"
-    source.write_bytes(b"original")
-    data = draft(source=b"original")
-    packet = tmp_path / "packet.json"
-    packet.write_text(json.dumps({key: data[key] for key in (
-        "source_events", "source_health", "stories", "show_notes",
-    )}), encoding="utf-8")
-    transcript = tmp_path / "transcript.txt"
-    narration = AI_NARRATION_DISCLOSURE + "\n\n" + CLAIM + "\n\n" + " ".join(
-        f"word{index}" for index in range(5000)
-    )
-    transcript.write_text(narration, encoding="utf-8")
-    review = tmp_path / "review.json"
-    review.write_text(json.dumps({
-        "transcript": {"engine": "faster-whisper", "model": "small.en"},
-        "review": data["generation"]["review"], "voice": {},
-    }), encoding="utf-8")
+    request_path, packet, transcript, review, source, target = prepare_inputs(tmp_path, corrected=corrected)
+    narration = transcript.read_text(encoding="utf-8")
+    original_audio = source.read_bytes()
+    original_review = json.loads(review.read_text())
     content = b"x" * 12000
     digest = hashlib.sha256(content).hexdigest()
     report = {**long_draft(ready=True)["generation"]["quality"], "audio_sha256": digest}
     def master(source, target):
+        assert source.read_bytes() == original_audio
         target.write_bytes(content)
         return report
     commands = []
@@ -378,7 +509,6 @@ def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path, seconds, 
     monkeypatch.setattr("pipeline.reviewed_audio.analyze_audio", measured)
     monkeypatch.setattr("pipeline.daily.analyze_audio", measured)
     monkeypatch.setattr("pipeline.audio_quality.loudness", lambda *args: {"input_i": -16, "input_tp": -1.1})
-    target = tmp_path / "prepared"
     if not accepted:
         with pytest.raises(AudioValidationError, match="outside"):
             prepare(request_path, packet, transcript, review, source, target)
@@ -392,9 +522,25 @@ def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path, seconds, 
     second = prepare(request_path, packet, transcript, review, source, target)
     assert first["episode_id"] == second["episode_id"] == req.episode_id
     assert second["resumed"]
-    assert source.read_bytes() == b"original"
+    assert source.read_bytes() == original_audio
     assert (target / "episode-manifest.json").read_bytes() == manifest_bytes
     assert (target / "daily-ai-brief.mp3").read_bytes() == content
+    prepared = EpisodeManifest.from_dict(json.loads(manifest_bytes))
+    assert prepared.narration == narration
+    assert prepared.generation["source_audio_sha256"] == hashlib.sha256(original_audio).hexdigest()
+    assert prepared.generation["transcript"]["sha256"] == hashlib.sha256(narration.encode()).hexdigest()
+    assert EpisodeManifest.from_dict(prepared.to_dict()).to_dict() == prepared.to_dict()
+    from pipeline.narrate import manifest_to_narration
+    from pipeline.render import render_manifest_readme
+    assert manifest_to_narration(prepared) == narration
+    if corrected:
+        assert prepared.generation["editing"] == original_review["editing"]
+        assert narration.endswith(long_narration(8885))
+        assert "### Editorial correction" in render_manifest_readme(prepared)
+        assert original_review["editing"]["correction_text"] in render_manifest_readme(prepared)
+    else:
+        assert "editing" not in prepared.generation
+        assert "### Editorial correction" not in render_manifest_readme(prepared)
     assert not Path("podcast.xml").exists()
     candidate = daily.finalize(
         target / "episode-manifest.json", verify_remote=False,
@@ -407,6 +553,32 @@ def test_prepare_import_and_exact_bundle_resume(monkeypatch, tmp_path, seconds, 
     assert sum("-xerror" in command for command in commands) == 3
     assert sum("-af" in command for command in commands) == 3
     assert not Path("data/state.json").exists()
+    changed_reviews = []
+    if corrected:
+        removed = {key: value for key, value in original_review.items() if key != "editing"}
+        changed_reviews.append(removed)
+        for field in ("original_audio_sha256", "correction_audio_sha256", "correction_text"):
+            changed = json.loads(json.dumps(original_review))
+            changed["editing"][field] = (
+                "Editorial correction:" if field == "correction_text" else "0" * 64
+            )
+            changed_reviews.append(changed)
+    else:
+        added = {**original_review, "editing": {
+            **corrected_draft()["generation"]["editing"], "correction_text": AI_NARRATION_DISCLOSURE,
+        }}
+        changed_reviews.append(added)
+    resume, importer = Mock(), Mock()
+    monkeypatch.setattr("pipeline.daily.resume_reviewed_release", resume)
+    monkeypatch.setattr("pipeline.reviewed_audio.prepare_reviewed_audio", importer)
+    for changed in changed_reviews:
+        review.write_text(json.dumps(changed), encoding="utf-8")
+        with pytest.raises(ValueError, match="editing provenance changed"):
+            prepare(request_path, packet, transcript, review, source, target)
+        assert (target / "episode-manifest.json").read_bytes() == manifest_bytes
+        assert (target / "daily-ai-brief.mp3").read_bytes() == content
+    resume.assert_not_called()
+    importer.assert_not_called()
 
 
 def test_explicit_voice_synthesis_preserves_provider_and_cannot_publish(monkeypatch, tmp_path):
@@ -426,3 +598,27 @@ def test_explicit_voice_synthesis_preserves_provider_and_cannot_publish(monkeypa
         synthesize(req, script, output)
     with pytest.raises(ValueError, match="browser"):
         synthesize(request(), script, tmp_path / "other.mp3")
+
+
+@pytest.mark.parametrize("text,accepted", [
+    (long_narration(10000), True), (long_narration(10001), False),
+    (CLAIM + "x" * (60000 - len(CLAIM)), True),
+    (CLAIM + "x" * (60001 - len(CLAIM)), False),
+], ids=["10000-words", "10001-words", "60000-characters", "60001-characters"])
+def test_explicit_voice_uses_same_long_form_budget(monkeypatch, tmp_path, text, accepted):
+    from pipeline.adhoc import synthesize
+    script = tmp_path / "script.txt"
+    script.write_text(text, encoding="utf-8")
+    output = tmp_path / "source.mp3"
+    generate = Mock(return_value=b"offline sample")
+    monkeypatch.setattr("pipeline.tts.generate_audio", generate)
+    if accepted:
+        synthesize(request(provider="edge"), script, output)
+        generate.assert_called_once_with(text)
+        assert output.read_bytes() == b"offline sample"
+    else:
+        with pytest.raises(ValueError, match="long-form budget"):
+            synthesize(request(provider="edge"), script, output)
+        generate.assert_not_called()
+        assert not output.exists()
+        assert not output.with_suffix(".voice.json").exists()
