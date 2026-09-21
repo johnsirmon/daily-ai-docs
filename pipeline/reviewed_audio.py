@@ -35,8 +35,24 @@ def _write_json(path: Path, data: dict[str, Any]) -> None:
         output.write("\n")
 
 
+def validate_local_handoff(path: Path, audio: Path, manifest: EpisodeManifest) -> None:
+    from .local_execution import load, require_artifact
+
+    state = load(path)
+    original_hash = manifest.generation.get("editing", {}).get("original_audio_sha256")
+    original = path.parent / state["request"]["artifact_name"]
+    require_artifact(
+        path, original if original_hash else audio, identity=manifest.episode_id,
+        kind="notebook-adhoc" if manifest.schema_version == 4 else "notebook-daily",
+        parent_request_sha256=manifest.generation.get("request_sha256", ""),
+    )
+    if original_hash and state["artifact"]["sha256"] != original_hash:
+        raise ValueError("correction provenance must retain the validated original recording")
+
+
 def prepare_reviewed_audio(
     manifest_path: str | Path, audio_path: str | Path, output_dir: str | Path,
+    *, local_execution_path: Path | None = None,
 ) -> dict[str, Any]:
     """Transcode an existing recording once and return the daily publication receipt."""
     manifest_path, audio_path = Path(manifest_path).resolve(), Path(audio_path).resolve()
@@ -54,6 +70,10 @@ def prepare_reviewed_audio(
     manifest = EpisodeManifest.from_dict(json.loads(manifest_path.read_text(encoding="utf-8")))
     if manifest.schema_version not in {3, 4} or manifest.status != "draft":
         raise SchemaError("reviewed audio import requires a schema-3 or schema-4 draft, not a reusable release")
+    from .local_execution import FILENAME
+    handoff = local_execution_path or audio_path.parent / FILENAME
+    if local_execution_path is not None or handoff.exists():
+        validate_local_handoff(handoff, audio_path, manifest)
     if AI_NARRATION_DISCLOSURE not in manifest.narration:
         raise SchemaError("reviewed audio narration must contain the approved production disclosure")
     expected_hash = manifest.generation["source_audio_sha256"]
@@ -119,8 +139,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--manifest", required=True, type=Path)
     parser.add_argument("--audio", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--local-execution", type=Path, help="validated handoff when not beside the original audio")
     args = parser.parse_args(argv)
-    publication = prepare_reviewed_audio(args.manifest, args.audio, args.output_dir)
+    publication = prepare_reviewed_audio(
+        args.manifest, args.audio, args.output_dir, local_execution_path=args.local_execution,
+    )
     print(json.dumps(publication, sort_keys=True))
     return 0
 

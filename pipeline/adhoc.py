@@ -84,6 +84,13 @@ def write_brief(request: PodcastRequest, packet: dict, directory: Path) -> Path:
                 lines.append(f"- Previously covered in {previous.episode_id}: {story.headline}")
     target = directory / "notebook-brief.md"
     content = "\n".join(lines) + "\n"
+    if request.provider == "gemini-notebook-web":
+        from .local_execution import LocalRequest, create
+        create(directory, LocalRequest(
+            identity=request.episode_id, kind="notebook-adhoc",
+            purpose="Original Notebook recording for transcript and source review; not publication approval.",
+            prompt=content, artifact_name="original.m4a", parent_request_sha256=request.revision,
+        ))
     if target.exists():
         if target.read_text(encoding="utf-8") != content:
             raise ValueError("brief evidence or history changed; preserve the prior review and revise explicitly")
@@ -133,6 +140,11 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
     if "editing" in review:
         draft["generation"]["editing"] = review["editing"]
     draft = EpisodeManifest.from_dict(draft).to_dict()
+    from .local_execution import FILENAME
+    from .reviewed_audio import validate_local_handoff
+    handoff = request_path.parent / FILENAME
+    if handoff.exists():
+        validate_local_handoff(handoff, audio_path, EpisodeManifest.from_dict(draft))
     if output.exists():
         from .daily import resume_reviewed_release
         saved = json.loads((output / "episode-manifest.json").read_text(encoding="utf-8"))
@@ -302,7 +314,12 @@ def main() -> None:
         receipt = Path("data/requests") / f"{request.request_id}.json"
         if not receipt.exists():
             receipt = args.request.parent / "status.json"
-        print(receipt.read_text(encoding="utf-8"))
+        result = json.loads(receipt.read_text(encoding="utf-8"))
+        from .local_execution import FILENAME, load
+        handoff = args.request.parent / FILENAME
+        if not Path("data/requests", f"{request.request_id}.json").exists() and handoff.exists():
+            result["local_execution"] = load(handoff)
+        print(json.dumps(result))
     elif args.command == "papers":
         from .sources.papers import collect_research_papers
         request = read_request(args.request)

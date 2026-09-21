@@ -405,6 +405,32 @@ def mocked_audio(monkeypatch):
     return runner, analyzer
 
 
+def test_import_reuses_validated_original_without_exporting_local_state(inputs, mocked_audio, monkeypatch):
+    from pipeline import local_execution as local
+
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    manifest_path, source, output = inputs
+    path = local.create(source.parent, local.LocalRequest(
+        identity=draft()["episode_id"], kind="notebook-daily", purpose="Original daily recording",
+        prompt="English Deep Dive Short, using approved public sources.", artifact_name=source.name,
+    ))
+    monkeypatch.setattr(local, "_measure", lambda *a: {
+        "duration_secs": 320, "codec": "aac", "sample_rate": 44100, "channels": 2,
+    })
+    for action in ("observe", "validate", "resume"):
+        local.advance(path, action, execution="local")
+    original = source.read_bytes()
+    result = prepare_reviewed_audio(manifest_path, source, output)
+    assert result["episode_id"] == draft()["episode_id"]
+    saved = json.loads((output / "episode-manifest.json").read_text())
+    assert saved["generation"] == draft()["generation"]
+    assert "local_execution" not in saved
+    assert not (output / local.FILENAME).exists()
+    assert source.read_bytes() == original
+    assert local.load(path)["attempts"]["generation"] == 0
+    mocked_audio[0].assert_called_once()
+
+
 def test_import_binds_measured_audio_without_mutating_sources(inputs, mocked_audio):
     manifest_path, source, output = inputs
     original_source, original_manifest = source.read_bytes(), manifest_path.read_bytes()

@@ -45,9 +45,9 @@ The commands without `--help` have different effects:
 |---|---|
 | `request` | GitHub identity/permission reads; writes a request-local queue record. |
 | `issue` | GitHub issue/permission reads; writes local staging and posts an intake comment. |
-| `brief` | Offline validation and request-local brief/status writes; reads local episode history. |
+| `brief` | Offline validation and brief/status writes; Notebook also gets a local-execution handoff. |
 | `prepare` | Offline schema/media validation and mastering; writes a new sealed bundle and local status. |
-| `status` | Local read only: confirmed request receipt if present, otherwise local status. Does not refresh GitHub. |
+| `status` | Local read only: confirmed receipt, otherwise local status including browser handoff. No GitHub refresh. |
 | `verify` | GitHub authorization reads plus manifest validation; not a full decode, media check, or delivery check. |
 | `papers` | Networked public paper collection; writes transient research under untracked staging. |
 | `synthesize` | Networked Edge TTS; writes new unpublished audio and a `.voice.json` sidecar. |
@@ -80,6 +80,9 @@ Use `notebook-podcast` for signed-in generation and the native Save handoff. Cho
 The duration preference is not a promise or a fixed gate. Generate/download once, preserve the original,
 and measure actual bytes. Require a finite positive duration plausible for the reviewed transcript.
 Allow at most one deliberate regeneration inside the authorized account allowance; then report the blocker.
+The persisted handoff allows one generation and one download claim, with no automatic browser retries.
+For a separately authorized regeneration, retain the failed attempt and prepare an explicitly revised handoff
+in new staging; never reset counters or infer failure from a missing download event.
 
 Follow [audio-production-review](../audio-production-review/SKILL.md) for approved local ASR,
 the review-packet example, mastering gates, and listening evidence. Retain the exact UTF-8 transcript.

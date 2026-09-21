@@ -51,7 +51,18 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--episode-source", type=Path, help="reviewed square PNG/JPEG; no cover text is added")
+    parser.add_argument("--local-execution", type=Path, help="validated browser source handoff (use python -m)")
     args = parser.parse_args()
+    if args.local_execution is not None:
+        if args.episode_source is None:
+            parser.error("--local-execution requires --episode-source")
+        from pipeline.local_execution import load, require_artifact
+        state = load(args.local_execution)
+        require_artifact(
+            args.local_execution, args.episode_source,
+            identity=state["request"]["identity"], kind="chatgpt-image",
+            parent_request_sha256=state["request"]["parent_request_sha256"],
+        )
     if args.episode_source is not None:
         if args.output == OUTPUT:
             parser.error("--episode-source requires an explicit episode --output, not the show cover")

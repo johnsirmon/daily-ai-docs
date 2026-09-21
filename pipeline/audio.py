@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -34,6 +35,7 @@ def analyze_audio(
     full_decode: bool = True,
     min_size_bytes: int = 10_000,
     expected_word_count: int | None = None,
+    allowed_codecs: tuple[str, ...] = ("mp3",),
 ) -> Dict[str, Any]:
     audio = Path(path)
     if not audio.is_file() or audio.stat().st_size < min_size_bytes:
@@ -45,6 +47,7 @@ def analyze_audio(
         [
             ffprobe,
             "-v", "error",
+            "-protocol_whitelist", "file",
             "-show_entries", "format=duration,size,format_name:stream=codec_name,sample_rate,channels",
             "-of", "json",
             str(audio),
@@ -60,10 +63,10 @@ def analyze_audio(
         payload = json.loads(result.stdout)
         duration = float(payload["format"]["duration"])
         streams = payload.get("streams") or []
-        stream = next(item for item in streams if item.get("codec_name") == "mp3")
+        stream = next(item for item in streams if item.get("codec_name") in allowed_codecs)
     except (ValueError, KeyError, StopIteration, TypeError) as exc:
-        raise AudioValidationError("audio is not a measurable MP3") from exc
-    if not min_duration_secs <= duration <= max_duration_secs:
+        raise AudioValidationError("audio is not a measurable supported recording") from exc
+    if not math.isfinite(duration) or not min_duration_secs <= duration <= max_duration_secs:
         raise AudioValidationError(
             f"duration {duration:.1f}s is outside {min_duration_secs:.0f}-{max_duration_secs:.0f}s"
         )
@@ -79,7 +82,7 @@ def analyze_audio(
             raise AudioValidationError("ffmpeg is required for full decode validation")
         silence = subprocess.run(
             [
-                ffmpeg, "-v", "info", "-xerror", "-i", str(audio),
+                ffmpeg, "-nostdin", "-v", "info", "-xerror", "-protocol_whitelist", "file", "-i", str(audio),
                 "-af", "silencedetect=noise=-50dB:d=2", "-f", "null", "-",
             ],
             check=False,

@@ -22,6 +22,12 @@ Read [operations](../../../docs/OPERATIONS.md#voice-and-delivery-polish) and the
 
 1. Identify the schema, request/episode, authorization scope, original recording, and
    new request-local output directory. Preserve unresolved staging and the original bytes.
+   If `local-execution.json` accompanies the recording, require `ready-to-resume-automation`
+   and its exact file/hash before continuing. This is media acceptance only, not transcript,
+   source, listening, or publication approval. Follow the
+   [handoff procedure](../../../docs/OPERATIONS.md#local--cloud-authenticated-execution-boundary).
+   Keep the validated original when making a correction composite; its hash must match
+   `editing.original_audio_sha256`. The importer still owns composite conversion/mastering.
 2. Record original size and SHA-256, probe codec/duration, and perform a full decode.
    A Notebook duration label, filename extension, or successful HTTP response is not media proof.
 3. Confirm local `ffmpeg` and `ffprobe` availability and record versions. Use the selected

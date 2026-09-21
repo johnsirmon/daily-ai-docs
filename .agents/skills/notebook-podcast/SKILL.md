@@ -20,6 +20,24 @@ description: >
 
 ## Prepare and generate once
 
+First use the [local/cloud handoff](../../../docs/OPERATIONS.md#local--cloud-authenticated-execution-boundary).
+`pipeline.adhoc brief` creates `local-execution.json` beside the existing request and brief for Notebook requests.
+For daily schema 3, prepare a `notebook-daily` handoff in a new staging directory with the exact approved prompt,
+episode identity, and original recording filename. Do not modify the scheduled daily provider to do this.
+Cloud stops on `local-required` and reports the handoff location; it must not assert local execution.
+Only a local agent using the current signed-in browser may pass `--execution local`.
+Before clicking Generate or Download, claim the corresponding action. Click only if the returned
+`perform_browser_action` is true; record `generated` only after inspecting persisted generation.
+These commands record milestones, not browser automation or proof of generation.
+
+Safe offline CLI discovery:
+
+```sh
+python -m pipeline.local_execution --help
+python -m pipeline.local_execution prepare --help
+python -m pipeline.local_execution step --help
+```
+
 1. Select a few substantive changes, not a list of new version tags. Check prior
    episode coverage. For research, inspect full methods and limitations.
 2. Prepare a short editorial brief: change versus before, affected audience,
@@ -63,12 +81,21 @@ description: >
    return a sign-in HTML page with HTTP 200. Do not save that as a successful audio
    artifact, extract cookies, or keep retrying protected URLs.
 
+Record an exposed native-dialog boundary with `wait --reason save-file`, then stop for the operator.
+After the operator confirms Save, use `observe --operator-saved`, `validate`, then `resume` on the handoff.
+Do not mark Save confirmed just because a dialog appeared. The exact request-local recording must exist.
+If saved elsewhere, ask for the exact path and copy only that recording into the expected path without overwriting;
+preserve the original and do not enumerate unrelated downloads.
+The handoff stores relative filenames, not account paths.
+
 ## Validate the actual recording
 
 Use [audio-production-review](../audio-production-review/SKILL.md) for the local ASR
 handoff, review-packet example, mastering, and listening record.
 
 - Preserve the original. Record size, codec, measured duration, and SHA-256.
+- Handoff validation checks the original recording without conversion. `ready-to-resume-automation`
+  permits the next review step, not import or publication by itself. Transcript and source reviews remain required.
 - Full-decode with FFmpeg and fail on errors. Daily schema-3 audio must measure 300-480 seconds.
   Schema-4 specials have no fixed minute range: require finite positive duration plausible for the reviewed
   transcript. Do not change a daily contract to fit a longer recording.

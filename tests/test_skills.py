@@ -31,6 +31,7 @@ HELP_COMMANDS = {
         "request", "issue", "brief", "prepare", "publish", "status", "verify", "papers", "synthesize",
     },
     "pipeline.reviewed_audio": {""},
+    "pipeline.local_execution": {"", "prepare", "step"},
 }
 
 

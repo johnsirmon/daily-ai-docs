@@ -156,4 +156,10 @@ Use the narrowest matching repository skill and read current code/workflows befo
   follow [audio-production-review](../.agents/skills/audio-production-review/SKILL.md).
 - Consult [recorded session lessons](../docs/SESSION_LESSONS.md) before repeating those workflows.
 - Browser tools may not control a native Save As dialog. Record the operator's Save step; do not treat a missing download event as a failed generation or retry downloads blindly.
+- Authenticated consumer work uses the request-local `pipeline.local_execution` handoff described in
+  [operations](../docs/OPERATIONS.md#local--cloud-authenticated-execution-boundary). Cloud prepares the exact public
+  request and stops on `local-required`; it cannot inherit a browser login. Local agents claim generation/download
+  once before clicking, record native Save assistance, validate actual bytes, and resume without regeneration.
+  Never transfer cookies, headers, session tokens, profiles, private notebook URLs, or signed media links.
+  Do not substitute APIs, add secrets, enable billing, or treat artifact readiness as publication approval.
 - Publication readiness requires review of actual spoken claims, not only a good prompt, an audio duration label, or passing unit tests.

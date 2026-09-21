@@ -275,6 +275,185 @@ No wrapper dependency, copied implementation, or cookie-based production adapter
 Notebook audio comparison may be useful later. The official Google Cloud Podcast API is a different service; its cost
 eligibility must be established separately and is not implied by a consumer subscription or Gemini API key.
 
+## Local / Cloud authenticated execution boundary
+
+Consumer browser sessions belong to the local operator, not GitHub Copilot Cloud or Actions.
+The offline `pipeline.local_execution` module records a **sidecar in existing request staging**;
+it does not add a service, central queue, browser adapter, credentials, billing, or a publisher.
+It reuses `pipeline.podcast_request.content_hash`, request-local identities, atomic JSON replacement,
+the existing artwork source checks, and the full-decode audio validator.
+Episode schemas, request revisions, immutable release recovery, and the scheduled daily provider are unchanged.
+
+### Responsibilities and persisted state
+
+Cloud may research approved public evidence, select stories, freeze the final prompt and identity,
+prepare provenance, change code, run tests, and determine that local authenticated execution is needed.
+It must persist the handoff and stop on `outcome: local-required`, not describe the operation as complete.
+Exit zero means the handoff command ran successfully; only `outcome: artifact-ready` permits the next automated step.
+That outcome **never authorizes publication**.
+
+Only a local agent may use the current signed-in ChatGPT Plus or Gemini/NotebookLM browser page, generate,
+download, or handle the operator-assisted Save boundary. The CLI itself never drives a browser.
+It grants a one-use action claim to the local agent; the agent then uses available browser tools
+and observes the result.
+`--execution` defaults to `cloud`; explicitly claiming `local` in GitHub Actions is rejected.
+The flag is an operator/agent execution contract, not a way to transfer authentication or prove browser availability.
+If the local browser cannot be controlled, record `wait` with `browser-unavailable` or `sign-in-required` and stop.
+Never inspect browser storage, profiles, cookies, tokens, or authentication headers to resolve that blocker.
+
+`local-execution.json` contains only the fixed request schema, content hash, validation requirements, milestone,
+bounded counters, fixed reason codes, media measurements, and exact byte identity. The request contains:
+
+- Episode/request identity, operation kind, public purpose and exact final prompt.
+- Expected request-relative output filename; exact square source dimensions for images.
+- Parent request hash for ad-hoc audio, binding it to the existing request revision.
+
+No arbitrary metadata, browser URLs, private notebook IDs, account paths, raw provider errors, or signed download
+links belong in it. Unknown fields and recognizable credential-bearing text/session links are rejected.
+This is **not a universal secret detector**: only supply reviewed public text. Never collect authentication material
+in the first place, including to test whether it would be rejected.
+
+| State | Evidence / next boundary |
+| --- | --- |
+| `ready-for-local-execution` | Frozen request; no authenticated operation claimed. |
+| `waiting-for-operator` | Local action claimed or blocked; generation/download may be pending, not successful. |
+| `local-artifact-created` | Exact expected nonempty file exists; size and hash recorded, no media acceptance yet. |
+| `local-artifact-validated` | Actual bytes fully decoded and measured under the request's media policy. |
+| `ready-to-resume-automation` | `resume` rechecked those bytes; reuse them for review/export, never regenerate. |
+| `failed` | Explicit failure; preserve artifacts and counters, inspect prerequisites, then explicitly `recover`. |
+
+Generation completion (`generated`), download claim, and operator Save confirmation are separate fields.
+Transcript review, source review, listening approval, reviewed preparation, and publication remain separate downstream
+milestones under the existing contracts. A Notebook duration label is not media validation or editorial acceptance.
+
+### Prepare and transfer a handoff
+
+Use the installed locked environment. All commands in this subsection are offline and write only chosen staging.
+They do not call a provider, collect sources, create releases, dispatch workflows, or change feed/history.
+For an existing special, `pipeline.adhoc brief` now writes the handoff beside its request and Notebook brief.
+Repeated identical briefs reuse it without resetting attempts; Edge requests do not create browser work.
+`pipeline.adhoc status` exposes the sidecar while the request remains unconfirmed.
+
+For ChatGPT artwork or a daily Notebook recording, place a public spec in a fresh directory under `.cache/`.
+Example image spec (dimensions are the expected **browser source**, not the eventual 3000-pixel JPEG):
+
+```json
+{
+  "identity": "daily-2026-09-21-topic-art-v1",
+  "kind": "chatgpt-image",
+  "purpose": "Episode artwork source for review; no text or logos.",
+  "prompt": "Create a 1024 by 1024 square abstract illustration of cooperating coding agents. No text or logos.",
+  "artifact_name": "source.png",
+  "width": 1024,
+  "height": 1024
+}
+```
+
+Use the real episode/request identity and final reviewed prompt, not these example values unchanged.
+For daily Notebook use `kind: notebook-daily`, an audio filename such as `original.m4a`, and omit dimensions.
+The exact prompt must include the approved public sources and English Deep Dive / Short, 5-8 minute instructions.
+Ad-hoc briefs use `notebook-adhoc` with their existing request hash and Longer instructions.
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.local_execution prepare `
+  --spec .cache\image-request\spec.json --directory .cache\image-request
+```
+
+The response contains the exact prompt, requirements, expected path, and `local-required`.
+Staging is intentionally ignored by Git. Before an ephemeral Cloud workspace is discarded, hand back
+**only the named non-secret sidecar** through the approved task artifact/file handoff channel and report its path.
+The local agent places it beside the request's existing files. Do not upload the whole cache, profile, notebook,
+or browser session; do not create a public release or new secret as transport.
+There is no automatic cross-machine synchronization. If the host cannot retain/transfer that file, report that
+specific transfer blocker rather than claim the local request has been delivered.
+Use one active copy/owner at a time; after local completion transfer the updated sidecar and exact selected
+artifact through an approved channel if further Cloud work needs them. Without the bytes, Cloud cannot resume.
+No absolute machine paths are stored in the sidecar; place it and its expected artifact together.
+
+### Local execution and native Save
+
+Set `$handoff` to the exact sidecar received or created above:
+
+```powershell
+$handoff = ".cache\image-request\local-execution.json"
+.\.venv\Scripts\python.exe -m pipeline.local_execution step --state $handoff --execution local --action generate
+```
+
+Only when `perform_browser_action: true`, submit the exact prompt once in the existing signed-in browser.
+Use the intended dedicated Notebook/public sources or ChatGPT image conversation and inspect accessible controls.
+Do not persist its private URL in the handoff. If controls need an operator, record `wait` with a fixed reason
+and tell the operator the exact visible action, without claiming it happened.
+After verifying generation persists in the UI, record `generated`, then claim a download:
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.local_execution step --state $handoff --execution local --action generated
+.\.venv\Scripts\python.exe -m pipeline.local_execution step --state $handoff --execution local --action download
+```
+
+Click Download only when that claim returns true. A missing browser download event is not permission to click again.
+If Windows Save As appears, record the boundary and ask the operator to save to the reported `expected_path`:
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.local_execution step --state $handoff --execution local `
+  --action wait --reason save-file
+```
+
+Tell the operator: choose the expected filename/directory and click **Save**, then confirm the exact saved path.
+After that confirmation and the actual file's existence, continue:
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.local_execution step --state $handoff --execution local `
+  --action observe --operator-saved
+.\.venv\Scripts\python.exe -m pipeline.local_execution step --state $handoff --execution local --action validate
+.\.venv\Scripts\python.exe -m pipeline.local_execution step --state $handoff --action resume
+```
+
+Omit `--operator-saved` for an actual tool-completed download. If saved elsewhere, preserve the original and copy
+only that exact recording/image to the expected staging filename without overwriting. Never enumerate unrelated
+downloads or retrieve signed media URLs outside the authenticated UI.
+An already existing artifact suppresses both generation and download claims, even when no browser event was observed;
+use `observe`, `validate`, and `resume` instead. Existing validated files are hash-checked,
+not regenerated or re-encoded.
+
+### Validation, consumers, and recovery
+
+Image validation requires exact requested source dimensions, a single fully decodable PNG/JPEG frame, and opacity.
+It does not prove prompt compliance or image quality: review subject matter, rights, lack of text/logos, and thumbnail
+appearance separately. The existing export owns resizing, metadata stripping, RGB JPEG and final size acceptance:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.generate_artwork --local-execution $handoff `
+  --episode-source .cache\image-request\source.png --output .cache\image-request\reviewed-v1.jpg
+```
+
+Use a staging destination until artwork publication is separately approved. No feed/catalog write is implied.
+Final public export still requires a new immutable filename and the existing artwork policy.
+
+Original Notebook validation accepts supported MP3/AAC/Opus/Vorbis/PCM recordings, full decode, non-silence, finite
+positive duration, byte size and hash. Daily recordings retain the 300-480-second gate. Specials still require
+transcript-based duration plausibility at reviewed import, not a fixed 20-30-minute publication limit.
+The handoff does not transcode, master, transcribe, fabricate reviews, or approve publication.
+After actual transcript/source review, use the unchanged reviewed-audio procedure below. The importer automatically
+checks a sidecar beside the audio; use `--local-execution PATH` when it is elsewhere. Ad-hoc preparation additionally
+checks the sidecar beside its request, including when resuming a prepared bundle.
+Correction composites retain the validated original hash in `editing.original_audio_sha256`; the composite's own
+input hash and reviews remain governed by the importer. Existing bundles without sidecars remain compatible.
+
+Browser claims are persisted **before** actions and allowed once each per handoff. They never reset on failure.
+After a crash between claim and click, inspect the existing browser result/operator situation; do not replay an
+ambiguous action. A confirmed unsuccessful generation requires a separately authorized, explicitly revised handoff
+in new staging, preserving the old attempt; retain the ad-hoc limit of at most one deliberate regeneration.
+There are at most three validation attempts, to permit recovery after missing local media tools.
+`fail --reason CODE` records a fixed reason, and `recover` permits inspection/validation again without resetting
+browser or validation counts. Missing files never become successful; changed observed bytes require new staging.
+Errors retain only fixed codes, never provider responses.
+Original files are never deleted or replaced by these commands.
+
+Exclusive per-sidecar lock files reject concurrent writers. A process crash can leave `local-execution.lock`.
+Only after confirming no agent owns it and reconciling the recorded attempts may the operator remove that exact lock;
+there is no automatic stale-lock takeover or browser retry. Do not operate on two transported copies concurrently.
+Nothing here changes subscriber state, automatically publishes on readiness, or bypasses reviewed-audio provenance.
+
 ### Browser-created Notebook listening samples
 
 An explicitly authorized sample can instead be authored in the signed-in Gemini Notebook web UI using the account's
