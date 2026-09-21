@@ -20,6 +20,7 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 import webbrowser
 
+from .audio import file_sha256
 from .schema import EpisodeManifest
 
 APPROVAL_FILE = "listening-approval.json"
@@ -51,11 +52,6 @@ class ReviewBundle:
         return self.directory / APPROVAL_FILE
 
 
-def _sha256(path: Path) -> str:
-    with path.open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
-
-
 def load_review_bundle(directory: Path) -> ReviewBundle:
     directory = directory.resolve()
     manifest_path = directory / "episode-manifest.json"
@@ -69,7 +65,7 @@ def load_review_bundle(directory: Path) -> ReviewBundle:
     manifest.validate(require_audio=True)
     if audio_path.stat().st_size != int(manifest.audio["size_bytes"]):
         raise ValueError("review audio byte length does not match the manifest")
-    if _sha256(audio_path) != manifest.audio["sha256"]:
+    if file_sha256(audio_path) != manifest.audio["sha256"]:
         raise ValueError("review audio SHA-256 does not match the manifest")
 
     transcript_path = directory / "narration.txt"

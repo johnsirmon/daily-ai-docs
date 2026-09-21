@@ -17,7 +17,6 @@ episodes must reuse their immutable manifest and MP3, never rerun this importer.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -25,14 +24,9 @@ import shutil
 import subprocess
 from typing import Any
 
-from .audio import analyze_audio, narration_duration_bounds
+from .audio import analyze_audio, file_sha256, narration_duration_bounds
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .schema import EpisodeManifest, SchemaError
-
-
-def _file_sha256(path: Path) -> str:
-    with path.open("rb") as source:
-        return hashlib.file_digest(source, "sha256").hexdigest()
 
 
 def _write_json(path: Path, data: dict[str, Any]) -> None:
@@ -67,7 +61,7 @@ def prepare_reviewed_audio(
         from .audio_quality import repetition_findings
         if repetition_findings(manifest.narration):
             raise SchemaError("adjacent repeated narration requires editorial review")
-    if _file_sha256(audio_path) != expected_hash:
+    if file_sha256(audio_path) != expected_hash:
         raise SchemaError("source audio SHA-256 does not match reviewed provenance")
     ffmpeg = shutil.which("ffmpeg")
     if not ffmpeg:
@@ -79,7 +73,7 @@ def prepare_reviewed_audio(
         manifest.generation["quality"] = master_audio(audio_path, destination)
     else:
         _transcode(ffmpeg, audio_path, destination)
-    if _file_sha256(audio_path) != expected_hash:
+    if file_sha256(audio_path) != expected_hash:
         raise SchemaError("source audio changed during import")
     word_count = len(manifest.narration.split())
     minimum, maximum = (
