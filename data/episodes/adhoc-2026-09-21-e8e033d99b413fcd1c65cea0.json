@@ -1,0 +1,152 @@
+{
+  "schema_version": 4,
+  "episode_id": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0",
+  "published_at": "2026-09-21T14:19:28.411603+00:00",
+  "status": "candidate",
+  "source_health": {
+    "github:Open-Dev-Society/OpenStock": "ok:2"
+  },
+  "source_events": [
+    {
+      "event_id": "openstock-newsletter-correction-a2e010ec",
+      "source_type": "announcement",
+      "title": "OpenStock corrects newsletter documentation from daily personalized summaries to a weekly Kit broadcast",
+      "url": "https://github.com/Open-Dev-Society/OpenStock/commit/a2e010ec610ad67686df97ad8a5621dccc6c2a4e",
+      "product": "OpenStock",
+      "topic": "AI-assisted investment research",
+      "published_at": "2026-09-20T16:16:14Z",
+      "fetched_at": "2026-09-21T11:46:56.048547+00:00",
+      "evidence": "docs: correct news summary cron from daily to weekly in README\n\n-    - Daily news summary emails (cron) personalized using user watchlists\n+    - Weekly news summary email (cron) sent as a Kit broadcast\n\n-        - Cron `0 12 * * *` -> Daily News Summary per user\n+        - Cron `0 9 * * 1` -> Weekly News Summary (every Monday at 9 AM, Kit broadcast)",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts"
+      }
+    },
+    {
+      "event_id": "openstock-minimax-default-99bab912",
+      "source_type": "announcement",
+      "title": "OpenStock changes its MiniMax provider default to MiniMax-M3 while retaining the model override",
+      "url": "https://github.com/Open-Dev-Society/OpenStock/commit/99bab9124e8a994b337ed4d7731cccf693af4390",
+      "product": "OpenStock",
+      "topic": "AI-assisted investment research",
+      "published_at": "2026-07-29T11:59:22Z",
+      "fetched_at": "2026-09-21T11:46:56.048547+00:00",
+      "evidence": "feat(ai-provider): default MiniMax to the current MiniMax-M3 model\n\nThe MiniMax provider defaulted to a superseded model and did not expose\nthe current MiniMax-M3 model. Default to MiniMax-M3 while keeping the\nMINIMAX_MODEL override, and update the tests that pinned the old default.\n\n-        model: process.env.MINIMAX_MODEL || \"MiniMax-M2.7\",\n+        model: process.env.MINIMAX_MODEL || \"MiniMax-M3\",",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts"
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "openstock-recent-changes-investor-value",
+      "event_ids": [
+        "openstock-newsletter-correction-a2e010ec",
+        "openstock-minimax-default-99bab912"
+      ],
+      "headline": "OpenStock for AI Developers: A Practical Investment Research Workflow",
+      "what_changed": "OpenStock corrected its newsletter documentation to describe a weekly Kit broadcast instead of daily personalized watchlist summaries. A separate change updated the MiniMax provider default while preserving the model environment override.",
+      "why_it_matters": "These changes help bound an evaluation of documentation and provider configuration. They do not establish an implementation history, predictive accuracy, or investment returns.",
+      "action": "watch",
+      "rationale": "Consider a source-linked research inbox, a thesis journal, and a paper-only evaluation before relying on an AI-assisted investing workflow. These are proposed practices, not verified shipped features or measured benefits.",
+      "source_urls": [
+        "https://github.com/Open-Dev-Society/OpenStock/commit/a2e010ec610ad67686df97ad8a5621dccc6c2a4e",
+        "https://github.com/Open-Dev-Society/OpenStock/commit/99bab9124e8a994b337ed4d7731cccf693af4390"
+      ],
+      "scores": {
+        "authority": 100
+      },
+      "kind": "product",
+      "editorial": {}
+    }
+  ],
+  "noise_notes": [
+    "Older implementation findings and the older paper-trading proposal remain outside this episode's evidence.",
+    "No timezone, maintainer motive, model capability comparison, deprecation schedule, or investment performance is inferred.",
+    "The user explicitly authorized an exact-script Edge recording after two unpublished Notebook takes failed review."
+  ],
+  "narration": "Production note: This episode uses AI-generated narration.\nOpen stock for AI developers, a practical investment research workflow.\nOpen stock September readme correction describes a weekly kit broadcast, not daily personalized news summaries.\nYou own stocks, understand code, and know your way around AI agents.\nWhat would make an open source investing project worth your time?\nThis episode looks at open stock through a deliberately narrow lens, what two recent changes establish, and how you might evaluate a useful research workflow for yourself.\nOur factual evidence consists of two primary commits inside a 60-day window.\nWe are not cataloging every feature in the application.\nWe have not deployed the project, run a trading strategy, or measured investment returns.\nThe workflows discussed later are proposals to evaluate, not a list of capabilities we have verified in open stock.\nThe first change is a September documentation correction.\nThe readme's old description referred to daily news summary emails personalized using user watchlists.\nThe replacement describes a weekly news summary email sent as a kit broadcast.\nThe important distinction is that this is a documentation change.\nIt does not establish that a working daily feature was removed, that a scheduler was rewritten, or that a maintainer abandoned a difficult system.\nThose would require different evidence.\nThere is no basis here for inventing that history.\nFor someone evaluating the project, the practical takeaway is to check the current description before planning around an older promise.\nIf personalized delivery matters to your use case, make it a question to verify in the implementation and in a test.\nDo not assume either that the behavior exists or that it was deliberately removed.\nThe second change is a July update to the Minimax provider configuration.\nIt changes the default model from Minimax M2.7 to Minimax M3, retains the model environment override, and updates tests that had pinned the earlier default.\nThat override selects a model value.\nThe cited change does not establish that it switches providers.\nNor does the update establish the model's accuracy, cost, context window, parameter count, or ability to predict investment returns.\nA change default is a reason to evaluate outputs, not a performance result.\nMy proposed evaluation step would be to record the selected model alongside the prompt and source material.\nCompare outputs on the same questions when changing configuration.\nThat is an experiment to consider, not something we have tested, and not a claim about logging features in this repository.\nSo what could a stock owning developer usefully build or evaluate around a project like this?\nI would begin with a research inbox, defined by a question you can actually check.\nPick a company you already follow and ask, what new public information would make me reconsider the reason I own it?\nThe desired output is a short, source-linked answer and a list of unresolved questions.\nIt is not an automatic instruction to buy or sell.\nMake the proposed output contract concrete.\nEach item could include the company, the question, the original source URL, its publication date, a short supporting excerpt, and the agent's interpretation.\nKeep the excerpt separate from the interpretation.\nIf a source is missing or does not support the answer, leave the item unresolved rather than accepting a confident paragraph.\nFor discovery, I would use EXA to find candidate public sources for a specific question, then inspect the original pages.\nEXA was used in researching this episode, but our approved factual evidence is the original dated commits.\nSearch output points toward evidence, it is not a substitute for checking what the source actually says.\nTo keep this proposed workflow efficient, bound it before running it.\nChoose the companies, questions, date window, and primary documents you want.\nSet a spending limit and a stopping condition.\nIf the sources do not answer the question, retain that limitation instead of expanding the search until the agent produces a satisfying story.\nThese are operating suggestions, not claims about guaranteed search coverage or a provider's prices.\nI would also distinguish a successful search with no relevant update from a collection failure.\nIf a source could not be checked, silence should not be interpreted as evidence that nothing changed.\nThis is a requirement for the workflow I am proposing, not a verified open stock feature.\nA second proposal is an investment thesis journal.\nBefore reading the agent's answer, write down your current view, the evidence behind it, and what would change your mind.\nAsk the agent to organize evidence for and against that view.\nPreserve the original entry so that later review does not depend on memory alone.\nFor example, a hypothetical journal entry might say, I expect this company's reported business performance to improve, and I want to identify evidence that contradicts that expectation.\nThat is a research question, not a forecast about a particular company.\nThe agent's task would be to collect and label evidence, not confirm your expectation because you already own the stock.\nThe third proposal is a paper-only evaluation.\nRun the research system without trade execution.\nPreserve what information was available at the time, what the system produced, and what you did with the output.\nDecide how to judge usefulness before seeing results.\nUseful does not necessarily mean profitable.\nYou could track whether the links support the summaries, whether relevant events were missed, how many alerts were irrelevant, and how much time verification took.\nInclude the setup, data, model, search, hosting, and maintenance costs that actually apply.\nThese are categories to measure, not prices or evidence that this project saves time.\nIf you also want to evaluate investment performance, define that as a separate test.\nSpecify the decision rule and comparison in advance, record costs and assumptions, and distinguish paper results from actual execution.\nA research summary that reads well is not itself evidence that a trading rule works.\nWhere does that leave the question of profit opportunities for AI developers investing their own money?\nThese two changes do not establish a profitable opportunity.\nA hypothesis worth testing is that a well-designed research workflow could help you organize evidence or spend less time finding it.\nWhether that happens needs measurement.\nWhether it improves investment outcomes is a different question requiring its own evidence.\nWe should not jump to the opposite conclusion and declare the entire project useless either.\nThis review covers two changes, not the full product.\nThe fair next step is a bounded trial against a need you can name, such as more traceable research notes or fewer unsupported summaries.\nKeep or reject that workflow based on what the trial actually shows.\nMy recommendation is to verify the behavior you need, preserve the sources behind the agent's statements, and evaluate a paper-only workflow before relying on it.\nTreat the proposed inbox and journal as design ideas, not capabilities we have verified here.\nThe documented changes are specific, a corrected newsletter description and a minimax default update with its model override retained.\nThe broader opportunity is a question to investigate, not a demonstrated trading edge.\nBegin with a clear question, a bounded experiment, and evidence that can change your answer.\n",
+  "show_notes": "A focused review of two OpenStock changes within the user's retained 60-day evidence window: a newsletter-documentation correction and a MiniMax default update. The discussion proposes an investment-research inbox, thesis journal, and paper-only evaluation for stock-owning developers. These proposals are not claims about implemented OpenStock features. This is not a comprehensive product audit, deployment test, backtest, or buy/sell recommendation. The documentation correction does not establish feature removal or maintainer motives. The model override is not evidence of provider switching. The provider update does not establish model performance or investment returns. Exa was used for discovery; the two original dated primary commits are the approved factual evidence.\n\nPrimary evidence for listening review:\n\nSeptember 20, 2026: https://github.com/Open-Dev-Society/OpenStock/commit/a2e010ec610ad67686df97ad8a5621dccc6c2a4e\nCommit: docs: correct news summary cron from daily to weekly in README\nRemoved: Daily news summary emails (cron) personalized using user watchlists\nAdded: Weekly news summary email (cron) sent as a Kit broadcast\n\nJuly 29, 2026: https://github.com/Open-Dev-Society/OpenStock/commit/99bab9124e8a994b337ed4d7731cccf693af4390\nExcerpt: Default to MiniMax-M3 while keeping the MINIMAX_MODEL override, and update the tests that pinned the old default.\nRemoved: model: process.env.MINIMAX_MODEL || \"MiniMax-M2.7\",\nAdded: model: process.env.MINIMAX_MODEL || \"MiniMax-M3\",",
+  "generation": {
+    "edition": "adhoc",
+    "provider": "edge",
+    "approved_at": "2026-09-21T14:19:28.411603+00:00",
+    "source_audio_sha256": "da7534190c078cda5fed343dac0cab47c1d8d8a6dc2b5f0667ffda498bc90e3a",
+    "transcript": {
+      "engine": "faster-whisper",
+      "model": "small.en",
+      "sha256": "b0d8215c7f85d25daf602b81eac7bc1db28e51c9620070bcfdeb6f9d23289207"
+    },
+    "review": {
+      "method": "transcript_source_comparison",
+      "reviewed_at": "2026-09-21T14:18:19.713477+00:00",
+      "reviewer": "assistant",
+      "claims": [
+        {
+          "text": "Open stock September readme correction describes a weekly kit broadcast, not daily personalized news summaries.",
+          "event_id": "openstock-newsletter-correction-a2e010ec",
+          "quote": "docs: correct news summary cron from daily to weekly in README\n\n-    - Daily news summary emails (cron) personalized using user watchlists\n+    - Weekly news summary email (cron) sent as a Kit broadcast"
+        },
+        {
+          "text": "The readme's old description referred to daily news summary emails personalized using user watchlists.",
+          "event_id": "openstock-newsletter-correction-a2e010ec",
+          "quote": "-    - Daily news summary emails (cron) personalized using user watchlists"
+        },
+        {
+          "text": "The replacement describes a weekly news summary email sent as a kit broadcast.",
+          "event_id": "openstock-newsletter-correction-a2e010ec",
+          "quote": "+    - Weekly news summary email (cron) sent as a Kit broadcast"
+        },
+        {
+          "text": "It changes the default model from Minimax M2.7 to Minimax M3, retains the model environment override, and updates tests that had pinned the earlier default.",
+          "event_id": "openstock-minimax-default-99bab912",
+          "quote": "The MiniMax provider defaulted to a superseded model and did not expose\nthe current MiniMax-M3 model. Default to MiniMax-M3 while keeping the\nMINIMAX_MODEL override, and update the tests that pinned the old default.\n\n-        model: process.env.MINIMAX_MODEL || \"MiniMax-M2.7\",\n+        model: process.env.MINIMAX_MODEL || \"MiniMax-M3\","
+        }
+      ],
+      "notes": [
+        "The user explicitly authorized fixed-script Edge narration and publication after review. Rejected Notebook takes and the earlier Edge take remain preserved and unpublished.",
+        "Compared the complete final local ASR transcript with the exact synthesis script and both original primary commit excerpts. Documentation changes are not implementation history, model selection is not provider switching, and workflow proposals are not asserted shipped features.",
+        "No complete application audit, deployment, strategy evaluation, or measured investment returns were performed. Research-inbox, thesis-journal, and paper-evaluation suggestions are explicitly editorial proposals.",
+        "Final raw ASR SHA-256 is 338df145e9acb1f95dcd955cf53ca53bc9560150a69384226806a3b1e0458ed5. Retained sentence-delimited ASR SHA-256 is 4fdc719d25817bfbf2178726fcf83040b0217314d9e63a56750ddff353d97e5c.",
+        "The publication transcript differs from retained final ASR only in the opening disclosure: Production note, this becomes Production note: This. No spoken words were added, removed, or replaced. The exact synthesis input contains this disclosure; the raw ASR and segment timings are unchanged.",
+        "ASR places the opening factual point at 10.08 seconds. This is timing evidence, not a listening assessment. No actual listening review is claimed; pronunciation, pacing, and final-file acceptance still require operator listening confirmation."
+      ]
+    },
+    "voice": {
+      "name": "en-US-AriaNeural",
+      "rate": "+0%",
+      "pitch": "+0Hz"
+    },
+    "quality": {
+      "method": "ffmpeg_loudnorm_two_pass",
+      "ffmpeg": "ffmpeg version 9.0.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+      "integrated_lufs": -16.74,
+      "true_peak_dbtp": -4.28,
+      "audio_sha256": "9c6bbd335fe2cc1fcdd98c34dd627a6137d8d47028442d0710be2f5799d8f957"
+    },
+    "request": {
+      "topic": "OpenStock for AI Developers: A Practical Investment Research Workflow",
+      "audience": "Stock-owning developers, not expert traders. Exact source-checked single-narrator script; retain the 60-day evidence window. Distinguish documented changes from proposed research workflows and unproven investment returns.",
+      "cutoff": "2026-09-21T13:46:13.649523+00:00",
+      "lookback_days": 60,
+      "provider": "edge",
+      "publish_now": true,
+      "actor": "johnsirmon",
+      "issue": null,
+      "schema_version": 1
+    },
+    "request_sha256": "e8e033d99b413fcd1c65cea08ed72e687e6bea9bb52acf40df89adcf11edfd6d"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/adhoc-2026-09-21-e8e033d99b413fcd1c65cea0/daily-ai-brief.mp3",
+    "size_bytes": 7839703,
+    "duration_secs": 489.912,
+    "sha256": "9c6bbd335fe2cc1fcdd98c34dd627a6137d8d47028442d0710be2f5799d8f957",
+    "codec": "mp3",
+    "sample_rate": 44100,
+    "channels": 2
+  }
+}
