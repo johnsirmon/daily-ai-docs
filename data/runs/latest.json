@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "status": "skipped",
-  "evaluated_at": "2026-09-20T14:16:57.999887Z",
+  "evaluated_at": "2026-09-21T16:31:37.670460Z",
   "reason": "insufficient_new_information",
   "source_health": {
-    "github:openai/codex": "ok:4",
-    "github:anthropics/claude-code": "ok:1",
+    "github:openai/codex": "ok:5",
+    "github:anthropics/claude-code": "ok:0",
     "github:google-gemini/gemini-cli": "ok:1",
     "github:NousResearch/hermes-agent": "ok:0",
     "github:microsoft/vscode": "ok:0",
@@ -16,5 +16,5 @@
     "youtube:weekly-digest": "error:ValueError"
   },
   "minimum_source_health": 0.6,
-  "last_episode_id": "daily-2026-09-19-d6ff21f1"
+  "last_episode_id": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0"
 }
