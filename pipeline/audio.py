@@ -15,6 +15,11 @@ class AudioValidationError(ValueError):
     pass
 
 
+def file_sha256(path: Path) -> str:
+    with path.open("rb") as source:
+        return hashlib.file_digest(source, "sha256").hexdigest()
+
+
 def narration_duration_bounds(word_count: int) -> tuple[float, float]:
     """Return the existing plausible duration interval for a spoken word count."""
     expected_duration = word_count / 155 * 60
@@ -72,17 +77,9 @@ def analyze_audio(
         ffmpeg = shutil.which("ffmpeg")
         if not ffmpeg:
             raise AudioValidationError("ffmpeg is required for full decode validation")
-        decoded = subprocess.run(
-            [ffmpeg, "-v", "error", "-xerror", "-i", str(audio), "-f", "null", "-"],
-            check=False,
-            capture_output=True,
-            timeout=max(120, min(900, int(duration * 2))),
-        )
-        if decoded.returncode != 0:
-            raise AudioValidationError("audio failed full decode")
         silence = subprocess.run(
             [
-                ffmpeg, "-v", "info", "-i", str(audio),
+                ffmpeg, "-v", "info", "-xerror", "-i", str(audio),
                 "-af", "silencedetect=noise=-50dB:d=2", "-f", "null", "-",
             ],
             check=False,
@@ -91,7 +88,7 @@ def analyze_audio(
             timeout=max(120, min(900, int(duration * 2))),
         )
         if silence.returncode:
-            raise AudioValidationError("silence measurement failed")
+            raise AudioValidationError("audio failed full decode or silence measurement")
         silence_durations = [
             float(value)
             for value in re.findall(r"silence_duration:\s*([0-9.]+)", silence.stderr)
@@ -102,7 +99,7 @@ def analyze_audio(
         "path": str(audio),
         "size_bytes": audio.stat().st_size,
         "duration_secs": round(duration, 3),
-        "sha256": hashlib.sha256(audio.read_bytes()).hexdigest(),
+        "sha256": file_sha256(audio),
         "codec": stream.get("codec_name"),
         "sample_rate": int(stream.get("sample_rate") or 0),
         "channels": int(stream.get("channels") or 0),

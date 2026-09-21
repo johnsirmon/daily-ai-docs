@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 from pathlib import Path
@@ -10,15 +9,21 @@ import re
 import shutil
 import subprocess
 
-from .audio import AudioValidationError
+from .audio import AudioValidationError, file_sha256
 
 
 def repetition_findings(text: str) -> list[str]:
     tokens = re.findall(r"\b[\w'-]+\b", text.casefold())
     for size in range(12, min(200, len(tokens) // 2) + 1):
-        for start in range(len(tokens) - 2 * size + 1):
-            if tokens[start:start + size] == tokens[start + size:start + 2 * size]:
-                return ["adjacent_repeated_passage"]
+        matched = 0
+        # A run of size equal tokens at this offset is two adjacent copies.
+        for index in range(size, len(tokens)):
+            if tokens[index] == tokens[index - size]:
+                matched += 1
+                if matched == size:
+                    return ["adjacent_repeated_passage"]
+            else:
+                matched = 0
     return []
 
 
@@ -75,7 +80,7 @@ def master_audio(source: Path, destination: Path) -> dict:
     report = {
         "method": "ffmpeg_loudnorm_two_pass", "ffmpeg": version,
         "integrated_lufs": final["input_i"], "true_peak_dbtp": final["input_tp"],
-        "audio_sha256": hashlib.sha256(destination.read_bytes()).hexdigest(),
+        "audio_sha256": file_sha256(destination),
     }
     validate_quality_report(report, final=True, audio_sha256=report["audio_sha256"])
     return report
@@ -84,14 +89,14 @@ def master_audio(source: Path, destination: Path) -> dict:
 def polish_generated_audio(path: Path) -> dict:
     """Preserve the newly generated input and replace only its unpublished working output."""
     import tempfile
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    digest = file_sha256(path)
     original = path.with_name(f"{path.stem}.source-{digest[:16]}{path.suffix}")
     if original.exists():
-        if hashlib.sha256(original.read_bytes()).hexdigest() != digest:
+        if file_sha256(original) != digest:
             raise AudioValidationError("preserved source identity collision")
     else:
-        with original.open("xb") as stream:
-            stream.write(path.read_bytes())
+        with path.open("rb") as source, original.open("xb") as stream:
+            shutil.copyfileobj(source, stream)
     with tempfile.TemporaryDirectory(dir=path.parent) as directory:
         mastered = Path(directory) / "mastered.mp3"
         report = master_audio(original, mastered)
