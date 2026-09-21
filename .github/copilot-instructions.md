@@ -58,6 +58,19 @@ Markdown linting follows `.markdownlint.json` (ATX headings, two-space list inde
 `.markdownlintignore` (generated `README.md` is excluded). See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution
 commands and [OPERATIONS.md](../docs/OPERATIONS.md) for live credentials, deployment, and recovery.
 
+## Evidence standard
+
+Never describe a change as an improvement solely because the implementation
+looks cleaner or newer.
+
+- Performance claims require before/after measurements.
+- Bug fixes require regression coverage when practical.
+- Deleted code requires evidence that it is unreachable or unused.
+- Dependency upgrades require compatibility validation.
+- Refactors must preserve externally observable behavior unless explicitly
+  approved otherwise.
+- Report checks actually executed; never mark unexecuted validation as passed.
+
 ## Architecture
 
 - The daily data flow is `collect -> select -> manifest -> narrate/audio -> validate -> release -> candidate RSS/README -> Pages -> subscriber verification -> confirm`.
