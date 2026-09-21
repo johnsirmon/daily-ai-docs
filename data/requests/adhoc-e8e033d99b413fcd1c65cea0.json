@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "request": {
+    "topic": "OpenStock for AI Developers: A Practical Investment Research Workflow",
+    "audience": "Stock-owning developers, not expert traders. Exact source-checked single-narrator script; retain the 60-day evidence window. Distinguish documented changes from proposed research workflows and unproven investment returns.",
+    "cutoff": "2026-09-21T13:46:13.649523+00:00",
+    "lookback_days": 60,
+    "provider": "edge",
+    "publish_now": true,
+    "actor": "johnsirmon",
+    "issue": null,
+    "schema_version": 1
+  },
+  "request_sha256": "e8e033d99b413fcd1c65cea08ed72e687e6bea9bb52acf40df89adcf11edfd6d",
+  "status": "published",
+  "episode_id": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0",
+  "confirmed_at": "2026-09-21T14:44:33.047613Z",
+  "audio_sha256": "9c6bbd335fe2cc1fcdd98c34dd627a6137d8d47028442d0710be2f5799d8f957"
+}

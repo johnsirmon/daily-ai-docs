@@ -55,10 +55,12 @@
     "vscode:1.131:subagent-visibility",
     "vscode:1.132:side-chats-live-activity",
     "vscode:2026-08-26:agent-host-architecture",
-    "vscode:1.138:reviewable-pr-handoff"
+    "vscode:1.138:reviewable-pr-handoff",
+    "openstock-newsletter-correction-a2e010ec",
+    "openstock-minimax-default-99bab912"
   ],
-  "last_publication": "2026-09-20T19:13:48.077647+00:00",
-  "last_episode_id": "adhoc-2026-09-19-fdb65c39609a3f98125084ed",
+  "last_publication": "2026-09-21T14:19:28.411603+00:00",
+  "last_episode_id": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 125270,

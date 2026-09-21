@@ -1,0 +1,16 @@
+{
+  "episode_id": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0",
+  "confirmed_at": "2026-09-21T14:44:33.047613Z",
+  "feed": {
+    "status": "ok",
+    "latest_guid": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0",
+    "episode_count": 44,
+    "age_hours": 0.42,
+    "cache_control": "max-age=600",
+    "audio_verified": true,
+    "candidate_verified": true,
+    "sha256_verified": true,
+    "artwork": "3000x3000 RGB"
+  },
+  "audio_sha256": "9c6bbd335fe2cc1fcdd98c34dd627a6137d8d47028442d0710be2f5799d8f957"
+}

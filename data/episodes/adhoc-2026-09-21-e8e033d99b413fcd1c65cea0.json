@@ -2,7 +2,7 @@
   "schema_version": 4,
   "episode_id": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0",
   "published_at": "2026-09-21T14:19:28.411603+00:00",
-  "status": "candidate",
+  "status": "published",
   "source_health": {
     "github:Open-Dev-Society/OpenStock": "ok:2"
   },
