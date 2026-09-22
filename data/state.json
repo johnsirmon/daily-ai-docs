@@ -57,10 +57,11 @@
     "vscode:2026-08-26:agent-host-architecture",
     "vscode:1.138:reviewable-pr-handoff",
     "openstock-newsletter-correction-a2e010ec",
-    "openstock-minimax-default-99bab912"
+    "openstock-minimax-default-99bab912",
+    "ghrel:be5e5add5981b09d6780"
   ],
-  "last_publication": "2026-09-21T14:19:28.411603+00:00",
-  "last_episode_id": "adhoc-2026-09-21-e8e033d99b413fcd1c65cea0",
+  "last_publication": "2026-09-22T14:58:41.936376Z",
+  "last_episode_id": "daily-2026-09-21-6d54e8e9",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 125270,
@@ -75,10 +76,10 @@
       "fetched_at": "2026-09-16T15:00:27.170645Z"
     },
     "NousResearch/hermes-agent": {
-      "stars": 245403,
-      "fetched_at": "2026-09-14T16:24:09.494147Z"
+      "stars": 247992,
+      "fetched_at": "2026-09-22T14:58:41.936376Z"
     }
   },
-  "last_daily_episode_id": "daily-2026-09-19-d6ff21f1",
-  "last_daily_publication": "2026-09-19T13:57:49.385299Z"
+  "last_daily_episode_id": "daily-2026-09-21-6d54e8e9",
+  "last_daily_publication": "2026-09-22T14:58:41.936376Z"
 }

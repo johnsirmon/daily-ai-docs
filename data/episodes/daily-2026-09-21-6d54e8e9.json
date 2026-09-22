@@ -2,7 +2,7 @@
   "schema_version": 1,
   "episode_id": "daily-2026-09-21-6d54e8e9",
   "published_at": "2026-09-22T14:58:41.936376Z",
-  "status": "candidate",
+  "status": "published",
   "source_health": {
     "github:openai/codex": "ok:12",
     "github:anthropics/claude-code": "ok:0",
