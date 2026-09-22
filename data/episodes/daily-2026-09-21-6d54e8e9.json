@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-21-6d54e8e9",
+  "published_at": "2026-09-22T14:58:41.936376Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:12",
+    "github:anthropics/claude-code": "ok:0",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:1",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:1",
+    "youtube:weekly-digest": "error:ValueError"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:be5e5add5981b09d6780",
+      "source_type": "github_release",
+      "title": "Hermes Agent v2026.9.21",
+      "url": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.21",
+      "product": "Hermes Agent",
+      "topic": "AI agents",
+      "published_at": "2026-09-21T18:10:55Z",
+      "fetched_at": "2026-09-22T14:58:41.936376Z",
+      "evidence": "Hermes Agent v0.21.4 (v2026.9.21)\nRelease Date: September 21, 2026\nPatch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). Full curated notes for this window are deferred to v0.22.0.\nAbout this release\nMeasured at commit 4b8a8134009a8727a289bcabeb0019fedd353128, the window since v0.21.3 contains 5,071 non-merge commits across 5,169 changed files (+312,961 / −62,855), 1,812 merged PRs and 2,116 closed issues.\nAlso in the window, undocumented here on purpose: a host-wide gateway singleton lock with a rendezvous record, and Desktop attaching to the running host backend instead of spawning a second one; one backend-owned connector operation with a setup card on Desktop, TUI and CLI; --format stream-json structured JSONL output for the CLI; skills.auto_load pinning skills into every new session's prompt; a Desktop chat/UI font picker, one-click local engine updates, and plugin uninstall from the Plugins hub; a decline unauthorized-DM behavior for the gateway; a configurable MCP discovery connect cap (mcp.discovery_concurrency); session_search after/before bounds plus OR-relaxed recall retry; hermes sessions set-journal-mode; LTX 2.5 and Kling O3 in the video catalogs; a website page for every catalog plugin and author, with pinned-commit READMEs and added/updated sorting; a dozen new community plugins in the catalog (tailscale, ssh, shodan, terminal, rss, resetwatch, done-bell, kiwi, cognee, Octen); and a large run of profile/multiplex isolation, cron, kanban, Desktop and state.db fixes.\nFull curated release notes for this window ship with v0.22.0, which will document everything from v0.21.0 onward — highlights, feature areas, and complete contributor credits. Nothing in this window is skipped.\nUpdating\nhermes update (git installs), or re-run the installer one-liner.\nDocker / Hermes Cloud: images build from this tag (nousresearch/hermes-agent:v2026.9.21).\nFull changelog: https://github.com/NousResearch/hermes-agent/compare/v2026.9.14...v2026.9.21",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "NousResearch/hermes-agent",
+        "version": "v2026.9.21",
+        "priority": 20,
+        "stars": 247992,
+        "private": false,
+        "draft": false,
+        "evidence_status": "release_body",
+        "star_delta": 2589,
+        "star_velocity": 326.04,
+        "momentum_window_days": 7.94
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:be5e5add5981b09d6780",
+      "event_ids": [
+        "ghrel:be5e5add5981b09d6780"
+      ],
+      "headline": "Hermes Agent v2026.9.21",
+      "what_changed": "Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). Full curated notes for this window are deferred to v0.22.0. … [Excerpt; see source for full details.]",
+      "why_it_matters": "This is relevant to developers tracking AI agents.",
+      "action": "watch",
+      "rationale": "Read the primary source and assess applicability before changing your workflow.",
+      "source_urls": [
+        "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.21"
+      ],
+      "scores": {
+        "authority": 25.0,
+        "relevance": 20.0,
+        "novelty": 25.0,
+        "recency": 13.07,
+        "impact": 6.0,
+        "momentum": 10.0,
+        "noise_penalty": 0.0,
+        "total": 99.07
+      }
+    }
+  ],
+  "noise_notes": [
+    "Excluded OpenAI Codex: no substantive change evidence.",
+    "Excluded Gemini CLI: no substantive change evidence.",
+    "Skipped GitHub Copilot: below threshold after routine/prerelease penalties."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-22. Production note: This episode uses AI-generated narration.\n\nHermes Agent v2026.9.21. Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). Full curated notes for this window are deferred to v0.22.0. About this release Measured at commit 4b8a8134009a8727a289bcabeb0019fedd353128, the window since v0.21.3 contains 5,071 non-merge commits across 5,169 changed files (+312,961 / −62,855), 1,812 merged PRs and 2,116 closed issues. Also in the window, undocumented here on purpose: a host-wide gateway singleton lock with a rendezvous record, and Desktop attaching to the running host backend instead of spawning a second one; one backend-owned connector operation with a setup card on Desktop, TUI and CLI; --format stream-json structured JSONL output for the CLI; skills.auto_load pinning skills into every new session's prompt; a Desktop chat/UI font picker, one-click local engine updates, and plugin uninstall from the Plugins hub; a decline unauthorized-DM behavior for the gateway; a configurable MCP discovery connect cap (mcp.discovery_concurrency); session_search after/before bounds plus OR-relaxed recall retry; hermes sessions set-journal-mode; LTX 2.5 and Kling O3 in the video catalogs; a website page for every catalog plugin and author, with pinned-commit READMEs and added/updated sorting; a dozen new community plugins in the catalog (tailscale, ssh, shodan, terminal, rss, resetwatch, done-bell, kiwi, cognee, Octen); and a large run of profile/multiplex isolation, cron, kanban, Desktop and state.db fixes. Full curated release notes for this window ship with v0.22.0, which will document everything from v0.21.0 onward — highlights, feature areas, and complete contributor credits. Nothing in this window is skipped. Updating hermes update (git installs), or re-run the installer one-liner. Docker / Hermes Cloud: images build from this tag (nousresearch/hermes-agent:v2026.9.21). Full changelog: https://github.com/NousResearch/hermes-agent/compare/v2026.9.14...v2026.9.21\n\nSupplementary learning coverage was unavailable; primary-source coverage remained sufficient for this edition.\n\nSource links and written recommendations are in the episode notes. See you tomorrow.",
+  "show_notes": "Hermes Agent v2026.9.21\nWhat changed: Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). Full curated notes for this window are deferred to v0.22.0. … [Excerpt; see source for full details.]\nWhy it matters: This is relevant to developers tracking AI agents.\nRecommendation: WATCH — Read the primary source and assess applicability before changing your workflow.\nSources: https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.21\n\nHigh noise / low signal\n- Excluded OpenAI Codex: no substantive change evidence.\n- Excluded Gemini CLI: no substantive change evidence.\n- Skipped GitHub Copilot: below threshold after routine/prerelease penalties.\n\nSupplementary coverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "narration_style": "explanatory-v2",
+    "edition": "alert"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-21-6d54e8e9/daily-ai-brief.mp3",
+    "size_bytes": 1316016,
+    "duration_secs": 219.336,
+    "sha256": "dc025ff0b5918c5d5963f4de18bacaa3b123033640542720c86a925ee256d699",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}

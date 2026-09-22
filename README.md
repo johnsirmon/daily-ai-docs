@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — Special: OpenStock for AI Developers: A Practical Investment Research Workflow
+# Daily AI Developer Brief — 2026-09-22
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
@@ -81,25 +81,21 @@ The pilot uses the signed-in account's existing allowance. It does not authorize
 
 ## Today's signal
 
-Long-form special for Stock-owning developers, not expert traders. Exact source-checked single-narrator script; retain the 60-day evidence window. Distinguish documented changes from proposed research workflows and unproven investment returns..
-Evidence window: 60 days ending 2026-09-21T13:46:13.649523+00:00.
-Audio provider: edge; transcript/source reviewed, not Gemini API verification.
+### Hermes Agent v2026.9.21
 
-### OpenStock for AI Developers: A Practical Investment Research Workflow
+**What changed:** Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). Full curated notes for this window are deferred to v0.22.0. … [Excerpt; see source for full details.]
 
-**What changed:** OpenStock corrected its newsletter documentation to describe a weekly Kit broadcast instead of daily personalized watchlist summaries. A separate change updated the MiniMax provider default while preserving the model environment override.
+**Why it matters:** This is relevant to developers tracking AI agents.
 
-**Why it matters:** These changes help bound an evaluation of documentation and provider configuration. They do not establish an implementation history, predictive accuracy, or investment returns.
+**Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
 
-**Recommendation:** WATCH — Consider a source-linked research inbox, a thesis journal, and a paper-only evaluation before relying on an AI-assisted investing workflow. These are proposed practices, not verified shipped features or measured benefits.
-
-Sources: [1](https://github.com/Open-Dev-Society/OpenStock/commit/a2e010ec610ad67686df97ad8a5621dccc6c2a4e), [2](https://github.com/Open-Dev-Society/OpenStock/commit/99bab9124e8a994b337ed4d7731cccf693af4390)
+Sources: [1](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.21)
 
 ## High noise / low signal
 
-- Older implementation findings and the older paper-trading proposal remain outside this episode's evidence.
-- No timezone, maintainer motive, model capability comparison, deprecation schedule, or investment performance is inferred.
-- The user explicitly authorized an exact-script Edge recording after two unpublished Notebook takes failed review.
+- Excluded OpenAI Codex: no substantive change evidence.
+- Excluded Gemini CLI: no substantive change evidence.
+- Skipped GitHub Copilot: below threshold after routine/prerelease penalties.
 
 ## Editorial contract
 
@@ -118,7 +114,16 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `github:Open-Dev-Society/OpenStock`: ok:2
+- `feed:https://github.blog/changelog/feed/`: ok:1
+- `github:NousResearch/hermes-agent`: ok:1
+- `github:agentskills/agentskills`: ok:0
+- `github:anthropics/claude-code`: ok:0
+- `github:google-gemini/gemini-cli`: ok:1
+- `github:microsoft/vscode`: ok:0
+- `github:microsoft/vscode-copilot-release`: ok:0
+- `github:modelcontextprotocol/specification`: ok:0
+- `github:openai/codex`: ok:12
+- `youtube:weekly-digest`: error:ValueError
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 
