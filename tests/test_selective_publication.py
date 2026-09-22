@@ -131,7 +131,9 @@ def test_rejected_unpublished_event_can_be_reconsidered():
     item = event()
     assert select_editorial_events([item], now=NOW)[0] == [item]
     assert select_editorial_events([item], now=NOW + timedelta(hours=1))[0] == [item]
-    assert not select_editorial_events([item], [item.event_id], now=NOW)[0]
+    selected, reasons = select_editorial_events([item], [item.event_id], now=NOW)
+    assert not selected
+    assert reasons == ["Excluded Tool: repeated announcement has no supported source revision."]
 
 
 def test_different_tag_does_not_repeat_identical_published_claim():
@@ -171,6 +173,30 @@ def test_research_is_bounded_reviewable_and_not_a_quiet_day_fallback():
     assert stale not in select_editorial_events([event(), stale], now=NOW)[0]
     other = replace(paper, event_id="another-paper", metadata={**paper.metadata, "paper_id": "2609.56789"})
     assert other in select_editorial_events([event(), paper, other], covered_paper_ids=["2609.12345"], now=NOW)[0]
+
+
+def test_editorial_caps_report_bounded_false_exclusion_reasons():
+    same_product = [event(f"tool-{index}", product="Tool") for index in range(2)]
+    other_products = [event(f"product-{index}", product=f"Product {index}") for index in range(4)]
+    selected, reasons = select_editorial_events(
+        [*same_product, *other_products], max_products=2, max_events_per_product=1, now=NOW,
+    )
+    assert len(selected) == 2
+    assert any("additional same-product candidates" in reason for reason in reasons)
+    assert any("outside the daily product cap" in reason for reason in reasons)
+    assert len(reasons) <= 8
+
+    paper = replace(event("paper-a", product="Research A"), source_type="research_paper", metadata={
+        "priority": 20, "paper_id": "2609.10001", "version": "v1",
+        "first_published_at": NOW.isoformat(), "updated_at": NOW.isoformat(),
+        "full_text_available": True, "full_text": "Methods and supported results.",
+    })
+    second = replace(
+        paper, event_id="paper-b", product="Research B",
+        metadata={**paper.metadata, "paper_id": "2609.10002"},
+    )
+    _, research_reasons = select_editorial_events([event(), paper, second], now=NOW)
+    assert "Limited research: additional eligible papers exceeded the daily research cap." in research_reasons
 
 
 def test_thin_run_skips_model_audio_feed_and_published_state(monkeypatch, tmp_path, capsys):

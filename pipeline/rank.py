@@ -27,7 +27,8 @@ _UTILITY_CONTEXT = re.compile(
     r"worktrees?|containers?|gateways?|backends?|connectors?|telemetry|traces?|evaluations?|benchmarks?|workflows?|runners?|"
     r"authentication|authorization|tokens?|credentials?|network|ssh|https|keys?|bundles?|"
     r"dependencies|budgets?|pricing|rate limits?|structured outputs?|plugins?|api|endpoint|"
-    r"clients?|automation|ci|installers?|downloads?|platforms?|architectures?)\b",
+    r"clients?|automation|ci|installers?|downloads?|platforms?|architectures?|"
+    r"downstream consumers?|docker images?|hosted deployments?|(?:release|curated) notes?)\b",
     re.IGNORECASE,
 )
 _UTILITY_CHANGE = re.compile(
@@ -35,7 +36,7 @@ _UTILITY_CHANGE = re.compile(
     r"allows?|prevents?|records?|reports?|attach(?:es|ing)?|spawn(?:s|ing)?|configurable|"
     r"deprecat(?:ed|ion)|retir(?:ed|ement)|migrat(?:e|ion)|"
     r"must|will stop|no longer|unaffected|affected|only|ignore|update|upgrade|replace|review|"
-    r"inspect|select|download|install)\b",
+    r"inspect|select|download|install|rolls? up|tagged release|deferred)\b",
     re.IGNORECASE,
 )
 _UTILITY_RISK = re.compile(
@@ -319,11 +320,15 @@ def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> St
         action = "act"
         impact_text = "The source flags a security or compatibility change that may affect existing users."
         rationale = "Check affected versions and the cited notice first; act only if your tooling is affected."
+    observer_excerpt = (
+        {"words": 150, "chars": 1600, "sentences": 5}
+        if event.metadata.get("observer_finding") else {}
+    )
     return Story(
         story_id=f"story:{event.event_id}",
         event_ids=[event.event_id],
         headline=event.title,
-        what_changed=_bounded_excerpt(event.evidence),
+        what_changed=_bounded_excerpt(event.evidence, **observer_excerpt),
         why_it_matters=impact_text,
         action=action,
         rationale=rationale,
@@ -377,6 +382,10 @@ def select_editorial_events(
     products: Dict[str, List[SourceEvent]] = {}
     papers: List[SourceEvent] = []
     reasons: List[str] = []
+    def reject(reason: str) -> None:
+        # Keep the audit useful without turning the edition into a churn list.
+        if reason not in reasons and len(reasons) < 8:
+            reasons.append(reason)
     def prior_digest(row: dict) -> str:
         return row.get("evidence_sha256") or hashlib.sha256(row["normalized_evidence"].encode("utf-8")).hexdigest()
     for event in dedupe_events(events):
@@ -388,17 +397,20 @@ def select_editorial_events(
         ]
         if event.event_id in seen:
             if not previous or not event.metadata.get("updated_at"):
+                reject(f"Excluded {event.product}: repeated announcement has no supported source revision.")
                 continue
             prior = max(previous, key=lambda row: row["published_at"])
             updated = datetime.fromisoformat(str(event.metadata["updated_at"]).replace("Z", "+00:00"))
             covered_at = datetime.fromisoformat(prior["published_at"].replace("Z", "+00:00"))
             if not covered_at < updated <= now or evidence_digest == prior_digest(prior):
+                reject(f"Excluded {event.product}: claimed revision is not newer supported evidence.")
                 continue
             revision = hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:12]
             event = replace(event, event_id=f"{event.event_id}:rev:{revision}", metadata={
                 **event.metadata, "canonical_event_id": event.event_id,
             })
             if event.event_id in seen:
+                reject(f"Excluded {event.product}: supported revision was already published.")
                 continue
         if event.source_type != "research_paper" and any(
             row["product"].casefold() == event.product.casefold()
@@ -406,7 +418,7 @@ def select_editorial_events(
             and prior_digest(row) == evidence_digest
             for row in published_events
         ):
-            reasons.append(f"Excluded {event.product}: unchanged previously published evidence.")
+            reject(f"Excluded {event.product}: unchanged previously published evidence.")
             continue
         if event.source_type == "research_paper":
             first = datetime.fromisoformat(str(event.metadata.get("first_published_at", event.published_at)).replace("Z", "+00:00"))
@@ -415,24 +427,30 @@ def select_editorial_events(
                     or not event.metadata.get("paper_id")
                     or event.metadata["paper_id"] in papers_seen
                     or not now - timedelta(days=30) <= first <= now):
-                reasons.append(f"Excluded {event.product}: stale, already covered, or insufficient paper evidence.")
+                reject(f"Excluded {event.product}: stale, already covered, or insufficient paper evidence.")
                 continue
             papers.append(event)
         elif event.source_type == "youtube_video":
-            reasons.append(f"Excluded {event.product}: learning discovery is not a verified new product change.")
+            reject(f"Excluded {event.product}: learning discovery is not a verified new product change.")
         elif has_substantive_evidence(event) and assess_utility(event)["demonstrated"]:
             products.setdefault(canonical_product(event.product), []).append(event)
         else:
-            reasons.append(f"Excluded {event.product}: no specific developer consequence was established.")
+            reject(f"Excluded {event.product}: no specific developer consequence was established.")
     ranked_groups = []
     for group in products.values():
         group.sort(key=lambda event: (score_event(event, seen)["total"], event.published_at), reverse=True)
+        if len(group) > max_events_per_product:
+            reject(f"Limited {group[0].product}: additional same-product candidates exceeded the editorial cap.")
         ranked_groups.append(group[:max_events_per_product])
     ranked_groups.sort(key=lambda group: (score_event(group[0], seen)["total"], group[0].published_at), reverse=True)
+    for group in ranked_groups[max_products:]:
+        reject(f"Limited {group[0].product}: candidate fell outside the daily product cap.")
     selected = [event for group in ranked_groups[:max_products] for event in group]
     # Research is a distinct optional segment, not an automatic no-news edition.
     if selected and max_research:
         papers.sort(key=lambda event: (score_event(event, seen)["relevance"], event.published_at), reverse=True)
+        if len(papers) > max_research:
+            reject("Limited research: additional eligible papers exceeded the daily research cap.")
         selected.extend(papers[:max_research])
     return selected, list(dict.fromkeys(reasons))
 
@@ -447,6 +465,10 @@ def group_editorial_stories(events: Sequence[SourceEvent]) -> List[Story]:
     for group in groups.values():
         first = group[0]
         base = event_to_story(first)
+        observer_excerpt = (
+            {"words": 150, "chars": 1600, "sentences": 5}
+            if first.metadata.get("observer_finding") else {}
+        )
         urls = list(dict.fromkeys(url for event in group for url in [
             event.url, *event.metadata.get("corroboration_urls", []),
         ]))
@@ -454,7 +476,7 @@ def group_editorial_stories(events: Sequence[SourceEvent]) -> List[Story]:
             story_id=base.story_id,
             event_ids=[event.event_id for event in group],
             headline=base.headline if len(group) == 1 else f"{first.product}: recent changes",
-            what_changed=_bounded_excerpt(" ".join(event.evidence for event in group)),
+            what_changed=_bounded_excerpt(" ".join(event.evidence for event in group), **observer_excerpt),
             why_it_matters=base.why_it_matters,
             action=base.action,
             rationale=base.rationale,

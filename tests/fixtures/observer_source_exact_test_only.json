@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-22T21:36:27+00:00",
+  "cutoff_at": "2026-09-22T21:36:27+00:00",
+  "status": "ok",
+  "coverage": [
+    {
+      "source": "Frozen official wording",
+      "status": "ok",
+      "detail": "TEST-ONLY source-exact fixture; never publication authority."
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "test-only-github-ssh-caveats",
+      "product": "GitHub",
+      "topic": "developer security",
+      "what_changed": "GitHub announced an SSH cryptography transition.",
+      "developer_consequence": "An inferred outage consequence must not become grounded merely because this finding is labeled documented_fact.",
+      "applicability": "Git-over-SSH users, not HTTPS-only users.",
+      "suggested_action": "Check the official compatibility wording.",
+      "caveats": "Existing RSA keys can continue with RSA-SHA2; the listed January 13, 2026 removal date conflicts with the surrounding schedule.",
+      "confidence": "high",
+      "claim_type": "documented_fact",
+      "novelty_basis": "TEST-ONLY regression fixture.",
+      "sources": [
+        {
+          "url": "https://example.com/observer-test-only/ssh",
+          "title": "TEST-ONLY Security improvements for SSH excerpt",
+          "published_at": "2026-09-22T14:11:47+00:00",
+          "retrieved_at": "2026-09-22T21:36:27+00:00",
+          "supporting_excerpt": "The only affected users are those connecting with a Git client over SSH or those using the unauthenticated Git protocol on GitHub Enterprise Server. If your Git remotes start with https://, nothing here will affect you. ... As long as the SSH program or library you’re using supports RSA with SHA-2, you can continue to use the same key without a problem. ... January 13, 2026: We’ll remove the ssh-rsa signature type and diffie-hellman-group-exchange-sha256 key exchange algorithm.",
+          "content_sha256": "ee39dcaf538c0446c394d0a857415944b89340b043358bfa5aa0471d0a9d612e"
+        }
+      ]
+    },
+    {
+      "finding_id": "test-only-codeql-bundle-scope",
+      "product": "CodeQL CLI",
+      "topic": "developer security tooling",
+      "what_changed": "The all-platform CodeQL bundle is deprecated.",
+      "developer_consequence": "Installers selecting the combined archive may need a platform-specific artifact.",
+      "applicability": "Direct CodeQL CLI bundle consumers.",
+      "suggested_action": "Select the supported platform and architecture bundle.",
+      "caveats": "This is bundle packaging wording and does not say CodeQL analysis is removed.",
+      "confidence": "high",
+      "claim_type": "documented_fact",
+      "novelty_basis": "TEST-ONLY regression fixture.",
+      "sources": [
+        {
+          "url": "https://example.com/observer-test-only/codeql",
+          "title": "TEST-ONLY All-platform CodeQL bundle excerpt",
+          "published_at": "2026-09-22T09:21:03+00:00",
+          "retrieved_at": "2026-09-22T21:36:27+00:00",
+          "supporting_excerpt": "Starting with CodeQL CLI 2.27.0, the all-platform CodeQL bundle ... is marked as deprecated. ... Download the platform-specific bundle for your supported operating system and architecture instead. Linux ARM64 binaries are available only through platform-specific downloads and will not be included in the all-platform bundle.",
+          "content_sha256": "2d2d823d075a2ac214f2c466c6a3302f0e8dcc81c19b1b9cfbb5594798511829"
+        }
+      ]
+    }
+  ],
+  "noise_notes": [
+    "High noise / low signal: test-only fixture excludes unsupported model-switching claims."
+  ]
+}

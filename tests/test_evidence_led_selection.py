@@ -47,6 +47,21 @@ def test_latest_subscriber_regression_is_measured_and_replayed_without_release_d
     assert "host-wide gateway singleton lock" in replay.narration
     assert "Source links and written recommendations are in the episode notes" in replay.narration
 
+    # Identifier deletion alone is not editorial utility. The deterministic replay
+    # must carry the source-supported story contract even though it remains a draft;
+    # the production 5-8 minute duration gate is unchanged and must not be padded.
+    utility_markers = {
+        "change": "stable tagged release",
+        "audience": "downstream consumers",
+        "consequence": "Docker images",
+        "action": "hermes update",
+        "caveat": "curated notes for this window are deferred",
+    }
+    present = {name: phrase.casefold() in replay.narration.casefold()
+               for name, phrase in utility_markers.items()}
+    assert all(present.values()), present
+    assert replay.status == "draft"
+
 
 def test_utility_narration_retains_negation_eligibility_and_compatibility_version():
     evidence = (
@@ -88,4 +103,3 @@ def test_alias_product_cap_and_research_cap_are_independent():
     assert len(selected) == 2
     assert {event.product for event in selected} & {"GitHub", "GitHub Platform"}
     assert any(event.product == "CodeQL CLI" for event in selected)
-

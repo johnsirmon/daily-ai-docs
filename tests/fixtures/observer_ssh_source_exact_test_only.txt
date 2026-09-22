@@ -1,0 +1,4 @@
+TEST-ONLY frozen excerpt fixture; not publication authority.
+The only affected users are those connecting with a Git client over SSH or those using the unauthenticated Git protocol on GitHub Enterprise Server. If your Git remotes start with https://, nothing here will affect you.
+If you’re using an existing RSA key, make sure you’re using RSA with SHA-2 (i.e., the rsa-sha2-256 and rsa-sha2-512 signature types). You do not need to generate a new key. As long as the SSH program or library you’re using supports RSA with SHA-2, you can continue to use the same key without a problem.
+January 13, 2026: We’ll remove the ssh-rsa signature type and diffie-hellman-group-exchange-sha256 key exchange algorithm.

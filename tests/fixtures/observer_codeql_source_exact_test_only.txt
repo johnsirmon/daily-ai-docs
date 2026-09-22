@@ -1,0 +1,3 @@
+TEST-ONLY frozen excerpt fixture; not publication authority.
+Starting with CodeQL CLI 2.27.0, the all-platform CodeQL bundle (i.e., codeql-bundle.tar.gz and codeql-bundle.tar.zst), which includes the binaries for all supported platforms up to this release, is marked as deprecated.
+In mid-March 2027, we will remove the all-platform CodeQL bundle. Download the platform-specific bundle for your supported operating system and architecture instead. Linux ARM64 binaries are available only through platform-specific downloads and will not be included in the all-platform bundle.
