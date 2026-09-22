@@ -44,6 +44,11 @@ def test_latest_subscriber_regression_is_measured_and_replayed_without_release_d
     replay.narration = manifest_to_narration(replay)
     assert "1,812 merged PRs" not in replay.narration
     assert "4b8a8134009a8727a289bcabeb0019fedd353128" not in replay.narration
+    assert not re.search(r"\b[~\d][\d,]*\s+(?:merged\s+)?PRs\b", replay.narration, re.I)
+    assert not _VERSION.findall(replay.narration)
+    assert "For Git installs, run hermes update; otherwise, re-run the installer." in replay.narration
+    assert "Updating hermes update" not in replay.narration
+    assert "It also includes a configurable MCP discovery connect cap" in replay.narration
     assert "host-wide gateway singleton lock" in replay.narration
     assert "Source links and written recommendations are in the episode notes" in replay.narration
 

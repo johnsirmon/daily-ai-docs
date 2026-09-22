@@ -167,6 +167,10 @@ def test_source_exact_fixture_preserves_material_caveats_without_promoting_infer
     )
     manifest.narration = manifest_to_narration(manifest)
     assert inferred not in manifest.narration
+    assert "https://, nothing here will affect you" in manifest.narration
+    assert "supports RSA with SHA-2" in manifest.narration
+    assert "January 13, 2026" in manifest.narration
+    assert "removal date conflicts with the surrounding schedule" in manifest.narration
 
 
 def test_source_exact_fixture_rejects_straight_apostrophe_for_official_curly_text(tmp_path):

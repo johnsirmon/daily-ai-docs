@@ -91,6 +91,34 @@ def utility_sentences(event: SourceEvent) -> List[str]:
     return useful
 
 
+def _spoken_utility_sentence(sentence: str) -> str:
+    """Remove release bookkeeping while retaining supported developer utility."""
+    rollup = re.match(
+        r"^(?:this|the) tag rolls up .*? into (a stable tagged release\b.*)$",
+        sentence,
+        re.IGNORECASE,
+    )
+    if rollup:
+        sentence = "This is " + rollup.group(1)
+    sentence = re.sub(
+        r"^(Full curated notes for this window are deferred)\s+to\s+\S+\.?$",
+        r"\1.",
+        sentence,
+        flags=re.IGNORECASE,
+    )
+    update = re.match(
+        r"^Updating\s+(.+?)\s+\(git installs\),\s+or re-run the installer one-liner\.?$",
+        sentence,
+        re.IGNORECASE,
+    )
+    if update:
+        sentence = f"For Git installs, run {update.group(1)}; otherwise, re-run the installer."
+    elif re.match(r"^(?:a|an)\s+", sentence, re.IGNORECASE):
+        sentence = "It also includes " + sentence
+    sentence = sentence.strip()
+    return sentence[:1].upper() + sentence[1:]
+
+
 def assess_utility(event: SourceEvent) -> Dict[str, float]:
     useful = utility_sentences(event)
     text = " ".join(useful)
@@ -292,7 +320,7 @@ def _bounded_excerpt(text: str, *, words: int = 110, chars: int = 1200, sentence
 
 def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Story:
     scores = score_event(event, seen_event_ids)
-    useful = utility_sentences(event)
+    useful = [_spoken_utility_sentence(sentence) for sentence in utility_sentences(event)]
     useful_text = ". ".join(sentence.rstrip(".;") for sentence in useful)
     if useful_text:
         useful_text += "."

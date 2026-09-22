@@ -64,6 +64,12 @@ def _normalise_sentence(s: str) -> str:
     return s
 
 
+def _spoken_story_text(text: str) -> str:
+    """Remove written excerpt notation before normalising spoken story prose."""
+    text = re.sub(r"\s*…\s*\[Excerpt; see source for full details\.\]\s*$", "", text)
+    return _normalise_sentence(text)
+
+
 def _strip_markdown(text: str) -> str:
     """Remove markdown syntax that would sound bad when spoken aloud."""
     # Remove HTML comments
@@ -451,11 +457,29 @@ def _explanatory_narration(manifest) -> str:
             # New utility-led stories already retain the relevant source sentences.
             # Keep release identifiers in notes unless those sentences need them for
             # compatibility or risk; never read an entire release body as narration.
-            paragraphs.append(" ".join([
-                *qualifications,
-                _normalise_sentence(story.why_it_matters),
-                _normalise_sentence(story.rationale),
-            ]))
+            observer_sources = [
+                source for source in sources if source.metadata.get("observer_finding")
+            ]
+            if observer_sources:
+                # Observer excerpts are independently checked against fetched source
+                # bytes. Speak those exact bounded claims plus the review caveat so
+                # applicability, exceptions, and conflicting dates are not lost.
+                caveats = list(dict.fromkeys(
+                    str(source.metadata["observer_finding"].get("caveats", "")).strip()
+                    for source in observer_sources
+                    if str(source.metadata["observer_finding"].get("caveats", "")).strip()
+                ))
+                paragraphs.append(" ".join([
+                    *qualifications,
+                    _spoken_story_text(story.what_changed),
+                    *(_normalise_sentence(f"Evidence-review caveat: {caveat}") for caveat in caveats),
+                ]))
+            else:
+                paragraphs.append(" ".join([
+                    *qualifications,
+                    _spoken_story_text(story.why_it_matters),
+                    _normalise_sentence(story.rationale),
+                ]))
         else:
             # Preserve the established v1/v2 renderer for accepted manifests and
             # immutable recovery; only new preparations receive explanatory-v3.
