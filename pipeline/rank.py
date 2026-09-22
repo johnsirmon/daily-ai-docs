@@ -22,37 +22,126 @@ _NOISE = re.compile(
     re.IGNORECASE,
 )
 
+_UTILITY_CONTEXT = re.compile(
+    r"\b(?:permissions?|approvals?|previews?|sandbox|tool (?:calls?|calling|execution|arguments?)|mcp|sessions?|context|memory|"
+    r"worktrees?|containers?|gateways?|backends?|connectors?|telemetry|traces?|evaluations?|benchmarks?|workflows?|runners?|"
+    r"authentication|authorization|tokens?|credentials?|network|ssh|https|keys?|bundles?|"
+    r"dependencies|budgets?|pricing|rate limits?|structured outputs?|plugins?|api|endpoint|"
+    r"clients?|automation|ci|installers?|downloads?|platforms?|architectures?)\b",
+    re.IGNORECASE,
+)
+_UTILITY_CHANGE = re.compile(
+    r"\b(?:added|adds?|fixed|fixes|enabled?|introduced|removed|requires?|supports?|blocks?|"
+    r"allows?|prevents?|records?|reports?|attach(?:es|ing)?|spawn(?:s|ing)?|configurable|"
+    r"deprecat(?:ed|ion)|retir(?:ed|ement)|migrat(?:e|ion)|"
+    r"must|will stop|no longer|unaffected|affected|only|ignore|update|upgrade|replace|review|"
+    r"inspect|select|download|install)\b",
+    re.IGNORECASE,
+)
+_UTILITY_RISK = re.compile(
+    r"\b(?:security|vulnerabilit(?:y|ies)|breaking changes?|compatibility|regression|crash|"
+    r"data loss|corrupt(?:ion|ed)?|stop working|fail(?:ure|ed)?|migrat(?:e|ion)|deprecat(?:ed|ion)|"
+    r"retir(?:ed|ement)|brownout|removal)\b",
+    re.IGNORECASE,
+)
+_UTILITY_HYPE = re.compile(
+    r"\b(?:amazing|exciting|game[- ]changing|revolutionary|best[- ]in[- ]class|powerful new|"
+    r"next generation|developer experience)\b",
+    re.IGNORECASE,
+)
+_COSMETIC = re.compile(r"\b(?:spinner|alignment|spacing|colors?|icons?|wording|typo|cosmetic|visual polish)\b", re.I)
+_PRODUCT_ALIASES = {
+    "vscode": "visual studio code",
+    "visual studio code": "visual studio code",
+    "github developer tools": "github platform",
+    "github": "github platform",
+    "github platform": "github platform",
+    "model context protocol": "model context protocol",
+    "mcp": "model context protocol",
+    "hermes": "hermes agent",
+    "hermes agent": "hermes agent",
+    "codeql": "codeql cli",
+    "codeql cli": "codeql cli",
+}
+
+
+def canonical_product(product: str) -> str:
+    key = re.sub(r"\s+", " ", product.strip().casefold())
+    return _PRODUCT_ALIASES.get(key, key)
+
+
+def utility_sentences(event: SourceEvent) -> List[str]:
+    """Return source sentences that establish a concrete developer consequence."""
+    useful = []
+    clean = " ".join(event.evidence.split())
+    for sentence in re.split(r"(?<=[.!?])\s+|;\s+|\n+", clean):
+        sentence = sentence.strip()
+        if not sentence or _UTILITY_HYPE.search(sentence) or _COSMETIC.search(sentence):
+            continue
+        if re.search(r"\b(?:no|not|without)\s+(?:known\s+)?breaking changes?\b", sentence, re.I):
+            continue
+        if re.search(r"\bmigration guide\b.*\boptional\b", sentence, re.I):
+            continue
+        context = bool(_UTILITY_CONTEXT.search(sentence))
+        change = bool(_UTILITY_CHANGE.search(sentence))
+        risk = bool(_UTILITY_RISK.search(sentence))
+        if len(sentence.split()) >= 5 and ((context and change) or risk):
+            useful.append(sentence)
+    return useful
+
+
+def assess_utility(event: SourceEvent) -> Dict[str, float]:
+    useful = utility_sentences(event)
+    text = " ".join(useful)
+    workflow = 30.0 if _UTILITY_CONTEXT.search(text) and _UTILITY_CHANGE.search(text) else 0.0
+    risk = 25.0 if _UTILITY_RISK.search(text) else 0.0
+    action = 20.0 if re.search(
+        r"\b(?:must|requires?|update|upgrade|replace|review|inspect|ignore|unaffected)\b", text, re.I,
+    ) else 0.0
+    specificity = 10.0 if useful else 0.0
+    return {
+        "workflow_impact": workflow,
+        "risk_or_compatibility": risk,
+        "actionability": action,
+        "specificity": specificity,
+        "demonstrated": 1.0 if useful else 0.0,
+        "utility_total": workflow + risk + action + specificity,
+    }
+
 
 def score_event(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Dict[str, float]:
-    """Return transparent component scores; total is higher-is-better."""
+    """Return transparent scores; metadata cannot rescue unsupported utility."""
     event.validate()
     seen = set(seen_event_ids)
+    utility = assess_utility(event)
     # Score relative to the recorded fetch time so replaying a manifest is deterministic.
     now = datetime.fromisoformat(event.fetched_at.replace("Z", "+00:00"))
     published = datetime.fromisoformat(event.published_at.replace("Z", "+00:00"))
     age_hours = max(0.0, (now - published).total_seconds() / 3600)
 
-    authority = 25.0 if event.authority == "primary" else 8.0
-    relevance = float(max(0, min(20, int(event.metadata.get("priority", 10)))))
-    novelty = 0.0 if event.event_id in seen else 25.0
-    recency = max(0.0, 20.0 - age_hours / 3.0)
-    text = f"{event.title} {event.evidence}"
-    impact = 15.0 if _HIGH_IMPACT.search(text) else 6.0
+    authority = 20.0 if event.authority == "primary" else 0.0
+    relevance = float(max(0, min(5, int(event.metadata.get("priority", 10)) / 4)))
+    novelty = 0.0 if event.event_id in seen else 15.0
+    recency = max(0.0, 5.0 - age_hours / 24.0)
     penalty = 0.0
     if event.channel == "prerelease":
         penalty += 12.0
-    if is_noise(event):
+    if is_noise(event) and not utility["demonstrated"]:
         penalty += 24.0
     velocity = float(event.metadata.get("star_velocity", 0) or 0)
     youtube_trend = float(event.metadata.get("trend_score", 0) or 0)
-    momentum = min(10.0, max(0.0, velocity / 10.0, youtube_trend / 10.0))
-    total = authority + relevance + novelty + recency + impact + momentum - penalty
+    momentum = min(3.0, max(0.0, velocity / 100.0, youtube_trend / 100.0))
+    total = (
+        utility["utility_total"] + authority + relevance + novelty + recency + momentum - penalty
+        if utility["demonstrated"] and authority else 0.0
+    )
     return {
+        **utility,
         "authority": round(authority, 2),
         "relevance": round(relevance, 2),
         "novelty": round(novelty, 2),
         "recency": round(recency, 2),
-        "impact": round(impact, 2),
+        "impact": round(max(utility["workflow_impact"], utility["risk_or_compatibility"]), 2),
         "momentum": round(momentum, 2),
         "noise_penalty": round(penalty, 2),
         "total": round(total, 2),
@@ -64,7 +153,7 @@ def _identity(event: SourceEvent) -> Tuple[str, str, str]:
         return event.source_type, str(event.metadata.get("paper_id") or event.event_id), "research"
     version = str(event.metadata.get("version") or event.metadata.get("canonical_event") or event.title)
     version = re.sub(r"\s+", " ", version.strip().lower())
-    return event.product.strip().lower(), version, event.channel
+    return canonical_product(event.product), version, event.channel
 
 
 def dedupe_events(events: Sequence[SourceEvent]) -> List[SourceEvent]:
@@ -78,11 +167,11 @@ def dedupe_events(events: Sequence[SourceEvent]) -> List[SourceEvent]:
             chosen[key] = event
             continue
         current_quality = (
-            current.authority == "primary", has_substantive_evidence(current),
+            current.authority == "primary", assess_utility(current)["utility_total"], has_substantive_evidence(current),
             len(" ".join(current.evidence.split())), current.published_at, current.event_id,
         )
         event_quality = (
-            event.authority == "primary", has_substantive_evidence(event),
+            event.authority == "primary", assess_utility(event)["utility_total"], has_substantive_evidence(event),
             len(" ".join(event.evidence.split())), event.published_at, event.event_id,
         )
         if event_quality > current_quality:
@@ -122,8 +211,14 @@ def select_events(
         scores = score_event(event, seen)
         if event.event_id in seen:
             continue
+        if event.authority != "primary":
+            noise_notes.append(f"Excluded {event.product}: spoken claims require primary evidence.")
+            continue
         if event.source_type != "youtube_video" and not has_substantive_evidence(event):
             noise_notes.append(f"Excluded {event.product}: no substantive change evidence.")
+            continue
+        if not scores["demonstrated"]:
+            noise_notes.append(f"Excluded {event.product}: no specific developer consequence was established.")
             continue
         if scores["total"] >= minimum_score:
             ranked.append((scores["total"], event))
@@ -138,7 +233,7 @@ def select_events(
         source_limit = limits.get(event.source_type, limit)
         if counts.get(event.source_type, 0) >= source_limit:
             continue
-        product_key = event.product.casefold()
+        product_key = canonical_product(event.product)
         if max_per_product is not None and product_counts.get(product_key, 0) >= max_per_product:
             noise_notes.append(f"Limited {event.product}: additional same-product updates omitted.")
             continue
@@ -196,14 +291,26 @@ def _bounded_excerpt(text: str, *, words: int = 110, chars: int = 1200, sentence
 
 def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Story:
     scores = score_event(event, seen_event_ids)
-    impact_text = f"This is relevant to developers tracking {event.topic}."
+    useful = utility_sentences(event)
+    useful_text = ". ".join(sentence.rstrip(".;") for sentence in useful)
+    if useful_text:
+        useful_text += "."
+    impact_text = _bounded_excerpt(useful_text, words=150, chars=1600, sentences=4)
+    if not impact_text:
+        impact_text = "The evidence does not establish a specific developer consequence."
     action = "watch"
-    rationale = "Read the primary source and assess applicability before changing your workflow."
+    action_sentences = [
+        sentence for sentence in useful
+        if re.search(r"\b(?:must|requires?|update|upgrade|replace|review|inspect|ignore|unaffected)\b", sentence, re.I)
+    ]
+    rationale = action_sentences[0] if action_sentences else "No workflow change is supported beyond the cited evidence."
+    if rationale in impact_text:
+        rationale = "No additional workflow change is supported beyond the cited evidence."
     combined = f"{event.title} {event.evidence}"
     # Learning videos and prereleases never become production ACT advice via keywords.
     if event.source_type == "youtube_video":
-        impact_text = "Use this as a focused learning pick, not verified product-change evidence."
-        rationale = "Ranked within a bounded weekly discovery sample; the ranking does not establish adoption or verify video claims."
+        impact_text = "This is a learning pick, not verified evidence of a product change. " + impact_text
+        rationale = "The bounded discovery ranking does not establish adoption or verify the video's claims."
     elif event.channel == "prerelease":
         action = "skip"
         impact_text = "This is prerelease information; avoid changing production workflows without a specific need."
@@ -258,7 +365,7 @@ def select_editorial_events(
     covered_paper_ids: Iterable[str] = (),
     published_events: Sequence[dict] = (),
     max_products: int = 3,
-    max_events_per_product: int = 2,
+    max_events_per_product: int = 1,
     max_research: int = 1,
     now: datetime | None = None,
 ) -> Tuple[List[SourceEvent], List[str]]:
@@ -313,10 +420,10 @@ def select_editorial_events(
             papers.append(event)
         elif event.source_type == "youtube_video":
             reasons.append(f"Excluded {event.product}: learning discovery is not a verified new product change.")
-        elif has_substantive_evidence(event):
-            products.setdefault(event.product.casefold(), []).append(event)
+        elif has_substantive_evidence(event) and assess_utility(event)["demonstrated"]:
+            products.setdefault(canonical_product(event.product), []).append(event)
         else:
-            reasons.append(f"Excluded {event.product}: no substantive change evidence.")
+            reasons.append(f"Excluded {event.product}: no specific developer consequence was established.")
     ranked_groups = []
     for group in products.values():
         group.sort(key=lambda event: (score_event(event, seen)["total"], event.published_at), reverse=True)
@@ -334,7 +441,7 @@ def group_editorial_stories(events: Sequence[SourceEvent]) -> List[Story]:
     """Keep related release evidence together instead of reading one segment per tag."""
     groups: Dict[str, List[SourceEvent]] = {}
     for event in events:
-        key = event.event_id if event.source_type == "research_paper" else event.product.casefold()
+        key = event.event_id if event.source_type == "research_paper" else canonical_product(event.product)
         groups.setdefault(key, []).append(event)
     stories = []
     for group in groups.values():

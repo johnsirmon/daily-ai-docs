@@ -273,7 +273,7 @@ def test_build_closing_is_non_empty():
 def _daily_manifest(*, marked=False, evidence=None, channel="stable", source_type="github_release",
                     narration_style=None):
     from pipeline.rank import event_to_story
-    from pipeline.schema import EpisodeManifest, SourceEvent
+    from pipeline.schema import EpisodeManifest, SourceEvent, Story
 
     source = SourceEvent(
         "example", source_type, "Tool approval update", "https://example.com/change",
@@ -281,9 +281,17 @@ def _daily_manifest(*, marked=False, evidence=None, channel="stable", source_typ
         evidence or "Tool adds a command approval preview. Existing approvals remain required.",
         channel=channel,
     )
+    story = event_to_story(source)
+    if not marked:
+        story = Story(
+            story.story_id, story.event_ids, story.headline, story.what_changed,
+            "This is relevant to developers tracking Coding.", story.action,
+            "Read the primary source and assess applicability before changing your workflow.",
+            story.source_urls, story.scores,
+        )
     return EpisodeManifest(
         1, "daily-example", "2026-09-19T12:00:00Z", "draft", {"source": "ok:1"},
-        [source], [event_to_story(source)], [], "pending", "Source notes.",
+        [source], [story], [], "pending", "Source notes.",
         {"narration_style": narration_style or "explanatory-v1"} if marked else {}, {},
     )
 

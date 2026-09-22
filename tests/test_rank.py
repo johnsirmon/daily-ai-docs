@@ -1,8 +1,9 @@
-from pipeline.rank import dedupe_events, score_event, select_events
+from pipeline.rank import assess_utility, canonical_product, dedupe_events, score_event, select_events
 from pipeline.schema import SourceEvent
 
 
-def event(event_id, *, product="Tool", version="v1", priority=10, velocity=0, channel="stable", evidence="Important update"):
+def event(event_id, *, product="Tool", version="v1", priority=10, velocity=0, channel="stable",
+          evidence="Added permission checks before tool execution in coding sessions."):
     return SourceEvent(
         event_id=event_id,
         source_type="github_release",
@@ -92,6 +93,7 @@ def test_selection_caps_weekly_video_recommendations():
             **base.to_dict(),
             "source_type": "youtube_video",
             "title": f"Weekly watch: video {index}",
+            "evidence": "A tutorial explains how to inspect tool-call traces before changing agent memory.",
             "metadata": {**base.metadata, "trend_score": 100},
         }))
     selected, _ = select_events(
@@ -118,3 +120,16 @@ def test_selection_caps_same_product_for_daily_diversity():
     assert len([item for item in selected if item.product == "Tool"]) == 2
     assert other in selected
     assert "additional same-product updates omitted" in " ".join(notes)
+
+
+def test_popularity_cannot_rescue_release_hype_without_utility():
+    hype = event("hype", priority=20, velocity=10000,
+                 evidence="Our latest release delivers an amazing developer experience.")
+    assert assess_utility(hype)["demonstrated"] == 0
+    assert score_event(hype)["total"] == 0
+    assert select_events([hype])[0] == []
+
+
+def test_canonical_aliases_share_product_cap_but_codeql_remains_distinct():
+    assert canonical_product("GitHub") == canonical_product("GitHub Platform")
+    assert canonical_product("CodeQL CLI") != canonical_product("GitHub")

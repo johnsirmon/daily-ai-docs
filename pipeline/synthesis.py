@@ -27,6 +27,7 @@ from .schema import (
     validate_editorial_source_url,
     validate_editorial_stories,
     validate_quantities,
+    validate_specific_utility,
     validate_spoken_text,
 )
 
@@ -49,6 +50,9 @@ why_it_matters, action, rationale, kind, editorial. action is act, watch, or ski
 (a recommendation, NOT editorial exclusion). kind is product or research.
 Explain the actual change, affected workflow, specific consequence, appropriate
 bounded experiment/check or reason to wait, and material applicability/limitations.
+Every story must answer what changes for the developer with a concrete task,
+decision, risk, or reusable lesson. Say who can ignore it when evidence establishes
+that boundary. Do not manufacture an experiment merely to fill the format.
 Explain prior capability and the before/after difference only when supplied primary
 evidence establishes both; otherwise qualify or omit the comparison. History is not
 evidence of prior capability. Define necessary unfamiliar jargon in plain language
@@ -111,6 +115,8 @@ author-reported, not independently reproduced findings, not established producti
 reliability. Ensure essential full-text limitations survive the spoken text.
 Reject generic relevance/advice, filler, repeated prose, padding, and title-only
 version churn. Source-based usefulness is required, not just factual accuracy.
+For every included story require a specific developer consequence, and reject advice
+or experiments invented only to satisfy a template.
 Independently verify any prior capability and before/after comparison against supplied
 primary evidence, never history or assumed background knowledge. Reject invented old
 defaults, alternatives, and tradeoffs. Check necessary jargon is explained accurately
@@ -263,7 +269,7 @@ def _editorial_candidates(events: List[SourceEvent], fallback: List[Story]) -> t
 
 def _evidence_payload(event: SourceEvent) -> dict:
     fields = {"paper_id", "version", "first_published_at", "updated_at", "full_text",
-              "full_text_available", "corroboration_urls"}
+              "full_text_available", "corroboration_urls", "observer_packet", "observer_finding"}
     return {
         "event_id": event.event_id, "source_type": event.source_type, "title": event.title,
         "url": event.url, "product": event.product, "published_at": event.published_at,
@@ -303,6 +309,8 @@ def _parse_editorial_draft(payload: dict, bases: dict, events: List[SourceEvent]
     rows, rejected = payload["stories"], payload["rejected"]
     if not isinstance(rows, list) or not isinstance(rejected, list):
         raise SchemaError("editorial stories and rejected must be arrays")
+    if len(rows) > 3:
+        raise SchemaError("a new daily brief may contain at most three stories")
     seen = set()
     stories = []
     row_fields = {"story_id", "event_ids", "headline", "what_changed", "why_it_matters",
@@ -317,6 +325,8 @@ def _parse_editorial_draft(payload: dict, bases: dict, events: List[SourceEvent]
         base = bases[story_id]
         if row["event_ids"] != base.event_ids:
             raise SchemaError("editorial draft must preserve exact grouped event_ids")
+        validate_specific_utility(row["why_it_matters"], "why_it_matters")
+        validate_specific_utility(row["rationale"], "rationale")
         stories.append(Story(**row, source_urls=base.source_urls, scores=base.scores).validate())
     for rejection in rejected:
         if not isinstance(rejection, dict) or set(rejection) != {"story_id", "reason"}:

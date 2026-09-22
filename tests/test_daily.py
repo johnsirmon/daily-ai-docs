@@ -73,10 +73,7 @@ def test_short_marked_editions_skip_before_tts_and_preserve_publication_state(mo
     assert not (tmp_path / "data/episodes").exists()
 
 
-@pytest.mark.parametrize("tts_available", [True, False])
-def test_viable_marked_script_reaches_unchanged_media_gates(monkeypatch, tmp_path, tts_available):
-    from pipeline.audio import narration_duration_bounds
-
+def test_short_utility_script_skips_instead_of_padding_or_calling_tts(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("AI_EDITORIAL", "off")
     monkeypatch.setenv("AI_SYNTHESIS", "off")
@@ -85,29 +82,13 @@ def test_viable_marked_script_reaches_unchanged_media_gates(monkeypatch, tmp_pat
     config.write_text(_CONFIG, encoding="utf-8")
     monkeypatch.setattr("pipeline.daily.collect_events",
                         lambda *args, **kwargs: (_deterministic_sources(4, substantive=True), {"source": "ok:4"}))
-    scripts = []
-    def synthesize(text, *, path):
-        scripts.append(text)
-        return path if tts_available else None
-    monkeypatch.setattr("pipeline.daily.write_audio", synthesize)
-    def measured(path, *, min_duration_secs, max_duration_secs, expected_word_count):
-        assert (min_duration_secs, max_duration_secs) == (180, 600)
-        lower, upper = narration_duration_bounds(expected_word_count)
-        assert lower <= 200 <= upper
-        return {"size_bytes": 12000, "duration_secs": 200, "sha256": "b" * 64,
-                "codec": "mp3", "sample_rate": 24000, "channels": 1}
-    monkeypatch.setattr("pipeline.daily.analyze_audio", measured)
-    if tts_available:
-        result = prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
-        assert result["outcome"] == "publish"
-        manifest = EpisodeManifest.from_dict(json.loads((tmp_path / result["manifest_path"]).read_text()))
-        assert manifest.status == "ready" and manifest.narration == scripts[0]
-    else:
-        with pytest.raises(RuntimeError, match="TTS failed"):
-            prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
-        assert not (tmp_path / "data/runs/latest.json").exists()
-        assert not (tmp_path / ".cache/publication.json").exists()
-    assert len(scripts) == 1
+    monkeypatch.setattr(
+        "pipeline.daily.write_audio",
+        lambda *args, **kwargs: pytest.fail("insufficient script must not call TTS"),
+    )
+    result = prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
+    assert result["outcome"] == "skipped"
+    assert result["reason"] == "insufficient_substantive_material"
 
 
 def test_prepare_dry_run_is_network_and_audio_free(monkeypatch, tmp_path):
@@ -123,7 +104,7 @@ def test_prepare_dry_run_is_network_and_audio_free(monkeypatch, tmp_path):
     )
     manifest = EpisodeManifest.from_dict(json.loads((tmp_path / publication["manifest_path"]).read_text()))
     assert manifest.stories
-    assert manifest.generation["narration_style"] == "explanatory-v2"
+    assert manifest.generation["narration_style"] == "explanatory-v3"
     assert "This episode uses AI-generated narration" in manifest.narration
     assert "The call is" not in manifest.narration
     assert "What changed" not in manifest.narration

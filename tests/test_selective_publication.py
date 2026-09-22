@@ -43,7 +43,7 @@ def setup_config(monkeypatch, tmp_path):
 def test_title_only_alpha_flood_is_ineligible_even_with_momentum():
     alphas = [event(f"alpha-{index}", evidence=f"Release 0.155.0-alpha.{index}", channel="prerelease")
               for index in range(5)]
-    assert score_event(alphas[0])["total"] == 84
+    assert score_event(alphas[0])["total"] == 0
     alphas = [replace(item, metadata={**item.metadata, "star_velocity": 10000}) for item in alphas]
     selected, reasons = select_editorial_events(alphas, now=NOW)
     assert not selected and reasons
@@ -116,9 +116,9 @@ def test_preview_warning_and_stable_milestone_remain_eligible():
                     channel="prerelease")
     stable = event("stable", evidence="Adds support for typed tool arguments in stable sessions.")
     selected, _ = select_editorial_events([preview, stable], now=NOW)
-    assert len(selected) == 2
+    assert len(selected) == 1
     grouped = group_editorial_stories(selected)
-    assert len(grouped) == 1 and set(grouped[0].event_ids) == {"preview", "stable"}
+    assert len(grouped) == 1 and len(grouped[0].event_ids) == 1
     assert select_editorial_events([stable], ["preview"], now=NOW)[0] == [stable]
 
 

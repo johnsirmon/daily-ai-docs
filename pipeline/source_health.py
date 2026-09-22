@@ -9,6 +9,7 @@ def primary_source_health(health: Dict[str, str]) -> Dict[str, str]:
         if ":detail:" not in name
         and not name.startswith("research:arxiv:")
         and not name.startswith("youtube:")
+        and not name.startswith("observer:")
     }
 
 
