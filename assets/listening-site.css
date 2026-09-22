@@ -1,0 +1,231 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  --accent: #1769aa;
+  --surface: #f4f7fa;
+  --border: #b8c5d1;
+  --notice: #fff4c2;
+  --correction: #ffe2df;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: #17212b;
+  background: #fff;
+}
+
+header,
+main,
+footer {
+  width: min(72rem, 100% - 2rem);
+  margin-inline: auto;
+}
+
+.site-header {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+header {
+  padding-block: 2rem 1rem;
+}
+
+.episode-header {
+  display: block;
+}
+
+main {
+  padding-block: 1rem 3rem;
+}
+
+footer {
+  border-top: 1px solid var(--border);
+  padding-block: 1rem 2rem;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2rem, 7vw, 3.5rem);
+}
+
+a {
+  color: #075b9b;
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.16em;
+  overflow-wrap: anywhere;
+}
+
+a:focus-visible,
+audio:focus-visible {
+  outline: 0.25rem solid #e36b00;
+  outline-offset: 0.2rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -10rem;
+  z-index: 2;
+  padding: 0.75rem;
+  color: #fff;
+  background: #000;
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+.cover {
+  width: clamp(7rem, 24vw, 12rem);
+  height: auto;
+  border-radius: 1rem;
+}
+
+.eyebrow {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.notice,
+.correction,
+.limited {
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 2px solid #8b6f00;
+  border-radius: 0.5rem;
+  color: #211b00;
+  background: var(--notice);
+}
+
+.correction {
+  border-color: #a1261c;
+  color: #2c0805;
+  background: var(--correction);
+}
+
+.compact {
+  padding: 0.75rem;
+}
+
+details {
+  margin-top: 0.75rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.episode-list {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.episode-list > li,
+.story,
+.player,
+.research {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+  background: var(--surface);
+}
+
+.badge {
+  display: inline-block;
+  margin: 0 0.25rem 0.25rem 0;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.status {
+  color: #6b3100;
+}
+
+.meta {
+  font-variant-numeric: tabular-nums;
+}
+
+.story {
+  margin-block: 1rem;
+}
+
+.action {
+  padding-left: 0.75rem;
+  border-left: 0.35rem solid var(--accent);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1fr) minmax(0, 3fr);
+  gap: 0.5rem 1rem;
+}
+
+dt {
+  font-weight: 750;
+}
+
+dd {
+  margin: 0;
+}
+
+.preserve-lines {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+audio {
+  width: 100%;
+  min-height: 3rem;
+}
+
+@media (max-width: 38rem) {
+  .site-header {
+    display: block;
+  }
+
+  dl {
+    grid-template-columns: 1fr;
+  }
+
+  dd + dt {
+    margin-top: 0.75rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #19242e;
+    --border: #536577;
+  }
+
+  body {
+    color: #edf3f7;
+    background: #0d141a;
+  }
+
+  a {
+    color: #83c9ff;
+  }
+
+  .status {
+    color: #ffc58f;
+  }
+}
