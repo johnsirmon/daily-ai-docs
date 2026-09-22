@@ -47,7 +47,8 @@ _CONFIDENCE = {"high", "medium", "low"}
 _CLAIM_TYPE = {"documented_fact", "maintainer_claim", "practitioner_observation", "inference"}
 _REDIRECTS = {301, 302, 303, 307, 308}
 _INJECTION = re.compile(
-    r"\b(?:ignore|disregard|override)\s+(?:all\s+)?(?:the\s+)?(?:previous|prior|system|developer)\s+instructions?\b|"
+    r"\b(?:ignore|disregard|override|forget)\s+(?:(?:all|any)\s+)?(?:the\s+)?"
+    r"(?:previous|prior|system|developer)\s+instructions?\b|"
     r"\b(?:system|developer|assistant)\s+prompt\s*:|\bdo\s+not\s+read\s+this\s+aloud\b",
     re.IGNORECASE,
 )
