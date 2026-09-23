@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — Special: TypeSafe Jev with VS Code Copilot Chat
+# Daily AI Developer Brief — 2026-09-23
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
@@ -79,64 +79,48 @@ Daily publishing, standalone Pages deployment, and weekly digest writes share th
 
 The pilot uses the signed-in account's existing allowance. It does not authorize a paid upgrade, cookie export, unattended browser automation, or publication. Approved recordings use the separate [reviewed-audio handoff](docs/OPERATIONS.md#publishing-approved-notebook-audio).
 
-### Editorial correction
-
-Production note: This episode uses AI-generated narration.
-
 ## Today's signal
 
-Long-form special for AI developers using GitHub Copilot and VS Code.
-Evidence window: 60 days ending 2026-09-23T15:15:34.731214+00:00.
-Audio provider: edge; transcript/source reviewed, not Gemini API verification.
+### OpenTelemetry in the GitHub Copilot app
 
-### Jev is a typed decision model, not a coding-chat replacement
+**What to know:** GitHub added OpenTelemetry configuration for the GitHub Copilot app through enterprise-managed settings, allowing administrators to export agent activity to compatible monitoring tools.
 
-**What to know:** TypeSafe launched Jev and documents typed Choice, Score, and Noul decisions, current pricing, limits, and known failure modes.
+**What changes for developers:** Enterprise teams can follow model and tool activity through an agent session, inspect step-by-step traces when behavior is unexpected, and apply the monitoring configuration centrally.
 
-**What changes for developers:** Developers should keep deterministic work in code and test semantic judgments rather than treating schema validity as truth.
+**Recommendation:** WATCH — Pilot export from a limited group to a secured existing OpenTelemetry backend, validate trace usefulness and access controls, and keep prompt and response capture disabled unless a reviewed need justifies enabling it.
 
-**Recommendation:** WATCH — Use only for narrow measured experiments.
+Sources: [1](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/)
 
-Sources: [1](https://typesafe.ai/blog/introducing-system-one-models-and-jev), [2](https://docs.typesafe.ai/introduction.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://docs.typesafe.ai/introduction/coding-agents.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [4](https://docs.typesafe.ai/models.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [5](https://docs.typesafe.ai/model-jaggedness/jev-1.13.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [6](https://docs.typesafe.ai/api.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+### Security improvements for SSH
 
-### Jev is not a native Copilot or VS Code custom-endpoint chat model
+**What to know:** GitHub announced removal of RSA/SHA-1 SSH signatures and diffie-hellman-group-exchange-sha256, a 3072-bit minimum for newly uploaded RSA keys after October 14, 2026, and support for ML-KEM hybrid key exchange on most GitHub cloud SSH sessions.
 
-**What to know:** Current Copilot model documentation omits Jev, and VS Code custom endpoints require a chat-compatible API.
+**What changes for developers:** Older Git clients, embedded SSH libraries, build servers, or automation can lose Git-over-SSH connectivity during brownouts and eventual removal if they still negotiate the retired algorithms.
 
-**What changes for developers:** A direct model-picker substitution is not a documented integration path.
+**Recommendation:** ACT — Inventory Git-over-SSH clients before the November 4 and December 9 brownouts. Confirm RSA uses SHA-2 or move new keys to Ed25519; upgrade clients that lack modern signature and key-exchange support. Ignore this item if every relevant remote uses HTTPS.
 
-**Recommendation:** SKIP — Keep the supported Copilot host model.
+Sources: [1](https://github.blog/changelog/2026-09-22-security-improvements-for-ssh)
 
-Sources: [1](https://docs.github.com/en/copilot/reference/ai-models/supported-models) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [2](https://docs.github.com/en/copilot/concepts/models/auto-model-selection) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://code.visualstudio.com/docs/agent-customization/language-models) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+### Deprecation notice: All-platform CodeQL bundle
 
-### MCP is a plausible tool route, but the found server is community software
+**What to know:** GitHub deprecated the combined all-platform CodeQL bundle starting with CodeQL CLI 2.27.0 and says it will remove the bundle in mid-March 2027.
 
-**What to know:** VS Code can expose MCP tools to its host model; TypeSafe publishes an agent skill, while jkudish/jev-mcp is a separate community implementation.
+**What changes for developers:** Bootstrap scripts, offline mirrors, CI images, or internal installers that hard-code the combined archive names must select an operating-system and architecture-specific artifact instead.
 
-**What changes for developers:** Review and pin any server, and do not mistake an agent skill for an official MCP integration.
+**Recommendation:** ACT — Search automation for codeql-bundle.tar.gz and codeql-bundle.tar.zst, make platform and architecture selection explicit, and test replacement artifacts before March 2027.
 
-**Recommendation:** WATCH — Inspect before installing; no integration was tested.
-
-Sources: [1](https://code.visualstudio.com/docs/copilot/customization/mcp-servers) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [2](https://docs.typesafe.ai/agent-skill.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://github.com/jkudish/jev-mcp)
-
-### The independent result is a small smoke test and data handling needs review
-
-**What to know:** A 25-item community study reported encouraging triage results with major sample, labeling, and rubric limitations; TypeSafe documents input collection, retention, and enterprise ZDR.
-
-**What changes for developers:** Use a larger controlled pilot and do not send private repository data before policy review.
-
-**Recommendation:** WATCH — The proposed 200-example pilot is a recommendation, not an observed result.
-
-Sources: [1](https://github.com/kierandotai/jev-scout/blob/main/docs/accuracy/2026-09-19-jev-golden-set-study.md), [2](https://typesafe.ai/legal/privacy-policy) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://docs.typesafe.ai/legal.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+Sources: [1](https://github.blog/changelog/2026-09-22-deprecation-notice-all-platform-codeql-bundle/)
 
 ## High noise / low signal
 
-- evals.typesafe.ai was not used because the narration does not cite its figures.
-- jevtypesafeai.com was excluded as unaffiliated and conflicting.
+- High noise / low signal: same-day Copilot model-availability announcements establish catalog access but provide no reproducible evidence that switching models improves a concrete developer workflow; they were excluded.
+- High noise / low signal: the Copilot for JetBrains page was fresh, but the available extracted body was incomplete and mostly exposed a feature list without enough directly verified consequence and caveat detail for this edition.
+- High noise / low signal: current VS Code results in the bounded sample were outside the 36-hour window, so older automation and Agents-window changes were not recycled.
+- Coverage warning: configured Exa authentication returned HTTP 401 and broader Hermes, MCP, and open-source ecosystem coverage is incomplete. This is a source-verified but degraded scan, not a comprehensive no-news claim.
 
 ## Editorial contract
 
-- An Edge-TTS editorial correction precedes the retained Notebook conversation; the manifest records both component hashes and the exact correction text.
+- This edition uses user-authorized Gemini Notebook web audio, a local-ASR transcript, and an assistant transcript/source comparison; it is not independently verified Gemini API generation.
 
 - Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.
 - One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.
@@ -153,7 +137,7 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `jev-public-evidence`: ok:15
+- `observer`: degraded:3 source-verified findings; Exa 401; broader coverage incomplete
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 

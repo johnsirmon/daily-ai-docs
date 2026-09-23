@@ -1,0 +1,206 @@
+{
+  "schema_version": 3,
+  "episode_id": "daily-2026-09-23-gate-a-f518254",
+  "published_at": "2026-09-23T15:24:10Z",
+  "status": "candidate",
+  "source_health": {
+    "observer": "degraded:3 source-verified findings; Exa 401; broader coverage incomplete"
+  },
+  "source_events": [
+    {
+      "event_id": "github-copilot-app-otel-2026-09-22",
+      "source_type": "announcement",
+      "title": "OpenTelemetry in the GitHub Copilot app",
+      "url": "https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/",
+      "product": "GitHub Copilot app",
+      "topic": "AI observability",
+      "published_at": "2026-09-23T02:14:54+00:00",
+      "fetched_at": "2026-09-23T10:32:25+00:00",
+      "evidence": "The GitHub Copilot app now supports OpenTelemetry (OTel) configuration through enterprise-managed settings. ... Follow the flow of a session, including requests to AI models and the tools an agent uses. ... Prompt and response content is excluded by default—review your content-capture settings before enabling it.",
+      "authority": "primary",
+      "channel": "announcement",
+      "metadata": {
+        "source_document_sha256": "9cc1bc0183c1fe83fd677d0ec188131bb5465adfa31452490d53b82892c4338d",
+        "evidence_status": "reviewed_excerpts"
+      }
+    },
+    {
+      "event_id": "github-ssh-crypto-transition-2026-09-22",
+      "source_type": "security",
+      "title": "Security improvements for SSH",
+      "url": "https://github.blog/changelog/2026-09-22-security-improvements-for-ssh",
+      "product": "GitHub SSH transport",
+      "topic": "developer security",
+      "published_at": "2026-09-22T14:11:47+00:00",
+      "fetched_at": "2026-09-23T10:32:25+00:00",
+      "evidence": "All new RSA SSH keys uploaded after October 14, 2026 must be at least 3072 bits in size ... November 4, 2026: We'll have a brownout ... If your Git remotes start with https://, nothing here will affect you. ... You do not need to generate a new key.",
+      "authority": "primary",
+      "channel": "security",
+      "metadata": {
+        "source_document_sha256": "bfa7caad199dfd48727b93526bbc4d5d2b007d6200daea59f7ba85a48ac1dae7",
+        "evidence_status": "reviewed_excerpts"
+      }
+    },
+    {
+      "event_id": "codeql-all-platform-bundle-deprecation-2026-09-22",
+      "source_type": "security",
+      "title": "Deprecation notice: All-platform CodeQL bundle",
+      "url": "https://github.blog/changelog/2026-09-22-deprecation-notice-all-platform-codeql-bundle/",
+      "product": "CodeQL CLI",
+      "topic": "developer security tooling",
+      "published_at": "2026-09-22T09:21:03+00:00",
+      "fetched_at": "2026-09-23T10:32:25+00:00",
+      "evidence": "Starting with CodeQL CLI 2.27.0, the all-platform CodeQL bundle ... is marked as deprecated. In mid-March 2027, we will remove the all-platform CodeQL bundle. Download the platform-specific bundle for your supported operating system and architecture instead.",
+      "authority": "primary",
+      "channel": "security",
+      "metadata": {
+        "source_document_sha256": "888f0674ef9cf9e5b1168042431c8693ea29c8da23d02919f330abf9f19303a9",
+        "evidence_status": "reviewed_excerpts"
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "github-copilot-app-otel-2026-09-22",
+      "event_ids": [
+        "github-copilot-app-otel-2026-09-22"
+      ],
+      "headline": "OpenTelemetry in the GitHub Copilot app",
+      "what_changed": "GitHub added OpenTelemetry configuration for the GitHub Copilot app through enterprise-managed settings, allowing administrators to export agent activity to compatible monitoring tools.",
+      "why_it_matters": "Enterprise teams can follow model and tool activity through an agent session, inspect step-by-step traces when behavior is unexpected, and apply the monitoring configuration centrally.",
+      "action": "watch",
+      "rationale": "Pilot export from a limited group to a secured existing OpenTelemetry backend, validate trace usefulness and access controls, and keep prompt and response capture disabled unless a reviewed need justifies enabling it.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/"
+      ],
+      "scores": {
+        "total": 100
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "github-ssh-crypto-transition-2026-09-22",
+      "event_ids": [
+        "github-ssh-crypto-transition-2026-09-22"
+      ],
+      "headline": "Security improvements for SSH",
+      "what_changed": "GitHub announced removal of RSA/SHA-1 SSH signatures and diffie-hellman-group-exchange-sha256, a 3072-bit minimum for newly uploaded RSA keys after October 14, 2026, and support for ML-KEM hybrid key exchange on most GitHub cloud SSH sessions.",
+      "why_it_matters": "Older Git clients, embedded SSH libraries, build servers, or automation can lose Git-over-SSH connectivity during brownouts and eventual removal if they still negotiate the retired algorithms.",
+      "action": "act",
+      "rationale": "Inventory Git-over-SSH clients before the November 4 and December 9 brownouts. Confirm RSA uses SHA-2 or move new keys to Ed25519; upgrade clients that lack modern signature and key-exchange support. Ignore this item if every relevant remote uses HTTPS.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-22-security-improvements-for-ssh"
+      ],
+      "scores": {
+        "total": 99
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "codeql-all-platform-bundle-deprecation-2026-09-22",
+      "event_ids": [
+        "codeql-all-platform-bundle-deprecation-2026-09-22"
+      ],
+      "headline": "Deprecation notice: All-platform CodeQL bundle",
+      "what_changed": "GitHub deprecated the combined all-platform CodeQL bundle starting with CodeQL CLI 2.27.0 and says it will remove the bundle in mid-March 2027.",
+      "why_it_matters": "Bootstrap scripts, offline mirrors, CI images, or internal installers that hard-code the combined archive names must select an operating-system and architecture-specific artifact instead.",
+      "action": "act",
+      "rationale": "Search automation for codeql-bundle.tar.gz and codeql-bundle.tar.zst, make platform and architecture selection explicit, and test replacement artifacts before March 2027.",
+      "source_urls": [
+        "https://github.blog/changelog/2026-09-22-deprecation-notice-all-platform-codeql-bundle/"
+      ],
+      "scores": {
+        "total": 98
+      },
+      "kind": "product",
+      "editorial": {}
+    }
+  ],
+  "noise_notes": [
+    "High noise / low signal: same-day Copilot model-availability announcements establish catalog access but provide no reproducible evidence that switching models improves a concrete developer workflow; they were excluded.",
+    "High noise / low signal: the Copilot for JetBrains page was fresh, but the available extracted body was incomplete and mostly exposed a feature list without enough directly verified consequence and caveat detail for this edition.",
+    "High noise / low signal: current VS Code results in the bounded sample were outside the 36-hour window, so older automation and Agents-window changes were not recycled.",
+    "Coverage warning: configured Exa authentication returned HTTP 401 and broader Hermes, MCP, and open-source ecosystem coverage is incomplete. This is a source-verified but degraded scan, not a comprehensive no-news claim."
+  ],
+  "narration": "Good morning. Today’s developer brief has three changes worth your attention: enterprise observability for the GitHub Copilot app, a GitHub SSH transition that can break older automation, and a CodeQL packaging deprecation. The first is useful now for teams operating coding agents. The other two are maintenance work with long lead times, not emergencies.\n\nStart with the GitHub Copilot app. GitHub has added OpenTelemetry configuration through enterprise-managed settings. An administrator can configure the telemetry property in managed-settings dot J-S-O-N, choose an endpoint, and send agent activity into a compatible monitoring system.\n\nThe useful part is not simply that another product exports telemetry. It is the level of the workflow that becomes visible. GitHub says teams can follow the flow of an agent session, including requests to models and the tools the agent uses. They can inspect step-by-step execution when behavior is unexpected, and they can apply the monitoring configuration centrally instead of asking every developer to set it up.\n\nThis matters for organizations moving from chat assistance to delegated work. When an agent takes several steps, a final answer does not explain why it chose a tool, where a session slowed down, or which part of the chain failed. A trace gives operators a shared record to investigate. It also makes agent monitoring fit existing observability practice rather than creating a separate debugging island for A-I tools.\n\nThe audience is enterprise administrators, platform teams, and engineering leaders using the GitHub Copilot app. Individual developers without control of enterprise-managed settings do not have an immediate action from this announcement.\n\nFor eligible teams, the action is to run a limited rollout rather than enabling broad content capture by habit. Point a test group at a secured OpenTelemetry endpoint, confirm that session traces are useful in the monitoring tool you already operate, and decide who is allowed to view them. GitHub says prompt and response content is excluded by default. Keep that default unless there is a reviewed reason to change it, and inspect the content-capture settings before deployment. Observability data can improve diagnosis, but expanding captured content also expands the privacy and code-handling questions you must govern.\n\nThe caveat is scope. The fresh announcement establishes support in the GitHub Copilot app through enterprise settings. It does not prove that the traces answer every reliability question, and it does not provide a measured reduction in failures or debugging time. Treat this as a new operational surface to evaluate, not as evidence that agent observability is solved.\n\nSecond, GitHub announced an SSH security transition. It plans to remove the S-S-H R-S-A signature type that uses S-H-A one, remove the Diffie-Hellman group-exchange S-H-A two-fifty-six key exchange, require newly uploaded R-S-A keys to be at least three thousand seventy-two bits after October fourteenth, and add the M-L-KEM hybrid key exchange for most GitHub cloud S-S-H sessions.\n\nThe practical risk is compatibility. Old Git clients, embedded S-S-H libraries, build servers, or long-lived automation may still negotiate the algorithms GitHub is retiring. GitHub lists brownouts on November fourth and December ninth. Those are the useful deadlines for testing because a brownout can reveal a hidden dependency before permanent removal.\n\nThere are three important limits to keep intact. First, H-T-T-P-S remotes are unaffected. If every relevant remote begins with H-T-T-P-S, you can ignore this story. Second, an existing R-S-A key does not automatically need replacement. GitHub says the same key can continue when the client signs with R-S-A S-H-A two, and most compatible implementations choose that automatically. The confusing point is that the R-S-A key type and the identically named legacy S-S-H R-S-A signature are not the same thing. Third, GitHub’s schedule currently says permanent removal is January thirteenth, twenty twenty-six, even though the listed brownouts occur later in twenty twenty-six. That year is internally inconsistent. Do not plan around the stated final-removal date until GitHub corrects or clarifies it.\n\nThe action is straightforward. Inventory systems that connect to GitHub over S-S-H, especially C-I servers and Java integrations. Confirm they support R-S-A with S-H-A two and a modern key exchange. Upgrade old clients where possible. For new keys, GitHub recommends Ed two-five-five-one-nine when compatibility allows. If another service requires R-S-A, generate at least a three-thousand-seventy-two-bit key. Do not rotate working keys merely because you saw the phrase S-S-H R-S-A; verify the negotiated signature first.\n\nFinally, CodeQL C-L-I version two point twenty-seven marks the combined all-platform bundle as deprecated. GitHub says it will remove the combined bundle in mid-March twenty twenty-seven and directs users to operating-system and architecture-specific downloads. Linux A-R-M sixty-four is already available only as a platform-specific download.\n\nThis affects maintainers who download or redistribute CodeQL directly: bootstrap scripts, offline mirrors, C-I images, and internal installers that hard-code codeql-bundle dot tar dot G-Z or codeql-bundle dot tar dot Z-S-T. Search that automation now and make platform and architecture selection explicit. Test the replacement artifact in every environment you actually support, then update checksums and cache keys as part of the same controlled change.\n\nThe caveat is important: this is a packaging deprecation, not a retirement of CodeQL analysis. Teams using managed code scanning without directly handling these bundles may have nothing to change. The removal is months away, so schedule the migration with normal maintenance rather than interrupting current work.\n\nThat is the brief. Evaluate Copilot OpenTelemetry with privacy defaults intact. Test Git-over-S-S-H before the announced brownouts, while treating GitHub’s final date as unresolved. And migrate direct CodeQL installers to platform-specific bundles before March. Everything else in the bounded scan was either older than the daily window, unsupported by useful evaluation, or too thin to justify your time today.",
+  "show_notes": "Production disclosure: AI-generated narration from Edge en-US-AriaNeural. John approved this exact hash-bound recording and waived an audible disclosure only for this exact personal release by board comment; no playback-coverage or detailed audio-quality finding is claimed.\n\nCoverage is required and limited to the three hash-bound official GitHub sources frozen in the Gate A evidence. Exa returned HTTP 401 and broader Hermes, MCP, and open-source coverage remains incomplete; this episode does not claim a comprehensive quiet-news scan.",
+  "generation": {
+    "edition": "gate-a-one-release-waiver",
+    "provider": "edge",
+    "approved_at": "2026-09-23T15:24:10Z",
+    "source_audio_sha256": "9b66721d363721a1aef0c0154c6c05117d1ba1db42a27132185e43c88f196a7b",
+    "transcript": {
+      "engine": "faster-whisper",
+      "model": "Systran/faster-whisper-small.en",
+      "sha256": "b93e06eb3ab31197e3dc9d8ab4d49d1c01376349e680234c9d25bbbab9e4ab39"
+    },
+    "review": {
+      "method": "transcript_source_comparison",
+      "reviewed_at": "2026-09-23T15:24:10Z",
+      "reviewer": "assistant",
+      "claims": [
+        {
+          "text": "GitHub has added OpenTelemetry configuration through enterprise-managed settings.",
+          "event_id": "github-copilot-app-otel-2026-09-22",
+          "quote": "The GitHub Copilot app now supports OpenTelemetry (OTel) configuration through enterprise-managed settings. ... Follow the flow of a session, including requests to AI models and the tools an agent uses. ... Prompt and response content is excluded by default—review your content-capture settings before enabling it."
+        },
+        {
+          "text": "First, H-T-T-P-S remotes are unaffected.",
+          "event_id": "github-ssh-crypto-transition-2026-09-22",
+          "quote": "All new RSA SSH keys uploaded after October 14, 2026 must be at least 3072 bits in size ... November 4, 2026: We'll have a brownout ... If your Git remotes start with https://, nothing here will affect you. ... You do not need to generate a new key."
+        },
+        {
+          "text": "GitHub says it will remove the combined bundle in mid-March twenty twenty-seven and directs users to operating-system and architecture-specific downloads.",
+          "event_id": "codeql-all-platform-bundle-deprecation-2026-09-22",
+          "quote": "Starting with CodeQL CLI 2.27.0, the all-platform CodeQL bundle ... is marked as deprecated. In mid-March 2027, we will remove the all-platform CodeQL bundle. Download the platform-specific bundle for your supported operating system and architecture instead."
+        }
+      ],
+      "notes": [
+        "John approved the exact hash-bound recording and the one-release audible-disclosure waiver by board comment; no playback-coverage or detailed audio-quality finding is claimed.",
+        "Audible AI disclosure is waived only for this exact personal release; the written disclosure remains in show notes.",
+        "Local ASR measured WER 0.148256; exact script, source excerpts, and material caveats were separately reviewed."
+      ]
+    },
+    "quality": {
+      "method": "ffmpeg_loudnorm_two_pass",
+      "ffmpeg": "ffmpeg version 8.0.1-3ubuntu2 Copyright (c) 2000-2025 the FFmpeg developers",
+      "integrated_lufs": -16.69,
+      "true_peak_dbtp": -4.78,
+      "audio_sha256": "9b66721d363721a1aef0c0154c6c05117d1ba1db42a27132185e43c88f196a7b"
+    },
+    "voice": {
+      "name": "en-US-AriaNeural",
+      "rate": "+0%",
+      "pitch": "+0Hz"
+    },
+    "waiver": {
+      "scope": "exact_personal_release_only",
+      "authorized_by": "John",
+      "authorized_at": "2026-09-23T15:24:10Z",
+      "preview_episode_id": "gate-a-2026-09-23-f518254",
+      "preview_manifest_sha256": "3ecef0a7bd3a7aa6f4a87040bac30526f8f000ec769400aca1e96fdf85269eb5",
+      "script_sha256": "14461847571b704ad0fca509c16b025bc583a9f8d8c73545ee345998c72c5385",
+      "implementation_sha": "f51825452c36f22d51db097af2acd5b3cc05dd86",
+      "original_provider_audio_sha256": "a5a1fb08408d60b604d77ce9e48515226f4c7ed3ad19bf1cfb9c96ac62787e16",
+      "listening_decision": "board_comment_approves_exact_recording_and_one_release_disclosure_waiver",
+      "audible_disclosure": "waived_for_this_release_only",
+      "coverage_policy": "required_exact_frozen_gate_a_evidence",
+      "source_sha256": {
+        "https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/": "9cc1bc0183c1fe83fd677d0ec188131bb5465adfa31452490d53b82892c4338d",
+        "https://github.blog/changelog/2026-09-22-security-improvements-for-ssh": "bfa7caad199dfd48727b93526bbc4d5d2b007d6200daea59f7ba85a48ac1dae7",
+        "https://github.blog/changelog/2026-09-22-deprecation-notice-all-platform-codeql-bundle/": "888f0674ef9cf9e5b1168042431c8693ea29c8da23d02919f330abf9f19303a9"
+      }
+    }
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-23-gate-a-f518254/daily-ai-brief.mp3",
+    "size_bytes": 6786446,
+    "duration_secs": 424.08,
+    "sha256": "9b66721d363721a1aef0c0154c6c05117d1ba1db42a27132185e43c88f196a7b",
+    "codec": "mp3",
+    "sample_rate": 44100,
+    "channels": 2
+  }
+}
