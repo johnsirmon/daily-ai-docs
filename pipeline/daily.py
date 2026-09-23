@@ -537,6 +537,11 @@ def resume_reviewed_release(episode_id: str, directory: Path = _CACHE_DIR) -> Di
     if manifest.status not in {"ready", "candidate"} or manifest.generation.get("preview_only"):
         raise RuntimeError("reviewed release must be approved publication media, not a preview")
     manifest.validate(require_audio=True)
+    if manifest.generation.get("edition") == "gate-a-one-release-waiver":
+        from .gate_a_release import validate_exact_publication_manifest
+        validate_exact_publication_manifest(
+            manifest, manifest_sha256=hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        )
     pending = _pending_candidate()
     if pending is not None and pending.episode_id != episode_id:
         raise RuntimeError("another publication candidate requires recovery first")

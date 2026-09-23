@@ -63,6 +63,10 @@ def load_review_bundle(directory: Path) -> ReviewBundle:
     if manifest.status != "ready":
         raise ValueError("review UI accepts only an unpublished ready manifest")
     manifest.validate(require_audio=True)
+    manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
+    if manifest.generation.get("edition") == "gate-a-one-release-waiver":
+        from .gate_a_release import validate_exact_publication_manifest
+        validate_exact_publication_manifest(manifest, manifest_sha256=manifest_sha256)
     if audio_path.stat().st_size != int(manifest.audio["size_bytes"]):
         raise ValueError("review audio byte length does not match the manifest")
     if file_sha256(audio_path) != manifest.audio["sha256"]:
@@ -88,7 +92,7 @@ def load_review_bundle(directory: Path) -> ReviewBundle:
         audio_path=audio_path,
         transcript=transcript,
         show_notes=show_notes,
-        manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest(),
+        manifest_sha256=manifest_sha256,
         transcript_sha256=hashlib.sha256(transcript.encode("utf-8")).hexdigest(),
     )
 
@@ -184,6 +188,45 @@ def record_approval(bundle: ReviewBundle, submission: dict[str, Any]) -> dict[st
 
 
 def _load_approval(bundle: ReviewBundle) -> dict[str, Any]:
+    if bundle.manifest.generation.get("edition") == "gate-a-one-release-waiver":
+        from .gate_a_release import (
+            AUDIO_SHA256,
+            AUTHORIZED_MANIFEST_SHA256,
+            AUTHORIZED_AT,
+            EPISODE_ID,
+            SCRIPT_SHA256,
+            validate_exact_publication_manifest,
+        )
+
+        validate_exact_publication_manifest(
+            bundle.manifest, manifest_sha256=bundle.manifest_sha256,
+        )
+        waiver_path = bundle.directory / "listening-waiver.json"
+        if not waiver_path.is_file():
+            raise ValueError("the exact Gate A board-approval substitution record is required")
+        waiver = json.loads(waiver_path.read_text(encoding="utf-8"))
+        expected = {
+            "schema_version": 1,
+            "purpose": "one_release_board_approval_substitution",
+            "episode_id": EPISODE_ID,
+            "authorized_at": AUTHORIZED_AT,
+            "authorized_by": "John",
+            "audio_sha256": AUDIO_SHA256,
+            "manifest_sha256": AUTHORIZED_MANIFEST_SHA256,
+            "script_sha256": SCRIPT_SHA256,
+            "audible_disclosure": "waived_for_this_release_only",
+            "publication_authorized": True,
+        }
+        if waiver != expected:
+            raise ValueError("Gate A board-approval substitution does not match this exact bundle")
+        return {
+            "reviewer": "John",
+            "decision": "approved_by_board_comment_substitution",
+            "episode_id": EPISODE_ID,
+            "audio_sha256": AUDIO_SHA256,
+            "manifest_sha256": bundle.manifest_sha256,
+            "transcript_sha256": bundle.transcript_sha256,
+        }
     if not bundle.approval_path.is_file():
         raise ValueError("listening approval is required before publication")
     approval = json.loads(bundle.approval_path.read_text(encoding="utf-8"))
@@ -279,6 +322,8 @@ def queue_publication(bundle: ReviewBundle, *, allow_publish: bool) -> dict[str,
         if (
             queued.get("episode_id") != bundle.manifest.episode_id
             or queued.get("audio_sha256") != bundle.manifest.audio["sha256"]
+            or queued.get("manifest_sha256") != bundle.manifest_sha256
+            or queued.get("transcript_sha256") != bundle.transcript_sha256
         ):
             raise ValueError("publication queue record does not match the current bundle")
         return queued
@@ -340,6 +385,8 @@ def queue_publication(bundle: ReviewBundle, *, allow_publish: bool) -> dict[str,
         "episode_id": tag,
         "queued_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "audio_sha256": bundle.manifest.audio["sha256"],
+        "manifest_sha256": bundle.manifest_sha256,
+        "transcript_sha256": bundle.transcript_sha256,
         "workflow": f"https://github.com/{repository}/actions/workflows/update-radar.yml",
         "subscriber_confirmed": False,
     }

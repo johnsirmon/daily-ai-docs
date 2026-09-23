@@ -546,8 +546,18 @@ def _reviewed_public_values(value: Any) -> None:
         for item in value:
             _reviewed_public_values(item)
     elif isinstance(value, str):
-        for url in re.findall(r"https?://[^\s<>\"']+", value):
-            _reviewed_public_url(url.rstrip(".,;!)]}"))
+        # Require a hostname or a complete bracketed IPv6 host so prose such as
+        # “remotes start with https://” is not misclassified as a URL.
+        pattern = (
+            r"https?://(?:[A-Za-z0-9]|"
+            r"\[[0-9A-Fa-f:.]+(?:%25(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)?\])"
+            r"[^\s<>\"']*"
+        )
+        for match in re.findall(pattern, value):
+            url = match.rstrip(".,;!)}")
+            while url.endswith("]") and url.count("]") > url.count("["):
+                url = url[:-1]
+            _reviewed_public_url(url)
 
 
 def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
@@ -562,6 +572,10 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         raise SchemaError("reviewed audio requires a publication status")
     generation = manifest.generation
     long_form = manifest.schema_version == 4
+    one_release_waiver = (
+        manifest.schema_version == 3
+        and generation.get("edition") == "gate-a-one-release-waiver"
+    )
     if generation.get("preview_only") is True:
         raise SchemaError("preview-only audio cannot be published")
     generation_fields = {
@@ -569,13 +583,22 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     }
     if long_form:
         generation_fields |= {"request", "request_sha256", "quality", "voice"}
+    elif one_release_waiver:
+        generation_fields |= {"quality", "voice", "waiver"}
     elif "quality" in generation:
         generation_fields.add("quality")
     if "editing" in generation:
         generation_fields.add("editing")
     _exact_fields(generation, generation_fields, "reviewed generation")
-    if not long_form and (generation["edition"] != "notebook" or generation["provider"] != "gemini-notebook-web"):
+    if (not long_form and not one_release_waiver
+            and (generation["edition"] != "notebook"
+                 or generation["provider"] != "gemini-notebook-web")):
         raise SchemaError("reviewed audio requires the gemini-notebook-web notebook provider")
+    if one_release_waiver:
+        # Import lazily to keep the exceptional fixed contract out of general
+        # schema initialization and to avoid making it a reusable provider mode.
+        from .gate_a_release import validate_exact_publication_manifest
+        validate_exact_publication_manifest(manifest)
     if long_form:
         from .podcast_request import PodcastRequest, utc_timestamp
         try:
