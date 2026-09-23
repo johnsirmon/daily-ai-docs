@@ -58,10 +58,25 @@
     "vscode:1.138:reviewable-pr-handoff",
     "openstock-newsletter-correction-a2e010ec",
     "openstock-minimax-default-99bab912",
-    "ghrel:be5e5add5981b09d6780"
+    "ghrel:be5e5add5981b09d6780",
+    "typesafe:jev-launch",
+    "typesafe:introduction",
+    "typesafe:coding-agents",
+    "typesafe:models",
+    "typesafe:jev-1.13-jaggedness",
+    "typesafe:api",
+    "github:copilot-models",
+    "github:copilot-auto",
+    "vscode:language-models",
+    "vscode:mcp-servers",
+    "typesafe:agent-skill",
+    "community:jev-mcp",
+    "community:jev-scout-study",
+    "typesafe:privacy",
+    "typesafe:legal"
   ],
-  "last_publication": "2026-09-22T14:58:41.936376Z",
-  "last_episode_id": "daily-2026-09-21-6d54e8e9",
+  "last_publication": "2026-09-23T16:34:29.777523+00:00",
+  "last_episode_id": "adhoc-2026-09-23-a1ecc4a4c7e54053aca8f328",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 125270,

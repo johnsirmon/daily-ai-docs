@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "request": {
+    "topic": "TypeSafe Jev with VS Code Copilot Chat",
+    "audience": "AI developers using GitHub Copilot and VS Code",
+    "cutoff": "2026-09-23T15:15:34.731214+00:00",
+    "lookback_days": 60,
+    "provider": "edge",
+    "publish_now": true,
+    "actor": "johnsirmon",
+    "issue": null,
+    "schema_version": 1
+  },
+  "request_sha256": "a1ecc4a4c7e54053aca8f32834047d93acc1ff4116f27df82ed8eb7aeef54ca7",
+  "status": "published",
+  "episode_id": "adhoc-2026-09-23-a1ecc4a4c7e54053aca8f328",
+  "confirmed_at": "2026-09-23T17:12:53.754102Z",
+  "audio_sha256": "79b317712bb13890188683bfa1fcdfae78c4ac222b59462e5cd7f612bf21dd7c"
+}
