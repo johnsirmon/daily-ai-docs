@@ -208,14 +208,47 @@ def test_reviewed_evergreen_documentation_is_ad_hoc_supporting_evidence(tmp_path
     "https://github.blog/changelog/2024-10-29-github-copilot-in-vscode/",
     "https://docs.github.com/en/actions",
     "https://docs.github.com.evil.example/en/copilot/customizing-copilot",
+    "https://docs.github.com/en/copilot/../actions",
+    "https://docs.github.com/en/copilot/../../articles",
+    "https://docs.github.com/en/copilot/%2e%2e/actions",
+    "https://docs.github.com/en/copilot/%252e%252e/actions",
+    "https://docs.github.com/en/copilot/.%2E/actions",
+    "https://docs.github.com/en/copilot/%2f..%2factions",
+    "https://docs.github.com/en/copilot/%5c..%5cactions",
+    "https://docs.github.com/en/copilot\\..\\actions",
+    "https://docs.github.com/en/copilot//actions",
+    "https://docs.github.com/en/copilot//",
+    "https://docs.github.com/en/copilot/\tactions",
 ])
 def test_non_documentation_urls_cannot_be_relabelled_evergreen_in_manifest(url):
     with pytest.raises(SchemaError, match="approved official documentation path"):
         EpisodeManifest.from_dict(replace_evergreen_url(long_draft_with_evergreen(), url))
 
 
+@pytest.mark.parametrize("url", [
+    "https://docs.github.com/en/copilot",
+    "https://docs.github.com/en/copilot/",
+    "https://docs.github.com/en/copilot/customizing-copilot",
+])
+def test_canonical_evergreen_documentation_paths_preserve_source_identity(url):
+    manifest = EpisodeManifest.from_dict(replace_evergreen_url(long_draft_with_evergreen(), url))
+    assert manifest.source_events[1].url == url
+    assert manifest.to_dict()["source_events"][1]["url"] == url
+
+
+def test_evergreen_path_policy_preserves_normal_fragment_encoding():
+    url = "https://docs.github.com/en/copilot/customizing-copilot#customize%20copilot"
+    event = SourceEvent.from_dict(evergreen_event(url=url))
+    assert event.url == url
+    assert event.to_dict()["url"] == url
+
+
 @pytest.mark.parametrize("url,accepted", [
     ("https://docs.github.com/en/copilot/customizing-copilot", True),
+    ("https://docs.github.com/en/copilot/../actions", False),
+    ("https://docs.github.com/en/copilot/%2e%2e/actions", False),
+    ("https://docs.github.com/en/copilot/%2f..%2factions", False),
+    ("https://docs.github.com/en/copilot\\..\\actions", False),
     ("https://arxiv.org/abs/1706.03762", False),
     ("https://www.reddit.com/r/LocalLLaMA/comments/example/community_study/", False),
     ("https://github.blog/changelog/2024-10-29-github-copilot-in-vscode/", False),

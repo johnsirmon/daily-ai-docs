@@ -156,9 +156,19 @@ def validate_evergreen_snapshot(event: "SourceEvent") -> None:
     validate_editorial_source_url(event.url)
     parsed = urlparse(event.url)
     host = (parsed.hostname or "").casefold()
-    path = parsed.path.rstrip("/")
+    raw_path = parsed.path
+    path = raw_path[:-1] if raw_path.endswith("/") else raw_path
     prefixes = _EVERGREEN_DOCUMENTATION_PATHS.get(host, ())
-    if not any(path == prefix or path.startswith(prefix + "/") for prefix in prefixes):
+    # Browsers and HTTP clients normalize dot segments and treat backslashes as
+    # separators for HTTPS URLs. Percent-encoding can hide either form from a
+    # raw prefix check. Evergreen admission is intentionally narrower than the
+    # general URL contract, so reject non-canonical path syntax rather than
+    # rewriting the reviewed source identity.
+    path_segments = path.split("/")
+    if (re.search(r"[\x00-\x20\x7f]", event.url)
+            or not path.startswith("/") or "%" in path or "\\" in path
+            or any(segment in {"", ".", ".."} for segment in path_segments[1:])
+            or not any(path == prefix or path.startswith(prefix + "/") for prefix in prefixes)):
         raise SchemaError("evergreen documentation URL is not an approved official documentation path")
     snapshot = event.metadata.get("evergreen_snapshot")
     _exact_fields(snapshot, {
