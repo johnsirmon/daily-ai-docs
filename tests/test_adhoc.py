@@ -58,6 +58,26 @@ def long_draft(*, ready=False, **changes):
 
 EVERGREEN_CLAIM = "Repository instructions customize agent behavior."
 EVERGREEN_CONTENT = EVERGREEN_CLAIM + "\nCopilot agents can use repository instructions in a repository.\n"
+EXACT_EVERGREEN_PAGE_URLS = (
+    "https://docs.typesafe.ai/introduction",
+    "https://docs.typesafe.ai/introduction.md",
+    "https://docs.typesafe.ai/introduction/coding-agents",
+    "https://docs.typesafe.ai/introduction/coding-agents.md",
+    "https://docs.typesafe.ai/models",
+    "https://docs.typesafe.ai/models.md",
+    "https://docs.typesafe.ai/model-jaggedness/jev-1.13",
+    "https://docs.typesafe.ai/model-jaggedness/jev-1.13.md",
+    "https://docs.typesafe.ai/api",
+    "https://docs.typesafe.ai/api.md",
+    "https://docs.typesafe.ai/agent-skill",
+    "https://docs.typesafe.ai/agent-skill.md",
+    "https://docs.typesafe.ai/legal",
+    "https://docs.typesafe.ai/legal.md",
+    "https://code.visualstudio.com/docs/agent-customization/language-models",
+    "https://code.visualstudio.com/docs/copilot/customization/mcp-servers",
+    "https://typesafe.ai/privacy-policy",
+    "https://typesafe.ai/legal/privacy-policy",
+)
 
 
 def evergreen_event(**changes):
@@ -229,6 +249,7 @@ def test_non_documentation_urls_cannot_be_relabelled_evergreen_in_manifest(url):
     "https://docs.github.com/en/copilot",
     "https://docs.github.com/en/copilot/",
     "https://docs.github.com/en/copilot/customizing-copilot",
+    *EXACT_EVERGREEN_PAGE_URLS,
 ])
 def test_canonical_evergreen_documentation_paths_preserve_source_identity(url):
     manifest = EpisodeManifest.from_dict(replace_evergreen_url(long_draft_with_evergreen(), url))
@@ -241,6 +262,44 @@ def test_evergreen_path_policy_preserves_normal_fragment_encoding():
     event = SourceEvent.from_dict(evergreen_event(url=url))
     assert event.url == url
     assert event.to_dict()["url"] == url
+
+
+@pytest.mark.parametrize("url", [
+    "https://docs.typesafe.ai.evil.example/models",
+    "https://code.visualstudio.com.evil.example/docs/agent-customization/language-models",
+    "https://typesafe.ai.evil.example/privacy-policy",
+    "https://docs.typesafe.ai/models/descendant",
+    "https://docs.typesafe.ai/models.md/descendant",
+    "https://docs.typesafe.ai/models-extra",
+    "https://docs.typesafe.ai/blog",
+    "https://docs.typesafe.ai/evals",
+    "https://code.visualstudio.com/docs/agent-customization/language-models/descendant",
+    "https://code.visualstudio.com/docs/agent-customization/language-models-extra",
+    "https://code.visualstudio.com/docs/copilot/customization/mcp-servers/descendant",
+    "https://code.visualstudio.com/docs/copilot/customization/mcp-servers-extra",
+    "https://typesafe.ai/privacy-policy/descendant",
+    "https://typesafe.ai/privacy-policy-extra",
+    "https://typesafe.ai/legal/privacy-policy/descendant",
+    "https://typesafe.ai/blog/introducing-system-one-models-and-jev",
+    "https://evals.typesafe.ai/",
+    "https://docs.typesafe.ai/models/../blog",
+    "https://docs.typesafe.ai/models/%2e%2e/blog",
+    "https://docs.typesafe.ai/%6dodels",
+    "https://docs.typesafe.ai\\models",
+    "https://docs.typesafe.ai//models",
+    "https://code.visualstudio.com/docs/agent-customization/../copilot/customization/mcp-servers",
+    "https://code.visualstudio.com/docs/agent-customization/%2e%2e/copilot/customization/mcp-servers",
+    "https://typesafe.ai/legal\\privacy-policy",
+])
+def test_exact_page_evergreen_allowlist_rejects_host_path_and_encoding_confusion(url):
+    with pytest.raises(SchemaError, match="approved official documentation path"):
+        SourceEvent.from_dict(evergreen_event(url=url))
+
+
+@pytest.mark.parametrize("url", [url + "/descendant" for url in EXACT_EVERGREEN_PAGE_URLS])
+def test_each_exact_evergreen_page_rejects_descendants(url):
+    with pytest.raises(SchemaError, match="approved official documentation path"):
+        SourceEvent.from_dict(evergreen_event(url=url))
 
 
 @pytest.mark.parametrize("url,accepted", [

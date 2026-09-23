@@ -28,8 +28,27 @@ MAX_EVERGREEN_SNAPSHOT_BYTES = 80000
 # Evergreen evidence is an exceptional, offline-reviewed date exemption. Keep
 # this allowlist narrower than general editorial URL validation: adding a new
 # documentation surface requires a code review and positive/negative fixtures.
-_EVERGREEN_DOCUMENTATION_PATHS = {
+_EVERGREEN_DOCUMENTATION_PREFIXES = {
     "docs.github.com": ("/en/copilot",),
+}
+_EVERGREEN_DOCUMENTATION_EXACT_PATHS = {
+    "docs.typesafe.ai": frozenset({
+        "/introduction", "/introduction.md",
+        "/introduction/coding-agents", "/introduction/coding-agents.md",
+        "/models", "/models.md",
+        "/model-jaggedness/jev-1.13", "/model-jaggedness/jev-1.13.md",
+        "/api", "/api.md",
+        "/agent-skill", "/agent-skill.md",
+        "/legal", "/legal.md",
+    }),
+    "code.visualstudio.com": frozenset({
+        "/docs/agent-customization/language-models",
+        "/docs/copilot/customization/mcp-servers",
+    }),
+    "typesafe.ai": frozenset({
+        "/privacy-policy",
+        "/legal/privacy-policy",
+    }),
 }
 _SPOKEN_DEBRIS = re.compile(
     r"https?://|www\.|\b[a-z0-9.-]+\.(?:com|org|net|io|dev|ai|edu|gov)(?:/|\b)|"
@@ -158,7 +177,8 @@ def validate_evergreen_snapshot(event: "SourceEvent") -> None:
     host = (parsed.hostname or "").casefold()
     raw_path = parsed.path
     path = raw_path[:-1] if raw_path.endswith("/") else raw_path
-    prefixes = _EVERGREEN_DOCUMENTATION_PATHS.get(host, ())
+    prefixes = _EVERGREEN_DOCUMENTATION_PREFIXES.get(host, ())
+    exact_paths = _EVERGREEN_DOCUMENTATION_EXACT_PATHS.get(host, frozenset())
     # Browsers and HTTP clients normalize dot segments and treat backslashes as
     # separators for HTTPS URLs. Percent-encoding can hide either form from a
     # raw prefix check. Evergreen admission is intentionally narrower than the
@@ -168,7 +188,8 @@ def validate_evergreen_snapshot(event: "SourceEvent") -> None:
     if (re.search(r"[\x00-\x20\x7f]", event.url)
             or not path.startswith("/") or "%" in path or "\\" in path
             or any(segment in {"", ".", ".."} for segment in path_segments[1:])
-            or not any(path == prefix or path.startswith(prefix + "/") for prefix in prefixes)):
+            or not (path in exact_paths
+                    or any(path == prefix or path.startswith(prefix + "/") for prefix in prefixes))):
         raise SchemaError("evergreen documentation URL is not an approved official documentation path")
     snapshot = event.metadata.get("evergreen_snapshot")
     _exact_fields(snapshot, {
