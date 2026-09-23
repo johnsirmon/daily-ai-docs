@@ -33,8 +33,8 @@ EDITION = "gate-a-one-release-waiver"
 # These two independent pins bind both the authorized semantic manifest and the
 # exact JSON asset uploaded by the publisher. They are updated only when the
 # one-release contract itself is re-authorized and independently reviewed.
-AUTHORIZED_MANIFEST_CONTENT_SHA256 = "4be2b50e9cd6d8d89a411f0336a4db0d04ef62731b24e65fd40f44d8ae6b43cf"
-AUTHORIZED_MANIFEST_SHA256 = "ef0d867772b4e2434866f1c8abaade366a02378436b77310dfaaf3f275ea2874"
+AUTHORIZED_MANIFEST_CONTENT_SHA256 = "e5737e727fce5bfd067ec8694c06176dc69082aa04c66ddcbb92fe72697cc214"
+AUTHORIZED_MANIFEST_SHA256 = "274daf2cbe965c45a88a57b95d493505f1896439a799494ce5587f7203623f05"
 SOURCE_HASHES = {
     "https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/":
         "9cc1bc0183c1fe83fd677d0ec188131bb5465adfa31452490d53b82892c4338d",
@@ -61,7 +61,7 @@ WAIVER = {
     "script_sha256": SCRIPT_SHA256,
     "implementation_sha": IMPLEMENTATION_SHA,
     "original_provider_audio_sha256": ORIGINAL_PROVIDER_AUDIO_SHA256,
-    "listening_decision": "board_comment_substitutes_for_missing_ui_record",
+    "listening_decision": "board_comment_approves_exact_recording_and_one_release_disclosure_waiver",
     "audible_disclosure": "waived_for_this_release_only",
     "coverage_policy": "required_exact_frozen_gate_a_evidence",
     "source_sha256": SOURCE_HASHES,
@@ -151,7 +151,9 @@ def _publication_manifest_data(preview: EpisodeManifest) -> dict[str, Any]:
         status="ready",
         show_notes=(
             "Production disclosure: AI-generated narration from Edge en-US-AriaNeural. "
-            "John waived an audible disclosure only for this exact personal release after full listening.\n\n"
+            "John approved this exact hash-bound recording and waived an audible disclosure only for this "
+            "exact personal release by board comment; no playback-coverage or detailed audio-quality finding "
+            "is claimed.\n\n"
             "Coverage is required and limited to the three hash-bound official GitHub sources frozen in "
             "the Gate A evidence. Exa returned HTTP 401 and broader Hermes, MCP, and open-source coverage "
             "remains incomplete; this episode does not claim a comprehensive quiet-news scan."
@@ -186,7 +188,7 @@ def _publication_manifest_data(preview: EpisodeManifest) -> dict[str, Any]:
             "reviewer": "assistant",
             "claims": claims,
             "notes": [
-                "John approved the exact fully listened audio by board comment; the missing UI record is substituted only for this release.",
+                "John approved the exact hash-bound recording and the one-release audible-disclosure waiver by board comment; no playback-coverage or detailed audio-quality finding is claimed.",
                 "Audible AI disclosure is waived only for this exact personal release; the written disclosure remains in show notes.",
                 "Local ASR measured WER 0.148256; exact script, source excerpts, and material caveats were separately reviewed.",
             ],

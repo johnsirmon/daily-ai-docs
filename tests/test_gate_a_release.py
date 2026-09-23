@@ -51,7 +51,7 @@ def _synthetic_contract(monkeypatch, audio: bytes = b"exact-audio" * 1000):
         "script_sha256": script_sha,
         "implementation_sha": "f" * 40,
         "original_provider_audio_sha256": "b" * 64,
-        "listening_decision": "board_comment_substitutes_for_missing_ui_record",
+        "listening_decision": "board_comment_approves_exact_recording_and_one_release_disclosure_waiver",
         "audible_disclosure": "waived_for_this_release_only",
         "coverage_policy": "required_exact_frozen_gate_a_evidence",
         "source_sha256": source_hashes,
@@ -141,6 +141,15 @@ def test_builds_only_exact_schema3_contract_and_preserves_audio_identity(monkeyp
         "source_document_sha256": "a" * 64,
         "evidence_status": "reviewed_excerpts",
     }
+    release_claims = " ".join([
+        manifest.show_notes,
+        *manifest.generation["review"]["notes"],
+    ])
+    assert "approved this exact hash-bound recording" in manifest.show_notes
+    assert "one-release audible-disclosure waiver by board comment" in release_claims
+    assert "no playback-coverage or detailed audio-quality finding is claimed" in release_claims
+    assert " ".join(("after", "full", "listening")) not in release_claims
+    assert " ".join(("fully", "listened")) not in release_claims
     assert "Audible AI disclosure is waived only" in manifest.generation["review"]["notes"][1]
     validate_exact_publication_manifest(manifest)
 
