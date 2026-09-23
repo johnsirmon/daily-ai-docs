@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
+from .schema import source_display_label
+
 
 def _trend_emoji(trend: str) -> str:
     return {"rising": "📈", "falling": "📉", "flat": "➡️"}.get(trend, "")
@@ -333,6 +335,11 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             quiet_message,
             "",
         ]
+    labels = {}
+    for event in manifest.source_events:
+        label = source_display_label(event)
+        if label:
+            labels[event.url] = label
     for story in manifest.stories:
         lines += [
             f"### {story.headline}",
@@ -343,7 +350,10 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             "",
             f"**Recommendation:** {story.action.upper()} — {story.rationale}",
             "",
-            "Sources: " + ", ".join(f"[{index + 1}]({url})" for index, url in enumerate(story.source_urls)),
+            "Sources: " + ", ".join(
+                f"[{index + 1}]({url})" + (f" — {labels[url]}" if url in labels else "")
+                for index, url in enumerate(story.source_urls)
+            ),
             "",
         ]
         if story.kind == "research":

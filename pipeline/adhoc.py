@@ -50,7 +50,7 @@ def read_request(path: Path) -> PodcastRequest:
 
 
 def write_brief(request: PodcastRequest, packet: dict, directory: Path) -> Path:
-    from .schema import EpisodeManifest, SourceEvent, validate_editorial_source_url
+    from .schema import EpisodeManifest, SourceEvent, source_display_label, validate_editorial_source_url
 
     events = [SourceEvent.from_dict(value) for value in packet["source_events"]]
     request.validate_sources(events)
@@ -72,7 +72,11 @@ def write_brief(request: PodcastRequest, packet: dict, directory: Path) -> Path:
         "Check confirmed episode history; a deep dive must add substance beyond previous coverage.", "",
         "## Approved sources",
     ]
-    lines.extend(f"- {event.event_id}: {event.title} ({event.published_at}) {event.url}" for event in events)
+    lines.extend(
+        f"- {event.event_id}: {event.title} "
+        f"({source_display_label(event) or event.published_at}) {event.url}"
+        for event in events
+    )
     lines += ["", "## Prior coverage to distinguish from new analysis"]
     selected_ids = {event.event_id for event in events}
     for path in sorted(Path("data/episodes").glob("*.json"), reverse=True)[:30]:

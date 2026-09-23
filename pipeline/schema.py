@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import ipaddress
 import math
@@ -24,6 +24,7 @@ MAX_LONG_FORM_NARRATION_CHARS = 60000
 
 
 MAX_FULL_TEXT_CHARS = 80000
+MAX_EVERGREEN_SNAPSHOT_BYTES = 80000
 _SPOKEN_DEBRIS = re.compile(
     r"https?://|www\.|\b[a-z0-9.-]+\.(?:com|org|net|io|dev|ai|edu|gov)(?:/|\b)|"
     r"&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]+);|<[^>]+>|"
@@ -132,6 +133,58 @@ def _timestamp(value: Any, name: str) -> str:
     return value
 
 
+def _utc_timestamp(value: Any, name: str) -> datetime:
+    value = _timestamp(value, name)
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.utcoffset() != timedelta(0):
+        raise SchemaError(f"{name} must be a UTC timestamp")
+    return parsed
+
+
+def validate_evergreen_snapshot(event: "SourceEvent") -> None:
+    """Validate an exact, human-reviewed capture of undated public documentation."""
+    if event.published_at != "":
+        raise SchemaError("evergreen documentation published_at must be empty")
+    if event.authority != "primary":
+        raise SchemaError("evergreen documentation must be public primary documentation")
+    snapshot = event.metadata.get("evergreen_snapshot")
+    _exact_fields(snapshot, {
+        "captured_at", "content_sha256", "content", "reviewer", "reviewed_at", "review_note",
+    }, "evergreen_snapshot")
+    captured_at = _utc_timestamp(snapshot["captured_at"], "evergreen_snapshot.captured_at")
+    reviewed_at = _utc_timestamp(snapshot["reviewed_at"], "evergreen_snapshot.reviewed_at")
+    if reviewed_at < captured_at:
+        raise SchemaError("evergreen snapshot review cannot predate capture")
+    content = snapshot["content"]
+    if not isinstance(content, str) or not content.strip():
+        raise SchemaError("evergreen_snapshot.content must be nonempty captured text")
+    if len(content.encode("utf-8")) > MAX_EVERGREEN_SNAPSHOT_BYTES:
+        raise SchemaError(f"evergreen_snapshot.content exceeds {MAX_EVERGREEN_SNAPSHOT_BYTES} UTF-8 bytes")
+    _sha256(snapshot["content_sha256"], "evergreen_snapshot.content_sha256")
+    if snapshot["content_sha256"] != hashlib.sha256(content.encode("utf-8")).hexdigest():
+        raise SchemaError("evergreen_snapshot.content_sha256 must hash the exact UTF-8 content")
+    if event.evidence not in content:
+        raise SchemaError("evergreen documentation evidence must be an exact excerpt of snapshot content")
+    _text(snapshot["reviewer"], "evergreen_snapshot.reviewer", limit=200)
+    note = _text(snapshot["review_note"], "evergreen_snapshot.review_note", limit=1600)
+    normalized_note = " ".join(note.casefold().split())
+    if ("original publication date" not in normalized_note
+            or not re.search(r"\b(?:unavailable|unknown|not (?:available|provided|published|shown|stated))\b",
+                             normalized_note)
+            or not re.search(r"\b(?:because|since|page|metadata|does not|no date)\b", normalized_note)):
+        raise SchemaError("evergreen snapshot review_note must explain why the original publication date is unavailable")
+
+
+def source_display_label(event: "SourceEvent") -> str:
+    """Return the required user-facing evidence label without changing old source copy."""
+    if event.source_type != "evergreen_documentation":
+        return ""
+    reviewed = _utc_timestamp(
+        event.metadata["evergreen_snapshot"]["reviewed_at"], "evergreen_snapshot.reviewed_at",
+    )
+    return f"Evergreen documentation; original publication date unavailable; snapshot reviewed {reviewed:%Y-%m-%d}"
+
+
 @dataclass(frozen=True)
 class SourceEvent:
     event_id: str
@@ -151,22 +204,25 @@ class SourceEvent:
         _text(self.event_id, "event_id", limit=200)
         if self.source_type not in {
             "github_release", "official_feed", "announcement", "security", "community", "youtube_video",
-            "research_paper",
+            "research_paper", "evergreen_documentation",
         }:
             raise SchemaError("unsupported source_type")
         _text(self.title, "title", limit=500)
         _https_url(self.url, "url")
         _text(self.product, "product", limit=200)
         _text(self.topic, "topic", limit=100)
-        _timestamp(self.published_at, "published_at")
-        _timestamp(self.fetched_at, "fetched_at")
         _text(self.evidence, "evidence", limit=8192)
+        if not isinstance(self.metadata, dict):
+            raise SchemaError("metadata must be an object")
+        if self.source_type == "evergreen_documentation":
+            validate_evergreen_snapshot(self)
+        else:
+            _timestamp(self.published_at, "published_at")
+        _timestamp(self.fetched_at, "fetched_at")
         if self.authority not in {"primary", "secondary"}:
             raise SchemaError("authority must be primary or secondary")
         if self.channel not in {"stable", "prerelease", "announcement", "security"}:
             raise SchemaError("unsupported channel")
-        if not isinstance(self.metadata, dict):
-            raise SchemaError("metadata must be an object")
         if self.metadata.get("private") is True or self.metadata.get("draft") is True:
             raise SchemaError("private repositories and draft releases are not publishable")
         if "full_text" in self.metadata:
@@ -562,6 +618,10 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         allowed = {"corroboration_urls", "evidence_status"} | hash_fields
         if event.source_type == "research_paper":
             allowed |= paper_fields
+        if event.source_type == "evergreen_documentation":
+            if not long_form:
+                raise SchemaError("evergreen documentation is supporting evidence for ad-hoc requests only")
+            allowed |= {"evergreen_snapshot"}
         if set(event.metadata) - allowed:
             raise SchemaError("unsupported reviewed source metadata; retain only public provenance")
         for name in hash_fields & event.metadata.keys():
@@ -693,6 +753,8 @@ class EpisodeManifest:
             raise SchemaError("an episode may contain at most seven stories")
         for event in self.source_events:
             event.validate()
+            if event.source_type == "evergreen_documentation" and self.schema_version != 4:
+                raise SchemaError("evergreen documentation is supporting evidence for ad-hoc requests only")
         for story in self.stories:
             story.validate()
         event_ids = {event.event_id for event in self.source_events}
