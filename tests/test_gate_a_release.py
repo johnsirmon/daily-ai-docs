@@ -154,6 +154,64 @@ def test_builds_only_exact_schema3_contract_and_preserves_audio_identity(monkeyp
     validate_exact_publication_manifest(manifest)
 
 
+def test_exact_contract_accepts_only_publisher_lifecycle_status_changes(monkeypatch):
+    preview, _, _ = _synthetic_contract(monkeypatch)
+    ready = build_publication_manifest(preview)
+    ready_bytes = (
+        json.dumps(ready.to_dict(), indent=2, ensure_ascii=False, allow_nan=False) + "\n"
+    ).encode()
+
+    validate_exact_publication_manifest(ready, manifest_sha256=_digest(ready_bytes))
+    for status in ("candidate", "published"):
+        lifecycle_manifest = EpisodeManifest.from_dict({**ready.to_dict(), "status": status})
+        validate_exact_publication_manifest(lifecycle_manifest)
+        with pytest.raises(SchemaError, match="bytes|asset"):
+            validate_exact_publication_manifest(
+                lifecycle_manifest, manifest_sha256=gate_a_release.AUTHORIZED_MANIFEST_SHA256,
+            )
+    with pytest.raises(SchemaError, match="exact authorization"):
+        EpisodeManifest.from_dict({**ready.to_dict(), "status": "draft"})
+
+
+@pytest.mark.parametrize("status", ["ready", "candidate", "published"])
+def test_exact_contract_rejects_non_status_mutation_in_every_lifecycle_state(monkeypatch, status):
+    preview, _, _ = _synthetic_contract(monkeypatch)
+    data = build_publication_manifest(preview).to_dict()
+    data.update(status=status, show_notes="Unauthorized lifecycle mutation.")
+
+    with pytest.raises(SchemaError, match="exact authorization"):
+        EpisodeManifest.from_dict(data)
+
+
+def test_gate_a_resume_finalize_confirm_lifecycle_offline(monkeypatch, tmp_path):
+    preview, audio, _ = _synthetic_contract(monkeypatch)
+    ready = build_publication_manifest(preview)
+    directory = tmp_path / ".cache"
+    directory.mkdir()
+    manifest_path = directory / "episode-manifest.json"
+    manifest_bytes = (
+        json.dumps(ready.to_dict(), indent=2, ensure_ascii=False, allow_nan=False) + "\n"
+    ).encode()
+    manifest_path.write_bytes(manifest_bytes)
+    (directory / "daily-ai-brief.mp3").write_bytes(audio)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_REPOSITORY", "johnsirmon/daily-ai-docs")
+    monkeypatch.setattr(daily, "_validate_reviewed_audio_file", lambda *_: None)
+
+    resumed = daily.resume_reviewed_release(ready.episode_id, directory)
+    candidate = daily.finalize(
+        manifest_path,
+        verify_remote=False,
+        publication_path=Path(resumed["manifest_path"]).parent / "publication.json",
+    )
+    published = daily.confirm(ready.episode_id, verify_remote=False)
+
+    assert candidate.status == "candidate"
+    assert published.status == "published"
+    assert manifest_path.read_bytes() == manifest_bytes
+    assert (directory / "daily-ai-brief.mp3").read_bytes() == audio
+
+
 @pytest.mark.parametrize("mutation", [
     lambda data: data["generation"]["waiver"].update({"scope": "reusable"}),
     lambda data: data["generation"]["voice"].update({"name": "OtherVoice"}),
