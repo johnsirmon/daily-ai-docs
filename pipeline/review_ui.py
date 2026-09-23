@@ -184,6 +184,42 @@ def record_approval(bundle: ReviewBundle, submission: dict[str, Any]) -> dict[st
 
 
 def _load_approval(bundle: ReviewBundle) -> dict[str, Any]:
+    if bundle.manifest.generation.get("edition") == "gate-a-one-release-waiver":
+        from .gate_a_release import (
+            AUDIO_SHA256,
+            AUTHORIZED_AT,
+            EPISODE_ID,
+            SCRIPT_SHA256,
+            validate_exact_publication_manifest,
+        )
+
+        validate_exact_publication_manifest(bundle.manifest)
+        waiver_path = bundle.directory / "listening-waiver.json"
+        if not waiver_path.is_file():
+            raise ValueError("the exact Gate A board-approval substitution record is required")
+        waiver = json.loads(waiver_path.read_text(encoding="utf-8"))
+        expected = {
+            "schema_version": 1,
+            "purpose": "one_release_board_approval_substitution",
+            "episode_id": EPISODE_ID,
+            "authorized_at": AUTHORIZED_AT,
+            "authorized_by": "John",
+            "audio_sha256": AUDIO_SHA256,
+            "manifest_sha256": bundle.manifest_sha256,
+            "script_sha256": SCRIPT_SHA256,
+            "audible_disclosure": "waived_for_this_release_only",
+            "publication_authorized": True,
+        }
+        if waiver != expected:
+            raise ValueError("Gate A board-approval substitution does not match this exact bundle")
+        return {
+            "reviewer": "John",
+            "decision": "approved_by_board_comment_substitution",
+            "episode_id": EPISODE_ID,
+            "audio_sha256": AUDIO_SHA256,
+            "manifest_sha256": bundle.manifest_sha256,
+            "transcript_sha256": bundle.transcript_sha256,
+        }
     if not bundle.approval_path.is_file():
         raise ValueError("listening approval is required before publication")
     approval = json.loads(bundle.approval_path.read_text(encoding="utf-8"))
