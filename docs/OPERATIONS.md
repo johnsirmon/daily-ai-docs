@@ -597,11 +597,13 @@ minimum and is never eligible for daily news selection. Dated announcements, blo
 their real original publication dates and their existing validation rules.
 
 The date exemption is fail-closed and offline: schema validation accepts only explicitly reviewed official host/path
-boundaries, currently GitHub Copilot documentation below `https://docs.github.com/en/copilot`. It does not fetch or
-infer the authority of a page. Papers, community/social pages, blogs, changelogs, and announcements are not eligible,
-even when a packet asserts `authority: "primary"`. To admit another legitimate documentation surface, first add its
-exact official host and narrow documentation path to the schema allowlist, add accepted and rejected URL-boundary
-fixtures, and obtain normal code review; do not broaden the rule in a publication packet.
+boundaries. GitHub Copilot documentation is bounded below `https://docs.github.com/en/copilot`; other admitted vendor
+documentation and service-policy references use exact-page rules in `pipeline/schema.py`, not domain-wide or descendant
+admission. It does not fetch or infer the authority of a page. Papers, community/social pages, blogs, changelogs, and
+announcements are not eligible, even when a packet asserts `authority: "primary"`. To admit another legitimate
+documentation surface, first add its exact official host and narrow documentation path to the schema allowlist, add
+accepted and rejected URL-boundary fixtures, and obtain normal code review; do not broaden the rule in a publication
+packet.
 
 Capture the exact public text used during review in an untracked request directory. The snapshot is limited to 80,000
 UTF-8 bytes. Compute the digest over the file's exact bytes without trimming or newline normalization:
