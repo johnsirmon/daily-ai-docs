@@ -323,6 +323,15 @@ def test_rejects_nonpublic_urls_in_sources_and_notes(url):
         EpisodeManifest.from_dict(data)
 
 
+def test_embedded_url_scan_rejects_bracketed_ipv6_zone_identifier():
+    data = draft()
+    data["generation"]["review"]["notes"] = [
+        "Reviewed at https://[fe80::1%25eth0]/secret.",
+    ]
+    with pytest.raises(SchemaError, match="public hosts"):
+        EpisodeManifest.from_dict(data)
+
+
 def test_embedded_url_scan_allows_bare_scheme_prose():
     data = draft()
     data["generation"]["review"]["notes"] = [

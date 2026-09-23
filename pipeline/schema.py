@@ -548,7 +548,11 @@ def _reviewed_public_values(value: Any) -> None:
     elif isinstance(value, str):
         # Require a hostname or a complete bracketed IPv6 host so prose such as
         # “remotes start with https://” is not misclassified as a URL.
-        pattern = r"https?://(?:[A-Za-z0-9]|\[[0-9A-Fa-f:.%]+\])[^\s<>\"']*"
+        pattern = (
+            r"https?://(?:[A-Za-z0-9]|"
+            r"\[[0-9A-Fa-f:.]+(?:%25(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)?\])"
+            r"[^\s<>\"']*"
+        )
         for match in re.findall(pattern, value):
             url = match.rstrip(".,;!)}")
             while url.endswith("]") and url.count("]") > url.count("["):
