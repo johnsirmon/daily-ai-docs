@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from pipeline import gate_a_release
+from pipeline import daily, gate_a_release
 from pipeline.gate_a_release import build_publication_manifest, validate_exact_publication_manifest
-from pipeline.review_ui import _load_approval, load_review_bundle
+from pipeline.review_ui import _load_approval, load_review_bundle, queue_publication
 from pipeline.schema import EpisodeManifest, SchemaError
 
 
@@ -118,6 +118,13 @@ def _synthetic_contract(monkeypatch, audio: bytes = b"exact-audio" * 1000):
             "channels": 2,
         },
     })
+    expected = gate_a_release._publication_manifest_data(preview)
+    monkeypatch.setattr(
+        gate_a_release, "AUTHORIZED_MANIFEST_CONTENT_SHA256",
+        gate_a_release._semantic_digest(expected),
+    )
+    raw = (json.dumps(expected, indent=2, ensure_ascii=False, allow_nan=False) + "\n").encode()
+    monkeypatch.setattr(gate_a_release, "AUTHORIZED_MANIFEST_SHA256", _digest(raw))
     return preview, audio, waiver
 
 
@@ -157,7 +164,10 @@ def test_board_comment_substitution_requires_exact_waiver_record(monkeypatch, tm
     preview, audio, _ = _synthetic_contract(monkeypatch)
     manifest = build_publication_manifest(preview)
     manifest_path = tmp_path / "episode-manifest.json"
-    manifest_path.write_text(json.dumps(manifest.to_dict()) + "\n", encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest.to_dict(), indent=2, ensure_ascii=False, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
     (tmp_path / "daily-ai-brief.mp3").write_bytes(audio)
     (tmp_path / "narration.txt").write_text(manifest.narration + "\n", encoding="utf-8")
     bundle = load_review_bundle(tmp_path)
@@ -186,13 +196,107 @@ def test_board_comment_substitution_requires_exact_waiver_record(monkeypatch, tm
         _load_approval(bundle)
 
 
-def test_embedded_url_scan_ignores_bare_scheme_but_rejects_private_url(monkeypatch):
-    preview, _, _ = _synthetic_contract(monkeypatch)
+@pytest.mark.parametrize("mutation", [
+    lambda data: data.update(show_notes="Mutated publication notes."),
+    lambda data: data["stories"][0].update(rationale="Mutated release rationale."),
+    lambda data: data["generation"]["review"]["notes"].append("Mutated review claim."),
+])
+@pytest.mark.parametrize("indent,sort_keys", [(None, True), (4, False)])
+def test_board_substitution_rejects_every_manifest_field_mutation(
+    monkeypatch, tmp_path, mutation, indent, sort_keys,
+):
+    preview, audio, _ = _synthetic_contract(monkeypatch)
     manifest = build_publication_manifest(preview)
     data = manifest.to_dict()
-    data["generation"]["review"]["notes"].append("HTTPS remotes start with https://, and are unaffected.")
-    EpisodeManifest.from_dict(data)
+    mutation(data)
+    manifest_bytes = (json.dumps(data, indent=indent, sort_keys=sort_keys) + "\n").encode()
+    with pytest.raises(SchemaError, match="exact authorization"):
+        EpisodeManifest.from_dict(json.loads(manifest_bytes))
+    (tmp_path / "episode-manifest.json").write_bytes(manifest_bytes)
+    (tmp_path / "daily-ai-brief.mp3").write_bytes(audio)
+    (tmp_path / "narration.txt").write_text(manifest.narration + "\n", encoding="utf-8")
+    record = {
+        "schema_version": 1,
+        "purpose": "one_release_board_approval_substitution",
+        "episode_id": gate_a_release.EPISODE_ID,
+        "authorized_at": gate_a_release.AUTHORIZED_AT,
+        "authorized_by": "John",
+        "audio_sha256": gate_a_release.AUDIO_SHA256,
+        "manifest_sha256": _digest(manifest_bytes),
+        "script_sha256": gate_a_release.SCRIPT_SHA256,
+        "audible_disclosure": "waived_for_this_release_only",
+        "publication_authorized": True,
+    }
+    (tmp_path / "listening-waiver.json").write_text(json.dumps(record), encoding="utf-8")
 
-    data["generation"]["review"]["notes"][-1] = "Private link https://127.0.0.1/secret"
-    with pytest.raises(SchemaError):
-        EpisodeManifest.from_dict(data)
+    with pytest.raises((SchemaError, ValueError), match="exact|authorized|authorization"):
+        _load_approval(load_review_bundle(tmp_path))
+
+
+def test_review_and_resume_require_exact_authorized_manifest_bytes(monkeypatch, tmp_path):
+    preview, audio, _ = _synthetic_contract(monkeypatch)
+    manifest = build_publication_manifest(preview)
+    directory = tmp_path / "bundle"
+    directory.mkdir()
+    (directory / "episode-manifest.json").write_text(
+        json.dumps(manifest.to_dict(), sort_keys=True, separators=(",", ":")), encoding="utf-8",
+    )
+    (directory / "daily-ai-brief.mp3").write_bytes(audio)
+    (directory / "narration.txt").write_text(manifest.narration + "\n", encoding="utf-8")
+
+    with pytest.raises((SchemaError, ValueError), match="exact|authorized|authorization"):
+        load_review_bundle(directory)
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_REPOSITORY", "johnsirmon/daily-ai-docs")
+    monkeypatch.setattr(daily, "_validate_reviewed_audio_file", lambda *_: None)
+    with pytest.raises((RuntimeError, SchemaError, ValueError), match="exact|authorized|authorization"):
+        daily.resume_reviewed_release(manifest.episode_id, directory)
+
+
+def test_reviewed_release_resume_rejects_semantic_manifest_mutation(monkeypatch, tmp_path):
+    preview, audio, _ = _synthetic_contract(monkeypatch)
+    manifest = build_publication_manifest(preview)
+    data = manifest.to_dict()
+    data["show_notes"] = "Mutated after review."
+    directory = tmp_path / "bundle"
+    directory.mkdir()
+    (directory / "episode-manifest.json").write_text(json.dumps(data), encoding="utf-8")
+    (directory / "daily-ai-brief.mp3").write_bytes(audio)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_REPOSITORY", "johnsirmon/daily-ai-docs")
+    monkeypatch.setattr(daily, "_validate_reviewed_audio_file", lambda *_: None)
+
+    with pytest.raises((RuntimeError, SchemaError, ValueError), match="exact|authorized|authorization"):
+        daily.resume_reviewed_release(manifest.episode_id, directory)
+
+
+def test_existing_queue_record_is_bound_to_exact_manifest(monkeypatch, tmp_path):
+    preview, audio, _ = _synthetic_contract(monkeypatch)
+    manifest = build_publication_manifest(preview)
+    manifest_bytes = (
+        json.dumps(manifest.to_dict(), indent=2, ensure_ascii=False, allow_nan=False) + "\n"
+    ).encode()
+    (tmp_path / "episode-manifest.json").write_bytes(manifest_bytes)
+    (tmp_path / "daily-ai-brief.mp3").write_bytes(audio)
+    (tmp_path / "narration.txt").write_text(manifest.narration + "\n", encoding="utf-8")
+    waiver = {
+        "schema_version": 1,
+        "purpose": "one_release_board_approval_substitution",
+        "episode_id": gate_a_release.EPISODE_ID,
+        "authorized_at": gate_a_release.AUTHORIZED_AT,
+        "authorized_by": "John",
+        "audio_sha256": gate_a_release.AUDIO_SHA256,
+        "manifest_sha256": gate_a_release.AUTHORIZED_MANIFEST_SHA256,
+        "script_sha256": gate_a_release.SCRIPT_SHA256,
+        "audible_disclosure": "waived_for_this_release_only",
+        "publication_authorized": True,
+    }
+    (tmp_path / "listening-waiver.json").write_text(json.dumps(waiver), encoding="utf-8")
+    (tmp_path / "publication-queue.json").write_text(json.dumps({
+        "episode_id": gate_a_release.EPISODE_ID,
+        "audio_sha256": gate_a_release.AUDIO_SHA256,
+    }), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="queue record"):
+        queue_publication(load_review_bundle(tmp_path), allow_publish=True)

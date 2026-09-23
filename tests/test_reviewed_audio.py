@@ -303,11 +303,13 @@ def test_reviewed_source_status_must_be_reviewed():
 
 @pytest.mark.parametrize("url", [
     "http://example.com/release", "https://localhost/release", "https://127.0.0.1/release",
-    "https://10.0.0.1/release", "https://example.internal/release",
+    "https://10.0.0.1/release", "http://[::1]/secret", "https://[fd00::1]/secret",
+    "https://example.internal/release",
     "https://user:password@example.com/release", "https://example.com:8443/release",
     "https://notebooklm.google.com/notebook/private", "https://gemini.google.com/app/private",
     "https://notebook.google.com/notebook/private", "https://notebook.google/notebook/private",
-    "https://drive.google.com/file/private", "https://example.com/release?api_key=private",
+    "https://accounts.google.com/signin", "https://drive.google.com/file/private",
+    "https://example.com/release?api_key=private", "https://example.com/release#private",
 ])
 def test_rejects_nonpublic_urls_in_sources_and_notes(url):
     data = draft()
@@ -319,6 +321,14 @@ def test_rejects_nonpublic_urls_in_sources_and_notes(url):
     data["generation"]["review"]["notes"] = [url]
     with pytest.raises(SchemaError):
         EpisodeManifest.from_dict(data)
+
+
+def test_embedded_url_scan_allows_bare_scheme_prose():
+    data = draft()
+    data["generation"]["review"]["notes"] = [
+        "HTTPS remotes start with https://, and are unaffected.",
+    ]
+    EpisodeManifest.from_dict(data)
 
 
 def test_rejects_secondary_sources_and_overlong_evidence():

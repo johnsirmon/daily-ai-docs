@@ -546,10 +546,14 @@ def _reviewed_public_values(value: Any) -> None:
         for item in value:
             _reviewed_public_values(item)
     elif isinstance(value, str):
-        # Require a host character so prose such as “remotes start with https://”
-        # is not misclassified as a URL. Actual embedded URLs remain validated.
-        for url in re.findall(r"https?://[A-Za-z0-9][^\s<>\"']*", value):
-            _reviewed_public_url(url.rstrip(".,;!)]}"))
+        # Require a hostname or a complete bracketed IPv6 host so prose such as
+        # “remotes start with https://” is not misclassified as a URL.
+        pattern = r"https?://(?:[A-Za-z0-9]|\[[0-9A-Fa-f:.%]+\])[^\s<>\"']*"
+        for match in re.findall(pattern, value):
+            url = match.rstrip(".,;!)}")
+            while url.endswith("]") and url.count("]") > url.count("["):
+                url = url[:-1]
+            _reviewed_public_url(url)
 
 
 def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
