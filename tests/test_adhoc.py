@@ -12,13 +12,13 @@ from unittest.mock import Mock
 import pytest
 
 from pipeline import daily
-from pipeline.adhoc import authorize, write_brief
+from pipeline.adhoc import authorize, prepare, write_brief
 from pipeline.audio import AudioValidationError, analyze_audio, narration_duration_bounds
 from pipeline.audio_quality import repetition_findings, validate_quality_report
 from pipeline.disclosure import AI_NARRATION_DISCLOSURE
 from pipeline.podcast_request import PodcastRequest, record_status, request_from_issue, save_request
 from pipeline.rank import score_event, select_editorial_events, select_events
-from pipeline.schema import EpisodeManifest, SchemaError, SourceEvent
+from pipeline.schema import EpisodeManifest, SchemaError, SourceEvent, source_display_label
 from tests.test_reviewed_audio import corrected_draft, draft, TIMESTAMP, CLAIM
 
 
@@ -99,6 +99,16 @@ def long_draft_with_evergreen(*, ready=False):
     data["generation"]["review"]["claims"].append({
         "text": EVERGREEN_CLAIM, "event_id": event["event_id"], "quote": EVERGREEN_CLAIM,
     })
+    return data
+
+
+def replace_evergreen_url(data, url):
+    event = data["source_events"][1]
+    old_url = event["url"]
+    event["url"] = url
+    data["stories"][0]["source_urls"] = [
+        url if value == old_url else value for value in data["stories"][0]["source_urls"]
+    ]
     return data
 
 
@@ -190,6 +200,84 @@ def test_reviewed_evergreen_documentation_is_ad_hoc_supporting_evidence(tmp_path
     packet = {key: data[key] for key in ("source_events", "source_health", "stories", "show_notes")}
     brief = write_brief(req, packet, tmp_path)
     assert label in brief.read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("url", [
+    "https://arxiv.org/abs/1706.03762",
+    "https://www.reddit.com/r/LocalLLaMA/comments/example/community_study/",
+    "https://github.blog/changelog/2024-10-29-github-copilot-in-vscode/",
+    "https://docs.github.com/en/actions",
+    "https://docs.github.com.evil.example/en/copilot/customizing-copilot",
+])
+def test_non_documentation_urls_cannot_be_relabelled_evergreen_in_manifest(url):
+    with pytest.raises(SchemaError, match="approved official documentation path"):
+        EpisodeManifest.from_dict(replace_evergreen_url(long_draft_with_evergreen(), url))
+
+
+@pytest.mark.parametrize("url,accepted", [
+    ("https://docs.github.com/en/copilot/customizing-copilot", True),
+    ("https://arxiv.org/abs/1706.03762", False),
+    ("https://www.reddit.com/r/LocalLLaMA/comments/example/community_study/", False),
+    ("https://github.blog/changelog/2024-10-29-github-copilot-in-vscode/", False),
+])
+def test_prepare_enforces_evergreen_documentation_url_policy(url, accepted, tmp_path, monkeypatch):
+    data = replace_evergreen_url(long_draft_with_evergreen(), url)
+    req = request()
+    request_path = save_request(req, tmp_path)
+    packet = tmp_path / "packet.json"
+    packet.write_text(json.dumps({key: data[key] for key in (
+        "source_events", "source_health", "stories", "show_notes",
+    )}), encoding="utf-8")
+    transcript = tmp_path / "transcript.txt"
+    transcript.write_text(data["narration"], encoding="utf-8")
+    review = tmp_path / "review.json"
+    review.write_text(json.dumps({key: data["generation"][key] for key in (
+        "transcript", "review", "voice",
+    )}), encoding="utf-8")
+    audio = tmp_path / "original.wav"
+    audio.write_bytes(b"synthetic reviewed audio")
+    importer = Mock(return_value={"episode_id": req.episode_id})
+    monkeypatch.setattr("pipeline.reviewed_audio.prepare_reviewed_audio", importer)
+    if accepted:
+        result = prepare(request_path, packet, transcript, review, audio, tmp_path / "prepared")
+        assert result["episode_id"] == req.episode_id
+        importer.assert_called_once()
+    else:
+        with pytest.raises(SchemaError, match="approved official documentation path"):
+            prepare(request_path, packet, transcript, review, audio, tmp_path / "prepared")
+        importer.assert_not_called()
+
+
+def test_subscriber_descriptions_label_evergreen_sources_with_and_without_catalog(tmp_path):
+    from pipeline.podcast import load_episodes, write_feed
+    from pipeline.podcast_metadata import manifest_presentation
+
+    data = long_draft_with_evergreen()
+    data["show_notes"] += "\nSources: " + data["source_events"][1]["url"]
+    manifest = EpisodeManifest.from_dict(data)
+    label = source_display_label(manifest.source_events[1])
+    before = manifest.to_dict()
+    assert label in manifest_presentation(manifest, metadata_path=None)["description"]
+    catalog = tmp_path / "metadata.json"
+    catalog.write_text(json.dumps({"schema_version": 1, "episodes": {manifest.episode_id: {
+        "title": "Reviewed evergreen presentation",
+        "summary": "Reviewed subscriber summary.",
+        "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/" + "a" * 40 + "/podcast.xml",
+    }}}), encoding="utf-8")
+    presentation = manifest_presentation(manifest, metadata_path=catalog)
+    assert label in presentation["description"]
+    feed = tmp_path / "podcast.xml"
+    write_feed([{
+        "guid": manifest.episode_id,
+        "title": presentation["title"],
+        "pub_date": manifest.published_at,
+        "mp3_url": manifest.audio["url"],
+        "file_size_bytes": 12000,
+        "duration_secs": 1200,
+        "description": presentation["description"],
+    }], str(feed))
+    assert label in load_episodes(str(feed))[0]["description"]
+    assert manifest.to_dict() == before
 
 
 def test_evergreen_documentation_does_not_satisfy_dated_primary_minimum():

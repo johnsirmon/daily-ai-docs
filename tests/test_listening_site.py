@@ -14,7 +14,7 @@ import pytest
 import pipeline.listening_site as site
 from pipeline.listening_site import ListeningSiteError, build_site
 from pipeline.schema import EpisodeManifest, SourceEvent, Story, editorial_narration
-from tests.test_adhoc import long_draft
+from tests.test_adhoc import long_draft, long_draft_with_evergreen, request
 from tests.test_reviewed_audio import corrected_draft
 
 
@@ -633,6 +633,24 @@ def test_cited_sources_do_not_upgrade_secondary_or_corroboration(tmp_path: Path)
     page = next(output.glob("episode-*.html")).read_text(encoding="utf-8")
     assert "Cited sources" in page and "Primary sources" not in page
     assert secondary.url in page and "corroboration.example.com" in page
+
+
+def test_cited_evergreen_source_has_required_listener_label(tmp_path: Path) -> None:
+    data = long_draft_with_evergreen(ready=True)
+    req = request(publish_now=True)
+    data["episode_id"] = req.episode_id
+    data["generation"]["request"] = req.to_dict()
+    data["generation"]["request_sha256"] = req.revision
+    data["audio"]["url"] = (
+        f"https://github.com/johnsirmon/daily-ai-docs/releases/download/{req.episode_id}/daily-ai-brief.mp3"
+    )
+    data["status"] = "candidate"
+    manifest = EpisodeManifest.from_dict(data)
+    feed, manifests, css = _fixture(tmp_path, manifest=manifest, record=_record_for_manifest(manifest))
+    output = tmp_path / "output"
+    build_site(feed_path=feed, manifest_dir=manifests, stylesheet_path=css, output_dir=output)
+    page = next(output.glob("episode-*.html")).read_text(encoding="utf-8")
+    assert "Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-17" in page
 
 
 def test_source_health_projects_compact_statuses_without_raw_details(tmp_path: Path) -> None:

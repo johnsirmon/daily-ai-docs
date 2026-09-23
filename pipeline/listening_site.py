@@ -21,7 +21,7 @@ from urllib.parse import urlparse
 from .disclosure import episode_metadata_disclosure
 from .podcast import _parse_duration
 from .podcast_metadata import load_catalog
-from .schema import EpisodeManifest
+from .schema import EpisodeManifest, source_display_label
 
 _ITUNES_NS = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 _CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
@@ -394,8 +394,11 @@ def _research(story) -> str:
     return f'<section class="research"><h3>Research context</h3><dl>{items}</dl></section>'
 
 
-def _story(story, index: int) -> str:
-    urls = "".join(f"<li>{_link(url)}</li>" for url in story.source_urls)
+def _story(story, index: int, source_labels: dict[str, str]) -> str:
+    urls = "".join(
+        f"<li>{_link(url)}{(' — ' + _escape(source_labels[url])) if url in source_labels else ''}</li>"
+        for url in story.source_urls
+    )
     return "\n".join([
         f'<article class="story" id="story-{index}">',
         f"  <h2>{_escape(story.headline)}</h2>",
@@ -426,7 +429,14 @@ def _episode_page(episode: SiteEpisode) -> str:
                 f"  <p>{_escape(editing['correction_text'])}</p>",
                 "</section>",
             ])
-        stories = "\n".join(_story(story, index) for index, story in enumerate(manifest.stories, 1))
+        source_labels = {
+            event.url: label
+            for event in manifest.source_events
+            if (label := source_display_label(event))
+        }
+        stories = "\n".join(
+            _story(story, index, source_labels) for index, story in enumerate(manifest.stories, 1)
+        )
         gaps = "".join(f"<li>{_escape(note)}</li>" for note in manifest.noise_notes)
         gaps_section = f'<section><h2>Coverage gaps and exclusions</h2><ul>{gaps}</ul></section>' if gaps else ""
         details = "\n".join([

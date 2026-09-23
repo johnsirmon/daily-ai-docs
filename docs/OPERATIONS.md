@@ -596,6 +596,13 @@ least one dated public primary source inside the request evidence window; evergr
 minimum and is never eligible for daily news selection. Dated announcements, blog posts, and research studies retain
 their real original publication dates and their existing validation rules.
 
+The date exemption is fail-closed and offline: schema validation accepts only explicitly reviewed official host/path
+boundaries, currently GitHub Copilot documentation below `https://docs.github.com/en/copilot`. It does not fetch or
+infer the authority of a page. Papers, community/social pages, blogs, changelogs, and announcements are not eligible,
+even when a packet asserts `authority: "primary"`. To admit another legitimate documentation surface, first add its
+exact official host and narrow documentation path to the schema allowlist, add accepted and rejected URL-boundary
+fixtures, and obtain normal code review; do not broaden the rule in a publication packet.
+
 Capture the exact public text used during review in an untracked request directory. The snapshot is limited to 80,000
 UTF-8 bytes. Compute the digest over the file's exact bytes without trimming or newline normalization:
 
@@ -612,8 +619,8 @@ Add the source event to `packet.json` with this exact snapshot shape. Replace ev
   "event_id": "docs:vendor-feature",
   "source_type": "evergreen_documentation",
   "title": "Official feature documentation",
-  "url": "https://vendor.example/docs/feature",
-  "product": "Vendor product",
+  "url": "https://docs.github.com/en/copilot/customizing-copilot",
+  "product": "GitHub Copilot",
   "topic": "Coding agents",
   "published_at": "",
   "fetched_at": "2026-09-23T12:00:00Z",
@@ -636,9 +643,12 @@ Add the source event to `packet.json` with this exact snapshot shape. Replace ev
 Keep the source's event ID in a story's `event_ids`, its URL in the matching `source_urls`, and at least one exact
 source-review claim mapped to its short `evidence` excerpt. Run `pipeline.adhoc brief` before generation; its approved
 source list must display `Evergreen documentation; original publication date unavailable; snapshot reviewed <date>`.
-Then use the normal transcript review and `pipeline.adhoc prepare` flow. The manifest includes the exact snapshot and is
-covered by the existing manifest SHA-256, listening approval, immutable release comparison, resume, and replay checks.
-Changing captured text, its digest, or review provenance requires a new reviewed bundle; do not edit a prepared bundle.
+Then use the normal transcript review and `pipeline.adhoc prepare` flow. The manifest includes the exact snapshot. The
+review UI's listening approval binds the full manifest hash; `prepare` compares the complete reviewed source events on
+resume, and finalization rejects a mismatched existing candidate. The `pipeline.adhoc publish` command and the internal
+`daily.resume_reviewed_release` recovery function do not independently load a local `listening-approval.json` before
+creating a first candidate, so do not describe those paths as listening-approval verification. Changing captured text,
+its digest, or review provenance requires a new reviewed bundle and renewed review; do not edit a prepared bundle.
 
 The following checks are offline and do not publish, upload, dispatch, or contact a source:
 

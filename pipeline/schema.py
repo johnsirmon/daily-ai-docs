@@ -25,6 +25,12 @@ MAX_LONG_FORM_NARRATION_CHARS = 60000
 
 MAX_FULL_TEXT_CHARS = 80000
 MAX_EVERGREEN_SNAPSHOT_BYTES = 80000
+# Evergreen evidence is an exceptional, offline-reviewed date exemption. Keep
+# this allowlist narrower than general editorial URL validation: adding a new
+# documentation surface requires a code review and positive/negative fixtures.
+_EVERGREEN_DOCUMENTATION_PATHS = {
+    "docs.github.com": ("/en/copilot",),
+}
 _SPOKEN_DEBRIS = re.compile(
     r"https?://|www\.|\b[a-z0-9.-]+\.(?:com|org|net|io|dev|ai|edu|gov)(?:/|\b)|"
     r"&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]+);|<[^>]+>|"
@@ -147,6 +153,13 @@ def validate_evergreen_snapshot(event: "SourceEvent") -> None:
         raise SchemaError("evergreen documentation published_at must be empty")
     if event.authority != "primary":
         raise SchemaError("evergreen documentation must be public primary documentation")
+    validate_editorial_source_url(event.url)
+    parsed = urlparse(event.url)
+    host = (parsed.hostname or "").casefold()
+    path = parsed.path.rstrip("/")
+    prefixes = _EVERGREEN_DOCUMENTATION_PATHS.get(host, ())
+    if not any(path == prefix or path.startswith(prefix + "/") for prefix in prefixes):
+        raise SchemaError("evergreen documentation URL is not an approved official documentation path")
     snapshot = event.metadata.get("evergreen_snapshot")
     _exact_fields(snapshot, {
         "captured_at", "content_sha256", "content", "reviewer", "reviewed_at", "review_note",
