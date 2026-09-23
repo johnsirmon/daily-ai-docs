@@ -88,11 +88,14 @@ def _write_json(path: Path, value: dict[str, Any]) -> None:
 def validate_exact_publication_manifest(
     manifest: EpisodeManifest, *, manifest_sha256: str | None = None,
 ) -> None:
-    """Validate the immutable one-release waiver without weakening other schemas."""
+    """Validate the one release, permitting only its publisher-owned status lifecycle."""
     generation = manifest.generation
+    authorized_content = asdict(manifest)
+    authorized_content["status"] = "ready"
     if (
         manifest.schema_version != 3
         or manifest.episode_id != EPISODE_ID
+        or manifest.status not in {"ready", "candidate", "published"}
         or generation.get("edition") != EDITION
         or generation.get("provider") != "edge"
         or generation.get("approved_at") != AUTHORIZED_AT
@@ -102,10 +105,12 @@ def validate_exact_publication_manifest(
         or manifest.audio.get("sha256") != AUDIO_SHA256
         or _digest(manifest.narration.encode("utf-8")) != NARRATION_SHA256
         or _digest((manifest.narration + "\n").encode("utf-8")) != SCRIPT_SHA256
-        or _semantic_digest(asdict(manifest)) != AUTHORIZED_MANIFEST_CONTENT_SHA256
+        or _semantic_digest(authorized_content) != AUTHORIZED_MANIFEST_CONTENT_SHA256
     ):
         raise SchemaError("Gate A one-release manifest does not match its exact authorization")
-    if manifest_sha256 is not None and manifest_sha256 != AUTHORIZED_MANIFEST_SHA256:
+    if manifest_sha256 is not None and (
+        manifest.status != "ready" or manifest_sha256 != AUTHORIZED_MANIFEST_SHA256
+    ):
         raise SchemaError("Gate A one-release manifest bytes are not the exact authorized asset")
     observed = {event.url: event.metadata.get("source_document_sha256") for event in manifest.source_events}
     if observed != SOURCE_HASHES or any(
