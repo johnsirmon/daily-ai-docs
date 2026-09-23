@@ -96,14 +96,22 @@ class PodcastRequest:
         start = end - timedelta(days=self.lookback_days)
         if not events:
             raise ValueError("request has insufficient primary evidence")
+        dated_primary = 0
         for event in events:
+            if event.source_type == "evergreen_documentation":
+                if event.authority != "primary" or event.published_at != "":
+                    raise ValueError(f"invalid evergreen supporting evidence: {event.event_id}")
+                continue
             published = utc_timestamp(event.published_at)
             if event.authority != "primary" or not start <= published <= end:
                 raise ValueError(f"source outside primary evidence window: {event.event_id}")
+            dated_primary += 1
             if event.source_type == "research_paper":
                 first = utc_timestamp(event.metadata["first_published_at"])
                 if first != published or not start <= first <= end:
                     raise ValueError("paper first publication is outside request window")
+        if dated_primary < 1:
+            raise ValueError("request has insufficient dated primary evidence; evergreen documentation is supporting only")
 
 
 def save_request(request: PodcastRequest, root: Path = Path(".cache/adhoc")) -> Path:

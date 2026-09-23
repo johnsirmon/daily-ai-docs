@@ -587,6 +587,78 @@ Keep the requested Notebook provider and `voice: {}` for a Notebook recording wi
 Unedited reviews omit `editing`; null is not valid. Full papers and third-party transcripts must not be archived
 in the publication packet.
 
+### Snapshot-reviewed evergreen documentation
+
+An ad-hoc schema-4 packet may use `source_type: "evergreen_documentation"` only for supporting evidence from public,
+official primary documentation when no honest original publication date is available. Set `published_at` to the empty
+string. Do not copy `fetched_at`, `dateModified`, a copyright year, or the review date into it. A packet still needs at
+least one dated public primary source inside the request evidence window; evergreen documentation does not satisfy that
+minimum and is never eligible for daily news selection. Dated announcements, blog posts, and research studies retain
+their real original publication dates and their existing validation rules.
+
+The date exemption is fail-closed and offline: schema validation accepts only explicitly reviewed official host/path
+boundaries, currently GitHub Copilot documentation below `https://docs.github.com/en/copilot`. It does not fetch or
+infer the authority of a page. Papers, community/social pages, blogs, changelogs, and announcements are not eligible,
+even when a packet asserts `authority: "primary"`. To admit another legitimate documentation surface, first add its
+exact official host and narrow documentation path to the schema allowlist, add accepted and rejected URL-boundary
+fixtures, and obtain normal code review; do not broaden the rule in a publication packet.
+
+Capture the exact public text used during review in an untracked request directory. The snapshot is limited to 80,000
+UTF-8 bytes. Compute the digest over the file's exact bytes without trimming or newline normalization:
+
+```bash
+python -c "import hashlib, pathlib, sys; print(hashlib.sha256(pathlib.Path(sys.argv[1]).read_bytes()).hexdigest())" \
+  .cache/adhoc/<request-id>/official-documentation.txt
+```
+
+Add the source event to `packet.json` with this exact snapshot shape. Replace every placeholder with reviewed values;
+`captured_at` and `reviewed_at` must be UTC timestamps, and review cannot predate capture:
+
+```json
+{
+  "event_id": "docs:vendor-feature",
+  "source_type": "evergreen_documentation",
+  "title": "Official feature documentation",
+  "url": "https://docs.github.com/en/copilot/customizing-copilot",
+  "product": "GitHub Copilot",
+  "topic": "Coding agents",
+  "published_at": "",
+  "fetched_at": "2026-09-23T12:00:00Z",
+  "evidence": "A short exact excerpt used by the story and claim review.",
+  "authority": "primary",
+  "channel": "stable",
+  "metadata": {
+    "evergreen_snapshot": {
+      "captured_at": "2026-09-23T12:00:00Z",
+      "content_sha256": "<64 lowercase hex characters from the exact UTF-8 content>",
+      "content": "<exact captured text, including its original whitespace>",
+      "reviewer": "<nonempty reviewer identity>",
+      "reviewed_at": "2026-09-23T12:30:00Z",
+      "review_note": "The original publication date is unavailable because the official page provides no date."
+    }
+  }
+}
+```
+
+Keep the source's event ID in a story's `event_ids`, its URL in the matching `source_urls`, and at least one exact
+source-review claim mapped to its short `evidence` excerpt. Run `pipeline.adhoc brief` before generation; its approved
+source list must display `Evergreen documentation; original publication date unavailable; snapshot reviewed <date>`.
+Then use the normal transcript review and `pipeline.adhoc prepare` flow. The manifest includes the exact snapshot. The
+review UI's listening approval binds the full manifest hash; `prepare` compares the complete reviewed source events on
+resume, and finalization rejects a mismatched existing candidate. The `pipeline.adhoc publish` command and the internal
+`daily.resume_reviewed_release` recovery function do not independently load a local `listening-approval.json` before
+creating a first candidate, so do not describe those paths as listening-approval verification. Changing captured text,
+its digest, or review provenance requires a new reviewed bundle and renewed review; do not edit a prepared bundle.
+
+The following checks are offline and do not publish, upload, dispatch, or contact a source:
+
+```bash
+python -m pytest -q tests/test_adhoc.py tests/test_reviewed_audio.py
+python -m pipeline.publish_check
+python -m pipeline.drift_check
+python -m compileall -q pipeline tests
+```
+
 Use the same Notebook browser technique, selecting English Deep Dive / Longer. Actual duration is not guaranteed.
 Preserve the original download, record any native Save handoff, transcribe locally, and review the spoken claims.
 An unavailable browser/transcriber or unresolved claim blocks the request. At most one deliberate regeneration

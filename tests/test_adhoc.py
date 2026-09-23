@@ -1,5 +1,6 @@
 """Network-free request, recency, long-form, and mixed-feed contracts."""
 
+from copy import deepcopy
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 import hashlib
@@ -11,12 +12,13 @@ from unittest.mock import Mock
 import pytest
 
 from pipeline import daily
-from pipeline.adhoc import authorize, write_brief
+from pipeline.adhoc import authorize, prepare, write_brief
 from pipeline.audio import AudioValidationError, analyze_audio, narration_duration_bounds
 from pipeline.audio_quality import repetition_findings, validate_quality_report
 from pipeline.disclosure import AI_NARRATION_DISCLOSURE
 from pipeline.podcast_request import PodcastRequest, record_status, request_from_issue, save_request
-from pipeline.schema import EpisodeManifest, SchemaError, SourceEvent
+from pipeline.rank import score_event, select_editorial_events, select_events
+from pipeline.schema import EpisodeManifest, SchemaError, SourceEvent, source_display_label
 from tests.test_reviewed_audio import corrected_draft, draft, TIMESTAMP, CLAIM
 
 
@@ -52,6 +54,62 @@ def long_draft(*, ready=False, **changes):
             "integrated_lufs": -16, "true_peak_dbtp": -1.1, "audio_sha256": "a" * 64,
         }
     return item
+
+
+EVERGREEN_CLAIM = "Repository instructions customize agent behavior."
+EVERGREEN_CONTENT = EVERGREEN_CLAIM + "\nCopilot agents can use repository instructions in a repository.\n"
+
+
+def evergreen_event(**changes):
+    values = {
+        "event_id": "docs:copilot-customization",
+        "source_type": "evergreen_documentation",
+        "title": "Customize Copilot agents",
+        "url": "https://docs.github.com/en/copilot/customizing-copilot",
+        "product": "GitHub Copilot",
+        "topic": "Coding agents",
+        "published_at": "",
+        "fetched_at": TIMESTAMP,
+        "evidence": EVERGREEN_CLAIM,
+        "authority": "primary",
+        "metadata": {"evergreen_snapshot": {
+            "captured_at": "2026-09-17T18:00:00Z",
+            "content_sha256": hashlib.sha256(EVERGREEN_CONTENT.encode("utf-8")).hexdigest(),
+            "content": EVERGREEN_CONTENT,
+            "reviewer": "assistant",
+            "reviewed_at": "2026-09-17T19:00:00Z",
+            "review_note": (
+                "The official documentation provides no original publication date; the original publication date "
+                "is unavailable in the page or its public metadata."
+            ),
+        }},
+    }
+    values.update(changes)
+    return values
+
+
+def long_draft_with_evergreen(*, ready=False):
+    data = long_draft(ready=ready)
+    event = evergreen_event()
+    data["source_events"].append(event)
+    data["stories"][0]["event_ids"].append(event["event_id"])
+    data["stories"][0]["source_urls"].append(event["url"])
+    data["narration"] += " " + EVERGREEN_CLAIM
+    data["generation"]["transcript"]["sha256"] = hashlib.sha256(data["narration"].encode()).hexdigest()
+    data["generation"]["review"]["claims"].append({
+        "text": EVERGREEN_CLAIM, "event_id": event["event_id"], "quote": EVERGREEN_CLAIM,
+    })
+    return data
+
+
+def replace_evergreen_url(data, url):
+    event = data["source_events"][1]
+    old_url = event["url"]
+    event["url"] = url
+    data["stories"][0]["source_urls"] = [
+        url if value == old_url else value for value in data["stories"][0]["source_urls"]
+    ]
+    return data
 
 
 def long_narration(word_count):
@@ -126,6 +184,222 @@ def test_recency_rejects_future_unknown_and_secondary():
     event = replace(event, published_at=TIMESTAMP, authority="secondary")
     with pytest.raises(ValueError):
         req.validate_sources([event])
+
+
+def test_reviewed_evergreen_documentation_is_ad_hoc_supporting_evidence(tmp_path):
+    from pipeline.render import render_manifest_readme
+
+    data = long_draft_with_evergreen()
+    manifest = EpisodeManifest.from_dict(data)
+    assert manifest.source_events[1].published_at == ""
+    assert EpisodeManifest.from_dict(manifest.to_dict()).to_dict() == manifest.to_dict()
+    label = "Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-17"
+    assert label in render_manifest_readme(manifest)
+
+    req = request(provider="edge")
+    packet = {key: data[key] for key in ("source_events", "source_health", "stories", "show_notes")}
+    brief = write_brief(req, packet, tmp_path)
+    assert label in brief.read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("url", [
+    "https://arxiv.org/abs/1706.03762",
+    "https://www.reddit.com/r/LocalLLaMA/comments/example/community_study/",
+    "https://github.blog/changelog/2024-10-29-github-copilot-in-vscode/",
+    "https://docs.github.com/en/actions",
+    "https://docs.github.com.evil.example/en/copilot/customizing-copilot",
+    "https://docs.github.com/en/copilot/../actions",
+    "https://docs.github.com/en/copilot/../../articles",
+    "https://docs.github.com/en/copilot/%2e%2e/actions",
+    "https://docs.github.com/en/copilot/%252e%252e/actions",
+    "https://docs.github.com/en/copilot/.%2E/actions",
+    "https://docs.github.com/en/copilot/%2f..%2factions",
+    "https://docs.github.com/en/copilot/%5c..%5cactions",
+    "https://docs.github.com/en/copilot\\..\\actions",
+    "https://docs.github.com/en/copilot//actions",
+    "https://docs.github.com/en/copilot//",
+    "https://docs.github.com/en/copilot/\tactions",
+])
+def test_non_documentation_urls_cannot_be_relabelled_evergreen_in_manifest(url):
+    with pytest.raises(SchemaError, match="approved official documentation path"):
+        EpisodeManifest.from_dict(replace_evergreen_url(long_draft_with_evergreen(), url))
+
+
+@pytest.mark.parametrize("url", [
+    "https://docs.github.com/en/copilot",
+    "https://docs.github.com/en/copilot/",
+    "https://docs.github.com/en/copilot/customizing-copilot",
+])
+def test_canonical_evergreen_documentation_paths_preserve_source_identity(url):
+    manifest = EpisodeManifest.from_dict(replace_evergreen_url(long_draft_with_evergreen(), url))
+    assert manifest.source_events[1].url == url
+    assert manifest.to_dict()["source_events"][1]["url"] == url
+
+
+def test_evergreen_path_policy_preserves_normal_fragment_encoding():
+    url = "https://docs.github.com/en/copilot/customizing-copilot#customize%20copilot"
+    event = SourceEvent.from_dict(evergreen_event(url=url))
+    assert event.url == url
+    assert event.to_dict()["url"] == url
+
+
+@pytest.mark.parametrize("url,accepted", [
+    ("https://docs.github.com/en/copilot/customizing-copilot", True),
+    ("https://docs.github.com/en/copilot/../actions", False),
+    ("https://docs.github.com/en/copilot/%2e%2e/actions", False),
+    ("https://docs.github.com/en/copilot/%2f..%2factions", False),
+    ("https://docs.github.com/en/copilot\\..\\actions", False),
+    ("https://arxiv.org/abs/1706.03762", False),
+    ("https://www.reddit.com/r/LocalLLaMA/comments/example/community_study/", False),
+    ("https://github.blog/changelog/2024-10-29-github-copilot-in-vscode/", False),
+])
+def test_prepare_enforces_evergreen_documentation_url_policy(url, accepted, tmp_path, monkeypatch):
+    data = replace_evergreen_url(long_draft_with_evergreen(), url)
+    req = request()
+    request_path = save_request(req, tmp_path)
+    packet = tmp_path / "packet.json"
+    packet.write_text(json.dumps({key: data[key] for key in (
+        "source_events", "source_health", "stories", "show_notes",
+    )}), encoding="utf-8")
+    transcript = tmp_path / "transcript.txt"
+    transcript.write_text(data["narration"], encoding="utf-8")
+    review = tmp_path / "review.json"
+    review.write_text(json.dumps({key: data["generation"][key] for key in (
+        "transcript", "review", "voice",
+    )}), encoding="utf-8")
+    audio = tmp_path / "original.wav"
+    audio.write_bytes(b"synthetic reviewed audio")
+    importer = Mock(return_value={"episode_id": req.episode_id})
+    monkeypatch.setattr("pipeline.reviewed_audio.prepare_reviewed_audio", importer)
+    if accepted:
+        result = prepare(request_path, packet, transcript, review, audio, tmp_path / "prepared")
+        assert result["episode_id"] == req.episode_id
+        importer.assert_called_once()
+    else:
+        with pytest.raises(SchemaError, match="approved official documentation path"):
+            prepare(request_path, packet, transcript, review, audio, tmp_path / "prepared")
+        importer.assert_not_called()
+
+
+def test_subscriber_descriptions_label_evergreen_sources_with_and_without_catalog(tmp_path):
+    from pipeline.podcast import load_episodes, write_feed
+    from pipeline.podcast_metadata import manifest_presentation
+
+    data = long_draft_with_evergreen()
+    data["show_notes"] += "\nSources: " + data["source_events"][1]["url"]
+    manifest = EpisodeManifest.from_dict(data)
+    label = source_display_label(manifest.source_events[1])
+    before = manifest.to_dict()
+    assert label in manifest_presentation(manifest, metadata_path=None)["description"]
+    catalog = tmp_path / "metadata.json"
+    catalog.write_text(json.dumps({"schema_version": 1, "episodes": {manifest.episode_id: {
+        "title": "Reviewed evergreen presentation",
+        "summary": "Reviewed subscriber summary.",
+        "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/" + "a" * 40 + "/podcast.xml",
+    }}}), encoding="utf-8")
+    presentation = manifest_presentation(manifest, metadata_path=catalog)
+    assert label in presentation["description"]
+    feed = tmp_path / "podcast.xml"
+    write_feed([{
+        "guid": manifest.episode_id,
+        "title": presentation["title"],
+        "pub_date": manifest.published_at,
+        "mp3_url": manifest.audio["url"],
+        "file_size_bytes": 12000,
+        "duration_secs": 1200,
+        "description": presentation["description"],
+    }], str(feed))
+    assert label in load_episodes(str(feed))[0]["description"]
+    assert manifest.to_dict() == before
+
+
+def test_evergreen_documentation_does_not_satisfy_dated_primary_minimum():
+    event = SourceEvent.from_dict(evergreen_event())
+    with pytest.raises(ValueError, match="insufficient dated primary evidence"):
+        request().validate_sources([event])
+
+
+def test_evergreen_documentation_is_excluded_from_daily_selection():
+    event = SourceEvent.from_dict(evergreen_event())
+    with pytest.raises(ValueError, match="not eligible for daily news scoring"):
+        score_event(event)
+    selected, notes = select_events([event], minimum_score=0)
+    assert selected == [] and "ad-hoc supporting evidence only" in notes[0]
+    selected, notes = select_editorial_events(
+        [event], now=datetime.fromisoformat(TIMESTAMP.replace("Z", "+00:00")),
+    )
+    assert selected == [] and "ad-hoc supporting evidence only" in notes[0]
+
+
+def test_evergreen_documentation_is_rejected_from_daily_manifest():
+    data = draft()
+    data["source_events"][0] = evergreen_event()
+    data["stories"][0]["event_ids"] = [data["source_events"][0]["event_id"]]
+    data["stories"][0]["source_urls"] = [data["source_events"][0]["url"]]
+    with pytest.raises(SchemaError, match="ad-hoc requests only"):
+        EpisodeManifest.from_dict(data)
+
+
+@pytest.mark.parametrize("field,value,match", [
+    ("captured_at", "2026-09-17T18:00:00-04:00", "UTC timestamp"),
+    ("reviewed_at", "2026-09-17T17:00:00Z", "cannot predate"),
+    ("reviewer", "", "must not be empty"),
+    ("content_sha256", "A" * 64, "lowercase SHA-256"),
+    ("review_note", "Reviewed official docs.", "original publication date"),
+])
+def test_evergreen_snapshot_rejects_malformed_review_provenance(field, value, match):
+    event = evergreen_event()
+    event["metadata"]["evergreen_snapshot"][field] = value
+    with pytest.raises(SchemaError, match=match):
+        SourceEvent.from_dict(event)
+
+
+def test_evergreen_snapshot_rejects_missing_and_tampered_content():
+    missing = evergreen_event()
+    missing["metadata"] = {}
+    with pytest.raises(SchemaError, match="evergreen_snapshot"):
+        SourceEvent.from_dict(missing)
+    tampered = evergreen_event()
+    tampered["metadata"]["evergreen_snapshot"]["content"] += "Tampered"
+    with pytest.raises(SchemaError, match="exact UTF-8 content"):
+        SourceEvent.from_dict(tampered)
+    unbound = evergreen_event(evidence="A claim absent from the captured document.")
+    with pytest.raises(SchemaError, match="exact excerpt"):
+        SourceEvent.from_dict(unbound)
+    dishonest = evergreen_event(published_at=TIMESTAMP)
+    with pytest.raises(SchemaError, match="must be empty"):
+        SourceEvent.from_dict(dishonest)
+
+    missing_review = evergreen_event()
+    del missing_review["metadata"]["evergreen_snapshot"]["reviewed_at"]
+    with pytest.raises(SchemaError, match="evergreen_snapshot"):
+        SourceEvent.from_dict(missing_review)
+
+    oversized = evergreen_event()
+    oversized_content = "x" * 80001
+    oversized["metadata"]["evergreen_snapshot"]["content"] = oversized_content
+    oversized["metadata"]["evergreen_snapshot"]["content_sha256"] = hashlib.sha256(
+        oversized_content.encode("utf-8"),
+    ).hexdigest()
+    with pytest.raises(SchemaError, match="80000 UTF-8 bytes"):
+        SourceEvent.from_dict(oversized)
+
+
+def test_evergreen_snapshot_is_bound_to_manifest_bytes_and_replay_validation():
+    original = EpisodeManifest.from_dict(long_draft_with_evergreen()).to_dict()
+    original_bytes = json.dumps(original, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    changed = deepcopy(original)
+    snapshot = changed["source_events"][1]["metadata"]["evergreen_snapshot"]
+    snapshot["content"] += "Reviewed addition."
+    snapshot["content_sha256"] = hashlib.sha256(snapshot["content"].encode("utf-8")).hexdigest()
+    replay = EpisodeManifest.from_dict(changed).to_dict()
+    replay_bytes = json.dumps(replay, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    assert hashlib.sha256(original_bytes).hexdigest() != hashlib.sha256(replay_bytes).hexdigest()
+
+    tampered = deepcopy(original)
+    tampered["source_events"][1]["metadata"]["evergreen_snapshot"]["content"] += "tamper"
+    with pytest.raises(SchemaError, match="exact UTF-8 content"):
+        EpisodeManifest.from_dict(tampered)
 
 
 def test_long_form_does_not_change_old_serialization():

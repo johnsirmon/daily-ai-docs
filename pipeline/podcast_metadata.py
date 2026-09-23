@@ -15,7 +15,7 @@ from .podcast import (
     set_show_presentation, validate_episode_image_url,
 )
 from .publish import validate_feed_file, validate_local_episode_artwork
-from .schema import EpisodeManifest, Story
+from .schema import EpisodeManifest, Story, source_display_label
 from .sources.text import bounded_text, clean_source_text
 
 TITLE_LIMIT = 90
@@ -38,14 +38,27 @@ def _change(story: Story) -> str:
     return text.lstrip("- ").strip()
 
 
+def listener_show_notes(manifest: EpisodeManifest) -> str:
+    """Derive subscriber labels for exceptional evidence without mutating the manifest."""
+    labels = [
+        f"{event.url} — {label}"
+        for event in manifest.source_events
+        if (label := source_display_label(event))
+    ]
+    if not labels:
+        return manifest.show_notes
+    return manifest.show_notes + "\n\nEvergreen source labels:\n" + "\n".join(labels)
+
+
 def _manifest_copy(manifest: EpisodeManifest) -> dict[str, str]:
     """Use extractive previews; all qualifications remain in the complete notes."""
     manifest.validate(require_audio=False)
     disclosure = episode_metadata_disclosure(manifest.schema_version)
+    notes = listener_show_notes(manifest)
     if not manifest.stories:
         return {
             "title": "No actionable updates in this brief",
-            "description": "\n\n".join(part for part in (disclosure, manifest.show_notes) if part),
+            "description": "\n\n".join(part for part in (disclosure, notes) if part),
         }
     lead = manifest.stories[0]
     headline = lead.headline
@@ -77,7 +90,7 @@ def _manifest_copy(manifest: EpisodeManifest) -> dict[str, str]:
         3: "Notebook edition. Reviewed AI-generated conversation.",
         4: "Special episode. Reviewed long-form audio.",
     }.get(manifest.schema_version, "")
-    parts = [summary, disclosure, edition, manifest.show_notes]
+    parts = [summary, disclosure, edition, notes]
     return {"title": title, "description": "\n\n".join(part for part in parts if part)}
 
 
@@ -90,7 +103,7 @@ def manifest_presentation(
         entry = load_catalog(metadata_path).get(manifest.episode_id, {})
         if "title" in entry:
             presentation = {
-                "title": entry["title"], "description": entry["summary"] + "\n\n" + manifest.show_notes,
+                "title": entry["title"], "description": entry["summary"] + "\n\n" + listener_show_notes(manifest),
             }
         if "image_url" in entry:
             presentation["image_url"] = entry["image_url"]
@@ -175,7 +188,7 @@ def refresh_catalog(
         if artwork_only or set(entry) == {"image_url"}:
             presentation = None
         elif "title" in entry:
-            notes = manifest.show_notes if manifest else "Original publication: " + entry["evidence_url"]
+            notes = listener_show_notes(manifest) if manifest else "Original publication: " + entry["evidence_url"]
             presentation = {"title": entry["title"], "description": entry["summary"] + "\n\n" + notes}
         elif manifest is not None:
             presentation = manifest_presentation(manifest, metadata_path=None)

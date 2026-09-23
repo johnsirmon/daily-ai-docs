@@ -141,6 +141,8 @@ def assess_utility(event: SourceEvent) -> Dict[str, float]:
 def score_event(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Dict[str, float]:
     """Return transparent scores; metadata cannot rescue unsupported utility."""
     event.validate()
+    if event.source_type == "evergreen_documentation":
+        raise ValueError("evergreen documentation is not eligible for daily news scoring")
     seen = set(seen_event_ids)
     utility = assess_utility(event)
     # Score relative to the recorded fetch time so replaying a manifest is deterministic.
@@ -237,6 +239,9 @@ def select_events(
     ranked = []
     noise_notes: List[str] = []
     for event in dedupe_events(events):
+        if event.source_type == "evergreen_documentation":
+            noise_notes.append(f"Excluded {event.product}: evergreen documentation is ad-hoc supporting evidence only.")
+            continue
         scores = score_event(event, seen)
         if event.event_id in seen:
             continue
@@ -417,6 +422,9 @@ def select_editorial_events(
     def prior_digest(row: dict) -> str:
         return row.get("evidence_sha256") or hashlib.sha256(row["normalized_evidence"].encode("utf-8")).hexdigest()
     for event in dedupe_events(events):
+        if event.source_type == "evergreen_documentation":
+            reasons.append(f"Excluded {event.product}: evergreen documentation is ad-hoc supporting evidence only.")
+            continue
         normalized = " ".join(event.evidence.casefold().split())
         evidence_digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
         previous = [
