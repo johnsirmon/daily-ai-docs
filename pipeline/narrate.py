@@ -64,6 +64,12 @@ def _normalise_sentence(s: str) -> str:
     return s
 
 
+def _spoken_story_text(text: str) -> str:
+    """Remove written excerpt notation before normalising spoken story prose."""
+    text = re.sub(r"\s*…\s*\[Excerpt; see source for full details\.\]\s*$", "", text)
+    return _normalise_sentence(text)
+
+
 def _strip_markdown(text: str) -> str:
     """Remove markdown syntax that would sound bad when spoken aloud."""
     # Remove HTML comments
@@ -366,7 +372,7 @@ def manifest_to_narration(manifest) -> str:
     manifest.validate(require_audio=False)
     if manifest.schema_version in {3, 4}:
         return manifest.narration
-    if manifest.generation.get("narration_style") in {"explanatory-v1", "explanatory-v2"} and manifest.stories:
+    if manifest.generation.get("narration_style") in {"explanatory-v1", "explanatory-v2", "explanatory-v3"} and manifest.stories:
         return _explanatory_narration(manifest)
     date_text = manifest.published_at[:10]
     failed_sources = [
@@ -434,7 +440,8 @@ def manifest_to_narration(manifest) -> str:
 def _explanatory_narration(manifest) -> str:
     """Render new deterministic editions without rewriting historical scripts."""
     events = {event.event_id: event for event in manifest.source_events}
-    prospective = manifest.generation.get("narration_style") == "explanatory-v2"
+    style = manifest.generation.get("narration_style")
+    prospective = style in {"explanatory-v2", "explanatory-v3"}
     opening = f"This is your Daily AI Developer Brief for {manifest.published_at[:10]}."
     if prospective:
         opening += " " + AI_NARRATION_DISCLOSURE
@@ -446,12 +453,40 @@ def _explanatory_narration(manifest) -> str:
             qualifications.append("This is prerelease information, not a stable release.")
         if any(source.source_type == "youtube_video" for source in sources):
             qualifications.append("This is a learning pick, not verified product-change evidence.")
-        # Use the complete bounded source evidence, not the written excerpt: later
-        # sentences may contain affected versions, conditions, or limitations.
-        evidence = " ".join(" ".join(source.evidence.split()) for source in sources)
-        paragraphs.append(" ".join([
-            _normalise_sentence(story.headline), *qualifications, evidence,
-        ]))
+        if style == "explanatory-v3":
+            # New utility-led stories already retain the relevant source sentences.
+            # Keep release identifiers in notes unless those sentences need them for
+            # compatibility or risk; never read an entire release body as narration.
+            observer_sources = [
+                source for source in sources if source.metadata.get("observer_finding")
+            ]
+            if observer_sources:
+                # Observer excerpts are independently checked against fetched source
+                # bytes. Speak those exact bounded claims plus the review caveat so
+                # applicability, exceptions, and conflicting dates are not lost.
+                caveats = list(dict.fromkeys(
+                    str(source.metadata["observer_finding"].get("caveats", "")).strip()
+                    for source in observer_sources
+                    if str(source.metadata["observer_finding"].get("caveats", "")).strip()
+                ))
+                paragraphs.append(" ".join([
+                    *qualifications,
+                    _spoken_story_text(story.what_changed),
+                    *(_normalise_sentence(f"Evidence-review caveat: {caveat}") for caveat in caveats),
+                ]))
+            else:
+                paragraphs.append(" ".join([
+                    *qualifications,
+                    _spoken_story_text(story.why_it_matters),
+                    _normalise_sentence(story.rationale),
+                ]))
+        else:
+            # Preserve the established v1/v2 renderer for accepted manifests and
+            # immutable recovery; only new preparations receive explanatory-v3.
+            evidence = " ".join(" ".join(source.evidence.split()) for source in sources)
+            paragraphs.append(" ".join([
+                _normalise_sentence(story.headline), *qualifications, evidence,
+            ]))
     failed_primary, failed_supplementary = failed_source_health(manifest.source_health)
     if failed_primary:
         paragraphs.append(

@@ -27,6 +27,7 @@ from .schema import EpisodeManifest, SourceEvent
 from .sources import (
     collect_github_releases,
     collect_official_feeds,
+    collect_observer_packet,
     collect_research_papers,
     collect_youtube_digest,
 )
@@ -159,7 +160,7 @@ def _dry_events(now: datetime) -> tuple[List[SourceEvent], Dict[str, str]]:
         topic="AI coding agents",
         published_at=stamp,
         fetched_at=stamp,
-        evidence="A deterministic source-backed fixture demonstrates the daily pipeline without network access.",
+        evidence="A deterministic fixture adds a permission check before tool execution without network access.",
         metadata={"priority": 20, "version": "dry-run-1"},
     ).validate()
     return [event], {"dry-run": "ok:1"}
@@ -190,11 +191,17 @@ def collect_events(
     )
     youtube_events, youtube_health = collect_youtube_digest(source_config.get("youtube", {}), now=now)
     paper_events, paper_health = ([], {})
+    observer_events, observer_health = ([], {})
     if editorial_enabled(config):
         paper_events, paper_health = collect_research_papers(
             source_config.get("papers", {}), now=now, covered_paper_ids=covered_paper_ids,
         )
-    health = {**github_health, **feed_health, **youtube_health, **paper_health}
+        observer_events, observer_health = collect_observer_packet(daily.get("observer"), now=now)
+    else:
+        observer_events, observer_health = collect_observer_packet(daily.get("observer"), now=now)
+        if observer_health:
+            raise ValueError("Observer ingestion requires grounded editorial mode")
+    health = {**github_health, **feed_health, **youtube_health, **paper_health, **observer_health}
     if not health:
         raise RuntimeError("no daily sources are configured")
     source_health = primary_source_health(health)
@@ -208,7 +215,7 @@ def collect_events(
         raise RuntimeError(
             f"source health {healthy}/{len(source_health)} is below the required {minimum_ratio:.0%}"
         )
-    return github_events + feed_events + youtube_events + paper_events, health
+    return github_events + feed_events + youtube_events + paper_events + observer_events, health
 
 
 def _show_notes(stories, noise_notes: Iterable[str], source_health: Dict[str, str]) -> str:
@@ -224,12 +231,12 @@ def _show_notes(stories, noise_notes: Iterable[str], source_health: Dict[str, st
                 "Primary sources were healthy and no update cleared the actionability threshold today. "
                 "Unavailable supplementary sources: " + ", ".join(failed_supplementary)
             )
-        return "Tracked sources were healthy, but no update cleared the actionability threshold today."
+        return "Tracked sources were healthy, but no item established enough developer utility for an episode."
     sections = []
     for story in stories:
         section = (
-            f"{story.headline}\nWhat changed: {story.what_changed}\n"
-            f"Why it matters: {story.why_it_matters}\n"
+            f"{story.headline}\nWhat to know: {story.what_changed}\n"
+            f"What changes for developers: {story.why_it_matters}\n"
             f"Recommendation: {story.action.upper()} — {story.rationale}\n"
             + "Sources: " + ", ".join(story.source_urls)
         )
@@ -339,7 +346,7 @@ def _prepare(
             events, state.get("seen_event_ids", []), covered_paper_ids=paper_ids,
             published_events=published_events,
             max_products=int(editorial.get("max_products", 3)),
-            max_events_per_product=int(editorial.get("max_events_per_product", 2)),
+            max_events_per_product=int(editorial.get("max_events_per_product", 1)),
             max_research=int(editorial.get("max_research", 1)), now=now,
         )
         if not selected:
@@ -371,6 +378,11 @@ def _prepare(
                 minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes,
             )
         deterministic = [event_to_story(event, state.get("seen_event_ids", [])) for event in selected]
+    observer_notes = list(dict.fromkeys(
+        note for event in events for note in event.metadata.get("observer_noise_notes", [])
+        if isinstance(note, str)
+    ))
+    noise_notes = list(dict.fromkeys([*noise_notes, *observer_notes]))
     if dry_run:
         stories, generation = deterministic, {"provider": "deterministic", "calls": 0, "dry_run": True}
     elif not use_editorial:
@@ -378,7 +390,7 @@ def _prepare(
     if use_editorial:
         generation = {**generation, "production_disclosure": AI_NARRATION_DISCLOSURE}
     else:
-        generation = {**generation, "narration_style": "explanatory-v2"}
+        generation = {**generation, "narration_style": "explanatory-v3"}
     identity_material = "\n".join(event.event_id for event in selected) or "quiet"
     if use_editorial:
         identity_material = "editorial-v2\n" + identity_material
@@ -423,7 +435,9 @@ def _prepare(
     edition = manifest.generation["edition"]
     minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
     maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
-    if not dry_run and manifest.generation.get("narration_style") in {"explanatory-v1", "explanatory-v2"}:
+    if not dry_run and manifest.generation.get("narration_style") in {
+        "explanatory-v1", "explanatory-v2", "explanatory-v3",
+    }:
         plausible_minimum, plausible_maximum = narration_duration_bounds(len(manifest.narration.split()))
         if plausible_maximum < minimum_duration:
             return _skip(

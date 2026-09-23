@@ -13,17 +13,22 @@ settings:
 # Community popularity is discovery-only; spoken claims require these primary sources.
 daily:
   lookback_hours: 36
-  max_stories: 7
-  # Keep one product from consuming the whole deterministic brief.
-  max_stories_per_product: 2
+  max_stories: 3
+  # One useful story per canonical product; thin days are allowed to skip.
+  max_stories_per_product: 1
   max_youtube_stories: 1
   minimum_score: 75
   minimum_source_health: 0.6
+  observer:
+    # Offline reviewed packet ingestion only; no workstation path is enabled in production.
+    mode: off
+    packet_path: null
+    allowed_hosts: []
   editorial:
     # Enable only after configuring and verifying a free-tier GEMINI_API_KEY.
     enabled: false
     max_products: 3
-    max_events_per_product: 2
+    max_events_per_product: 1
     max_research: 1
     minimum_words: 600
     maximum_words: 1100

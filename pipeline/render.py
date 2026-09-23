@@ -208,7 +208,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "</p>",
         '<p align="center"><em>Keep up with AI developer technology without being flattened by the update wave.</em></p>',
         "",
-        "A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.",
+        "A source-backed briefing for AI developers: what changes your work, what is worth trying, and what to ignore.",
         "",
         "## Podcast",
         "",
@@ -323,10 +323,10 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
     if not manifest.stories:
         failed = [status for status in manifest.source_health.values() if not status.startswith("ok:")]
         quiet_message = (
-            "No tracked update cleared the actionability threshold today. Coverage was incomplete; "
+            "No item established enough developer utility for an episode today. Coverage was incomplete; "
             "review the source-health details below."
             if failed
-            else "No tracked update cleared the actionability threshold today. "
+            else "No item established a specific action, decision, risk, or reusable lesson today. "
                  "This is a healthy quiet day, not a source outage."
         )
         lines += [
@@ -337,9 +337,9 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         lines += [
             f"### {story.headline}",
             "",
-            f"**What changed:** {story.what_changed}",
+            f"**What to know:** {story.what_changed}",
             "",
-            f"**Why it matters:** {story.why_it_matters}",
+            f"**What changes for developers:** {story.why_it_matters}",
             "",
             f"**Recommendation:** {story.action.upper()} — {story.rationale}",
             "",
@@ -378,7 +378,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             "",
         ] if manifest.schema_version in {3, 4} and "editing" in manifest.generation else []),
         "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
-        "- Up to seven actionable stories, capped per product for variety; thin-news runs skip publication.",
+        "- One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.",
         "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.",
         "- Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.",
         "- Product-change claims require public primary evidence.",

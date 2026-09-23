@@ -37,6 +37,11 @@ _SPOKEN_DEBRIS = re.compile(
     r"ignore (?:all |the |previous |prior )*instructions|system prompt",
     re.IGNORECASE | re.MULTILINE,
 )
+_GENERIC_UTILITY = re.compile(
+    r"^(?:this is relevant to developers tracking\b.*|read the (?:primary source|release notes?)[.!]?|"
+    r"assess applicability[.!]?|a new version was released[.!]?)$",
+    re.IGNORECASE,
+)
 _QUANTITIES = re.compile(
     r"\d+(?:[.,]\d+)*(?:\s*(?:%|percent|million|billion|trillion))?|"
     r"\b(?:zero|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
@@ -72,6 +77,14 @@ def validate_spoken_text(value: Any, name: str, *, limit: int = 12000) -> str:
     text = _text(value, name, limit=limit)
     if _SPOKEN_DEBRIS.search(text):
         raise SchemaError(f"{name} contains URLs, markup, instructions, or editorial boilerplate")
+    return text
+
+
+def validate_specific_utility(value: Any, name: str) -> str:
+    """Reject explanations that name a topic but establish no consequence."""
+    text = validate_spoken_text(value, name, limit=1600)
+    if _GENERIC_UTILITY.fullmatch(" ".join(text.split())):
+        raise SchemaError(f"{name} must state a specific developer consequence or decision")
     return text
 
 
@@ -147,7 +160,7 @@ class SourceEvent:
         _text(self.topic, "topic", limit=100)
         _timestamp(self.published_at, "published_at")
         _timestamp(self.fetched_at, "fetched_at")
-        _text(self.evidence, "evidence", limit=4000)
+        _text(self.evidence, "evidence", limit=8192)
         if self.authority not in {"primary", "secondary"}:
             raise SchemaError("authority must be primary or secondary")
         if self.channel not in {"stable", "prerelease", "announcement", "security"}:

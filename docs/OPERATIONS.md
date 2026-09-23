@@ -682,6 +682,17 @@ pass, `python -m pipeline.daily confirm` marks the manifest published, advances 
 ## Source and ranking policy
 
 - Add primary release repositories and official feeds under `daily.sources` in `topics/topics.yaml`.
+- Daily selection publishes one to three useful stories, at most one per canonical product and at most one reviewed
+  research item. Fresh tags, popularity, and product priority cannot rescue an item that does not establish a concrete
+  developer task, decision, risk, or reusable lesson. Versions remain in written notes unless a security or
+  compatibility boundary needs them spoken. Thin evidence skips without padding; grounded episodes retain the existing
+  300–480-second contract.
+- `daily.observer` is an offline, opt-in input to grounded editorial mode. It has exact keys `mode`, `packet_path`, and
+  `allowed_hosts`; defaults are `off`, `null`, and an empty list. `required` fails closed on missing, stale, malformed,
+  degraded, error, or authentication-failed coverage. `optional` may retain individually validated findings while
+  exposing degraded coverage. The importer re-fetches each allowlisted public HTTPS source, checks DNS and redirects,
+  hashes exact response bytes, and treats packet prose as untrusted evidence for the existing independent drafting and
+  verification path. It does not add credentials, discovery, transfer, schedules, or a second publisher.
 - Source responses marked private and draft releases are rejected.
 - Source errors are recorded separately from healthy no-news results.
 - Event IDs are derived from canonical URLs; accepted IDs are retained in `data/state.json` to prevent replay.
