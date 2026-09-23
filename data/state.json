@@ -73,10 +73,13 @@
     "community:jev-mcp",
     "community:jev-scout-study",
     "typesafe:privacy",
-    "typesafe:legal"
+    "typesafe:legal",
+    "github-copilot-app-otel-2026-09-22",
+    "github-ssh-crypto-transition-2026-09-22",
+    "codeql-all-platform-bundle-deprecation-2026-09-22"
   ],
-  "last_publication": "2026-09-23T16:34:29.777523+00:00",
-  "last_episode_id": "adhoc-2026-09-23-a1ecc4a4c7e54053aca8f328",
+  "last_publication": "2026-09-23T15:24:10Z",
+  "last_episode_id": "daily-2026-09-23-gate-a-f518254",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 125270,
@@ -95,6 +98,6 @@
       "fetched_at": "2026-09-22T14:58:41.936376Z"
     }
   },
-  "last_daily_episode_id": "daily-2026-09-21-6d54e8e9",
-  "last_daily_publication": "2026-09-22T14:58:41.936376Z"
+  "last_daily_episode_id": "daily-2026-09-23-gate-a-f518254",
+  "last_daily_publication": "2026-09-23T15:24:10Z"
 }

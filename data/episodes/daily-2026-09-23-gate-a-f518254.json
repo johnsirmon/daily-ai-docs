@@ -2,7 +2,7 @@
   "schema_version": 3,
   "episode_id": "daily-2026-09-23-gate-a-f518254",
   "published_at": "2026-09-23T15:24:10Z",
-  "status": "candidate",
+  "status": "published",
   "source_health": {
     "observer": "degraded:3 source-verified findings; Exa 401; broader coverage incomplete"
   },

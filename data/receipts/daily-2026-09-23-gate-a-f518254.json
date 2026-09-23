@@ -1,0 +1,16 @@
+{
+  "episode_id": "daily-2026-09-23-gate-a-f518254",
+  "confirmed_at": "2026-09-23T18:07:23.790063Z",
+  "feed": {
+    "status": "ok",
+    "latest_guid": "daily-2026-09-23-gate-a-f518254",
+    "episode_count": 47,
+    "age_hours": 2.72,
+    "cache_control": "max-age=600",
+    "audio_verified": true,
+    "candidate_verified": true,
+    "sha256_verified": true,
+    "artwork": "3000x3000 RGB"
+  },
+  "audio_sha256": "9b66721d363721a1aef0c0154c6c05117d1ba1db42a27132185e43c88f196a7b"
+}
