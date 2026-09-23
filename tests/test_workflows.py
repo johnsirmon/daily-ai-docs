@@ -1,5 +1,6 @@
 """Static workflow contracts. Never dispatch or execute publishing shell steps."""
 import ast
+import re
 import shlex
 import shutil
 import subprocess
@@ -10,6 +11,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github/workflows"
+FULL_ACTION_SHA = re.compile(r"^[0-9a-f]{40}$")
 
 
 def workflow(name):
@@ -19,6 +21,35 @@ def workflow(name):
 
 def steps(name):
     return [step for job in workflow(name)["jobs"].values() for step in job.get("steps", [])]
+
+
+def action_name(reference):
+    return reference.partition("@")[0]
+
+
+def third_party_action_is_pinned(reference):
+    if reference.startswith("./"):
+        return True
+    _, separator, revision = reference.rpartition("@")
+    return bool(separator and FULL_ACTION_SHA.fullmatch(revision))
+
+
+def test_all_third_party_actions_use_full_commit_shas():
+    fixture = yaml.load(
+        "jobs:\n  test:\n    steps:\n      - uses: owner/action@v1\n",
+        Loader=yaml.BaseLoader,
+    )
+    reference = fixture["jobs"]["test"]["steps"][0]["uses"]
+    assert not third_party_action_is_pinned(reference)
+    assert third_party_action_is_pinned("owner/action@0123456789abcdef0123456789abcdef01234567")
+
+    mutable = {
+        f"{path.name}: {step['uses']}"
+        for path in WORKFLOWS.glob("*.yml")
+        for step in steps(path.name)
+        if "uses" in step and not third_party_action_is_pinned(step["uses"])
+    }
+    assert not mutable, "Mutable action references:\n" + "\n".join(sorted(mutable))
 
 
 def test_daily_publisher_has_memorable_actions_name():
@@ -32,7 +63,7 @@ def test_publishers_share_non_cancelling_concurrency(name):
 
 @pytest.mark.parametrize("name", ["pages.yml", "update-radar.yml", "youtube-trends.yml"])
 def test_publishers_always_operate_from_current_main(name):
-    checkout = next(step for step in steps(name) if step.get("uses") == "actions/checkout@v4")
+    checkout = next(step for step in steps(name) if action_name(step.get("uses", "")) == "actions/checkout")
     assert checkout["with"]["ref"] == "main"
 
 
@@ -41,9 +72,9 @@ def test_pages_retains_push_and_manual_recovery():
     assert "workflow_dispatch" in document["on"]
     assert document["on"]["push"]["branches"] == ["main"]
     assert "podcast.xml" in document["on"]["push"]["paths"]
-    assert any(step.get("uses") == "actions/deploy-pages@v4" for step in steps("pages.yml"))
+    assert any(action_name(step.get("uses", "")) == "actions/deploy-pages" for step in steps("pages.yml"))
     # The daily publisher deploys inline: waiting on a separately locked workflow deadlocks.
-    assert any(step.get("uses") == "actions/deploy-pages@v4" for step in steps("update-radar.yml"))
+    assert any(action_name(step.get("uses", "")) == "actions/deploy-pages" for step in steps("update-radar.yml"))
 
 
 @pytest.mark.parametrize("name", ["pages.yml", "update-radar.yml"])
@@ -192,13 +223,15 @@ def test_preview_cannot_publish_and_requires_an_explicit_trigger():
     assert not any(command in commands for command in
                    ("git push", "git commit", "gh release", "pipeline.daily finalize", "pipeline.daily confirm"))
     assert not any("pages" in step.get("uses", "") for step in all_steps)
-    upload = next(step for step in all_steps if step.get("uses") == "actions/upload-artifact@v4")
+    upload = next(step for step in all_steps
+                  if action_name(step.get("uses", "")) == "actions/upload-artifact")
     assert upload["if"] == "always()"
     assert ".cache/publication.json" not in upload["with"]["path"]
 
 
 def test_youtube_diagnostics_are_always_retained_without_transcripts():
-    upload = next(step for step in steps("youtube-trends.yml") if step.get("uses") == "actions/upload-artifact@v4")
+    upload = next(step for step in steps("youtube-trends.yml")
+                  if action_name(step.get("uses", "")) == "actions/upload-artifact")
     assert upload["if"] == "always()"
     assert upload["with"]["path"] == ".cache/youtube-discovery-health.json"
     assert upload["with"]["retention-days"] == "14"
