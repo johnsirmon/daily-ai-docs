@@ -9,7 +9,7 @@ import ipaddress
 import math
 import re
 from typing import Any, Dict, List
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit
 
 from .disclosure import AI_NARRATION_DISCLOSURE
 
@@ -173,7 +173,10 @@ def validate_evergreen_snapshot(event: "SourceEvent") -> None:
     if event.authority != "primary":
         raise SchemaError("evergreen documentation must be public primary documentation")
     validate_editorial_source_url(event.url)
-    parsed = urlparse(event.url)
+    # urlparse() moves a final segment's semicolon parameters out of .path,
+    # which can make an unreviewed resource such as /models;draft appear to be
+    # the reviewed /models page. urlsplit() preserves the request path exactly.
+    parsed = urlsplit(event.url)
     host = (parsed.hostname or "").casefold()
     raw_path = parsed.path
     path = raw_path[:-1] if raw_path.endswith("/") else raw_path
@@ -186,7 +189,7 @@ def validate_evergreen_snapshot(event: "SourceEvent") -> None:
     # rewriting the reviewed source identity.
     path_segments = path.split("/")
     if (re.search(r"[\x00-\x20\x7f]", event.url)
-            or not path.startswith("/") or "%" in path or "\\" in path
+            or not path.startswith("/") or "%" in path or "\\" in path or ";" in path
             or any(segment in {"", ".", ".."} for segment in path_segments[1:])
             or not (path in exact_paths
                     or any(path == prefix or path.startswith(prefix + "/") for prefix in prefixes))):

@@ -264,6 +264,24 @@ def test_evergreen_path_policy_preserves_normal_fragment_encoding():
     assert event.to_dict()["url"] == url
 
 
+@pytest.mark.parametrize("base", EXACT_EVERGREEN_PAGE_URLS)
+@pytest.mark.parametrize("suffix", [";unreviewed", ";%2f..%2fblog", ";", "/;unreviewed"])
+def test_exact_evergreen_pages_reject_semicolon_parameter_paths(base, suffix):
+    with pytest.raises(SchemaError, match="approved official documentation path"):
+        SourceEvent.from_dict(evergreen_event(url=base + suffix))
+
+
+@pytest.mark.parametrize("url", [
+    "https://docs.github.com/en/copilot;unreviewed",
+    "https://docs.github.com/en/copilot/customizing-copilot;unreviewed",
+    "https://docs.github.com/en/copilot/customizing-copilot/;unreviewed",
+    "https://docs.github.com/en/copilot/customizing-copilot;%2f..%2factions",
+])
+def test_github_evergreen_prefix_rejects_semicolon_parameter_siblings(url):
+    with pytest.raises(SchemaError, match="approved official documentation path"):
+        SourceEvent.from_dict(evergreen_event(url=url))
+
+
 @pytest.mark.parametrize("url", [
     "https://docs.typesafe.ai.evil.example/models",
     "https://code.visualstudio.com.evil.example/docs/agent-customization/language-models",
