@@ -1,5 +1,264 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</description><itunes:summary>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</itunes:summary><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg" /><image><url>https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg</url><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link></image><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>Hermes Agent: Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch...</title><description>Hermes Agent v2026.9.21: Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments)...
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</description><itunes:summary>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</itunes:summary><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg" /><image><url>https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg</url><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link></image><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>TypeSafe Jev with VS Code Copilot Chat</title><description>TypeSafe Jev with VS Code Copilot Chat. Jev is a typed decision model, not a coding-chat replacement: TypeSafe launched Jev and documents typed Choice, Score, and Noul decisions, current pricing, limits, and known failure modes. Also covered: Jev is not a native Copilot or VS Code custom-endpoint chat model; MCP is a plausible tool route, but the found server is community software;...
+
+Production disclosure: This episode uses AI-generated narration reviewed against its transcript and cited sources.
+
+Special episode. Reviewed long-form audio.
+
+# Show notes — Jev and Copilot: a specialist, not a replacement
+
+Original production research cutoff: 2026-09-23 06:15 EDT (10:15 UTC).
+Later evidence snapshot review: captures at 2026-09-23 15:17 UTC; reviewed at 15:17:26 UTC. This later review updates only these written publication notes; the original transcript, audio, source-event dates, and production notes remain historical inputs.
+
+## Recommendation
+
+Experiment narrowly; do not adopt Jev as an everyday Copilot chat model.
+
+Jev is a typed decision model for bounded classification, scoring, and yes/no judgments. It is not a conversational or coding model, is not on GitHub Copilot’s current native model list, and is not eligible for Copilot Auto. The plausible VS Code route is to retain a supported Copilot host model and let it call Jev through a reviewed tool integration. No integration was installed or tested for this episode.
+
+## What is documented
+
+- Jev takes state plus typed questions and returns Choice, Score, or Noul results, including distributions and confidence where applicable.
+- Current documented stable version: `jev-1.13.0`; aliases `jev-latest` and `jev-preview` currently point to it.
+- Direct API: `POST /v1/systemone`. This is an evaluation API, not a chat-completions API.
+- Official price checked today: $42 per billion input tokens, equivalently $0.042 per million. Outputs are free. The official model page documents a 64k request limit and additional 32k state-plus-longest-question limit. Pricing and limits can change.
+- GitHub’s current Copilot list does not include Jev. Copilot Auto routes only among supported and policy-eligible chat models.
+- VS Code MCP servers add tools. They do not automatically replace the selected chat model.
+- VS Code custom endpoints support Chat Completions, Responses, and Anthropic Messages APIs. Jev’s evaluation API does not match those chat interfaces.
+- TypeSafe’s official agent skill teaches agents how to build TypeSafe integrations. It is not an MCP server.
+
+## Integration routes
+
+### Supported components
+
+1. Keep a normal Copilot-supported host model selected.
+2. Use VS Code’s documented MCP support to connect a trusted local or remote tool server.
+3. Have that tool call TypeSafe’s documented API with state and typed questions.
+4. Keep policy, thresholds, deterministic checks, and side effects in application code.
+
+The components are documented, but their composition into a Jev–VS Code workflow was not tested in this research.
+
+### Community implementation to inspect
+
+`jkudish/jev-mcp` is a community repository whose current README calls it early software. The README says it provides ten judgment tools, documents Node 20+, `TYPESAFE_API_KEY`, and a local `npx` launch. Three examples from those ten are:
+
+- `jev_verify`: compare claims with supplied evidence.
+- `jev_screen`: screen text for prompt injection, substance, and relevance.
+- `jev_find`: rank candidates against a query.
+
+The repository provides a generic “Any other MCP client” configuration. Do not assume that its exact JSON is the current VS Code schema; add it through VS Code’s documented MCP workflow if evaluating it. Review and pin source first. It is not in the `typesafe-ai` GitHub organization and was not presented in TypeSafe’s official documentation index as an official server. No integration was installed or tested for this episode.
+
+### Custom wrapper
+
+A minimal custom MCP wrapper around `POST /v1/systemone` is technically plausible and gives control over the tool schema, payload filtering, logging, version pinning, and thresholds. This is a proposed architecture, not a tested integration. It adds maintenance and should only be built after a direct API pilot demonstrates value.
+
+## Pilot recommendation
+
+Use one bounded, reversible lane such as issue triage or research-result scoring.
+
+- Dataset: at least 200 previously resolved examples plus a held-out test set.
+- Pin: model version, prompt/rubric version, thresholds, and tool implementation commit.
+- Baselines: deterministic rules; current small model with structured output; Jev; Jev plus low-confidence escalation.
+- Metrics: task accuracy, per-class precision/recall, confidence calibration, costly false positives, review rate, end-to-end latency including host/tool round trips, total cost, timeouts/errors, and drift.
+- Safety: no automatic high-impact action; deterministic validation before side effects; review ambiguous and adversarial examples.
+- Adoption gate: a material quality, cost, or latency win after integration overhead. Schema validity alone does not count.
+
+## Caveats and risks
+
+- “No hallucinations” is a vendor framing for schema-constrained output. It does not establish correct decisions.
+- In TypeSafe’s dated Sep 15 launch article, the “Workflow evals” and “Nuance” sections say the evaluations use predictions from large external models as reference probabilities rather than independent ground truth; the vendor also acknowledges possible bias and says its largest speed/cost gains are at the high end of real-world gains.
+- A community study author reported 22/25 (88%) relevance and 24/25 (96%) credibility on 25 hand-authored, search-result-shaped items across four research goals. It was one sequential run with one person-session’s labels, an unpinnable gateway model version, and two label/rubric divergences. Treat it as a smoke test: it was not independently reproduced and was not a sampled live-search benchmark.
+- Additional TypeSafe calls mean separate billing, credentials, network latency, rate limits, and availability.
+- TypeSafe’s privacy policy says input is collected and not used to train or fine-tune models; retention is described broadly, while zero-data-retention is an enterprise offering. Assess before sending private code or records.
+- VS Code warns that local MCP servers can run arbitrary code. Review publisher and configuration before starting one.
+
+## Primary sources
+
+1. TypeSafe introduction — https://docs.typesafe.ai/introduction.md
+2. Jev with coding agents — https://docs.typesafe.ai/introduction/coding-agents.md
+3. Models and pricing — https://docs.typesafe.ai/models.md
+4. Jev 1.13 jaggedness — https://docs.typesafe.ai/model-jaggedness/jev-1.13.md
+5. API reference — https://docs.typesafe.ai/api.md
+6. Launch post and vendor benchmark nuance — https://typesafe.ai/blog/introducing-system-one-models-and-jev
+7. Official TypeSafe agent skill — https://docs.typesafe.ai/agent-skill.md
+8. GitHub Copilot supported models — https://docs.github.com/en/copilot/reference/ai-models/supported-models
+9. Copilot Auto — https://docs.github.com/en/copilot/concepts/models/auto-model-selection
+10. Change/add Copilot chat models — https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model
+11. VS Code language models/BYOK — https://code.visualstudio.com/docs/agent-customization/language-models
+12. VS Code MCP — https://code.visualstudio.com/docs/copilot/customization/mcp-servers
+13. TypeSafe privacy policy — https://typesafe.ai/privacy-policy
+
+## Secondary sources
+
+14. Community early-software MCP implementation — https://github.com/jkudish/jev-mcp
+15. Community author-reported 25-item smoke test — https://github.com/kierandotai/jev-scout/blob/main/docs/accuracy/2026-09-19-jev-golden-set-study.md
+
+## High noise / low signal
+
+- `jevtypesafeai.com` is explicitly unaffiliated and showed conflicting pricing in earlier retrieval. It was excluded as evidence.
+- Search snippets describing an “official Jev MCP” were not corroborated by TypeSafe’s documentation index or GitHub organization.
+- Numerous newly created community MCP repositories exist. Their names, defaults, security posture, and provenance vary; no ecosystem-wide recommendation is justified yet.
+- Launch slogans and headline multiples were retained only with vendor attribution and methodological caveats.
+
+
+Evergreen source labels:
+https://docs.typesafe.ai/introduction.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/introduction/coding-agents.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/models.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/model-jaggedness/jev-1.13.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/api.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.github.com/en/copilot/reference/ai-models/supported-models — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.github.com/en/copilot/concepts/models/auto-model-selection — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://code.visualstudio.com/docs/agent-customization/language-models — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://code.visualstudio.com/docs/copilot/customization/mcp-servers — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/agent-skill.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://typesafe.ai/legal/privacy-policy — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/legal.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23</description><itunes:summary>TypeSafe Jev with VS Code Copilot Chat. Jev is a typed decision model, not a coding-chat replacement: TypeSafe launched Jev and documents typed Choice, Score, and Noul decisions, current pricing, limits, and known failure modes. Also covered: Jev is not a native Copilot or VS Code custom-endpoint chat model; MCP is a plausible tool route, but the found server is community software;...
+
+Production disclosure: This episode uses AI-generated narration reviewed against its transcript and cited sources.
+
+Special episode. Reviewed long-form audio.
+
+# Show notes — Jev and Copilot: a specialist, not a replacement
+
+Original production research cutoff: 2026-09-23 06:15 EDT (10:15 UTC).
+Later evidence snapshot review: captures at 2026-09-23 15:17 UTC; reviewed at 15:17:26 UTC. This later review updates only these written publication notes; the original transcript, audio, source-event dates, and production notes remain historical inputs.
+
+## Recommendation
+
+Experiment narrowly; do not adopt Jev as an everyday Copilot chat model.
+
+Jev is a typed decision model for bounded classification, scoring, and yes/no judgments. It is not a conversational or coding model, is not on GitHub Copilot’s current native model list, and is not eligible for Copilot Auto. The plausible VS Code route is to retain a supported Copilot host model and let it call Jev through a reviewed tool integration. No integration was installed or tested for this episode.
+
+## What is documented
+
+- Jev takes state plus typed questions and returns Choice, Score, or Noul results, including distributions and confidence where applicable.
+- Current documented stable version: `jev-1.13.0`; aliases `jev-latest` and `jev-preview` currently point to it.
+- Direct API: `POST /v1/systemone`. This is an evaluation API, not a chat-completions API.
+- Official price checked today: $42 per billion input tokens, equivalently $0.042 per million. Outputs are free. The official model page documents a 64k request limit and additional 32k state-plus-longest-question limit. Pricing and limits can change.
+- GitHub’s current Copilot list does not include Jev. Copilot Auto routes only among supported and policy-eligible chat models.
+- VS Code MCP servers add tools. They do not automatically replace the selected chat model.
+- VS Code custom endpoints support Chat Completions, Responses, and Anthropic Messages APIs. Jev’s evaluation API does not match those chat interfaces.
+- TypeSafe’s official agent skill teaches agents how to build TypeSafe integrations. It is not an MCP server.
+
+## Integration routes
+
+### Supported components
+
+1. Keep a normal Copilot-supported host model selected.
+2. Use VS Code’s documented MCP support to connect a trusted local or remote tool server.
+3. Have that tool call TypeSafe’s documented API with state and typed questions.
+4. Keep policy, thresholds, deterministic checks, and side effects in application code.
+
+The components are documented, but their composition into a Jev–VS Code workflow was not tested in this research.
+
+### Community implementation to inspect
+
+`jkudish/jev-mcp` is a community repository whose current README calls it early software. The README says it provides ten judgment tools, documents Node 20+, `TYPESAFE_API_KEY`, and a local `npx` launch. Three examples from those ten are:
+
+- `jev_verify`: compare claims with supplied evidence.
+- `jev_screen`: screen text for prompt injection, substance, and relevance.
+- `jev_find`: rank candidates against a query.
+
+The repository provides a generic “Any other MCP client” configuration. Do not assume that its exact JSON is the current VS Code schema; add it through VS Code’s documented MCP workflow if evaluating it. Review and pin source first. It is not in the `typesafe-ai` GitHub organization and was not presented in TypeSafe’s official documentation index as an official server. No integration was installed or tested for this episode.
+
+### Custom wrapper
+
+A minimal custom MCP wrapper around `POST /v1/systemone` is technically plausible and gives control over the tool schema, payload filtering, logging, version pinning, and thresholds. This is a proposed architecture, not a tested integration. It adds maintenance and should only be built after a direct API pilot demonstrates value.
+
+## Pilot recommendation
+
+Use one bounded, reversible lane such as issue triage or research-result scoring.
+
+- Dataset: at least 200 previously resolved examples plus a held-out test set.
+- Pin: model version, prompt/rubric version, thresholds, and tool implementation commit.
+- Baselines: deterministic rules; current small model with structured output; Jev; Jev plus low-confidence escalation.
+- Metrics: task accuracy, per-class precision/recall, confidence calibration, costly false positives, review rate, end-to-end latency including host/tool round trips, total cost, timeouts/errors, and drift.
+- Safety: no automatic high-impact action; deterministic validation before side effects; review ambiguous and adversarial examples.
+- Adoption gate: a material quality, cost, or latency win after integration overhead. Schema validity alone does not count.
+
+## Caveats and risks
+
+- “No hallucinations” is a vendor framing for schema-constrained output. It does not establish correct decisions.
+- In TypeSafe’s dated Sep 15 launch article, the “Workflow evals” and “Nuance” sections say the evaluations use predictions from large external models as reference probabilities rather than independent ground truth; the vendor also acknowledges possible bias and says its largest speed/cost gains are at the high end of real-world gains.
+- A community study author reported 22/25 (88%) relevance and 24/25 (96%) credibility on 25 hand-authored, search-result-shaped items across four research goals. It was one sequential run with one person-session’s labels, an unpinnable gateway model version, and two label/rubric divergences. Treat it as a smoke test: it was not independently reproduced and was not a sampled live-search benchmark.
+- Additional TypeSafe calls mean separate billing, credentials, network latency, rate limits, and availability.
+- TypeSafe’s privacy policy says input is collected and not used to train or fine-tune models; retention is described broadly, while zero-data-retention is an enterprise offering. Assess before sending private code or records.
+- VS Code warns that local MCP servers can run arbitrary code. Review publisher and configuration before starting one.
+
+## Primary sources
+
+1. TypeSafe introduction — https://docs.typesafe.ai/introduction.md
+2. Jev with coding agents — https://docs.typesafe.ai/introduction/coding-agents.md
+3. Models and pricing — https://docs.typesafe.ai/models.md
+4. Jev 1.13 jaggedness — https://docs.typesafe.ai/model-jaggedness/jev-1.13.md
+5. API reference — https://docs.typesafe.ai/api.md
+6. Launch post and vendor benchmark nuance — https://typesafe.ai/blog/introducing-system-one-models-and-jev
+7. Official TypeSafe agent skill — https://docs.typesafe.ai/agent-skill.md
+8. GitHub Copilot supported models — https://docs.github.com/en/copilot/reference/ai-models/supported-models
+9. Copilot Auto — https://docs.github.com/en/copilot/concepts/models/auto-model-selection
+10. Change/add Copilot chat models — https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model
+11. VS Code language models/BYOK — https://code.visualstudio.com/docs/agent-customization/language-models
+12. VS Code MCP — https://code.visualstudio.com/docs/copilot/customization/mcp-servers
+13. TypeSafe privacy policy — https://typesafe.ai/privacy-policy
+
+## Secondary sources
+
+14. Community early-software MCP implementation — https://github.com/jkudish/jev-mcp
+15. Community author-reported 25-item smoke test — https://github.com/kierandotai/jev-scout/blob/main/docs/accuracy/2026-09-19-jev-golden-set-study.md
+
+## High noise / low signal
+
+- `jevtypesafeai.com` is explicitly unaffiliated and showed conflicting pricing in earlier retrieval. It was excluded as evidence.
+- Search snippets describing an “official Jev MCP” were not corroborated by TypeSafe’s documentation index or GitHub organization.
+- Numerous newly created community MCP repositories exist. Their names, defaults, security posture, and provenance vary; no ecosystem-wide recommendation is justified yet.
+- Launch slogans and headline multiples were retained only with vendor attribution and methodological caveats.
+
+
+Evergreen source labels:
+https://docs.typesafe.ai/introduction.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/introduction/coding-agents.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/models.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/model-jaggedness/jev-1.13.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/api.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.github.com/en/copilot/reference/ai-models/supported-models — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.github.com/en/copilot/concepts/models/auto-model-selection — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://code.visualstudio.com/docs/agent-customization/language-models — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://code.visualstudio.com/docs/copilot/customization/mcp-servers — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/agent-skill.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://typesafe.ai/legal/privacy-policy — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+https://docs.typesafe.ai/legal.md — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23</itunes:summary><content:encoded>&lt;p&gt;TypeSafe Jev with VS Code Copilot Chat. Jev is a typed decision model, not a coding-chat replacement: TypeSafe launched Jev and documents typed Choice, Score, and Noul decisions, current pricing, limits, and known failure modes. Also covered: Jev is not a native Copilot or VS Code custom-endpoint chat model; MCP is a plausible tool route, but the found server is community software;...&lt;/p&gt;
+&lt;p&gt;Production disclosure: This episode uses AI-generated narration reviewed against its transcript and cited sources.&lt;/p&gt;
+&lt;p&gt;Special episode. Reviewed long-form audio.&lt;/p&gt;
+&lt;p&gt;# Show notes — Jev and Copilot: a specialist, not a replacement&lt;/p&gt;
+&lt;p&gt;Original production research cutoff: 2026-09-23 06:15 EDT (10:15 UTC).&lt;br /&gt;Later evidence snapshot review: captures at 2026-09-23 15:17 UTC; reviewed at 15:17:26 UTC. This later review updates only these written publication notes; the original transcript, audio, source-event dates, and production notes remain historical inputs.&lt;/p&gt;
+&lt;p&gt;## Recommendation&lt;/p&gt;
+&lt;p&gt;Experiment narrowly; do not adopt Jev as an everyday Copilot chat model.&lt;/p&gt;
+&lt;p&gt;Jev is a typed decision model for bounded classification, scoring, and yes/no judgments. It is not a conversational or coding model, is not on GitHub Copilot’s current native model list, and is not eligible for Copilot Auto. The plausible VS Code route is to retain a supported Copilot host model and let it call Jev through a reviewed tool integration. No integration was installed or tested for this episode.&lt;/p&gt;
+&lt;p&gt;## What is documented&lt;/p&gt;
+&lt;p&gt;- Jev takes state plus typed questions and returns Choice, Score, or Noul results, including distributions and confidence where applicable.&lt;br /&gt;- Current documented stable version: `jev-1.13.0`; aliases `jev-latest` and `jev-preview` currently point to it.&lt;br /&gt;- Direct API: `POST /v1/systemone`. This is an evaluation API, not a chat-completions API.&lt;br /&gt;- Official price checked today: $42 per billion input tokens, equivalently $0.042 per million. Outputs are free. The official model page documents a 64k request limit and additional 32k state-plus-longest-question limit. Pricing and limits can change.&lt;br /&gt;- GitHub’s current Copilot list does not include Jev. Copilot Auto routes only among supported and policy-eligible chat models.&lt;br /&gt;- VS Code MCP servers add tools. They do not automatically replace the selected chat model.&lt;br /&gt;- VS Code custom endpoints support Chat Completions, Responses, and Anthropic Messages APIs. Jev’s evaluation API does not match those chat interfaces.&lt;br /&gt;- TypeSafe’s official agent skill teaches agents how to build TypeSafe integrations. It is not an MCP server.&lt;/p&gt;
+&lt;p&gt;## Integration routes&lt;/p&gt;
+&lt;p&gt;### Supported components&lt;/p&gt;
+&lt;p&gt;1. Keep a normal Copilot-supported host model selected.&lt;br /&gt;2. Use VS Code’s documented MCP support to connect a trusted local or remote tool server.&lt;br /&gt;3. Have that tool call TypeSafe’s documented API with state and typed questions.&lt;br /&gt;4. Keep policy, thresholds, deterministic checks, and side effects in application code.&lt;/p&gt;
+&lt;p&gt;The components are documented, but their composition into a Jev–VS Code workflow was not tested in this research.&lt;/p&gt;
+&lt;p&gt;### Community implementation to inspect&lt;/p&gt;
+&lt;p&gt;`jkudish/jev-mcp` is a community repository whose current README calls it early software. The README says it provides ten judgment tools, documents Node 20+, `TYPESAFE_API_KEY`, and a local `npx` launch. Three examples from those ten are:&lt;/p&gt;
+&lt;p&gt;- `jev_verify`: compare claims with supplied evidence.&lt;br /&gt;- `jev_screen`: screen text for prompt injection, substance, and relevance.&lt;br /&gt;- `jev_find`: rank candidates against a query.&lt;/p&gt;
+&lt;p&gt;The repository provides a generic “Any other MCP client” configuration. Do not assume that its exact JSON is the current VS Code schema; add it through VS Code’s documented MCP workflow if evaluating it. Review and pin source first. It is not in the `typesafe-ai` GitHub organization and was not presented in TypeSafe’s official documentation index as an official server. No integration was installed or tested for this episode.&lt;/p&gt;
+&lt;p&gt;### Custom wrapper&lt;/p&gt;
+&lt;p&gt;A minimal custom MCP wrapper around `POST /v1/systemone` is technically plausible and gives control over the tool schema, payload filtering, logging, version pinning, and thresholds. This is a proposed architecture, not a tested integration. It adds maintenance and should only be built after a direct API pilot demonstrates value.&lt;/p&gt;
+&lt;p&gt;## Pilot recommendation&lt;/p&gt;
+&lt;p&gt;Use one bounded, reversible lane such as issue triage or research-result scoring.&lt;/p&gt;
+&lt;p&gt;- Dataset: at least 200 previously resolved examples plus a held-out test set.&lt;br /&gt;- Pin: model version, prompt/rubric version, thresholds, and tool implementation commit.&lt;br /&gt;- Baselines: deterministic rules; current small model with structured output; Jev; Jev plus low-confidence escalation.&lt;br /&gt;- Metrics: task accuracy, per-class precision/recall, confidence calibration, costly false positives, review rate, end-to-end latency including host/tool round trips, total cost, timeouts/errors, and drift.&lt;br /&gt;- Safety: no automatic high-impact action; deterministic validation before side effects; review ambiguous and adversarial examples.&lt;br /&gt;- Adoption gate: a material quality, cost, or latency win after integration overhead. Schema validity alone does not count.&lt;/p&gt;
+&lt;p&gt;## Caveats and risks&lt;/p&gt;
+&lt;p&gt;- “No hallucinations” is a vendor framing for schema-constrained output. It does not establish correct decisions.&lt;br /&gt;- In TypeSafe’s dated Sep 15 launch article, the “Workflow evals” and “Nuance” sections say the evaluations use predictions from large external models as reference probabilities rather than independent ground truth; the vendor also acknowledges possible bias and says its largest speed/cost gains are at the high end of real-world gains.&lt;br /&gt;- A community study author reported 22/25 (88%) relevance and 24/25 (96%) credibility on 25 hand-authored, search-result-shaped items across four research goals. It was one sequential run with one person-session’s labels, an unpinnable gateway model version, and two label/rubric divergences. Treat it as a smoke test: it was not independently reproduced and was not a sampled live-search benchmark.&lt;br /&gt;- Additional TypeSafe calls mean separate billing, credentials, network latency, rate limits, and availability.&lt;br /&gt;- TypeSafe’s privacy policy says input is collected and not used to train or fine-tune models; retention is described broadly, while zero-data-retention is an enterprise offering. Assess before sending private code or records.&lt;br /&gt;- VS Code warns that local MCP servers can run arbitrary code. Review publisher and configuration before starting one.&lt;/p&gt;
+&lt;p&gt;## Primary sources&lt;/p&gt;
+&lt;p&gt;1. TypeSafe introduction — &lt;a href="https://docs.typesafe.ai/introduction.md"&gt;https://docs.typesafe.ai/introduction.md&lt;/a&gt;&lt;br /&gt;2. Jev with coding agents — &lt;a href="https://docs.typesafe.ai/introduction/coding-agents.md"&gt;https://docs.typesafe.ai/introduction/coding-agents.md&lt;/a&gt;&lt;br /&gt;3. Models and pricing — &lt;a href="https://docs.typesafe.ai/models.md"&gt;https://docs.typesafe.ai/models.md&lt;/a&gt;&lt;br /&gt;4. Jev 1.13 jaggedness — &lt;a href="https://docs.typesafe.ai/model-jaggedness/jev-1.13.md"&gt;https://docs.typesafe.ai/model-jaggedness/jev-1.13.md&lt;/a&gt;&lt;br /&gt;5. API reference — &lt;a href="https://docs.typesafe.ai/api.md"&gt;https://docs.typesafe.ai/api.md&lt;/a&gt;&lt;br /&gt;6. Launch post and vendor benchmark nuance — &lt;a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev"&gt;https://typesafe.ai/blog/introducing-system-one-models-and-jev&lt;/a&gt;&lt;br /&gt;7. Official TypeSafe agent skill — &lt;a href="https://docs.typesafe.ai/agent-skill.md"&gt;https://docs.typesafe.ai/agent-skill.md&lt;/a&gt;&lt;br /&gt;8. GitHub Copilot supported models — &lt;a href="https://docs.github.com/en/copilot/reference/ai-models/supported-models"&gt;https://docs.github.com/en/copilot/reference/ai-models/supported-models&lt;/a&gt;&lt;br /&gt;9. Copilot Auto — &lt;a href="https://docs.github.com/en/copilot/concepts/models/auto-model-selection"&gt;https://docs.github.com/en/copilot/concepts/models/auto-model-selection&lt;/a&gt;&lt;br /&gt;10. Change/add Copilot chat models — &lt;a href="https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model"&gt;https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model&lt;/a&gt;&lt;br /&gt;11. VS Code language models/BYOK — &lt;a href="https://code.visualstudio.com/docs/agent-customization/language-models"&gt;https://code.visualstudio.com/docs/agent-customization/language-models&lt;/a&gt;&lt;br /&gt;12. VS Code MCP — &lt;a href="https://code.visualstudio.com/docs/copilot/customization/mcp-servers"&gt;https://code.visualstudio.com/docs/copilot/customization/mcp-servers&lt;/a&gt;&lt;br /&gt;13. TypeSafe privacy policy — &lt;a href="https://typesafe.ai/privacy-policy"&gt;https://typesafe.ai/privacy-policy&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;## Secondary sources&lt;/p&gt;
+&lt;p&gt;14. Community early-software MCP implementation — &lt;a href="https://github.com/jkudish/jev-mcp"&gt;https://github.com/jkudish/jev-mcp&lt;/a&gt;&lt;br /&gt;15. Community author-reported 25-item smoke test — &lt;a href="https://github.com/kierandotai/jev-scout/blob/main/docs/accuracy/2026-09-19-jev-golden-set-study.md"&gt;https://github.com/kierandotai/jev-scout/blob/main/docs/accuracy/2026-09-19-jev-golden-set-study.md&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;## High noise / low signal&lt;/p&gt;
+&lt;p&gt;- `jevtypesafeai.com` is explicitly unaffiliated and showed conflicting pricing in earlier retrieval. It was excluded as evidence.&lt;br /&gt;- Search snippets describing an “official Jev MCP” were not corroborated by TypeSafe’s documentation index or GitHub organization.&lt;br /&gt;- Numerous newly created community MCP repositories exist. Their names, defaults, security posture, and provenance vary; no ecosystem-wide recommendation is justified yet.&lt;br /&gt;- Launch slogans and headline multiples were retained only with vendor attribution and methodological caveats.&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;Evergreen source labels:&lt;br /&gt;&lt;a href="https://docs.typesafe.ai/introduction.md"&gt;https://docs.typesafe.ai/introduction.md&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.typesafe.ai/introduction/coding-agents.md"&gt;https://docs.typesafe.ai/introduction/coding-agents.md&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.typesafe.ai/models.md"&gt;https://docs.typesafe.ai/models.md&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.typesafe.ai/model-jaggedness/jev-1.13.md"&gt;https://docs.typesafe.ai/model-jaggedness/jev-1.13.md&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.typesafe.ai/api.md"&gt;https://docs.typesafe.ai/api.md&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.github.com/en/copilot/reference/ai-models/supported-models"&gt;https://docs.github.com/en/copilot/reference/ai-models/supported-models&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.github.com/en/copilot/concepts/models/auto-model-selection"&gt;https://docs.github.com/en/copilot/concepts/models/auto-model-selection&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://code.visualstudio.com/docs/agent-customization/language-models"&gt;https://code.visualstudio.com/docs/agent-customization/language-models&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://code.visualstudio.com/docs/copilot/customization/mcp-servers"&gt;https://code.visualstudio.com/docs/copilot/customization/mcp-servers&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.typesafe.ai/agent-skill.md"&gt;https://docs.typesafe.ai/agent-skill.md&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://typesafe.ai/legal/privacy-policy"&gt;https://typesafe.ai/legal/privacy-policy&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;br /&gt;&lt;a href="https://docs.typesafe.ai/legal.md"&gt;https://docs.typesafe.ai/legal.md&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23&lt;/p&gt;</content:encoded><guid isPermaLink="false">adhoc-2026-09-23-a1ecc4a4c7e54053aca8f328</guid><pubDate>Wed, 23 Sep 2026 16:34:29 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/adhoc-2026-09-23-a1ecc4a4c7e54053aca8f328/daily-ai-brief.mp3" length="7673355" type="audio/mpeg" /><itunes:duration>8:00</itunes:duration></item><item><title>Hermes Agent: Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch...</title><description>Hermes Agent v2026.9.21: Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments)...
 
 Production disclosure: This episode uses AI-generated narration based on the cited source material.
 

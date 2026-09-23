@@ -1,11 +1,11 @@
-# Daily AI Developer Brief — 2026-09-22
+# Daily AI Developer Brief — Special: TypeSafe Jev with VS Code Copilot Chat
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
 </p>
 <p align="center"><em>Keep up with AI developer technology without being flattened by the update wave.</em></p>
 
-A concise, source-backed daily podcast for AI agent developers: what changed, why it matters, what is worth learning, and whether to act, watch, or skip.
+A source-backed briefing for AI developers: what changes your work, what is worth trying, and what to ignore.
 
 ## Podcast
 
@@ -79,28 +79,67 @@ Daily publishing, standalone Pages deployment, and weekly digest writes share th
 
 The pilot uses the signed-in account's existing allowance. It does not authorize a paid upgrade, cookie export, unattended browser automation, or publication. Approved recordings use the separate [reviewed-audio handoff](docs/OPERATIONS.md#publishing-approved-notebook-audio).
 
+### Editorial correction
+
+Production note: This episode uses AI-generated narration.
+
 ## Today's signal
 
-### Hermes Agent v2026.9.21
+Long-form special for AI developers using GitHub Copilot and VS Code.
+Evidence window: 60 days ending 2026-09-23T15:15:34.731214+00:00.
+Audio provider: edge; transcript/source reviewed, not Gemini API verification.
 
-**What changed:** Hermes Agent v0.21.4 (v2026.9.21) Release Date: September 21, 2026 Patch release. This tag rolls up the ~1,800 PRs merged since v0.21.3 into a stable tagged release for downstream consumers (Docker images, Hermes Cloud, hosted deployments). Full curated notes for this window are deferred to v0.22.0. … [Excerpt; see source for full details.]
+### Jev is a typed decision model, not a coding-chat replacement
 
-**Why it matters:** This is relevant to developers tracking AI agents.
+**What to know:** TypeSafe launched Jev and documents typed Choice, Score, and Noul decisions, current pricing, limits, and known failure modes.
 
-**Recommendation:** WATCH — Read the primary source and assess applicability before changing your workflow.
+**What changes for developers:** Developers should keep deterministic work in code and test semantic judgments rather than treating schema validity as truth.
 
-Sources: [1](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.21)
+**Recommendation:** WATCH — Use only for narrow measured experiments.
+
+Sources: [1](https://typesafe.ai/blog/introducing-system-one-models-and-jev), [2](https://docs.typesafe.ai/introduction.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://docs.typesafe.ai/introduction/coding-agents.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [4](https://docs.typesafe.ai/models.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [5](https://docs.typesafe.ai/model-jaggedness/jev-1.13.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [6](https://docs.typesafe.ai/api.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+
+### Jev is not a native Copilot or VS Code custom-endpoint chat model
+
+**What to know:** Current Copilot model documentation omits Jev, and VS Code custom endpoints require a chat-compatible API.
+
+**What changes for developers:** A direct model-picker substitution is not a documented integration path.
+
+**Recommendation:** SKIP — Keep the supported Copilot host model.
+
+Sources: [1](https://docs.github.com/en/copilot/reference/ai-models/supported-models) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [2](https://docs.github.com/en/copilot/concepts/models/auto-model-selection) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://code.visualstudio.com/docs/agent-customization/language-models) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
+
+### MCP is a plausible tool route, but the found server is community software
+
+**What to know:** VS Code can expose MCP tools to its host model; TypeSafe publishes an agent skill, while jkudish/jev-mcp is a separate community implementation.
+
+**What changes for developers:** Review and pin any server, and do not mistake an agent skill for an official MCP integration.
+
+**Recommendation:** WATCH — Inspect before installing; no integration was tested.
+
+Sources: [1](https://code.visualstudio.com/docs/copilot/customization/mcp-servers) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [2](https://docs.typesafe.ai/agent-skill.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://github.com/jkudish/jev-mcp)
+
+### The independent result is a small smoke test and data handling needs review
+
+**What to know:** A 25-item community study reported encouraging triage results with major sample, labeling, and rubric limitations; TypeSafe documents input collection, retention, and enterprise ZDR.
+
+**What changes for developers:** Use a larger controlled pilot and do not send private repository data before policy review.
+
+**Recommendation:** WATCH — The proposed 200-example pilot is a recommendation, not an observed result.
+
+Sources: [1](https://github.com/kierandotai/jev-scout/blob/main/docs/accuracy/2026-09-19-jev-golden-set-study.md), [2](https://typesafe.ai/legal/privacy-policy) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23, [3](https://docs.typesafe.ai/legal.md) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-09-23
 
 ## High noise / low signal
 
-- Excluded OpenAI Codex: no substantive change evidence.
-- Excluded Gemini CLI: no substantive change evidence.
-- Skipped GitHub Copilot: below threshold after routine/prerelease penalties.
+- evals.typesafe.ai was not used because the narration does not cite its figures.
+- jevtypesafeai.com was excluded as unaffiliated and conflicting.
 
 ## Editorial contract
 
+- An Edge-TTS editorial correction precedes the retained Notebook conversation; the manifest records both component hashes and the exact correction text.
+
 - Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.
-- Up to seven actionable stories, capped per product for variety; thin-news runs skip publication.
+- One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.
 - Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.
 - Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.
 - Product-change claims require public primary evidence.
@@ -114,16 +153,7 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `feed:https://github.blog/changelog/feed/`: ok:1
-- `github:NousResearch/hermes-agent`: ok:1
-- `github:agentskills/agentskills`: ok:0
-- `github:anthropics/claude-code`: ok:0
-- `github:google-gemini/gemini-cli`: ok:1
-- `github:microsoft/vscode`: ok:0
-- `github:microsoft/vscode-copilot-release`: ok:0
-- `github:modelcontextprotocol/specification`: ok:0
-- `github:openai/codex`: ok:12
-- `youtube:weekly-digest`: error:ValueError
+- `jev-public-evidence`: ok:15
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 
