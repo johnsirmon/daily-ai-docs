@@ -21,7 +21,7 @@ daily:
   minimum_source_health: 0.6
   observer:
     # Offline reviewed packet ingestion only; no workstation path is enabled in production.
-    mode: off
+    mode: "off"
     packet_path: null
     allowed_hosts: []
   editorial:

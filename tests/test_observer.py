@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
+import yaml
 
 from pipeline.narrate import manifest_to_narration
 from pipeline.rank import group_editorial_stories, select_editorial_events
@@ -94,6 +95,23 @@ def config(path, mode="optional", hosts=None):
 
 def test_off_is_network_free_and_default_safe():
     assert collect_observer_packet({"mode": "off", "packet_path": None, "allowed_hosts": []}, now=NOW) == ([], {})
+
+
+def test_committed_observer_config_is_string_off_and_network_free(monkeypatch):
+    def unexpected_io(*_args, **_kwargs):
+        pytest.fail("disabled Observer configuration attempted packet or network I/O")
+
+    monkeypatch.setattr("pipeline.sources.observer._read_packet", unexpected_io)
+    monkeypatch.setattr("pipeline.sources.detail.socket.getaddrinfo", unexpected_io)
+    monkeypatch.setattr("pipeline.sources.observer.socket.create_connection", unexpected_io)
+    monkeypatch.setattr("pipeline.sources.observer._PinnedHTTPSConnection.request", unexpected_io)
+    monkeypatch.setattr("pipeline.sources.observer.requests.sessions.Session.request", unexpected_io)
+
+    topics_path = Path(__file__).parents[1] / "topics" / "topics.yaml"
+    observer_config = yaml.safe_load(topics_path.read_text(encoding="utf-8"))["daily"]["observer"]
+
+    assert observer_config["mode"] == "off"
+    assert collect_observer_packet(observer_config, now=NOW) == ([], {})
 
 
 def test_valid_packet_maps_to_source_event_and_fetches_each_url_once(tmp_path):
