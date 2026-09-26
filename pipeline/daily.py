@@ -467,7 +467,11 @@ def _prepare(
         except AudioDurationError as exc:
             # The preemptive plausibility check above is a heuristic; measured
             # TTS output can still land just short of the edition's minimum.
-            # Treat that as thin content rather than an unrecoverable failure.
+            # Treat that as thin content rather than an unrecoverable failure,
+            # but only for the deterministic explanatory narration path: this
+            # audio call is not nested under the preemptive check above, so
+            # editorial narration (which never sets an explanatory
+            # narration_style) can still reach here and must keep failing hard.
             if exc.too_short and is_explanatory_narration:
                 _MANIFEST_PATH.unlink(missing_ok=True)
                 Path(produced).unlink(missing_ok=True)
