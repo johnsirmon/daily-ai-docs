@@ -19,15 +19,21 @@ class AudioValidationError(ValueError):
 class AudioDurationError(AudioValidationError):
     """Raised when measured audio duration falls outside the expected bounds.
 
-    Carries the measured duration and whether the audio was too short (rather
-    than too long or otherwise implausible) so callers can distinguish thin
-    content -- which may warrant a graceful skip -- from other audio defects.
+    Carries the measured duration, whether the audio was too short (rather
+    than too long or otherwise implausible), and which check raised it:
+
+    - "bounds": duration fell outside the edition's hard min/max duration.
+    - "plausibility": duration is outside the range implied by the narration's
+      word count, even though it satisfies the edition's hard bounds. This can
+      indicate a broken or truncated TTS render rather than thin content, so
+      callers should not treat it the same as a "bounds" shortfall.
     """
 
-    def __init__(self, message: str, *, duration: float, too_short: bool):
+    def __init__(self, message: str, *, duration: float, too_short: bool, kind: str):
         super().__init__(message)
         self.duration = duration
         self.too_short = too_short
+        self.kind = kind
 
 
 def file_sha256(path: Path) -> str:
@@ -85,6 +91,7 @@ def analyze_audio(
             f"duration {duration:.1f}s is outside {min_duration_secs:.0f}-{max_duration_secs:.0f}s",
             duration=duration,
             too_short=math.isfinite(duration) and duration < min_duration_secs,
+            kind="bounds",
         )
     if expected_word_count:
         plausible_minimum, plausible_maximum = narration_duration_bounds(expected_word_count)
@@ -93,6 +100,7 @@ def analyze_audio(
                 f"duration {duration:.1f}s is implausible for {expected_word_count} narration words",
                 duration=duration,
                 too_short=duration < plausible_minimum,
+                kind="plausibility",
             )
     if full_decode:
         ffmpeg = shutil.which("ffmpeg")

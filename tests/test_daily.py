@@ -143,7 +143,9 @@ def test_measured_short_audio_skips_instead_of_failing_the_workflow(monkeypatch,
         return path
 
     def _fake_analyze_audio(*args, **kwargs):
-        raise AudioDurationError("duration 123.8s is outside 180-600s", duration=123.8, too_short=True)
+        raise AudioDurationError(
+            "duration 123.8s is outside 180-600s", duration=123.8, too_short=True, kind="bounds",
+        )
 
     monkeypatch.setattr("pipeline.daily.write_audio", _fake_write_audio)
     monkeypatch.setattr("pipeline.daily.analyze_audio", _fake_analyze_audio)
@@ -157,6 +159,43 @@ def test_measured_short_audio_skips_instead_of_failing_the_workflow(monkeypatch,
     assert not (tmp_path / ".cache/episode-manifest.json").exists()
     assert not (tmp_path / ".cache/daily-ai-brief.mp3").exists()
     assert not (tmp_path / "data/episodes").exists()
+
+
+def test_measured_implausible_audio_still_raises_instead_of_skipping(monkeypatch, tmp_path):
+    # A "plausibility" mismatch (duration inconsistent with narration word
+    # count) can indicate a broken or truncated TTS render rather than thin
+    # content, so it must keep failing hard instead of being silently skipped
+    # like the edition's hard "bounds" minimum/maximum.
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AI_EDITORIAL", "off")
+    monkeypatch.setenv("AI_SYNTHESIS", "off")
+    monkeypatch.setenv("PODCAST_AUDIO_POLISH", "0")
+    config = tmp_path / "topics.yaml"
+    config.write_text(_CONFIG, encoding="utf-8")
+    (tmp_path / "podcast.xml").write_text("last-good-feed")
+    state = {"schema_version": 1, "seen_event_ids": [], "last_publication": None}
+    (tmp_path / "data").mkdir()
+    state_path = tmp_path / "data/state.json"
+    state_path.write_text(json.dumps(state))
+    monkeypatch.setattr(
+        "pipeline.daily.collect_events",
+        lambda *args, **kwargs: (_verbose_sources(4), {"source": "ok:4"}),
+    )
+
+    def _fake_write_audio(narration, *, path):
+        Path(path).write_bytes(b"\x00" * 20_000)
+        return path
+
+    def _fake_analyze_audio(*args, **kwargs):
+        raise AudioDurationError(
+            "duration 123.8s is implausible for 301 narration words",
+            duration=123.8, too_short=True, kind="plausibility",
+        )
+
+    monkeypatch.setattr("pipeline.daily.write_audio", _fake_write_audio)
+    monkeypatch.setattr("pipeline.daily.analyze_audio", _fake_analyze_audio)
+    with pytest.raises(AudioDurationError):
+        prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
 
 
 def test_prepare_dry_run_is_network_and_audio_free(monkeypatch, tmp_path):
