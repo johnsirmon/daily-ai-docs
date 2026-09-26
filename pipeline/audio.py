@@ -16,6 +16,26 @@ class AudioValidationError(ValueError):
     pass
 
 
+class AudioDurationError(AudioValidationError):
+    """Raised when measured audio duration falls outside the expected bounds.
+
+    Carries the measured duration, whether the audio was too short (rather
+    than too long or otherwise implausible), and which check raised it:
+
+    - "bounds": duration fell outside the edition's hard min/max duration.
+    - "plausibility": duration is outside the range implied by the narration's
+      word count, even though it satisfies the edition's hard bounds. This can
+      indicate a broken or truncated TTS render rather than thin content, so
+      callers should not treat it the same as a "bounds" shortfall.
+    """
+
+    def __init__(self, message: str, *, duration: float, too_short: bool, kind: str):
+        super().__init__(message)
+        self.duration = duration
+        self.too_short = too_short
+        self.kind = kind
+
+
 def file_sha256(path: Path) -> str:
     with path.open("rb") as source:
         return hashlib.file_digest(source, "sha256").hexdigest()
@@ -67,14 +87,20 @@ def analyze_audio(
     except (ValueError, KeyError, StopIteration, TypeError) as exc:
         raise AudioValidationError("audio is not a measurable supported recording") from exc
     if not math.isfinite(duration) or not min_duration_secs <= duration <= max_duration_secs:
-        raise AudioValidationError(
-            f"duration {duration:.1f}s is outside {min_duration_secs:.0f}-{max_duration_secs:.0f}s"
+        raise AudioDurationError(
+            f"duration {duration:.1f}s is outside {min_duration_secs:.0f}-{max_duration_secs:.0f}s",
+            duration=duration,
+            too_short=math.isfinite(duration) and duration < min_duration_secs,
+            kind="bounds",
         )
     if expected_word_count:
         plausible_minimum, plausible_maximum = narration_duration_bounds(expected_word_count)
         if duration < plausible_minimum or duration > plausible_maximum:
-            raise AudioValidationError(
-                f"duration {duration:.1f}s is implausible for {expected_word_count} narration words"
+            raise AudioDurationError(
+                f"duration {duration:.1f}s is implausible for {expected_word_count} narration words",
+                duration=duration,
+                too_short=duration < plausible_minimum,
+                kind="plausibility",
             )
     if full_decode:
         ffmpeg = shutil.which("ffmpeg")

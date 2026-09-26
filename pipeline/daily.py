@@ -14,10 +14,10 @@ from typing import Any, Dict, Iterable, List
 
 import yaml
 
-from .audio import analyze_audio, file_sha256, narration_duration_bounds
+from .audio import AudioDurationError, analyze_audio, file_sha256, narration_duration_bounds
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .evidence_archive import publication_evidence
-from .narrate import manifest_to_narration
+from .narrate import EXPLANATORY_NARRATION_STYLES, manifest_to_narration
 from .podcast import prepend_episode
 from .podcast_metadata import manifest_presentation
 from .publish import validate_feed_file, validate_local_episode_artwork, verify_remote_audio, verify_remote_feed
@@ -435,9 +435,8 @@ def _prepare(
     edition = manifest.generation["edition"]
     minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
     maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
-    if not dry_run and manifest.generation.get("narration_style") in {
-        "explanatory-v1", "explanatory-v2", "explanatory-v3",
-    }:
+    is_explanatory_narration = manifest.generation.get("narration_style") in EXPLANATORY_NARRATION_STYLES
+    if not dry_run and is_explanatory_narration:
         plausible_minimum, plausible_maximum = narration_duration_bounds(len(manifest.narration.split()))
         if plausible_maximum < minimum_duration:
             return _skip(
@@ -458,12 +457,33 @@ def _prepare(
             from .audio_quality import polish_generated_audio
             manifest.generation["source_audio_sha256"] = file_sha256(produced)
             manifest.generation["quality"] = polish_generated_audio(produced)
-        analysis = analyze_audio(
-            produced,
-            min_duration_secs=minimum_duration,
-            max_duration_secs=maximum_duration,
-            expected_word_count=len(manifest.narration.split()),
-        )
+        try:
+            analysis = analyze_audio(
+                produced,
+                min_duration_secs=minimum_duration,
+                max_duration_secs=maximum_duration,
+                expected_word_count=len(manifest.narration.split()),
+            )
+        except AudioDurationError as exc:
+            # The preemptive plausibility check above is a heuristic; measured
+            # TTS output can still land just short of the edition's hard
+            # duration minimum. Treat that specific "bounds" shortfall as thin
+            # content rather than an unrecoverable failure -- but only for the
+            # deterministic explanatory narration path: this audio call is not
+            # nested under the preemptive check above, so editorial narration
+            # (which never sets an explanatory narration_style) can still
+            # reach here and must keep failing hard. A "plausibility"
+            # mismatch (duration inconsistent with the narration's word
+            # count) is left to raise, since it more likely indicates a
+            # broken or truncated TTS render than genuinely thin content.
+            if exc.kind == "bounds" and exc.too_short and is_explanatory_narration:
+                _MANIFEST_PATH.unlink(missing_ok=True)
+                Path(produced).unlink(missing_ok=True)
+                return _skip(
+                    now=now, reason="insufficient_substantive_material", health=health,
+                    minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes,
+                )
+            raise
         manifest.audio.update(analysis)
         manifest.audio.pop("path", None)
         manifest.status = "ready"

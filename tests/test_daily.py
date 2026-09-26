@@ -1,8 +1,10 @@
 import json
 from datetime import datetime, timezone
+from pathlib import Path
 
 import pytest
 
+from pipeline.audio import AudioDurationError
 from pipeline.daily import collect_events, confirm, finalize, prepare
 from pipeline.publish import PublicationError
 from pipeline.schema import EpisodeManifest, SourceEvent
@@ -33,6 +35,30 @@ def _deterministic_sources(count, *, substantive=False):
     return [
         SourceEvent(
             f"e{index}", "announcement", f"Tool {index} approval update",
+            f"https://example.com/change-{index}", f"Tool {index}", "Coding",
+            "2026-09-19T10:00:00Z", "2026-09-19T11:00:00Z", evidence,
+        )
+        for index in range(count)
+    ]
+
+
+def _verbose_sources(count):
+    # Long enough per-story evidence that the preemptive word-rate plausibility
+    # check clears the edition's minimum duration, so a subsequent measured
+    # duration shortfall is exercising the post-TTS handling, not the earlier
+    # preemptive skip.
+    evidence = (
+        "Tool adds a command approval preview that lists the requested arguments and target"
+        " directory before any approval is granted. Only explicitly approved commands execute"
+        " in the workspace, and remote execution remains disabled for projects without an"
+        " existing permission grant. Administrators can retain existing project settings while"
+        " reviewing the proposed operation, and denied requests do not launch a process or"
+        " change files. Audit entries record the requested command, its arguments, and its"
+        " approval outcome for later review by the security team."
+    )
+    return [
+        SourceEvent(
+            f"v{index}", "announcement", f"Tool {index} approval update",
             f"https://example.com/change-{index}", f"Tool {index}", "Coding",
             "2026-09-19T10:00:00Z", "2026-09-19T11:00:00Z", evidence,
         )
@@ -89,6 +115,87 @@ def test_short_utility_script_skips_instead_of_padding_or_calling_tts(monkeypatc
     result = prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
     assert result["outcome"] == "skipped"
     assert result["reason"] == "insufficient_substantive_material"
+
+
+def test_measured_short_audio_skips_instead_of_failing_the_workflow(monkeypatch, tmp_path):
+    # The preemptive plausibility check is a heuristic on expected word rate;
+    # actual TTS output can still land just under the edition's minimum
+    # duration. That must produce a graceful skip (with a run receipt) rather
+    # than an unhandled AudioValidationError that leaves no receipt behind.
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AI_EDITORIAL", "off")
+    monkeypatch.setenv("AI_SYNTHESIS", "off")
+    monkeypatch.setenv("PODCAST_AUDIO_POLISH", "0")
+    config = tmp_path / "topics.yaml"
+    config.write_text(_CONFIG, encoding="utf-8")
+    (tmp_path / "podcast.xml").write_text("last-good-feed")
+    state = {"schema_version": 1, "seen_event_ids": [], "last_publication": None}
+    (tmp_path / "data").mkdir()
+    state_path = tmp_path / "data/state.json"
+    state_path.write_text(json.dumps(state))
+    monkeypatch.setattr(
+        "pipeline.daily.collect_events",
+        lambda *args, **kwargs: (_verbose_sources(4), {"source": "ok:4"}),
+    )
+
+    def _fake_write_audio(narration, *, path):
+        Path(path).write_bytes(b"\x00" * 20_000)
+        return path
+
+    def _fake_analyze_audio(*args, **kwargs):
+        raise AudioDurationError(
+            "duration 123.8s is outside 180-600s", duration=123.8, too_short=True, kind="bounds",
+        )
+
+    monkeypatch.setattr("pipeline.daily.write_audio", _fake_write_audio)
+    monkeypatch.setattr("pipeline.daily.analyze_audio", _fake_analyze_audio)
+    result = prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
+    assert result["outcome"] == "skipped"
+    assert result["reason"] == "insufficient_substantive_material"
+    receipt = json.loads((tmp_path / "data/runs/latest.json").read_text())
+    assert receipt["status"] == "skipped" and receipt["reason"] == result["reason"]
+    assert json.loads(state_path.read_text()) == state
+    assert (tmp_path / "podcast.xml").read_text() == "last-good-feed"
+    assert not (tmp_path / ".cache/episode-manifest.json").exists()
+    assert not (tmp_path / ".cache/daily-ai-brief.mp3").exists()
+    assert not (tmp_path / "data/episodes").exists()
+
+
+def test_measured_implausible_audio_still_raises_instead_of_skipping(monkeypatch, tmp_path):
+    # A "plausibility" mismatch (duration inconsistent with narration word
+    # count) can indicate a broken or truncated TTS render rather than thin
+    # content, so it must keep failing hard instead of being silently skipped
+    # like the edition's hard "bounds" minimum/maximum.
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AI_EDITORIAL", "off")
+    monkeypatch.setenv("AI_SYNTHESIS", "off")
+    monkeypatch.setenv("PODCAST_AUDIO_POLISH", "0")
+    config = tmp_path / "topics.yaml"
+    config.write_text(_CONFIG, encoding="utf-8")
+    (tmp_path / "podcast.xml").write_text("last-good-feed")
+    state = {"schema_version": 1, "seen_event_ids": [], "last_publication": None}
+    (tmp_path / "data").mkdir()
+    state_path = tmp_path / "data/state.json"
+    state_path.write_text(json.dumps(state))
+    monkeypatch.setattr(
+        "pipeline.daily.collect_events",
+        lambda *args, **kwargs: (_verbose_sources(4), {"source": "ok:4"}),
+    )
+
+    def _fake_write_audio(narration, *, path):
+        Path(path).write_bytes(b"\x00" * 20_000)
+        return path
+
+    def _fake_analyze_audio(*args, **kwargs):
+        raise AudioDurationError(
+            "duration 123.8s is implausible for 301 narration words",
+            duration=123.8, too_short=True, kind="plausibility",
+        )
+
+    monkeypatch.setattr("pipeline.daily.write_audio", _fake_write_audio)
+    monkeypatch.setattr("pipeline.daily.analyze_audio", _fake_analyze_audio)
+    with pytest.raises(AudioDurationError):
+        prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
 
 
 def test_prepare_dry_run_is_network_and_audio_free(monkeypatch, tmp_path):
