@@ -11,6 +11,12 @@ from typing import List
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .source_health import failed_source_health
 
+# Deterministic (non-editorial) narration renderers. New preparations only
+# ever emit the current version, but earlier releases and immutable recovery
+# paths must keep rendering the version recorded in their manifest.
+EXPLANATORY_NARRATION_STYLES = frozenset({"explanatory-v1", "explanatory-v2", "explanatory-v3"})
+
+
 # Rotating spoken phrases for topic and repo transitions (deterministic — index
 # is incremented per call so repeated topics don't all sound identical).
 _TOPIC_TRANSITIONS = [
@@ -372,7 +378,7 @@ def manifest_to_narration(manifest) -> str:
     manifest.validate(require_audio=False)
     if manifest.schema_version in {3, 4}:
         return manifest.narration
-    if manifest.generation.get("narration_style") in {"explanatory-v1", "explanatory-v2", "explanatory-v3"} and manifest.stories:
+    if manifest.generation.get("narration_style") in EXPLANATORY_NARRATION_STYLES and manifest.stories:
         return _explanatory_narration(manifest)
     date_text = manifest.published_at[:10]
     failed_sources = [

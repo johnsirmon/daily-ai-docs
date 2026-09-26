@@ -17,7 +17,7 @@ import yaml
 from .audio import AudioDurationError, analyze_audio, file_sha256, narration_duration_bounds
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .evidence_archive import publication_evidence
-from .narrate import manifest_to_narration
+from .narrate import EXPLANATORY_NARRATION_STYLES, manifest_to_narration
 from .podcast import prepend_episode
 from .podcast_metadata import manifest_presentation
 from .publish import validate_feed_file, validate_local_episode_artwork, verify_remote_audio, verify_remote_feed
@@ -435,9 +435,8 @@ def _prepare(
     edition = manifest.generation["edition"]
     minimum_duration = 300 if use_editorial else {"quiet": 30, "alert": 30, "normal": 180}[edition]
     maximum_duration = 480 if use_editorial else {"quiet": 120, "alert": 300, "normal": 600}[edition]
-    if not dry_run and manifest.generation.get("narration_style") in {
-        "explanatory-v1", "explanatory-v2", "explanatory-v3",
-    }:
+    is_explanatory_narration = manifest.generation.get("narration_style") in EXPLANATORY_NARRATION_STYLES
+    if not dry_run and is_explanatory_narration:
         plausible_minimum, plausible_maximum = narration_duration_bounds(len(manifest.narration.split()))
         if plausible_maximum < minimum_duration:
             return _skip(
@@ -469,9 +468,7 @@ def _prepare(
             # The preemptive plausibility check above is a heuristic; measured
             # TTS output can still land just short of the edition's minimum.
             # Treat that as thin content rather than an unrecoverable failure.
-            if exc.too_short and manifest.generation.get("narration_style") in {
-                "explanatory-v1", "explanatory-v2", "explanatory-v3",
-            }:
+            if exc.too_short and is_explanatory_narration:
                 _MANIFEST_PATH.unlink(missing_ok=True)
                 Path(produced).unlink(missing_ok=True)
                 return _skip(

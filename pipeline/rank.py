@@ -321,12 +321,17 @@ def _bounded_excerpt(text: str, *, words: int = 110, chars: int = 1200, sentence
     excerpt = " ".join(selected)
     if excerpt == clean:
         return excerpt
+    if chars < len(marker):
+        # No room for content alongside the marker; truncate the marker itself
+        # so the total never exceeds the caller's char budget.
+        return marker[:chars].strip()
     # Reserve room for the appended marker so a labelled excerpt never exceeds
     # the caller's char budget (which callers often set equal to a schema limit).
-    budget = max(chars - len(marker), 0)
-    while len(excerpt) > budget and " " in excerpt:
-        excerpt = excerpt.rsplit(" ", 1)[0]
-    return (excerpt[:budget] + marker).strip()
+    budget = chars - len(marker)
+    if len(excerpt) > budget:
+        cut = excerpt.rfind(" ", 0, budget + 1)
+        excerpt = excerpt[:cut] if cut > 0 else excerpt[:budget]
+    return (excerpt + marker).strip()
 
 
 def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Story:
