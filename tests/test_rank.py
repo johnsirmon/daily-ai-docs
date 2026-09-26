@@ -1,4 +1,4 @@
-from pipeline.rank import assess_utility, canonical_product, dedupe_events, event_to_story, score_event, select_events
+from pipeline.rank import _bounded_excerpt, assess_utility, canonical_product, dedupe_events, event_to_story, score_event, select_events
 from pipeline.schema import SourceEvent
 
 
@@ -148,3 +148,13 @@ def test_event_to_story_bounds_rationale_from_a_long_action_sentence():
     story = event_to_story(event("long-action", evidence=long_sentence))
     assert len(story.rationale) <= 1200
     story.validate()
+
+
+def test_bounded_excerpt_truncates_marker_when_chars_smaller_than_marker():
+    # When the caller's char budget is smaller than the "…[Excerpt...]"
+    # marker itself, there is no room to keep any original content; the
+    # marker must be truncated so the result never exceeds the budget.
+    long_text = "word " * 400
+    result = _bounded_excerpt(long_text, chars=10)
+    assert len(result) <= 10
+    assert result == "… [Excerp"
