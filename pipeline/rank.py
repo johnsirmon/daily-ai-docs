@@ -303,6 +303,7 @@ def _requires_action(text: str) -> bool:
 
 def _bounded_excerpt(text: str, *, words: int = 110, chars: int = 1200, sentences: int = 3) -> str:
     """Keep source wording, prefer sentence/word boundaries, and label omissions."""
+    marker = " … [Excerpt; see source for full details.]"
     clean = " ".join(text.split())
     selected = []
     for sentence in re.split(r"(?<=[.!?])\s+", clean)[:sentences]:
@@ -320,7 +321,12 @@ def _bounded_excerpt(text: str, *, words: int = 110, chars: int = 1200, sentence
     excerpt = " ".join(selected)
     if excerpt == clean:
         return excerpt
-    return (excerpt + " … [Excerpt; see source for full details.]").strip()
+    # Reserve room for the appended marker so a labelled excerpt never exceeds
+    # the caller's char budget (which callers often set equal to a schema limit).
+    budget = max(chars - len(marker), 0)
+    while len(excerpt) > budget and " " in excerpt:
+        excerpt = excerpt.rsplit(" ", 1)[0]
+    return (excerpt[:budget] + marker).strip()
 
 
 def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> Story:
@@ -337,7 +343,11 @@ def event_to_story(event: SourceEvent, seen_event_ids: Iterable[str] = ()) -> St
         sentence for sentence in useful
         if re.search(r"\b(?:must|requires?|update|upgrade|replace|review|inspect|ignore|unaffected)\b", sentence, re.I)
     ]
-    rationale = action_sentences[0] if action_sentences else "No workflow change is supported beyond the cited evidence."
+    rationale = (
+        _bounded_excerpt(action_sentences[0])
+        if action_sentences
+        else "No workflow change is supported beyond the cited evidence."
+    )
     if rationale in impact_text:
         rationale = "No additional workflow change is supported beyond the cited evidence."
     combined = f"{event.title} {event.evidence}"

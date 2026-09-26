@@ -14,7 +14,7 @@ from typing import Any, Dict, Iterable, List
 
 import yaml
 
-from .audio import analyze_audio, file_sha256, narration_duration_bounds
+from .audio import AudioDurationError, analyze_audio, file_sha256, narration_duration_bounds
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .evidence_archive import publication_evidence
 from .narrate import manifest_to_narration
@@ -458,12 +458,27 @@ def _prepare(
             from .audio_quality import polish_generated_audio
             manifest.generation["source_audio_sha256"] = file_sha256(produced)
             manifest.generation["quality"] = polish_generated_audio(produced)
-        analysis = analyze_audio(
-            produced,
-            min_duration_secs=minimum_duration,
-            max_duration_secs=maximum_duration,
-            expected_word_count=len(manifest.narration.split()),
-        )
+        try:
+            analysis = analyze_audio(
+                produced,
+                min_duration_secs=minimum_duration,
+                max_duration_secs=maximum_duration,
+                expected_word_count=len(manifest.narration.split()),
+            )
+        except AudioDurationError as exc:
+            # The preemptive plausibility check above is a heuristic; measured
+            # TTS output can still land just short of the edition's minimum.
+            # Treat that as thin content rather than an unrecoverable failure.
+            if exc.too_short and manifest.generation.get("narration_style") in {
+                "explanatory-v1", "explanatory-v2", "explanatory-v3",
+            }:
+                _MANIFEST_PATH.unlink(missing_ok=True)
+                Path(produced).unlink(missing_ok=True)
+                return _skip(
+                    now=now, reason="insufficient_substantive_material", health=health,
+                    minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes,
+                )
+            raise
         manifest.audio.update(analysis)
         manifest.audio.pop("path", None)
         manifest.status = "ready"

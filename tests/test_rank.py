@@ -1,4 +1,4 @@
-from pipeline.rank import assess_utility, canonical_product, dedupe_events, score_event, select_events
+from pipeline.rank import assess_utility, canonical_product, dedupe_events, event_to_story, score_event, select_events
 from pipeline.schema import SourceEvent
 
 
@@ -133,3 +133,18 @@ def test_popularity_cannot_rescue_release_hype_without_utility():
 def test_canonical_aliases_share_product_cap_but_codeql_remains_distinct():
     assert canonical_product("GitHub") == canonical_product("GitHub Platform")
     assert canonical_product("CodeQL CLI") != canonical_product("GitHub")
+
+
+def test_event_to_story_bounds_rationale_from_a_long_action_sentence():
+    # A single run-on "sentence" (no internal terminators) containing an
+    # action keyword must not overflow the story's 1200-character rationale
+    # limit; event_to_story previously used it verbatim and raised SchemaError.
+    long_sentence = (
+        "You must update every one of the following configuration keys across all affected "
+        "environments and services before the next scheduled deployment window closes, review "
+        "each dependent workflow, replace deprecated call sites, upgrade any pinned client "
+        "libraries, and inspect downstream consumers for compatibility " + ("issues " * 250)
+    ).strip() + "."
+    story = event_to_story(event("long-action", evidence=long_sentence))
+    assert len(story.rationale) <= 1200
+    story.validate()

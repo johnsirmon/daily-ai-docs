@@ -16,6 +16,20 @@ class AudioValidationError(ValueError):
     pass
 
 
+class AudioDurationError(AudioValidationError):
+    """Raised when measured audio duration falls outside the expected bounds.
+
+    Carries the measured duration and whether the audio was too short (rather
+    than too long or otherwise implausible) so callers can distinguish thin
+    content -- which may warrant a graceful skip -- from other audio defects.
+    """
+
+    def __init__(self, message: str, *, duration: float, too_short: bool):
+        super().__init__(message)
+        self.duration = duration
+        self.too_short = too_short
+
+
 def file_sha256(path: Path) -> str:
     with path.open("rb") as source:
         return hashlib.file_digest(source, "sha256").hexdigest()
@@ -67,14 +81,18 @@ def analyze_audio(
     except (ValueError, KeyError, StopIteration, TypeError) as exc:
         raise AudioValidationError("audio is not a measurable supported recording") from exc
     if not math.isfinite(duration) or not min_duration_secs <= duration <= max_duration_secs:
-        raise AudioValidationError(
-            f"duration {duration:.1f}s is outside {min_duration_secs:.0f}-{max_duration_secs:.0f}s"
+        raise AudioDurationError(
+            f"duration {duration:.1f}s is outside {min_duration_secs:.0f}-{max_duration_secs:.0f}s",
+            duration=duration,
+            too_short=math.isfinite(duration) and duration < min_duration_secs,
         )
     if expected_word_count:
         plausible_minimum, plausible_maximum = narration_duration_bounds(expected_word_count)
         if duration < plausible_minimum or duration > plausible_maximum:
-            raise AudioValidationError(
-                f"duration {duration:.1f}s is implausible for {expected_word_count} narration words"
+            raise AudioDurationError(
+                f"duration {duration:.1f}s is implausible for {expected_word_count} narration words",
+                duration=duration,
+                too_short=duration < plausible_minimum,
             )
     if full_decode:
         ffmpeg = shutil.which("ffmpeg")
