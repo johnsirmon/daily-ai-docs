@@ -302,7 +302,13 @@ def _requires_action(text: str) -> bool:
 
 
 def _bounded_excerpt(text: str, *, words: int = 110, chars: int = 1200, sentences: int = 3) -> str:
-    """Keep source wording, prefer sentence/word boundaries, and label omissions."""
+    """Keep source wording, prefer sentence/word boundaries, and label omissions.
+
+    The result never exceeds `chars`: when the excerpt is truncated, room is
+    reserved for the appended "…[Excerpt...]" marker, cutting on a word
+    boundary where possible; if `chars` is smaller than the marker itself,
+    the marker is truncated instead so the char-budget guarantee always holds.
+    """
     marker = " … [Excerpt; see source for full details.]"
     clean = " ".join(text.split())
     selected = []
