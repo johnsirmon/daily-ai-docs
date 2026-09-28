@@ -76,18 +76,20 @@
     "typesafe:legal",
     "github-copilot-app-otel-2026-09-22",
     "github-ssh-crypto-transition-2026-09-22",
-    "codeql-all-platform-bundle-deprecation-2026-09-22"
+    "codeql-all-platform-bundle-deprecation-2026-09-22",
+    "ghrel:b6ce910accbcbcac0943",
+    "ghrel:cdf0d63217ad659b5e61"
   ],
-  "last_publication": "2026-09-23T15:24:10Z",
-  "last_episode_id": "daily-2026-09-23-gate-a-f518254",
+  "last_publication": "2026-09-28T18:13:09.517933Z",
+  "last_episode_id": "daily-2026-09-28-a180a7f9",
   "repo_snapshots": {
     "openai/codex": {
-      "stars": 125270,
-      "fetched_at": "2026-09-19T13:57:49.385299Z"
+      "stars": 126963,
+      "fetched_at": "2026-09-28T18:13:09.517933Z"
     },
     "anthropics/claude-code": {
-      "stars": 146550,
-      "fetched_at": "2026-09-19T13:57:49.385299Z"
+      "stars": 148459,
+      "fetched_at": "2026-09-28T18:13:09.517933Z"
     },
     "microsoft/vscode": {
       "stars": 192574,
@@ -98,6 +100,6 @@
       "fetched_at": "2026-09-22T14:58:41.936376Z"
     }
   },
-  "last_daily_episode_id": "daily-2026-09-23-gate-a-f518254",
-  "last_daily_publication": "2026-09-23T15:24:10Z"
+  "last_daily_episode_id": "daily-2026-09-28-a180a7f9",
+  "last_daily_publication": "2026-09-28T18:13:09.517933Z"
 }
