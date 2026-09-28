@@ -814,6 +814,9 @@ class EpisodeManifest:
         if self.schema_version not in {1, 2, 3, 4}:
             raise SchemaError("unsupported manifest schema_version")
         _text(self.episode_id, "episode_id", limit=200)
+        if (self.status != "published"
+                and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,199}", self.episode_id)):
+            raise SchemaError("unpublished manifest requires a safe episode_id")
         _timestamp(self.published_at, "published_at")
         if self.status not in {"draft", "ready", "candidate", "published", "quiet"}:
             raise SchemaError("unsupported manifest status")
