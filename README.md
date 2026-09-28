@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — 2026-09-23
+# Daily AI Developer Brief — 2026-09-28
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
@@ -81,53 +81,39 @@ The pilot uses the signed-in account's existing allowance. It does not authorize
 
 ## Today's signal
 
-### OpenTelemetry in the GitHub Copilot app
+### OpenAI Codex rust-v0.158.0
 
-**What to know:** GitHub added OpenTelemetry configuration for the GitHub Copilot app through enterprise-managed settings, allowing administrators to export agent activity to compatible monitoring tools.
+**What to know:** New Features Configure copy-on-select and right-click paste in the fullscreen TUI. Copied transcript selections now preserve Markdown formatting. (#47639, #47896, #48118) Connect to MCP servers that require pre-registered OAuth client secrets, including through codex mcp add --oauth-client-secret. … [Excerpt; see source for full details.]
 
-**What changes for developers:** Enterprise teams can follow model and tool activity through an agent session, inspect step-by-step traces when behavior is unexpected, and apply the monitoring configuration centrally.
+**What changes for developers:** (#47639, #47896, #48118) Connect to MCP servers that require pre-registered OAuth client secrets, including through codex mcp add --oauth-client-secret. (#47484, #47956) Terminal input approval is enabled by default for commands running with elevated permissions. (#47799, #48073) Bug Fixes Fixed Windows sandbox failures involving ordinary Windows 10 paths, rejected stored credentials, and large permission policies. (#47672, #47695, #47919) Fixed Linux sandbox startup with nested writable roots and preserved Git metadata protections across writable roots on Linux and macOS. … [Excerpt; see source for full details.]
 
-**Recommendation:** WATCH — Pilot export from a limited group to a secured existing OpenTelemetry backend, validate trace usefulness and access controls, and keep prompt and response capture disabled unless a reviewed need justifies enabling it.
+**Recommendation:** WATCH — No additional workflow change is supported beyond the cited evidence.
 
-Sources: [1](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/)
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.158.0)
 
-### Security improvements for SSH
+### Claude Code v2.1.284
 
-**What to know:** GitHub announced removal of RSA/SHA-1 SSH signatures and diffie-hellman-group-exchange-sha256, a 3072-bit minimum for newly uploaded RSA keys after October 14, 2026, and support for ML-KEM hybrid key exchange on most GitHub cloud SSH sessions.
+**What to know:** What's changed Added Claude Sonnet 5.5 (claude-sonnet-5-5), now the default Sonnet model on the Anthropic API — 1M context, $2/$10 per Mtok with $0.20/Mtok cache reads Added a "Yes, but ask again next time" answer to auto mode's prompt before a read outside the working directories, so you can allow that one read and still be asked about later ones Added dollar amounts to the Claude apps gateway spend limit in /usage and the status line (for example "$271.40 / $500.00 spent this month") when the gateway runs this version or later; the status line's rate_limits.spend_limit also gains used_usd, limit_usd and period Added effortSlider:decreaseEffort, increaseEffort and toggleUltracode keybinding actions, so … [Excerpt; see source for full details.]
 
-**What changes for developers:** Older Git clients, embedded SSH libraries, build servers, or automation can lose Git-over-SSH connectivity during brownouts and eventual removal if they still negotiate the retired algorithms.
+**What changes for developers:** What's changed Added Claude Sonnet 5.5 (claude-sonnet-5-5), now the default Sonnet model on the Anthropic API — 1M context, $2/$10 per Mtok with $0.20/Mtok cache reads Added a "Yes, but ask again next time" answer to auto mode's prompt before a read outside the working directories, so you can allow that one read and still be asked about later ones Added dollar amounts to the Claude apps gateway spend limit in /usage and the status line (for example "$271.40 / $500.00 spent this month") when the gateway runs this version or later. … [Excerpt; see source for full details.]
 
-**Recommendation:** ACT — Inventory Git-over-SSH clients before the November 4 and December 9 brownouts. Confirm RSA uses SHA-2 or move new keys to Ed25519; upgrade clients that lack modern signature and key-exchange support. Ignore this item if every relevant remote uses HTTPS.
+**Recommendation:** WATCH — No workflow change is supported beyond the cited evidence.
 
-Sources: [1](https://github.blog/changelog/2026-09-22-security-improvements-for-ssh)
-
-### Deprecation notice: All-platform CodeQL bundle
-
-**What to know:** GitHub deprecated the combined all-platform CodeQL bundle starting with CodeQL CLI 2.27.0 and says it will remove the bundle in mid-March 2027.
-
-**What changes for developers:** Bootstrap scripts, offline mirrors, CI images, or internal installers that hard-code the combined archive names must select an operating-system and architecture-specific artifact instead.
-
-**Recommendation:** ACT — Search automation for codeql-bundle.tar.gz and codeql-bundle.tar.zst, make platform and architecture selection explicit, and test replacement artifacts before March 2027.
-
-Sources: [1](https://github.blog/changelog/2026-09-22-deprecation-notice-all-platform-codeql-bundle/)
+Sources: [1](https://github.com/anthropics/claude-code/releases/tag/v2.1.284)
 
 ## High noise / low signal
 
-- High noise / low signal: same-day Copilot model-availability announcements establish catalog access but provide no reproducible evidence that switching models improves a concrete developer workflow; they were excluded.
-- High noise / low signal: the Copilot for JetBrains page was fresh, but the available extracted body was incomplete and mostly exposed a feature list without enough directly verified consequence and caveat detail for this edition.
-- High noise / low signal: current VS Code results in the bounded sample were outside the 36-hour window, so older automation and Agents-window changes were not recycled.
-- Coverage warning: configured Exa authentication returned HTTP 401 and broader Hermes, MCP, and open-source ecosystem coverage is incomplete. This is a source-verified but degraded scan, not a comprehensive no-news claim.
+- Excluded OpenAI Codex: no substantive change evidence.
+- Excluded Gemini CLI: no substantive change evidence.
 
 ## Editorial contract
-
-- This edition uses user-authorized Gemini Notebook web audio, a local-ASR transcript, and an assistant transcript/source comparison; it is not independently verified Gemini API generation.
 
 - Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.
 - One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.
 - Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.
 - Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.
 - Product-change claims require public primary evidence.
-- This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings.
+- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation.
 - Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.
 - At most one transcript-backed YouTube learning pick may appear; it never replaces vendor evidence.
 
@@ -137,7 +123,16 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `observer`: degraded:3 source-verified findings; Exa 401; broader coverage incomplete
+- `feed:https://github.blog/changelog/feed/`: ok:0
+- `github:NousResearch/hermes-agent`: ok:0
+- `github:agentskills/agentskills`: ok:0
+- `github:anthropics/claude-code`: ok:1
+- `github:google-gemini/gemini-cli`: ok:1
+- `github:microsoft/vscode`: ok:0
+- `github:microsoft/vscode-copilot-release`: ok:0
+- `github:modelcontextprotocol/specification`: ok:0
+- `github:openai/codex`: ok:8
+- `youtube:weekly-digest`: error:ValueError
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 
