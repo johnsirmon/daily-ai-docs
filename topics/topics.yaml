@@ -19,14 +19,18 @@ daily:
   max_youtube_stories: 1
   minimum_score: 75
   minimum_source_health: 0.6
+  # Production-only, fail-closed spoken-content gate. Tiny unit-test configs
+  # must opt in explicitly rather than inheriting publication policy.
+  require_publication_usefulness: true
   observer:
     # Offline reviewed packet ingestion only; no workstation path is enabled in production.
     mode: "off"
     packet_path: null
     allowed_hosts: []
   editorial:
-    # Enable only after configuring and verifying a free-tier GEMINI_API_KEY.
-    enabled: false
+    # Production is fail-closed via AI_EDITORIAL=required. No deterministic
+    # narration is published when grounded drafting or verification fails.
+    enabled: true
     max_products: 3
     max_events_per_product: 1
     max_research: 1
@@ -71,6 +75,44 @@ daily:
         topic: Agent interoperability
         priority: 16
     feeds:
+      - url: https://openai.com/news/rss.xml
+        product: OpenAI Developer Platform
+        topic: AI developer platforms
+        priority: 24
+        enrichment:
+          enabled: true
+          allowed_hosts: [openai.com]
+        include:
+          - api
+          - codex
+          - developer
+          - agent
+          - gpt
+        product_rules:
+          - product: OpenAI API
+            include: [api, developer]
+          - product: OpenAI Codex
+            include: [codex]
+      - url: https://developers.googleblog.com/feeds/posts/default
+        product: Google AI Developer Tools
+        topic: AI developer platforms
+        priority: 22
+        enrichment:
+          enabled: true
+          allowed_hosts: [developers.googleblog.com]
+        include:
+          - gemini api
+          - agent development kit
+          - antigravity sdk
+          - model context protocol
+          - mcp tools
+        product_rules:
+          - product: Google Gemini API
+            include: [gemini api]
+          - product: Google Agent Development Kit
+            include: [agent development kit]
+          - product: Model Context Protocol
+            include: [model context protocol, mcp tools]
       - url: https://github.blog/changelog/feed/
         product: GitHub Developer Tools
         topic: AI coding agents

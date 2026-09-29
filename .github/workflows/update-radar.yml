@@ -26,7 +26,9 @@ env:
   PODCAST_MIGRATE_FEED: "1"
   AI_SYNTHESIS: ${{ vars.AI_SYNTHESIS || 'off' }}
   AI_MODEL: ${{ vars.AI_MODEL || 'gpt-5-mini' }}
-  AI_EDITORIAL: ${{ vars.AI_EDITORIAL || 'off' }}
+  # Fail closed on grounded drafting/verification. A provider failure records a
+  # failed run; it must never fall back to deterministic release-note narration.
+  AI_EDITORIAL: required
   GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.8-flash' }}
   TTS_PROVIDER: ${{ vars.TTS_PROVIDER || 'edge' }}
   PODCAST_AUDIO_POLISH: ${{ vars.PODCAST_AUDIO_POLISH || '0' }}

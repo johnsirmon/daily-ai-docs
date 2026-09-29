@@ -106,9 +106,10 @@ audio API and `OPENAI_API_KEY`; enabling it is a separate cost decision, never a
 
 ## Grounded editorial mode
 
-The new mode is **opt-in**: `AI_EDITORIAL=off` remains the workflow default so that deploying code without a Gemini
-key does not break the existing publisher. The legacy `AI_SYNTHESIS` setting only prioritizes action labels; enabling
-it alone does not produce better explanations.
+The scheduled publisher is fail-closed with `AI_EDITORIAL=required`. A missing key, provider failure, rejected draft,
+or failed verification records a failed run and retains the last good feed; it never falls back to deterministic
+release-note narration. The legacy `AI_SYNTHESIS` setting only prioritizes action labels and does not replace grounded
+drafting plus independent verification.
 
 With `AI_EDITORIAL=required`, the publisher:
 
@@ -123,7 +124,7 @@ With `AI_EDITORIAL=required`, the publisher:
 - Requires normal audio to measure **300-480 seconds**. Word budgets guide preparation but do not replace measured
   duration. Short scripts are skipped, not padded; an unexpected audio duration is a validation failure.
 
-### Free-tier-only activation
+### Free-tier-only configuration
 
 1. Create or choose a Gemini API project whose selected model has free-tier access, without paid billing enabled.
    Check the actual project's model availability and quotas: a Google AI/Notebook subscription is separate from API
@@ -132,10 +133,10 @@ With `AI_EDITORIAL=required`, the publisher:
    issue text, logs, or example commands. Do not reuse an OpenAI key or export consumer-account cookies.
 3. Set `GEMINI_MODEL` to a verified free-tier model. The default is `gemini-3.8-flash`, using Google's documented
    OpenAI-compatible endpoint. No NotebookLM wrapper package is required.
-4. Validate an unpublished sample and its grounded claims before activation. Browser generation and live publishing
+4. Validate an unpublished sample and its grounded claims before changing the configured model. Browser generation and live publishing
    are separate operational actions; ordinary tests mock providers and do not consume account quotas.
-5. Set repository variable `AI_EDITORIAL=required`. Keep `TTS_PROVIDER=edge` for the existing no-key audio path.
-   Setting another TTS provider is a separate cost decision, not an automatic fallback.
+5. Keep `TTS_PROVIDER=edge` for the existing no-key audio path. Setting another TTS provider is a separate cost
+   decision, not an automatic fallback. Do not disable required editorial mode to make a provider failure green.
 
 The free Gemini API tier may use submitted content to improve Google's products. Only approved public source material
 and public episode history may be sent. Authentication, quota, timeout, schema, grounding, or verification failures stop

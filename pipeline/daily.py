@@ -24,6 +24,7 @@ from .publish import validate_feed_file, validate_local_episode_artwork, verify_
 from .rank import event_to_story, group_editorial_stories, select_editorial_events, select_events
 from .render import write_manifest_readme
 from .schema import EpisodeManifest, SourceEvent
+from .usefulness import validate_publication_usefulness
 from .sources import (
     collect_github_releases,
     collect_official_feeds,
@@ -421,6 +422,8 @@ def _prepare(
         audio={"url": audio_url},
     )
     manifest.narration = manifest_to_narration(manifest)
+    if daily.get("require_publication_usefulness", False):
+        validate_publication_usefulness(manifest)
     if os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
         from .audio_quality import repetition_findings
         if repetition_findings(manifest.narration):
