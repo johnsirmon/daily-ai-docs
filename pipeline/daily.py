@@ -422,7 +422,7 @@ def _prepare(
         audio={"url": audio_url},
     )
     manifest.narration = manifest_to_narration(manifest)
-    if daily.get("require_publication_usefulness", False):
+    if daily.get("require_publication_usefulness", False) and not dry_run:
         validate_publication_usefulness(manifest)
     if os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
         from .audio_quality import repetition_findings
@@ -512,7 +512,8 @@ def prepare(
     now: datetime | None = None,
 ) -> Dict[str, Any]:
     config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
-    enabled = editorial_enabled(config) and not dry_run
+    policy_required = bool(config.get("daily", {}).get("require_publication_usefulness", False))
+    enabled = (editorial_enabled(config) or policy_required) and not dry_run
     now = now or datetime.now(timezone.utc)
     try:
         return _prepare(config_path, dry_run=dry_run, no_audio=no_audio, force=force, now=now)

@@ -89,10 +89,10 @@ daily:
           - agent
           - gpt
         product_rules:
-          - product: OpenAI API
-            include: [api, developer]
           - product: OpenAI Codex
             include: [codex]
+          - product: OpenAI API
+            include: [api, developer]
       - url: https://developers.googleblog.com/feeds/posts/default
         product: Google AI Developer Tools
         topic: AI developer platforms

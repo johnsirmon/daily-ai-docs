@@ -9,6 +9,7 @@ from .schema import EpisodeManifest
 
 _GENERIC_FILLER = (
     "no additional workflow change is supported beyond the cited evidence",
+    "no workflow change is supported beyond the cited evidence",
     "no additional action is supported beyond the cited evidence",
     "monitor the upstream release notes for more information",
 )
@@ -18,9 +19,11 @@ _RAW_SPOKEN_PATTERNS = (
     ("Markdown link", re.compile(r"\[[^\]]+\]\([^\)]+\)")),
     ("code fence or inline code", re.compile(r"`{1,3}")),
     ("pull-request or issue identifier", re.compile(
-        r"(?:\(\s*#\d{2,}\s*\)|\b(?:pull request|issue)\s+#?\d{2,}\b)", re.IGNORECASE,
+        r"(?:#\d+\b|\bPR\s*#?\d+\b|\b(?:pull[- ]request|issue)\s+#?\d+\b)", re.IGNORECASE,
     )),
-    ("commit hash", re.compile(r"\b[0-9a-f]{12,40}\b", re.IGNORECASE)),
+    ("commit hash", re.compile(
+        r"(?:\b(?:commit|revision|sha)\s+[0-9a-f]{7,40}\b|\b[0-9a-f]{12,40}\b)", re.IGNORECASE,
+    )),
 )
 
 
@@ -44,7 +47,9 @@ def publication_usefulness_findings(manifest: EpisodeManifest) -> list[str]:
             findings.append(f"spoken {label}")
     if narration.startswith("(") and re.match(r"^\(?#?\d+", narration):
         findings.append("script opens with a repository identifier")
-    if manifest.schema_version == 2:
+    if manifest.schema_version != 2:
+        findings.append("fresh briefing is not grounded independently verified editorial")
+    else:
         if manifest.generation.get("verified") is not True:
             findings.append("grounded editorial script lacks independent model verification")
         if not any(story.action == "skip" for story in manifest.stories):

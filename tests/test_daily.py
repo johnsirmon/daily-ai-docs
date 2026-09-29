@@ -8,6 +8,7 @@ from pipeline.audio import AudioDurationError
 from pipeline.daily import collect_events, confirm, finalize, prepare
 from pipeline.publish import PublicationError
 from pipeline.schema import EpisodeManifest, SourceEvent
+from pipeline.usefulness import PublicationUsefulnessError
 
 
 _CONFIG = """
@@ -115,6 +116,26 @@ def test_short_utility_script_skips_instead_of_padding_or_calling_tts(monkeypatc
     result = prepare(config, now=datetime(2026, 9, 19, 12, tzinfo=timezone.utc))
     assert result["outcome"] == "skipped"
     assert result["reason"] == "insufficient_substantive_material"
+
+
+def test_production_usefulness_policy_rejects_explicit_editorial_off_before_tts(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AI_EDITORIAL", "off")
+    monkeypatch.setenv("AI_SYNTHESIS", "off")
+    source = _deterministic_sources(1, substantive=True)[0]
+    monkeypatch.setattr("pipeline.daily.collect_events", lambda *args, **kwargs: ([source], {"source": "ok:1"}))
+    monkeypatch.setattr("pipeline.daily.select_events", lambda *args, **kwargs: ([source], []))
+    monkeypatch.setattr(
+        "pipeline.daily.write_audio",
+        lambda *args, **kwargs: pytest.fail("non-grounded production must fail before TTS"),
+    )
+    production = Path(__file__).resolve().parents[1] / "topics" / "topics.yaml"
+    with pytest.raises(PublicationUsefulnessError):
+        prepare(production, now=datetime(2026, 9, 30, 12, tzinfo=timezone.utc))
+    receipt = json.loads((tmp_path / "data/runs/latest.json").read_text())
+    assert receipt["status"] == "failed"
+    assert receipt["reason"] == "PublicationUsefulnessError"
+    assert not (tmp_path / ".cache/publication.json").exists()
 
 
 def test_measured_short_audio_skips_instead_of_failing_the_workflow(monkeypatch, tmp_path):

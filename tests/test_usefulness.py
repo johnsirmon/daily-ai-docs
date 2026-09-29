@@ -32,6 +32,30 @@ def test_rejects_recent_release_fragment_shape_and_generic_filler():
         validate_publication_usefulness(manifest)
 
 
+@pytest.mark.parametrize("text", [
+    "The change in PR #48151 adds sandboxed command previews.",
+    "The change in #48151 adds sandboxed command previews.",
+    "Pull-request 48151 adds sandboxed command previews.",
+    "Issue #7 adds sandboxed command previews.",
+    "Commit 225be55 adds sandboxed command previews.",
+    "Commit 225be554c1b adds sandboxed command previews.",
+    "No workflow change is supported beyond the cited evidence.",
+])
+def test_rejects_common_repository_fragments(text):
+    manifest = _manifest(text, schema_version=2, actions=("skip",), verified=True)
+    assert publication_usefulness_findings(manifest)
+
+
+@pytest.mark.parametrize("text", [
+    "The API returns HTTP 403 when enrichment is unavailable.",
+    "Version 6.1 costs less for this documented input tier.",
+    "Run 7 representative tasks before changing the default.",
+])
+def test_admits_useful_contextual_numbers(text):
+    manifest = _manifest(text, schema_version=2, actions=("skip",), verified=True)
+    assert publication_usefulness_findings(manifest) == []
+
+
 def test_rejects_spoken_markdown_urls_and_hashes():
     manifest = _manifest(
         "# Update\nRead [the notes](https://example.com) at `abcdef0123456789`."
@@ -66,3 +90,10 @@ def test_grounded_editorial_requires_verification_and_not_worth_chasing_takeaway
     findings = publication_usefulness_findings(manifest)
     assert "grounded editorial script lacks independent model verification" in findings
     assert "briefing does not identify anything that is not worth chasing" in findings
+
+
+def test_fresh_deterministic_brief_cannot_satisfy_usefulness_policy():
+    findings = publication_usefulness_findings(_manifest(
+        "A concrete developer briefing with a bounded experiment and a clear skip decision."
+    ))
+    assert "fresh briefing is not grounded independently verified editorial" in findings
