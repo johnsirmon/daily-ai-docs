@@ -65,6 +65,16 @@ def test_manifest_roundtrip():
     assert loaded.stories[0].action == "act"
 
 
+@pytest.mark.parametrize("episode_id", ["../../outside", "daily/escape", r"daily\escape", ".hidden", "daily-ä"])
+def test_manifest_rejects_episode_ids_unsafe_for_paths_and_release_tags(episode_id):
+    manifest = EpisodeManifest(
+        1, episode_id, "2026-09-07T12:00:00Z", "draft", {"source": "ok:1"},
+        [event()], [story()], [], "Narration long enough for validation.", "Notes.", {}, {},
+    )
+    with pytest.raises(SchemaError, match="safe episode_id"):
+        manifest.validate(require_audio=False)
+
+
 def test_legacy_manifest_serialization_does_not_add_editorial_defaults():
     manifest = EpisodeManifest(
         1, "daily-1", "2026-09-07T12:00:00Z", "candidate", {"source": "ok:1"},
