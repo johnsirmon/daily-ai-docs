@@ -95,7 +95,10 @@ peer review or reproduction. In spoken_text say research, author-reported, and
 not independently reproduced. Include paper_review.limitations VERBATIM in spoken_text.
 
 Use a brief outcome-led opening, source-based explanations, and a concise practical
-closing. Neutral framing; no automatic urgent short-alert exception. Aim at the
+closing with a short action list and one evidence-backed thing not worth chasing.
+At least one included story must use action "skip"; if the evidence cannot support
+that recommendation, reject the episode instead of inventing one. Neutral framing;
+no automatic urgent short-alert exception. Aim at the
 supplied useful word target across the entire script, never pad thin evidence.
 Do not promise a measured duration. Hard maximum is 1500 total spoken words.
 """
@@ -117,6 +120,8 @@ Reject generic relevance/advice, filler, repeated prose, padding, and title-only
 version churn. Source-based usefulness is required, not just factual accuracy.
 For every included story require a specific developer consequence, and reject advice
 or experiments invented only to satisfy a template.
+Require a concise closing action list and at least one included story with action
+"skip" that explains an evidence-backed thing not worth chasing.
 Independently verify any prior capability and before/after comparison against supplied
 primary evidence, never history or assumed background knowledge. Reject invented old
 defaults, alternatives, and tradeoffs. Check necessary jargon is explained accurately
