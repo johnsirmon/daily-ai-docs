@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "episode_id": "daily-2026-09-29-f8f3fde3",
+  "published_at": "2026-09-29T16:34:38.049814Z",
+  "status": "candidate",
+  "source_health": {
+    "github:openai/codex": "ok:7",
+    "github:anthropics/claude-code": "ok:1",
+    "github:google-gemini/gemini-cli": "ok:1",
+    "github:NousResearch/hermes-agent": "ok:16",
+    "github:microsoft/vscode": "ok:0",
+    "github:microsoft/vscode-copilot-release": "ok:0",
+    "github:modelcontextprotocol/specification": "ok:0",
+    "github:agentskills/agentskills": "ok:0",
+    "feed:https://github.blog/changelog/feed/": "ok:1",
+    "youtube:weekly-digest": "error:ValueError"
+  },
+  "source_events": [
+    {
+      "event_id": "ghrel:9b9d615d7fb6df0bae74",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.159.0",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.159.0",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-29T08:05:42Z",
+      "fetched_at": "2026-09-29T16:34:38.049814Z",
+      "evidence": "New Features\nOpt-in instant_interrupt lets new input steer Codex during model responses or long-running code-mode calls. (#48135, #48141)\nNew sessions get a compact welcome screen and consistent headers, with occasional tips during and after turns. (#48513, #48562, #48352)\nThe warnings viewer dismisses reviewed warnings when closed; press k to keep one for later. (#48205, #48206)\nYou can scroll the transcript while deciding whether to implement a plan. (#48805)\nNative Mermaid rendering supports more flowchart edges, labels, and node groups. (#48814, #48895)\nApp-server clients can paginate thread history from a specific item. (#48151)\nBug Fixes\nWindows launches avoid stray console windows for MCP servers, code-mode hosts, and piped commands; restrictive launchers can fall back to embedded mode. (#48138, #48238, #48483, #48491)\nCopying transcript selections preserves Markdown tables, formatting, and significant whitespace. More terminals now copy automatically on selection. (#48548, #48549, #48469)\nBlank sessions retain drafts when switching tasks, and threads can be archived and listed before their first turn. (#48628, #48828, #48199)\nLocal ChatGPT sign-in opens the browser reliably; onboarding also provides a shortcut to copy the login link. (#48502, #48544)\nApproved commands retain explicit filesystem denials, and .aws directories are protected by default under writable roots. (#48155, #48176)\nFixed macOS TLS access in network-enabled sandboxes and remote environments that require proxy access. (#48565, #48198)\nChores\nRemoved automatic follow-up prompt suggestions and the tui.prompt_suggestions setting. (#48621)\nRemoved the bundled plugin-creator skill. (#48604)\nChangelog\nFull Changelog: https://github.com/openai/codex/compare/rust-v0.158.0...rust-v0.159.0\n#48135 Add opt-in code-mode yielding on new user input @pakrym-oai\n#48138 Suppress console windows when spawning the code-mode host on Windows @zm-oai\n#48141 Preempt model responses when new user input arrives @pakrym-oai\n#48143 Preserve executor MCP credential boundaries across reconnects @rreichel3-oai\n#48151 Add item anchors to thread/items/list pagination @btraut-openai\n#48155 Preserve filesystem denials when preparing approved commands @viyatb-oai\n#48157 Allow Windows daemon launches with residual job membership @etraut-openai\n#48158 Fix Guardian retained context spacing and empty assistant handling @olliem-oai\n#48168 Generate unique exec-server process IDs for every request @sdcoffey\n#48174 Preserve usage limit windows in turn and compaction analytics @rhan-oai\n#48176 Protect .aws directories under sandbox writable roots @jackz100\n#48187 Fix zsh alias quoting in sourced shell snapshots @jif-oai\n#48190 Bound agent message board SSE frames before parsing @jif-oai\n#48197 Optimize blake3 in Bazel fastbuilds @jif-oai\n#48198 Honor execution environment proxy requirements @seanh-oai\n#48199 Keep archived threads with empty previews visible in listings @acrognale-oai\n#48200 Extract Responses header conversion into a shared module @anp-oai\n#48205 Dismiss viewed TUI warnings when closing the viewer @fcoury-oai\n#48206 Add a keep-and-next action to the warnings viewer @fcoury-oai\n#48207 Preserve queued output for observers during code-mode termination @pakrym-oai\n#48211 Keep Codex visible during external editor handoff @etraut-openai\n#48213 Isolate executable fixture copies in CLI tests on Linux @jif-oai\n#48222 Preserve late result metadata for truncated code-mode calls @ningyi-oai\n#48224 Preserve model and access program pairs during compaction @jamy-OAI\n#48229 Extract Responses failure parsing into a dedicated module @anp-oai\n#48238 Suppress console windows for local Windows MCP servers @malsamiri-oai\n#48272 Prevent Windows daemon launches from retaining launcher stdio @zm-oai\n#48318 Keep TUI reconnect attempts running until the shared deadline @etraut-openai\n#48344 Preserve tool metadata for OpenAI provider endpoint overrides @peilin-openai",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "repo": "openai/codex",
+        "version": "rust-v0.159.0",
+        "priority": 20,
+        "stars": 127099,
+        "private": false,
+        "draft": false,
+        "evidence_status": "release_body",
+        "star_delta": 136,
+        "star_velocity": 145.99,
+        "momentum_window_days": 0.93
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:ghrel:9b9d615d7fb6df0bae74",
+      "event_ids": [
+        "ghrel:9b9d615d7fb6df0bae74"
+      ],
+      "headline": "OpenAI Codex rust-v0.159.0",
+      "what_changed": "New Features Opt-in instant_interrupt lets new input steer Codex during model responses or long-running code-mode calls. (#48135, #48141) New sessions get a compact welcome screen and consistent headers, with occasional tips during and after turns. (#48513, #48562, #48352) The warnings viewer dismisses reviewed warnings when closed; press k to keep one for later. … [Excerpt; see source for full details.]",
+      "why_it_matters": "(#48151) Bug Fixes Windows launches avoid stray console windows for MCP servers, code-mode hosts, and piped commands. (#48155, #48176) Fixed macOS TLS access in network-enabled sandboxes and remote environments that require proxy access. (#48621) Removed the bundled plugin-creator skill.",
+      "action": "watch",
+      "rationale": "No additional workflow change is supported beyond the cited evidence.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.159.0"
+      ],
+      "scores": {
+        "workflow_impact": 30.0,
+        "risk_or_compatibility": 0.0,
+        "actionability": 20.0,
+        "specificity": 10.0,
+        "demonstrated": 1.0,
+        "utility_total": 60.0,
+        "authority": 20.0,
+        "relevance": 5.0,
+        "novelty": 15.0,
+        "recency": 4.65,
+        "impact": 30.0,
+        "momentum": 1.46,
+        "noise_penalty": 0.0,
+        "total": 106.11
+      }
+    }
+  ],
+  "noise_notes": [
+    "Excluded OpenAI Codex: no substantive change evidence.",
+    "Excluded Gemini CLI: no substantive change evidence.",
+    "Excluded Hermes Agent: no specific developer consequence was established."
+  ],
+  "narration": "This is your Daily AI Developer Brief for 2026-09-29. Production note: This episode uses AI-generated narration.\n\n(#48151) Bug Fixes Windows launches avoid stray console windows for MCP servers, code-mode hosts, and piped commands. (#48155, #48176) Fixed macOS TLS access in network-enabled sandboxes and remote environments that require proxy access. (#48621) Removed the bundled plugin-creator skill. No additional workflow change is supported beyond the cited evidence.\n\nSupplementary learning coverage was unavailable; primary-source coverage remained sufficient for this edition.\n\nSource links and written recommendations are in the episode notes. See you tomorrow.",
+  "show_notes": "OpenAI Codex rust-v0.159.0\nWhat to know: New Features Opt-in instant_interrupt lets new input steer Codex during model responses or long-running code-mode calls. (#48135, #48141) New sessions get a compact welcome screen and consistent headers, with occasional tips during and after turns. (#48513, #48562, #48352) The warnings viewer dismisses reviewed warnings when closed; press k to keep one for later. … [Excerpt; see source for full details.]\nWhat changes for developers: (#48151) Bug Fixes Windows launches avoid stray console windows for MCP servers, code-mode hosts, and piped commands. (#48155, #48176) Fixed macOS TLS access in network-enabled sandboxes and remote environments that require proxy access. (#48621) Removed the bundled plugin-creator skill.\nRecommendation: WATCH — No additional workflow change is supported beyond the cited evidence.\nSources: https://github.com/openai/codex/releases/tag/rust-v0.159.0\n\nHigh noise / low signal\n- Excluded OpenAI Codex: no substantive change evidence.\n- Excluded Gemini CLI: no substantive change evidence.\n- Excluded Hermes Agent: no specific developer consequence was established.\n\nSupplementary coverage gaps\n- youtube:weekly-digest",
+  "generation": {
+    "provider": "deterministic",
+    "calls": 0,
+    "narration_style": "explanatory-v3",
+    "edition": "alert"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-09-29-f8f3fde3/daily-ai-brief.mp3",
+    "size_bytes": 335088,
+    "duration_secs": 55.848,
+    "sha256": "c83274a61924565bdeedc07d9b306952d1d8f1f837332e131c4bd249ea14b80a",
+    "codec": "mp3",
+    "sample_rate": 24000,
+    "channels": 1
+  }
+}

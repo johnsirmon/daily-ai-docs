@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — 2026-09-28
+# Daily AI Developer Brief — 2026-09-29
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
@@ -81,30 +81,21 @@ The pilot uses the signed-in account's existing allowance. It does not authorize
 
 ## Today's signal
 
-### OpenAI Codex rust-v0.158.0
+### OpenAI Codex rust-v0.159.0
 
-**What to know:** New Features Configure copy-on-select and right-click paste in the fullscreen TUI. Copied transcript selections now preserve Markdown formatting. (#47639, #47896, #48118) Connect to MCP servers that require pre-registered OAuth client secrets, including through codex mcp add --oauth-client-secret. … [Excerpt; see source for full details.]
+**What to know:** New Features Opt-in instant_interrupt lets new input steer Codex during model responses or long-running code-mode calls. (#48135, #48141) New sessions get a compact welcome screen and consistent headers, with occasional tips during and after turns. (#48513, #48562, #48352) The warnings viewer dismisses reviewed warnings when closed; press k to keep one for later. … [Excerpt; see source for full details.]
 
-**What changes for developers:** (#47639, #47896, #48118) Connect to MCP servers that require pre-registered OAuth client secrets, including through codex mcp add --oauth-client-secret. (#47484, #47956) Terminal input approval is enabled by default for commands running with elevated permissions. (#47799, #48073) Bug Fixes Fixed Windows sandbox failures involving ordinary Windows 10 paths, rejected stored credentials, and large permission policies. (#47672, #47695, #47919) Fixed Linux sandbox startup with nested writable roots and preserved Git metadata protections across writable roots on Linux and macOS. … [Excerpt; see source for full details.]
+**What changes for developers:** (#48151) Bug Fixes Windows launches avoid stray console windows for MCP servers, code-mode hosts, and piped commands. (#48155, #48176) Fixed macOS TLS access in network-enabled sandboxes and remote environments that require proxy access. (#48621) Removed the bundled plugin-creator skill.
 
 **Recommendation:** WATCH — No additional workflow change is supported beyond the cited evidence.
 
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.158.0)
-
-### Claude Code v2.1.284
-
-**What to know:** What's changed Added Claude Sonnet 5.5 (claude-sonnet-5-5), now the default Sonnet model on the Anthropic API — 1M context, $2/$10 per Mtok with $0.20/Mtok cache reads Added a "Yes, but ask again next time" answer to auto mode's prompt before a read outside the working directories, so you can allow that one read and still be asked about later ones Added dollar amounts to the Claude apps gateway spend limit in /usage and the status line (for example "$271.40 / $500.00 spent this month") when the gateway runs this version or later; the status line's rate_limits.spend_limit also gains used_usd, limit_usd and period Added effortSlider:decreaseEffort, increaseEffort and toggleUltracode keybinding actions, so … [Excerpt; see source for full details.]
-
-**What changes for developers:** What's changed Added Claude Sonnet 5.5 (claude-sonnet-5-5), now the default Sonnet model on the Anthropic API — 1M context, $2/$10 per Mtok with $0.20/Mtok cache reads Added a "Yes, but ask again next time" answer to auto mode's prompt before a read outside the working directories, so you can allow that one read and still be asked about later ones Added dollar amounts to the Claude apps gateway spend limit in /usage and the status line (for example "$271.40 / $500.00 spent this month") when the gateway runs this version or later. … [Excerpt; see source for full details.]
-
-**Recommendation:** WATCH — No workflow change is supported beyond the cited evidence.
-
-Sources: [1](https://github.com/anthropics/claude-code/releases/tag/v2.1.284)
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.159.0)
 
 ## High noise / low signal
 
 - Excluded OpenAI Codex: no substantive change evidence.
 - Excluded Gemini CLI: no substantive change evidence.
+- Excluded Hermes Agent: no specific developer consequence was established.
 
 ## Editorial contract
 
@@ -123,15 +114,15 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `feed:https://github.blog/changelog/feed/`: ok:0
-- `github:NousResearch/hermes-agent`: ok:0
+- `feed:https://github.blog/changelog/feed/`: ok:1
+- `github:NousResearch/hermes-agent`: ok:16
 - `github:agentskills/agentskills`: ok:0
 - `github:anthropics/claude-code`: ok:1
 - `github:google-gemini/gemini-cli`: ok:1
 - `github:microsoft/vscode`: ok:0
 - `github:microsoft/vscode-copilot-release`: ok:0
 - `github:modelcontextprotocol/specification`: ok:0
-- `github:openai/codex`: ok:8
+- `github:openai/codex`: ok:7
 - `youtube:weekly-digest`: error:ValueError
 
 Each edition manifest distinguishes healthy no-news results from source outages.
