@@ -346,6 +346,7 @@ def _prepare(
         selected, noise_notes = select_editorial_events(
             events, state.get("seen_event_ids", []), covered_paper_ids=paper_ids,
             published_events=published_events,
+            audience_profile=editorial.get("audience_profile"),
             max_products=int(editorial.get("max_products", 3)),
             max_events_per_product=int(editorial.get("max_events_per_product", 1)),
             max_research=int(editorial.get("max_research", 1)), now=now,

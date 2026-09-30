@@ -28,6 +28,11 @@ daily:
     packet_path: null
     allowed_hosts: []
   editorial:
+    # Public relevance preferences, not evidence of installed versions or entitlement.
+    audience_profile:
+      experience: experienced
+      tools: [vscode-insiders, copilot-chat, copilot-cli, codex, hermes]
+      priorities: [agent-integrations, mcp, evals, observability, handoffs, reliability, cost, wsl]
     # Production is fail-closed via AI_EDITORIAL=required. No deterministic
     # narration is published when grounded drafting or verification fails.
     enabled: true

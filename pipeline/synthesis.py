@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from .editorial_profile import PROFILE_INSTRUCTIONS, validate_profile
+
 import json
 import os
 import re
@@ -405,6 +407,7 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
     """
     settings = editorial_model_config(config)
     values = config or {}
+    profile = validate_profile(values.get("audience_profile"))
     max_input = _budget_integer(values, "max_input_chars", 120000, 2000, 120000)
     max_output = _budget_integer(values, "max_output_tokens", 4000, 256, 6000)
     verify_output = _budget_integer(values, "verification_max_output_tokens", 2500, 256, 4000)
@@ -425,10 +428,13 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
         "history": recent,
         "useful_word_target": {"min": target_min, "max": target_max},
     }
+    if profile is not None:
+        request["audience_profile"] = profile
+    profile_instructions = PROFILE_INSTRUCTIONS if profile is not None else ""
     client = get_editorial_client(values)
     started = time.monotonic()
     draft = _request_editorial(
-        client, model=settings.model, instructions=_DRAFT_INSTRUCTIONS, payload=request,
+        client, model=settings.model, instructions=_DRAFT_INSTRUCTIONS + profile_instructions, payload=request,
         max_input_chars=max_input, max_output_tokens=max_output, timeout=settings.timeout_seconds,
     )
     try:
@@ -445,7 +451,7 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
     if remaining < 1:
         raise EditorialProviderError("Gemini editorial time budget exhausted before verification")
     verification = _request_editorial(
-        client, model=settings.model, instructions=_VERIFY_INSTRUCTIONS,
+        client, model=settings.model, instructions=_VERIFY_INSTRUCTIONS + profile_instructions,
         payload={**request, "proposed_brief": draft}, max_input_chars=max_input,
         max_output_tokens=verify_output, timeout=min(settings.timeout_seconds, remaining),
     )
