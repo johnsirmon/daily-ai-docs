@@ -1,5 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</description><itunes:summary>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</itunes:summary><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg" /><image><url>https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg</url><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link></image><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><title>OpenAI Codex: Opt-in instant_interrupt lets new input steer Codex during model...</title><description>OpenAI Codex rust-v0.159.0: Opt-in instant_interrupt lets new input steer Codex during model responses or long-running code-mode calls. (#48135, #48141) New sessions get a compact welcome screen and consistent headers, with occasional tips during and after turns...
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"><channel><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link><description>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</description><itunes:summary>Understand AI developer tools, not just their release notes. Source-backed explanations of coding assistants, agent workflows, and developer tooling: what changed, who it affects, and where the limits are. Short daily briefs and occasional deep dives connect primary sources with practical workflows, tradeoffs, and clearly labeled research. Created by John Sirmon with AI-generated narration.</itunes:summary><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg" /><image><url>https://johnsirmon.github.io/daily-ai-docs/assets/podcast-cover-v4.jpg</url><title>Daily AI Developer Brief</title><link>https://github.com/johnsirmon/daily-ai-docs</link></image><language>en-us</language><generator>daily-ai-docs</generator><itunes:author>John Sirmon</itunes:author><itunes:explicit>false</itunes:explicit><itunes:type>episodic</itunes:type><itunes:category text="Technology" /><itunes:new-feed-url>https://johnsirmon.github.io/daily-ai-docs/podcast.xml</itunes:new-feed-url><item><itunes:image href="https://johnsirmon.github.io/daily-ai-docs/assets/episodes/daily-2026-10-01-control-bafeff25.jpg" /><title>Control before speed: connected tools and model choices</title><description>Control before speed: connected tools and model choices: Copilot CLI adds MCP discovery recovery, origin-scoped GitHub authentication and session-scoped read-only directory approvals. Also covered: Treat a catalog default as a testable change.
+
+Production disclosure: This episode uses AI-generated narration reviewed against its transcript and cited sources.
+
+Reviewed Edge narration. AI-generated audio.
+
+Control before speed: tools, permissions, and model choices
+October 1, 2026 episode.
+
+Optional integration checks (proposed experiments, not measured results)
+
+Use a disposable workspace, a noncritical MCP server and a harmless read-only task. Record the available tools, briefly interrupt discovery, restore the connection, and inspect whether the session and tool list recover. If your test server supports it, separately reproduce a completed response followed by trailing progress updates and check whether the client treats the call as complete.
+
+Do not use discovery recovery as permission to repeat an external-state-changing action. Inspect the outcome before deciding whether any action should run again. The release announcement is not evidence that your own server, client configuration or task passed these checks.
+
+Permission changes
+
+Copilot CLI v1.0.90 adds --mcp-github-auth to scope GitHub account authentication to approved MCP server origins. Session-scoped read-only directory approvals concern a separate local-filesystem boundary. Check the actual prompt, approved scope and installed build; do not assume existing configurations changed automatically. The release also says permission prompts remain answerable after resuming interrupted sessions.
+
+Model comparison
+
+Use the same small, reproducible bug in separate clean workspaces, with comparable permissions. Record the selected model, accepted result, repair/review effort and any usage cost actually exposed by your tools. This is a proposed local comparison, not a benchmark or a savings claim. Codex's announcement concerns its bundled model catalog; it does not establish that all existing sessions changed models.
+
+Primary release evidence
+
+GitHub Copilot CLI v1.0.90, published September 30, 2026:
+https://github.com/github/copilot-cli/releases/tag/v1.0.90
+
+OpenAI Codex rust-v0.159.1, published September 29, 2026:
+https://github.com/openai/codex/releases/tag/rust-v0.159.1
+
+Primary background definitions (context, not new release announcements)
+
+https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli
+https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro
+https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture
+https://learn.chatgpt.com/docs/codex/cli
+
+Canonical editorial context
+
+https://sirmon.ai/updates/hydrafusion-workflows/
+https://sirmon.ai/updates/claude-code-reliability/
+
+These journal articles inform the whole-workflow evaluation and reliability framing. They are not primary evidence for the Copilot or Codex release claims.
+
+Production: AI-generated narration, disclosed in the audio. This episode has not had a human listening review. Automated transcription can misrecognize names and short phrases. No sponsorship or advertisements.
+
+
+Automatic transcript (listening corrections pending): https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/transcript.vtt
+Chapters: https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/chapters.json
+
+
+Evergreen source labels:
+https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
+https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
+https://learn.chatgpt.com/docs/codex/cli — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01</description><itunes:summary>Control before speed: connected tools and model choices: Copilot CLI adds MCP discovery recovery, origin-scoped GitHub authentication and session-scoped read-only directory approvals. Also covered: Treat a catalog default as a testable change.
+
+Production disclosure: This episode uses AI-generated narration reviewed against its transcript and cited sources.
+
+Reviewed Edge narration. AI-generated audio.
+
+Control before speed: tools, permissions, and model choices
+October 1, 2026 episode.
+
+Optional integration checks (proposed experiments, not measured results)
+
+Use a disposable workspace, a noncritical MCP server and a harmless read-only task. Record the available tools, briefly interrupt discovery, restore the connection, and inspect whether the session and tool list recover. If your test server supports it, separately reproduce a completed response followed by trailing progress updates and check whether the client treats the call as complete.
+
+Do not use discovery recovery as permission to repeat an external-state-changing action. Inspect the outcome before deciding whether any action should run again. The release announcement is not evidence that your own server, client configuration or task passed these checks.
+
+Permission changes
+
+Copilot CLI v1.0.90 adds --mcp-github-auth to scope GitHub account authentication to approved MCP server origins. Session-scoped read-only directory approvals concern a separate local-filesystem boundary. Check the actual prompt, approved scope and installed build; do not assume existing configurations changed automatically. The release also says permission prompts remain answerable after resuming interrupted sessions.
+
+Model comparison
+
+Use the same small, reproducible bug in separate clean workspaces, with comparable permissions. Record the selected model, accepted result, repair/review effort and any usage cost actually exposed by your tools. This is a proposed local comparison, not a benchmark or a savings claim. Codex's announcement concerns its bundled model catalog; it does not establish that all existing sessions changed models.
+
+Primary release evidence
+
+GitHub Copilot CLI v1.0.90, published September 30, 2026:
+https://github.com/github/copilot-cli/releases/tag/v1.0.90
+
+OpenAI Codex rust-v0.159.1, published September 29, 2026:
+https://github.com/openai/codex/releases/tag/rust-v0.159.1
+
+Primary background definitions (context, not new release announcements)
+
+https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli
+https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro
+https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture
+https://learn.chatgpt.com/docs/codex/cli
+
+Canonical editorial context
+
+https://sirmon.ai/updates/hydrafusion-workflows/
+https://sirmon.ai/updates/claude-code-reliability/
+
+These journal articles inform the whole-workflow evaluation and reliability framing. They are not primary evidence for the Copilot or Codex release claims.
+
+Production: AI-generated narration, disclosed in the audio. This episode has not had a human listening review. Automated transcription can misrecognize names and short phrases. No sponsorship or advertisements.
+
+
+Automatic transcript (listening corrections pending): https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/transcript.vtt
+Chapters: https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/chapters.json
+
+
+Evergreen source labels:
+https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
+https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
+https://learn.chatgpt.com/docs/codex/cli — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01</itunes:summary><content:encoded>&lt;p&gt;Control before speed: connected tools and model choices: Copilot CLI adds MCP discovery recovery, origin-scoped GitHub authentication and session-scoped read-only directory approvals. Also covered: Treat a catalog default as a testable change.&lt;/p&gt;
+&lt;p&gt;Production disclosure: This episode uses AI-generated narration reviewed against its transcript and cited sources.&lt;/p&gt;
+&lt;p&gt;Reviewed Edge narration. AI-generated audio.&lt;/p&gt;
+&lt;p&gt;Control before speed: tools, permissions, and model choices&lt;br /&gt;October 1, 2026 episode.&lt;/p&gt;
+&lt;p&gt;Optional integration checks (proposed experiments, not measured results)&lt;/p&gt;
+&lt;p&gt;Use a disposable workspace, a noncritical MCP server and a harmless read-only task. Record the available tools, briefly interrupt discovery, restore the connection, and inspect whether the session and tool list recover. If your test server supports it, separately reproduce a completed response followed by trailing progress updates and check whether the client treats the call as complete.&lt;/p&gt;
+&lt;p&gt;Do not use discovery recovery as permission to repeat an external-state-changing action. Inspect the outcome before deciding whether any action should run again. The release announcement is not evidence that your own server, client configuration or task passed these checks.&lt;/p&gt;
+&lt;p&gt;Permission changes&lt;/p&gt;
+&lt;p&gt;Copilot CLI v1.0.90 adds --mcp-github-auth to scope GitHub account authentication to approved MCP server origins. Session-scoped read-only directory approvals concern a separate local-filesystem boundary. Check the actual prompt, approved scope and installed build; do not assume existing configurations changed automatically. The release also says permission prompts remain answerable after resuming interrupted sessions.&lt;/p&gt;
+&lt;p&gt;Model comparison&lt;/p&gt;
+&lt;p&gt;Use the same small, reproducible bug in separate clean workspaces, with comparable permissions. Record the selected model, accepted result, repair/review effort and any usage cost actually exposed by your tools. This is a proposed local comparison, not a benchmark or a savings claim. Codex&amp;#x27;s announcement concerns its bundled model catalog; it does not establish that all existing sessions changed models.&lt;/p&gt;
+&lt;p&gt;Primary release evidence&lt;/p&gt;
+&lt;p&gt;GitHub Copilot CLI v1.0.90, published September 30, 2026:&lt;br /&gt;&lt;a href="https://github.com/github/copilot-cli/releases/tag/v1.0.90"&gt;https://github.com/github/copilot-cli/releases/tag/v1.0.90&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;OpenAI Codex rust-v0.159.1, published September 29, 2026:&lt;br /&gt;&lt;a href="https://github.com/openai/codex/releases/tag/rust-v0.159.1"&gt;https://github.com/openai/codex/releases/tag/rust-v0.159.1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Primary background definitions (context, not new release announcements)&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli"&gt;https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli&lt;/a&gt;&lt;br /&gt;&lt;a href="https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro"&gt;https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro&lt;/a&gt;&lt;br /&gt;&lt;a href="https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture"&gt;https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture&lt;/a&gt;&lt;br /&gt;&lt;a href="https://learn.chatgpt.com/docs/codex/cli"&gt;https://learn.chatgpt.com/docs/codex/cli&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Canonical editorial context&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://sirmon.ai/updates/hydrafusion-workflows/"&gt;https://sirmon.ai/updates/hydrafusion-workflows/&lt;/a&gt;&lt;br /&gt;&lt;a href="https://sirmon.ai/updates/claude-code-reliability/"&gt;https://sirmon.ai/updates/claude-code-reliability/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;These journal articles inform the whole-workflow evaluation and reliability framing. They are not primary evidence for the Copilot or Codex release claims.&lt;/p&gt;
+&lt;p&gt;Production: AI-generated narration, disclosed in the audio. This episode has not had a human listening review. Automated transcription can misrecognize names and short phrases. No sponsorship or advertisements.&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;Automatic transcript (listening corrections pending): &lt;a href="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/transcript.vtt"&gt;https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/transcript.vtt&lt;/a&gt;&lt;br /&gt;Chapters: &lt;a href="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/chapters.json"&gt;https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/chapters.json&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;Evergreen source labels:&lt;br /&gt;&lt;a href="https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli"&gt;https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01&lt;br /&gt;&lt;a href="https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro"&gt;https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01&lt;br /&gt;&lt;a href="https://learn.chatgpt.com/docs/codex/cli"&gt;https://learn.chatgpt.com/docs/codex/cli&lt;/a&gt; — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01&lt;/p&gt;</content:encoded><guid isPermaLink="false">daily-2026-10-01-control-bafeff25</guid><pubDate>Thu, 01 Oct 2026 15:49:04 +0000</pubDate><enclosure url="https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/daily-ai-brief.mp3" length="4264062" type="audio/mpeg" /><itunes:duration>4:26</itunes:duration></item><item><title>OpenAI Codex: Opt-in instant_interrupt lets new input steer Codex during model...</title><description>OpenAI Codex rust-v0.159.0: Opt-in instant_interrupt lets new input steer Codex during model responses or long-running code-mode calls. (#48135, #48141) New sessions get a compact welcome screen and consistent headers, with occasional tips during and after turns...
 
 Production disclosure: This episode uses AI-generated narration based on the cited source material.
 

@@ -1,0 +1,270 @@
+{
+  "schema_version": 3,
+  "episode_id": "daily-2026-10-01-control-bafeff25",
+  "published_at": "2026-10-01T15:49:04.149481Z",
+  "status": "candidate",
+  "source_health": {
+    "reviewed:copilot": "ok:1",
+    "reviewed:codex": "ok:1",
+    "reviewed:background": "ok:3"
+  },
+  "source_events": [
+    {
+      "event_id": "reviewed:copilot:v1.0.90",
+      "source_type": "github_release",
+      "title": "GitHub Copilot CLI v1.0.90",
+      "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.90",
+      "product": "GitHub Copilot CLI",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-30T21:38:30Z",
+      "fetched_at": "2026-10-01T13:26:48.071557Z",
+      "evidence": "MCP tools recover after transient discovery failures without restarting the session; unchanged catalogs remain available during recovery.\nMCP tool calls complete even when servers keep sending progress updates after responding\nAdd --mcp-github-auth to scope GitHub account auth to approved MCP server origins\nAdd session-scoped read-only directory approvals to path access prompts\nPermission prompts remain answerable after resuming interrupted sessions.\nAdd support for GPT-6.1 Sol in model selection",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts",
+        "source_document_sha256": "345bdf80fa68a461ebf5ca0971fe3ac334a5eacb77e44f137667d4769494b7da"
+      }
+    },
+    {
+      "event_id": "reviewed:codex:rust-v0.159.1",
+      "source_type": "github_release",
+      "title": "OpenAI Codex rust-v0.159.1",
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.159.1",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "2026-09-29T20:32:34Z",
+      "fetched_at": "2026-10-01T13:26:48.071557Z",
+      "evidence": "Added GPT-6.1 Sol as the default model in the bundled catalog and Amazon Bedrock Mantle and Runtime catalogs.",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts",
+        "source_document_sha256": "4d6f87a95d3d93a4576bc1be2498c0cb51dcea3afb0382abd15bac978c8373e5"
+      }
+    },
+    {
+      "event_id": "docs:copilot-cli",
+      "source_type": "evergreen_documentation",
+      "title": "GitHub Copilot CLI background",
+      "url": "https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli",
+      "product": "GitHub Copilot CLI",
+      "topic": "AI coding agents",
+      "published_at": "",
+      "fetched_at": "2026-10-01T15:49:04.149481Z",
+      "evidence": "Copilot directly from your terminal. You can use it to answer questions, write and debug code",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-01T15:49:04.149481Z",
+          "reviewed_at": "2026-10-01T15:49:04.149481Z",
+          "reviewer": "assistant",
+          "content": "Copilot directly from your terminal. You can use it to answer questions, write and debug code",
+          "content_sha256": "7db8303776e1b7a84beaed5afdcad3cc8230369a9cc8324d9bb0db8d9e78a597",
+          "review_note": "The original publication date is unavailable because this official documentation page provides no date. This captures the exact bounded public excerpt used for review, not a dated news announcement."
+        }
+      }
+    },
+    {
+      "event_id": "docs:mcp",
+      "source_type": "evergreen_documentation",
+      "title": "Model Context Protocol background",
+      "url": "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro",
+      "product": "Model Context Protocol",
+      "topic": "AI coding agents",
+      "published_at": "",
+      "fetched_at": "2026-10-01T15:49:04.149481Z",
+      "evidence": "MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems.",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-01T15:49:04.149481Z",
+          "reviewed_at": "2026-10-01T15:49:04.149481Z",
+          "reviewer": "assistant",
+          "content": "MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems.",
+          "content_sha256": "fd447999a807f0b304cecb24aa0b5907644182d545d0d88c7dc3ec2846e8bb34",
+          "review_note": "The original publication date is unavailable because this official documentation page provides no date. This captures the exact bounded public excerpt used for review, not a dated news announcement."
+        }
+      }
+    },
+    {
+      "event_id": "docs:codex-cli",
+      "source_type": "evergreen_documentation",
+      "title": "OpenAI Codex background",
+      "url": "https://learn.chatgpt.com/docs/codex/cli",
+      "product": "OpenAI Codex",
+      "topic": "AI coding agents",
+      "published_at": "",
+      "fetched_at": "2026-10-01T15:49:04.149481Z",
+      "evidence": "Let Codex inspect files, make edits, and run the tools already installed on your machine.",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-01T15:49:04.149481Z",
+          "reviewed_at": "2026-10-01T15:49:04.149481Z",
+          "reviewer": "assistant",
+          "content": "Let Codex inspect files, make edits, and run the tools already installed on your machine.",
+          "content_sha256": "e25d1b59e22a72dde69e076fc61879cf2e8df442f7f96050d933a3fe70380dc0",
+          "review_note": "The original publication date is unavailable because this official documentation page provides no date. This captures the exact bounded public excerpt used for review, not a dated news announcement."
+        }
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "story:copilot-control",
+      "event_ids": [
+        "reviewed:copilot:v1.0.90",
+        "docs:copilot-cli",
+        "docs:mcp"
+      ],
+      "headline": "Control before speed: connected tools and model choices",
+      "what_changed": "Copilot CLI adds MCP discovery recovery, origin-scoped GitHub authentication and session-scoped read-only directory approvals.",
+      "why_it_matters": "Connection recovery and permission scope give MCP integrations concrete behaviors to inspect before changing a working session.",
+      "action": "watch",
+      "rationale": "In a disposable workspace, test read-only discovery recovery and inspect the approved origin and directory scope separately.",
+      "source_urls": [
+        "https://github.com/github/copilot-cli/releases/tag/v1.0.90",
+        "https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli",
+        "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro"
+      ],
+      "scores": {
+        "total": 100
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "story:model-catalog",
+      "event_ids": [
+        "reviewed:codex:rust-v0.159.1",
+        "docs:codex-cli"
+      ],
+      "headline": "Treat a catalog default as a testable change",
+      "what_changed": "Codex adds GPT-6.1 Sol as the default in its bundled and named Bedrock catalogs.",
+      "why_it_matters": "A catalog change is not a benchmark or evidence of improved results on a particular repository.",
+      "action": "watch",
+      "rationale": "Check the selected model and use a representative acceptance task before replacing a working default; measure any cost claim.",
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.159.1",
+        "https://learn.chatgpt.com/docs/codex/cli"
+      ],
+      "scores": {
+        "total": 90
+      },
+      "kind": "product",
+      "editorial": {}
+    }
+  ],
+  "noise_notes": [],
+  "narration": "GitHub Copilot's terminal assistant has new fixes for recovering connected tools and finishing calls that get stuck behind progress updates. Meanwhile, GPT 6.1 Soul is arriving in Copilot's model selection and as the default in Codex's bundle model catalog. If you use an agent to investigate bugs, the useful question is what these changes mean for getting from a broken test to a fix you trust. This is the daily AI developer brief for October 1st. Covering releases from September 30th and late September 29th. Exact builds and primary sources are in the notes. Production note. This episode uses AI generated narration. Copilot's command line assistant is an AI coding tool you use in your terminal to ask questions, write code, or debug a project. MCP, short from model context protocol, is a standard that connects AI applications to outside data and tools. For coding assistant, those connections can bring information into the task instead of leaving everything inside the conversation. Picture a bug investigation where your assistant needs information from a connected tool before suggesting change. Halfway through, that tool disappears from the available list. Now the investigation has a second problem. Is the connection broken or should you restart the whole session? Copilot's release says tools can recover after a temporary discovery failure without restarting, while an unchanged list of tools remains available during recovery. That is the first fix getting the connection back without starting over. The second fix is about finishing the call. A server may have already sent its response, but keep sending progress updates afterward. The release says those updates no longer prevent the tool call from completing. Think of a waiter delivering your order while the kitchen display still says it's cooking. The answer arriving and the activity indicator stopping aren't necessarily the same event. These changes are worth your attention if connected tools are part of your copilot work. If they aren't, you can leave the connection testing to people maintaining those integrations. I've put the read-only recovery checks in the notes, including how to keep discovery testing separate from replaying an action that changes data. The important distinction is simple. Finding a tool again and deciding to run it again are different decisions. Permissions get a useful update too. GitHub account authentication can be limited to approved MCP server origins, while separate session scope approvals let you allow read-only access to a local directory. Those address different boundaries, remote account access and local file access, so don't treat one approval as permission for the other. Permission prompts also remain answerable after an interrupted session resumes, which is especially relevant if you've returned to a task only to find its approval steps stuck. Then there's the model change. CodeX is OpenAI's coding agent. Its terminal tool can inspect files, edit code and run local development tools. The model is one choice inside that working setup alongside your task and permissions. Its release makes sole the default in the bundled model catalog, while copilot adds it as a model selection option. That doesn't mean every existing session has switched. Neither release supplies performance or price evidence showing that your project will get a better or cheaper result. If you're considering the new model, give it the same small, reproducible bug as your current setup in separate clean workspaces, then compare the accepted result and how much repair or review each attempt needed. Keep permissions comparable and note which model actually ran. You're looking for a change you can accept, not just a convincing first answer. If your current setup is doing the job and you're not evaluating alternatives, there's no need to turn model availability into another project today. For your next coding session, pick the change that matches the friction you actually have, a connected tool that needs reliable recovery, or a model choice you want to compare. Start there and let the rest wait.",
+  "show_notes": "Control before speed: tools, permissions, and model choices\nOctober 1, 2026 episode.\n\nOptional integration checks (proposed experiments, not measured results)\n\nUse a disposable workspace, a noncritical MCP server and a harmless read-only task. Record the available tools, briefly interrupt discovery, restore the connection, and inspect whether the session and tool list recover. If your test server supports it, separately reproduce a completed response followed by trailing progress updates and check whether the client treats the call as complete.\n\nDo not use discovery recovery as permission to repeat an external-state-changing action. Inspect the outcome before deciding whether any action should run again. The release announcement is not evidence that your own server, client configuration or task passed these checks.\n\nPermission changes\n\nCopilot CLI v1.0.90 adds --mcp-github-auth to scope GitHub account authentication to approved MCP server origins. Session-scoped read-only directory approvals concern a separate local-filesystem boundary. Check the actual prompt, approved scope and installed build; do not assume existing configurations changed automatically. The release also says permission prompts remain answerable after resuming interrupted sessions.\n\nModel comparison\n\nUse the same small, reproducible bug in separate clean workspaces, with comparable permissions. Record the selected model, accepted result, repair/review effort and any usage cost actually exposed by your tools. This is a proposed local comparison, not a benchmark or a savings claim. Codex's announcement concerns its bundled model catalog; it does not establish that all existing sessions changed models.\n\nPrimary release evidence\n\nGitHub Copilot CLI v1.0.90, published September 30, 2026:\nhttps://github.com/github/copilot-cli/releases/tag/v1.0.90\n\nOpenAI Codex rust-v0.159.1, published September 29, 2026:\nhttps://github.com/openai/codex/releases/tag/rust-v0.159.1\n\nPrimary background definitions (context, not new release announcements)\n\nhttps://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli\nhttps://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro\nhttps://modelcontextprotocol.io/docs/2026-07-28/learn/architecture\nhttps://learn.chatgpt.com/docs/codex/cli\n\nCanonical editorial context\n\nhttps://sirmon.ai/updates/hydrafusion-workflows/\nhttps://sirmon.ai/updates/claude-code-reliability/\n\nThese journal articles inform the whole-workflow evaluation and reliability framing. They are not primary evidence for the Copilot or Codex release claims.\n\nProduction: AI-generated narration, disclosed in the audio. This episode has not had a human listening review. Automated transcription can misrecognize names and short phrases. No sponsorship or advertisements.\n\n\nAutomatic transcript (listening corrections pending): https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/transcript.vtt\nChapters: https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/chapters.json\n",
+  "generation": {
+    "edition": "reviewed-edge",
+    "provider": "edge",
+    "approved_at": "2026-10-01T15:49:04.149481Z",
+    "source_audio_sha256": "73ba239db4957b56face61e9b4d4ee7e3ab734143a5f0ff2422be4da94b57fbc",
+    "transcript": {
+      "engine": "faster-whisper",
+      "model": "base.en",
+      "sha256": "a16e7c4296c61567c5adfdf16dbf87788be9bceea26bb9be6bb647263749e97f"
+    },
+    "review": {
+      "method": "transcript_source_comparison",
+      "reviewed_at": "2026-10-01T15:49:04.149481Z",
+      "reviewer": "assistant",
+      "claims": [
+        {
+          "text": "Copilot's release says tools can recover after a temporary discovery failure without restarting, while an unchanged list of tools remains available during recovery.",
+          "event_id": "reviewed:copilot:v1.0.90",
+          "quote": "MCP tools recover after transient discovery failures without restarting the session; unchanged catalogs remain available during recovery."
+        },
+        {
+          "text": "The release says those updates no longer prevent the tool call from completing.",
+          "event_id": "reviewed:copilot:v1.0.90",
+          "quote": "MCP tool calls complete even when servers keep sending progress updates after responding"
+        },
+        {
+          "text": "GitHub account authentication can be limited to approved MCP server origins",
+          "event_id": "reviewed:copilot:v1.0.90",
+          "quote": "Add --mcp-github-auth to scope GitHub account auth to approved MCP server origins"
+        },
+        {
+          "text": "while separate session scope approvals let you allow read-only access to a local directory.",
+          "event_id": "reviewed:copilot:v1.0.90",
+          "quote": "Add session-scoped read-only directory approvals to path access prompts"
+        },
+        {
+          "text": "Permission prompts also remain answerable after an interrupted session resumes",
+          "event_id": "reviewed:copilot:v1.0.90",
+          "quote": "Permission prompts remain answerable after resuming interrupted sessions."
+        },
+        {
+          "text": "Its release makes sole the default in the bundled model catalog",
+          "event_id": "reviewed:codex:rust-v0.159.1",
+          "quote": "Added GPT-6.1 Sol as the default model in the bundled catalog and Amazon Bedrock Mantle and Runtime catalogs."
+        },
+        {
+          "text": "while copilot adds it as a model selection option.",
+          "event_id": "reviewed:copilot:v1.0.90",
+          "quote": "Add support for GPT-6.1 Sol in model selection"
+        },
+        {
+          "text": "Copilot's command line assistant is an AI coding tool you use in your terminal to ask questions, write code, or debug a project.",
+          "event_id": "docs:copilot-cli",
+          "quote": "Copilot directly from your terminal. You can use it to answer questions, write and debug code"
+        },
+        {
+          "text": "MCP, short from model context protocol, is a standard that connects AI applications to outside data and tools.",
+          "event_id": "docs:mcp",
+          "quote": "MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems."
+        },
+        {
+          "text": "Its terminal tool can inspect files, edit code and run local development tools.",
+          "event_id": "docs:codex-cli",
+          "quote": "Let Codex inspect files, make edits, and run the tools already installed on your machine."
+        }
+      ],
+      "notes": [
+        "Owner explicitly authorized publication of this exact revised recording without human audition; no human listening approval is claimed.",
+        "Independent parent review approved the factual content and tightened script for recording. A redundant analogy caveat was removed as directed.",
+        "Raw local ASR preserved: Sol appears as Soul/sole; bundled, short for and session-scoped have recognition uncertainties. These are not confirmed pronunciation defects.",
+        "Primary release claims and background definitions checked against their cited sources. Examples are editorial proposals, not measured results.",
+        "The exact approved concise script and source/transcript hashes are bound by duration_policy. Previous experimental recordings are not this release."
+      ]
+    },
+    "voice": {
+      "name": "en-US-AndrewMultilingualNeural",
+      "rate": "-5%",
+      "pitch": "+0Hz"
+    },
+    "quality": {
+      "method": "ffmpeg_loudnorm_two_pass",
+      "ffmpeg": "ffmpeg version 8.0.1-3ubuntu2 Copyright (c) 2000-2025 the FFmpeg developers",
+      "integrated_lufs": -16.56,
+      "true_peak_dbtp": -4.72,
+      "audio_sha256": "bafeff2581546deaaca9114c0dcbb7bb72ba1ce6c80f15254f7e58cd26f90f79"
+    },
+    "duration_policy": {
+      "class": "short_brief",
+      "rationale": "The independently reviewed concise episode explains the relevant changes completely; padding to five minutes would repeat guidance and conflict with the explicit editorial goal.",
+      "approved_at": "2026-10-01T15:26:01.493340+00:00",
+      "script": "GitHub Copilot's terminal assistant has new fixes for recovering connected tools and finishing calls that get stuck behind progress updates. Meanwhile, GPT six point one Sol is arriving in Copilot's model selection and as the default in Codex's bundled model catalog. If you use an agent to investigate bugs, the useful question is what these changes mean for getting from a broken test to a fix you trust.\n\nThis is the Daily AI Developer Brief for October first, covering releases from September thirtieth and late September twenty-ninth. Exact builds and primary sources are in the notes. Production note: This episode uses AI-generated narration.\n\nCopilot's command-line assistant is an AI coding tool you use in your terminal to ask questions, write code, or debug a project. MCP, short for Model Context Protocol, is a standard that connects AI applications to outside data and tools. For a coding assistant, those connections can bring information into the task instead of leaving everything inside the conversation.\n\nPicture a bug investigation where your assistant needs information from a connected tool before suggesting a change. Halfway through, that tool disappears from the available list. Now the investigation has a second problem: is the connection broken, or should you restart the whole session? Copilot's release says tools can recover after a temporary discovery failure without restarting, while an unchanged list of tools remains available during recovery. That is the first fix: getting the connection back without starting over.\n\nThe second fix is about finishing the call. A server may have already sent its response but keep sending progress updates afterward. The release says those updates no longer prevent the tool call from completing. Think of a waiter delivering your order while the kitchen display still says it's cooking: the answer arriving and the activity indicator stopping aren't necessarily the same event.\n\nThese changes are worth your attention if connected tools are part of your Copilot work. If they aren't, you can leave the connection testing to people maintaining those integrations. I've put the read-only recovery checks in the notes, including how to keep discovery testing separate from replaying an action that changes data. The important distinction is simple: finding a tool again and deciding to run it again are different decisions.\n\nPermissions get a useful update too: GitHub account authentication can be limited to approved MCP server origins, while separate session-scoped approvals let you allow read-only access to a local directory. Those address different boundaries, remote account access and local file access, so don't treat one approval as permission for the other. Permission prompts also remain answerable after an interrupted session resumes, which is especially relevant if you've returned to a task only to find its approval step stuck.\n\nThen there's the model change. Codex is OpenAI's coding agent; its terminal tool can inspect files, edit code and run local development tools. The model is one choice inside that working setup, alongside your task and permissions. Its release makes Sol the default in the bundled model catalog, while Copilot adds it as a model-selection option. That doesn't mean every existing session has switched. Neither release supplies performance or price evidence showing that your project will get a better or cheaper result.\n\nIf you're considering the new model, give it the same small, reproducible bug as your current setup in separate clean workspaces, then compare the accepted result and how much repair or review each attempt needed. Keep permissions comparable and note which model actually ran. You're looking for a change you can accept, not just a convincing first answer. If your current setup is doing the job and you're not evaluating alternatives, there's no need to turn model availability into another project today.\n\nFor your next coding session, pick the change that matches the friction you actually have: a connected tool that needs reliable recovery, or a model choice you want to compare. Start there, and let the rest wait.\n",
+      "script_sha256": "bd051afdabf68e7f98504c60b5d4508f9bae23070e94af0349ab9a8acc5dd95a",
+      "source_audio_sha256": "73ba239db4957b56face61e9b4d4ee7e3ab734143a5f0ff2422be4da94b57fbc",
+      "transcript_sha256": "a16e7c4296c61567c5adfdf16dbf87788be9bceea26bb9be6bb647263749e97f"
+    }
+  },
+  "audio": {
+    "size_bytes": 4264062,
+    "duration_secs": 266.448,
+    "sha256": "bafeff2581546deaaca9114c0dcbb7bb72ba1ce6c80f15254f7e58cd26f90f79",
+    "codec": "mp3",
+    "sample_rate": 44100,
+    "channels": 2,
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/daily-2026-10-01-control-bafeff25/daily-ai-brief.mp3"
+  }
+}

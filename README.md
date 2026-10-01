@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — 2026-09-29
+# Daily AI Developer Brief — 2026-10-01
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
@@ -81,30 +81,36 @@ The pilot uses the signed-in account's existing allowance. It does not authorize
 
 ## Today's signal
 
-### OpenAI Codex rust-v0.159.0
+### Control before speed: connected tools and model choices
 
-**What to know:** New Features Opt-in instant_interrupt lets new input steer Codex during model responses or long-running code-mode calls. (#48135, #48141) New sessions get a compact welcome screen and consistent headers, with occasional tips during and after turns. (#48513, #48562, #48352) The warnings viewer dismisses reviewed warnings when closed; press k to keep one for later. … [Excerpt; see source for full details.]
+**What to know:** Copilot CLI adds MCP discovery recovery, origin-scoped GitHub authentication and session-scoped read-only directory approvals.
 
-**What changes for developers:** (#48151) Bug Fixes Windows launches avoid stray console windows for MCP servers, code-mode hosts, and piped commands. (#48155, #48176) Fixed macOS TLS access in network-enabled sandboxes and remote environments that require proxy access. (#48621) Removed the bundled plugin-creator skill.
+**What changes for developers:** Connection recovery and permission scope give MCP integrations concrete behaviors to inspect before changing a working session.
 
-**Recommendation:** WATCH — No additional workflow change is supported beyond the cited evidence.
+**Recommendation:** WATCH — In a disposable workspace, test read-only discovery recovery and inspect the approved origin and directory scope separately.
 
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.159.0)
+Sources: [1](https://github.com/github/copilot-cli/releases/tag/v1.0.90), [2](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01, [3](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
 
-## High noise / low signal
+### Treat a catalog default as a testable change
 
-- Excluded OpenAI Codex: no substantive change evidence.
-- Excluded Gemini CLI: no substantive change evidence.
-- Excluded Hermes Agent: no specific developer consequence was established.
+**What to know:** Codex adds GPT-6.1 Sol as the default in its bundled and named Bedrock catalogs.
+
+**What changes for developers:** A catalog change is not a benchmark or evidence of improved results on a particular repository.
+
+**Recommendation:** WATCH — Check the selected model and use a representative acceptance task before replacing a working default; measure any cost claim.
+
+Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.159.1), [2](https://learn.chatgpt.com/docs/codex/cli) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
 
 ## Editorial contract
+
+- This edition uses reviewed Edge narration, a local-ASR transcript and an assistant transcript/source comparison; it is not Notebook audio or independently verified Gemini API generation.
 
 - Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.
 - One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.
 - Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.
 - Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.
 - Product-change claims require public primary evidence.
-- Every story ends with an `ACT`, `WATCH`, or `SKIP` recommendation.
+- This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings.
 - Routine patches, repeated announcements, unsupported adoption claims, and engagement-only rankings are filtered out.
 - At most one transcript-backed YouTube learning pick may appear; it never replaces vendor evidence.
 
@@ -114,16 +120,9 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `feed:https://github.blog/changelog/feed/`: ok:1
-- `github:NousResearch/hermes-agent`: ok:16
-- `github:agentskills/agentskills`: ok:0
-- `github:anthropics/claude-code`: ok:1
-- `github:google-gemini/gemini-cli`: ok:1
-- `github:microsoft/vscode`: ok:0
-- `github:microsoft/vscode-copilot-release`: ok:0
-- `github:modelcontextprotocol/specification`: ok:0
-- `github:openai/codex`: ok:7
-- `youtube:weekly-digest`: error:ValueError
+- `reviewed:background`: ok:3
+- `reviewed:codex`: ok:1
+- `reviewed:copilot`: ok:1
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 
