@@ -527,9 +527,8 @@ def prepare(
 
 def _validate_reviewed_audio_file(manifest: EpisodeManifest, path: Path) -> None:
     word_count = len(manifest.narration.split())
-    minimum, maximum = (
-        narration_duration_bounds(word_count) if manifest.schema_version == 4 else (300, 480)
-    )
+    from .reviewed_duration import reviewed_duration_bounds
+    minimum, maximum = reviewed_duration_bounds(manifest)
     measured = analyze_audio(
         path, min_duration_secs=minimum, max_duration_secs=maximum,
         expected_word_count=word_count,

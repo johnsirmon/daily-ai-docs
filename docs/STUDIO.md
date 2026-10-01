@@ -167,3 +167,40 @@ Apple references: [RSS](https://podcasters.apple.com/support/823-podcast-require
 [audio](https://podcasters.apple.com/support/893-audio-requirements),
 [AI disclosure](https://podcasters.apple.com/support/891-content-and-subscription-guidelines),
 [chapters](https://podcasters.apple.com/support/5482-using-chapters-on-apple-podcasts).
+
+
+## Deliberately concise reviewed daily audio
+
+The default reviewed daily window remains 300-480 seconds, originally introduced
+with the reviewed-audio importer (94258fbb). It is an editorial format target,
+not an Apple Podcasts minimum. A reviewed Edge daily may explicitly opt into
+`generation.duration_policy` with these exact fields:
+
+```json
+{
+  "class": "short_brief",
+  "rationale": "A concrete editorial reason this complete episode should stay concise.",
+  "approved_at": "<timezone-aware approval timestamp>",
+  "script": "<complete approved spoken script>",
+  "script_sha256": "<exact UTF-8 script hash>",
+  "source_audio_sha256": "<same source audio hash as generation>",
+  "transcript_sha256": "<same exact ASR hash as generation.transcript>"
+}
+```
+
+This class is restricted to 450-750 approved words and 180-300 measured seconds,
+with a stronger lower duration bound of script words / 190 * 60 seconds. It is not
+an automatic response to failed synthesis. Script and ASR must contain disclosure,
+retain the same opening/ending eight normalized words, and preserve at least 97%
+ordered word coverage with a transcript length within 5% of the approved script.
+That tolerates small ASR spelling differences, not missing sections. It cannot
+prove every word was spoken correctly: actual listening remains necessary.
+
+Schema validation, import, private build and release-byte verification use the
+same rule. Source/transcript/final-media hashes, primary-claim review, mastering,
+full decode, silence and speech-duration plausibility checks remain mandatory.
+Existing manifests without this policy retain their old behavior. Schema-2 model
+generation, Notebook imports, special requests and fixed waivers are unchanged.
+Approval metadata is an operator-reviewed record, not a cryptographic signature or
+publication grant. The revision-4 recording remains private and on listening hold;
+its original duration-failure receipt remains preserved as historical evidence.

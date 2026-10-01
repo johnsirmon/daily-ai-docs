@@ -160,7 +160,9 @@ def build(draft: Path, audio: Path, feed: Path, artwork: Path, output: Path, *, 
                 with _environment(PODCAST_AUDIO_POLISH="1"):
                     prepare_reviewed_audio(draft, audio, bundle)
             manifest = EpisodeManifest.from_dict(json.loads((bundle / "episode-manifest.json").read_text()))
-            measured = analyze_audio(bundle / "daily-ai-brief.mp3", min_duration_secs=300, max_duration_secs=480,
+            from .reviewed_duration import reviewed_duration_bounds
+            minimum, maximum = reviewed_duration_bounds(manifest)
+            measured = analyze_audio(bundle / "daily-ai-brief.mp3", min_duration_secs=minimum, max_duration_secs=maximum,
                                      expected_word_count=len(manifest.narration.split()))
             if measured["sha256"] != manifest.audio["sha256"]:
                 raise ValueError("prepared bundle audio changed")

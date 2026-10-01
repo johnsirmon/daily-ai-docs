@@ -592,7 +592,14 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         generation_fields.add("quality")
     if "editing" in generation:
         generation_fields.add("editing")
+    if "duration_policy" in generation:
+        generation_fields.add("duration_policy")
     _exact_fields(generation, generation_fields, "reviewed generation")
+    from .reviewed_duration import reviewed_duration_bounds
+    try:
+        duration_minimum, duration_maximum = reviewed_duration_bounds(manifest)
+    except (ValueError, TypeError) as exc:
+        raise SchemaError(str(exc)) from exc
     if (not long_form and not one_release_waiver and not reviewed_edge
             and (generation["edition"] != "notebook"
                  or generation["provider"] != "gemini-notebook-web")):
@@ -798,8 +805,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         if (type(duration) not in (int, float) or not math.isfinite(duration)
                 or duration <= 0):
             raise SchemaError("reviewed audio duration must be a finite positive number")
-        if not long_form and not 300 <= duration <= 480:
-            raise SchemaError("reviewed audio duration must be within 300-480 seconds")
+        if not long_form and not duration_minimum <= duration <= duration_maximum:
+            raise SchemaError(f"reviewed audio duration must be within {duration_minimum:g}-{duration_maximum:g} seconds")
         if (manifest.audio["codec"] != "mp3" or type(manifest.audio["sample_rate"]) is not int
                 or manifest.audio["sample_rate"] != 44100
                 or type(manifest.audio["channels"]) is not int or manifest.audio["channels"] != 2):
