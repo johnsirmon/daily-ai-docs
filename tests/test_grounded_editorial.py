@@ -765,3 +765,25 @@ def test_hard_word_budget_cannot_be_exceeded_or_silently_truncated():
     proposal["stories"][0]["editorial"]["spoken_text"] = "Go " * 1500
     with pytest.raises(EditorialValidationError, match="1500-word"):
         run_editorial(proposal)
+
+
+@pytest.mark.parametrize("profile", [None, {"experience": "experienced", "tools": ["codex"], "priorities": ["mcp"]}])
+def test_entry_context_required_in_both_calls_even_for_experienced_readers(profile):
+    config = {} if profile is None else {"audience_profile": profile}
+    _, client = run_editorial(config=config)
+    assert client.chat.completions.create.call_count == 2
+    for call in client.chat.completions.create.call_args_list:
+        instructions = call.kwargs["messages"][0]["content"]
+        for requirement in ("EVERY included entry", "plain language", "larger AI workflow",
+                            "concrete use case", "who can skip", "with its limits",
+                            "background definitions", "approved=false"):
+            assert requirement in instructions
+
+
+def test_missing_context_audit_issue_blocks_even_when_citations_are_supported():
+    proposal = draft()
+    verdict = approval(proposal)
+    # All claim-support booleans remain true: citation matches alone are insufficient.
+    verdict["issues"] = ["Entry does not explain what the tool is or where it fits in the AI workflow."]
+    with pytest.raises(EditorialVerificationError):
+        run_editorial(proposal, verdict=verdict)

@@ -24,7 +24,7 @@ import shutil
 import subprocess
 from typing import Any
 
-from .audio import analyze_audio, file_sha256, narration_duration_bounds
+from .audio import analyze_audio, file_sha256
 from .disclosure import AI_NARRATION_DISCLOSURE
 from .schema import EpisodeManifest, SchemaError
 
@@ -74,10 +74,17 @@ def prepare_reviewed_audio(
     handoff = local_execution_path or audio_path.parent / FILENAME
     if local_execution_path is not None or handoff.exists():
         validate_local_handoff(handoff, audio_path, manifest)
-    if AI_NARRATION_DISCLOSURE not in manifest.narration:
+    # ASR punctuation is not spoken; preserve the exact transcript while matching
+    # the disclosure's words for the explicit new reviewed Edge contract only.
+    import re
+    normalized_disclosure = lambda text: " ".join(re.findall(r"[a-z]+", text.casefold()))
+    edge_disclosed = (manifest.generation.get("edition") == "reviewed-edge"
+                      and normalized_disclosure(AI_NARRATION_DISCLOSURE) in normalized_disclosure(manifest.narration))
+    if AI_NARRATION_DISCLOSURE not in manifest.narration and not edge_disclosed:
         raise SchemaError("reviewed audio narration must contain the approved production disclosure")
     expected_hash = manifest.generation["source_audio_sha256"]
-    if manifest.schema_version == 4 or os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
+    if (manifest.schema_version == 4 or manifest.generation.get("edition") == "reviewed-edge"
+            or os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1"):
         from .audio_quality import repetition_findings
         if repetition_findings(manifest.narration):
             raise SchemaError("adjacent repeated narration requires editorial review")
@@ -88,7 +95,8 @@ def prepare_reviewed_audio(
         raise RuntimeError("ffmpeg is required for reviewed audio import")
     output.mkdir(parents=False, exist_ok=False)
     destination = output / "daily-ai-brief.mp3"
-    if manifest.schema_version == 4 or os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1":
+    if (manifest.schema_version == 4 or manifest.generation.get("edition") == "reviewed-edge"
+            or os.environ.get("PODCAST_AUDIO_POLISH", "0") == "1"):
         from .audio_quality import master_audio
         manifest.generation["quality"] = master_audio(audio_path, destination)
     else:
@@ -96,9 +104,8 @@ def prepare_reviewed_audio(
     if file_sha256(audio_path) != expected_hash:
         raise SchemaError("source audio changed during import")
     word_count = len(manifest.narration.split())
-    minimum, maximum = (
-        narration_duration_bounds(word_count) if manifest.schema_version == 4 else (300, 480)
-    )
+    from .reviewed_duration import reviewed_duration_bounds
+    minimum, maximum = reviewed_duration_bounds(manifest)
     analysis = analyze_audio(
         destination, min_duration_secs=minimum, max_duration_secs=maximum,
         full_decode=True, expected_word_count=word_count,

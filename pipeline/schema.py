@@ -32,6 +32,11 @@ _EVERGREEN_DOCUMENTATION_PREFIXES = {
     "docs.github.com": ("/en/copilot",),
 }
 _EVERGREEN_DOCUMENTATION_EXACT_PATHS = {
+    "modelcontextprotocol.io": frozenset({
+        "/docs/2026-07-28/getting-started/intro",
+        "/docs/2026-07-28/learn/architecture",
+    }),
+    "learn.chatgpt.com": frozenset({"/docs/codex/cli"}),
     "docs.typesafe.ai": frozenset({
         "/introduction", "/introduction.md",
         "/introduction/coding-agents", "/introduction/coding-agents.md",
@@ -572,6 +577,7 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         raise SchemaError("reviewed audio requires a publication status")
     generation = manifest.generation
     long_form = manifest.schema_version == 4
+    reviewed_edge = (manifest.schema_version == 3 and generation.get("edition") == "reviewed-edge")
     one_release_waiver = (
         manifest.schema_version == 3
         and generation.get("edition") == "gate-a-one-release-waiver"
@@ -583,17 +589,35 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     }
     if long_form:
         generation_fields |= {"request", "request_sha256", "quality", "voice"}
+    elif reviewed_edge:
+        generation_fields |= {"quality", "voice"}
     elif one_release_waiver:
         generation_fields |= {"quality", "voice", "waiver"}
     elif "quality" in generation:
         generation_fields.add("quality")
     if "editing" in generation:
         generation_fields.add("editing")
+    if "duration_policy" in generation:
+        generation_fields.add("duration_policy")
     _exact_fields(generation, generation_fields, "reviewed generation")
-    if (not long_form and not one_release_waiver
+    from .reviewed_duration import reviewed_duration_bounds
+    try:
+        duration_minimum, duration_maximum = reviewed_duration_bounds(manifest)
+    except (ValueError, TypeError) as exc:
+        raise SchemaError(str(exc)) from exc
+    if (not long_form and not one_release_waiver and not reviewed_edge
             and (generation["edition"] != "notebook"
                  or generation["provider"] != "gemini-notebook-web")):
         raise SchemaError("reviewed audio requires the gemini-notebook-web notebook provider")
+    if reviewed_edge:
+        if generation["provider"] != "edge":
+            raise SchemaError("reviewed-edge must identify the actual edge provider")
+        _exact_fields(generation["voice"], {"name", "rate", "pitch"}, "Edge voice")
+        for key in generation["voice"]:
+            _text(generation["voice"][key], f"voice.{key}", limit=120)
+        from .usefulness import spoken_quality_findings
+        if spoken_quality_findings(manifest.narration):
+            raise SchemaError("reviewed Edge speech contains release fragments or filler")
     if one_release_waiver:
         # Import lazily to keep the exceptional fixed contract out of general
         # schema initialization and to avoid making it a reusable provider mode.
@@ -689,8 +713,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         if event.source_type == "research_paper":
             allowed |= paper_fields
         if event.source_type == "evergreen_documentation":
-            if not long_form:
-                raise SchemaError("evergreen documentation is supporting evidence for ad-hoc requests only")
+            if not (long_form or reviewed_edge):
+                raise SchemaError("evergreen documentation requires ad-hoc or reviewed Edge support")
             allowed |= {"evergreen_snapshot"}
         if set(event.metadata) - allowed:
             raise SchemaError("unsupported reviewed source metadata; retain only public provenance")
@@ -706,6 +730,9 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
                 or (not long_form and mapped_events.intersection(story.event_ids))):
             raise SchemaError("reviewed stories must map each source exactly once")
         mapped_events.update(story.event_ids)
+        if reviewed_edge and any(events[eid].source_type == "evergreen_documentation" for eid in story.event_ids):
+            if not any(events[eid].source_type != "evergreen_documentation" for eid in story.event_ids):
+                raise SchemaError("reviewed daily background requires dated primary evidence in the same story")
         papers = [events[event_id] for event_id in story.event_ids
                   if events[event_id].source_type == "research_paper"]
         if bool(papers) != (story.kind == "research"):
@@ -786,8 +813,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         if (type(duration) not in (int, float) or not math.isfinite(duration)
                 or duration <= 0):
             raise SchemaError("reviewed audio duration must be a finite positive number")
-        if not long_form and not 300 <= duration <= 480:
-            raise SchemaError("reviewed audio duration must be within 300-480 seconds")
+        if not long_form and not duration_minimum <= duration <= duration_maximum:
+            raise SchemaError(f"reviewed audio duration must be within {duration_minimum:g}-{duration_maximum:g} seconds")
         if (manifest.audio["codec"] != "mp3" or type(manifest.audio["sample_rate"]) is not int
                 or manifest.audio["sample_rate"] != 44100
                 or type(manifest.audio["channels"]) is not int or manifest.audio["channels"] != 2):
@@ -826,7 +853,8 @@ class EpisodeManifest:
             raise SchemaError("an episode may contain at most seven stories")
         for event in self.source_events:
             event.validate()
-            if event.source_type == "evergreen_documentation" and self.schema_version != 4:
+            if (event.source_type == "evergreen_documentation" and self.schema_version != 4
+                    and not (self.schema_version == 3 and self.generation.get("edition") == "reviewed-edge")):
                 raise SchemaError("evergreen documentation is supporting evidence for ad-hoc requests only")
         for story in self.stories:
             story.validate()

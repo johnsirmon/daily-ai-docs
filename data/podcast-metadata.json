@@ -216,6 +216,9 @@
       "title": "Langflow, Dify, and MCP server discovery",
       "summary": "This archived weekly digest covers Langflow, Dify, Awesome MCP Servers, and the MCP server repository. Its learning themes include Copilot CLI, TypeScript MCP servers, and Azure OpenAI with Azure AI Search, alongside Semantic Kernel VectorData and VS Code release listings.",
       "evidence_url": "https://github.com/johnsirmon/daily-ai-docs/blob/0d9c58bc1efdedb1f750010a69b96887e9e33f65/README.md"
+    },
+    "daily-2026-10-01-control-bafeff25": {
+      "image_url": "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/daily-2026-10-01-control-bafeff25.jpg"
     }
   }
 }

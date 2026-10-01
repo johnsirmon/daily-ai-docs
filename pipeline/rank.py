@@ -34,7 +34,7 @@ _UTILITY_CONTEXT = re.compile(
 )
 _UTILITY_CHANGE = re.compile(
     r"\b(?:added|adds?|fixed|fixes|enabled?|introduced|removed|requires?|supports?|blocks?|"
-    r"allows?|prevents?|records?|reports?|attach(?:es|ing)?|spawn(?:s|ing)?|configurable|"
+    r"allows?|prevents?|records?|reports?|recovers?|completes?|attach(?:es|ing)?|spawn(?:s|ing)?|configurable|"
     r"deprecat(?:ed|ion)|retir(?:ed|ement)|migrat(?:e|ion)|"
     r"must|will stop|no longer|unaffected|affected|only|ignore|update|upgrade|replace|review|"
     r"inspect|select|download|install|rolls? up|tagged release|deferred)\b",

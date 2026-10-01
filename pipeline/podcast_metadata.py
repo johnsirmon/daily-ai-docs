@@ -90,6 +90,8 @@ def _manifest_copy(manifest: EpisodeManifest) -> dict[str, str]:
         3: "Notebook edition. Reviewed AI-generated conversation.",
         4: "Special episode. Reviewed long-form audio.",
     }.get(manifest.schema_version, "")
+    if manifest.schema_version == 3 and manifest.generation.get("edition") == "reviewed-edge":
+        edition = "Reviewed Edge narration. AI-generated audio."
     parts = [summary, disclosure, edition, notes]
     return {"title": title, "description": "\n\n".join(part for part in parts if part)}
 
