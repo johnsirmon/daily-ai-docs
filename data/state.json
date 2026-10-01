@@ -79,10 +79,15 @@
     "codeql-all-platform-bundle-deprecation-2026-09-22",
     "ghrel:b6ce910accbcbcac0943",
     "ghrel:cdf0d63217ad659b5e61",
-    "ghrel:9b9d615d7fb6df0bae74"
+    "ghrel:9b9d615d7fb6df0bae74",
+    "reviewed:copilot:v1.0.90",
+    "reviewed:codex:rust-v0.159.1",
+    "docs:copilot-cli",
+    "docs:mcp",
+    "docs:codex-cli"
   ],
-  "last_publication": "2026-09-29T16:34:38.049814Z",
-  "last_episode_id": "daily-2026-09-29-f8f3fde3",
+  "last_publication": "2026-10-01T15:49:04.149481Z",
+  "last_episode_id": "daily-2026-10-01-control-bafeff25",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 127099,
@@ -101,6 +106,6 @@
       "fetched_at": "2026-09-22T14:58:41.936376Z"
     }
   },
-  "last_daily_episode_id": "daily-2026-09-29-f8f3fde3",
-  "last_daily_publication": "2026-09-29T16:34:38.049814Z"
+  "last_daily_episode_id": "daily-2026-10-01-control-bafeff25",
+  "last_daily_publication": "2026-10-01T15:49:04.149481Z"
 }

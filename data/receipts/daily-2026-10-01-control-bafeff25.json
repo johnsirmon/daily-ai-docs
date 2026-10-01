@@ -1,0 +1,18 @@
+{
+  "episode_id": "daily-2026-10-01-control-bafeff25",
+  "confirmed_at": "2026-10-01T16:05:19.932217Z",
+  "feed": {
+    "status": "ok",
+    "latest_guid": "daily-2026-10-01-control-bafeff25",
+    "episode_count": 50,
+    "age_hours": 0.27,
+    "cache_control": "max-age=600",
+    "audio_verified": true,
+    "candidate_verified": true,
+    "sha256_verified": true,
+    "artwork": "3000x3000 RGB",
+    "episode_artwork": "1600x1600 RGB JPEG",
+    "episode_image_url": "https://johnsirmon.github.io/daily-ai-docs/assets/episodes/daily-2026-10-01-control-bafeff25.jpg"
+  },
+  "audio_sha256": "bafeff2581546deaaca9114c0dcbb7bb72ba1ce6c80f15254f7e58cd26f90f79"
+}

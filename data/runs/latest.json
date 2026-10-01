@@ -1,9 +1,13 @@
 {
   "schema_version": 1,
-  "status": "failed",
-  "evaluated_at": "2026-09-30T16:28:25.541033Z",
-  "reason": "workflow_failure",
-  "source_health": {},
+  "status": "published",
+  "evaluated_at": "2026-10-01T16:05:19.932630Z",
+  "reason": "subscriber_confirmed",
+  "source_health": {
+    "reviewed:copilot": "ok:1",
+    "reviewed:codex": "ok:1",
+    "reviewed:background": "ok:3"
+  },
   "minimum_source_health": 0.6,
-  "last_episode_id": "daily-2026-09-29-f8f3fde3"
+  "last_episode_id": "daily-2026-10-01-control-bafeff25"
 }

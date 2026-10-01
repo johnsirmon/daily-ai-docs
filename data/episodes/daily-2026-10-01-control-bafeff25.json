@@ -2,7 +2,7 @@
   "schema_version": 3,
   "episode_id": "daily-2026-10-01-control-bafeff25",
   "published_at": "2026-10-01T15:49:04.149481Z",
-  "status": "candidate",
+  "status": "published",
   "source_health": {
     "reviewed:copilot": "ok:1",
     "reviewed:codex": "ok:1",
