@@ -6,6 +6,20 @@ publisher. Notebook and the explicit `reviewed-edge` route both enter the same
 reviewed bundle and local listening UI. Scheduled schema-2 API generation keeps its
 independent two-call verification and fail-closed behavior; it is not a fallback.
 
+## Editorial ownership and default operator path
+
+Sirmon.ai and its curated research own the dated journal, articles and corrections.
+Daily AI Developer Brief owns spoken adaptation, audio, cover, chapters and RSS.
+The default operator path is the journal packet below, primary-claim review, then
+the private build command. Do not run a second discovery pass just to fill an episode.
+A changed article revision reopens review under the same article ID; it never silently
+replaces released audio, GUIDs or historical feed entries. Publish an explicit corrected
+episode through the existing approved publisher when needed.
+
+The existing scheduled collector remains a compatibility path; this branch does not
+disable or reroute a live workflow. Retiring that schedule requires an explicit
+operational cutover after the replacement's hosting and review handoffs work.
+
 ## Private run
 
 ```sh
@@ -50,22 +64,36 @@ has been uploaded or verified by this command. Only the feed/site copy is modifi
 
 ## Shared research: Sirmon owns collection
 
-The version-1 consumer is `python -m pipeline.editorial_bundle --bundle public.json
---output drafting-packet.json`. Pass repeated `--seen-item-id` values from confirmed
-podcast consumption to avoid repeating articles; preparing a packet does not advance
-novelty state. This is a file handoff, not another service or collection backend.
-The exact producer contract must be agreed with the Sirmon owner before connecting it
-as the production source. The initial consumer rejects unknown fields to keep private
-metadata out, and never promotes a bundle into verified narration.
+The producer owns [the public journal feed](https://sirmon.ai/updates/feed.json)
+and its [v1 contract](https://github.com/johnsirmon/sirmon-ai/blob/main/AI_JOURNAL_OPERATIONS.md).
+Save that public JSON locally, then consume it offline:
 
-Contract: root `schema_version: 1`, `bundle_id`, `generated_at`, `items`.
-Each item: stable `id`, `published_at`, `canonical_url`, `title`, `narration_summary`,
-`why_it_matters`, `affected_workflow`, `decision` (keep/try/replace/watch), `claims`,
-optional `experiment` and `caveat`. Each claim: `text`, public primary `source_url`,
-exact supporting `quote`, `source_published_at`. Timestamps are timezone-aware ISO8601.
-The article URL is attribution, not primary support. A quote-shaped string is not
-proof of entailment: the existing source/claim and audio review remain required.
-No Sirmon repository, deployment or backend is changed here.
+```sh
+python -m pipeline.editorial_bundle --bundle feed.json --output drafting-packet.json
+# Only after a successful output has consumed that exact revision:
+python -m pipeline.editorial_bundle --bundle feed.json --output next-packet.json --seen-revision hydrafusion-workflows:1
+```
+
+The actual contract uses `schemaVersion: 1`, date-only `updatedAt`, `events` and
+`articles`. Events preserve announcement `date`, `verifiedAt`, named primary `source`,
+`maturity` and `confidence`. Articles preserve stable `id`, positive `revision`,
+publication/update/verification dates, `eventIds`, `canonicalUrl`, `sources`,
+`narrationSummary`, `importance`, `audience`, practical `action`, `takeaway` and sections.
+Date-only values remain date-only; article publication is not announcement recency.
+Older supporting events remain historical context, not fresh news.
+
+The consumer replaces the provisional unpublished bundle format. It validates linked
+published evidence, rejects unknown major versions, and ignores additive v1 fields
+by projecting only known public fields. Unchanged `(id, revision)` pairs are skipped;
+a changed revision updates the same article identity. Preparation never advances
+consumption state. The caller must persist processed pairs only after successful output.
+No scheduler, network collector, second backend or automatic audio regeneration is added.
+
+The packet remains **untrusted drafting context**, not a source-verified episode.
+Preserve canonical attribution and primary links; fetch and review primary support
+before turning narration summaries into product claims. The feed does not carry
+claim-local quotes, and the consumer does not invent them or independent verification.
+Existing source/claim review, novelty and actual listening gates still apply.
 
 ## Quality rubric and current diagnosis
 
