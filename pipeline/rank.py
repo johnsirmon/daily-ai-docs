@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, Iterable, List, Sequence, Tuple
 
 from .schema import SourceEvent, Story
+from .editorial_profile import relevance_bonus, validate_profile
 
 _HIGH_IMPACT = re.compile(
     r"\b(security (?:fix|patch|advisory)|vulnerabilit(?:y|ies)|breaking change|"
@@ -421,6 +422,7 @@ def select_editorial_events(
     events: Sequence[SourceEvent],
     seen_event_ids: Iterable[str] = (),
     *,
+    audience_profile: dict | None = None,
     covered_paper_ids: Iterable[str] = (),
     published_events: Sequence[dict] = (),
     max_products: int = 3,
@@ -431,6 +433,7 @@ def select_editorial_events(
     """Apply editorial eligibility before ranking, without marking rejects published."""
     if not 1 <= max_products <= 5 or not 1 <= max_events_per_product <= 3 or max_research not in {0, 1}:
         raise ValueError("editorial selection limits are outside the supported budget")
+    profile = validate_profile(audience_profile)
     now = now or datetime.now(timezone.utc)
     seen, papers_seen = set(seen_event_ids), set(covered_paper_ids)
     products: Dict[str, List[SourceEvent]] = {}
@@ -495,17 +498,17 @@ def select_editorial_events(
             reject(f"Excluded {event.product}: no specific developer consequence was established.")
     ranked_groups = []
     for group in products.values():
-        group.sort(key=lambda event: (score_event(event, seen)["total"], event.published_at), reverse=True)
+        group.sort(key=lambda event: (score_event(event, seen)["total"] + relevance_bonus(event, profile), event.published_at), reverse=True)
         if len(group) > max_events_per_product:
             reject(f"Limited {group[0].product}: additional same-product candidates exceeded the editorial cap.")
         ranked_groups.append(group[:max_events_per_product])
-    ranked_groups.sort(key=lambda group: (score_event(group[0], seen)["total"], group[0].published_at), reverse=True)
+    ranked_groups.sort(key=lambda group: (score_event(group[0], seen)["total"] + relevance_bonus(group[0], profile), group[0].published_at), reverse=True)
     for group in ranked_groups[max_products:]:
         reject(f"Limited {group[0].product}: candidate fell outside the daily product cap.")
     selected = [event for group in ranked_groups[:max_products] for event in group]
     # Research is a distinct optional segment, not an automatic no-news edition.
     if selected and max_research:
-        papers.sort(key=lambda event: (score_event(event, seen)["relevance"], event.published_at), reverse=True)
+        papers.sort(key=lambda event: (score_event(event, seen)["relevance"] + relevance_bonus(event, profile), event.published_at), reverse=True)
         if len(papers) > max_research:
             reject("Limited research: additional eligible papers exceeded the daily research cap.")
         selected.extend(papers[:max_research])
