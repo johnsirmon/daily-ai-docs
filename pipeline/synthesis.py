@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .editorial_profile import PROFILE_INSTRUCTIONS, validate_profile
+from .editorial_context import CONTEXT_INSTRUCTIONS
 
 import json
 import os
@@ -434,7 +435,7 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
     client = get_editorial_client(values)
     started = time.monotonic()
     draft = _request_editorial(
-        client, model=settings.model, instructions=_DRAFT_INSTRUCTIONS + profile_instructions, payload=request,
+        client, model=settings.model, instructions=_DRAFT_INSTRUCTIONS + profile_instructions + CONTEXT_INSTRUCTIONS, payload=request,
         max_input_chars=max_input, max_output_tokens=max_output, timeout=settings.timeout_seconds,
     )
     try:
@@ -451,7 +452,7 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
     if remaining < 1:
         raise EditorialProviderError("Gemini editorial time budget exhausted before verification")
     verification = _request_editorial(
-        client, model=settings.model, instructions=_VERIFY_INSTRUCTIONS + profile_instructions,
+        client, model=settings.model, instructions=_VERIFY_INSTRUCTIONS + profile_instructions + CONTEXT_INSTRUCTIONS,
         payload={**request, "proposed_brief": draft}, max_input_chars=max_input,
         max_output_tokens=verify_output, timeout=min(settings.timeout_seconds, remaining),
     )

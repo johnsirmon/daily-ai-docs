@@ -95,6 +95,37 @@ before turning narration summaries into product claims. The feed does not carry
 claim-local quotes, and the consumer does not invent them or independent verification.
 Existing source/claim review, novelty and actual listening gates still apply.
 
+## Required context for every entry
+
+Before approving either an API-generated or reviewed-audio entry, check the actual
+spoken text against all of these requirements:
+
+1. Explain the unfamiliar tool or concept plainly on first mention, including
+   necessary acronyms. Experienced listeners should not need a second tab.
+2. Place it in the larger AI workflow: what goes in, what job it performs, and
+   what useful result comes out, only as far as primary evidence establishes.
+3. Give a concrete use case or a useful analogy and explain its limits. Mark
+   hypothetical examples; an analogy is not evidence of results or safety.
+4. Explain why this change matters to that workflow, who should care, and who
+   can skip it or defer action. Keep eligibility and installed versions conditional.
+5. Retain preview status, caveats and source limitations. Obtain missing primary
+   background evidence or defer the entry instead of inventing an introduction.
+
+Review each entry separately; a general opening or closing does not satisfy it.
+The shared context requirement is passed to journal handoffs, drafting and the
+independent audit. Missing context must produce an audit issue and rejection through
+the existing two-call gate. No extra model call or keyword-based semantic approval
+is added. Reviewed Edge/Notebook audio requires the same human editorial checklist;
+ASR and automated syntax/loudness checks cannot certify explanation or naturalness.
+
+The frozen October 1 private candidate predates this rule and is **not approved**
+against it: Copilot CLI/MCP need plain definitions and workflow placement; Codex and
+Bedrock need orientation or removal where irrelevant. Both entries need a clear
+conditional who-can-skip boundary. The practical recovery/permission experiments and
+model acceptance check are useful existing context, but do not close those gaps.
+Keep the current recording and transcript intact. Source the missing definitions,
+review a revised script, and create a separate candidate before any new recording.
+
 ## Quality rubric and current diagnosis
 
 | Dimension | Acceptance evidence |
