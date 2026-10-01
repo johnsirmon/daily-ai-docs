@@ -44,6 +44,10 @@ daily:
     max_input_chars: 120000
   sources:
     github_releases:
+      - repo: github/copilot-cli
+        product: GitHub Copilot CLI
+        topic: AI coding agents
+        priority: 20
       - repo: openai/codex
         product: OpenAI Codex
         topic: AI coding agents

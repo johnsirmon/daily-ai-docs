@@ -380,7 +380,9 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "## Editorial contract",
         "",
         *([
-            "- This edition uses user-authorized Gemini Notebook web audio, a local-ASR transcript, and an assistant transcript/source comparison; it is not independently verified Gemini API generation.",
+            ("- This edition uses reviewed Edge narration, a local-ASR transcript and an assistant transcript/source comparison; it is not Notebook audio or independently verified Gemini API generation."
+             if manifest.generation.get("provider") == "edge" else
+             "- This edition uses user-authorized Gemini Notebook web audio, a local-ASR transcript, and an assistant transcript/source comparison; it is not independently verified Gemini API generation."),
             "",
         ] if manifest.schema_version == 3 else []),
         *([

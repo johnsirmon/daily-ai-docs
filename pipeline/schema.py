@@ -572,6 +572,7 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         raise SchemaError("reviewed audio requires a publication status")
     generation = manifest.generation
     long_form = manifest.schema_version == 4
+    reviewed_edge = (manifest.schema_version == 3 and generation.get("edition") == "reviewed-edge")
     one_release_waiver = (
         manifest.schema_version == 3
         and generation.get("edition") == "gate-a-one-release-waiver"
@@ -583,6 +584,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     }
     if long_form:
         generation_fields |= {"request", "request_sha256", "quality", "voice"}
+    elif reviewed_edge:
+        generation_fields |= {"quality", "voice"}
     elif one_release_waiver:
         generation_fields |= {"quality", "voice", "waiver"}
     elif "quality" in generation:
@@ -590,10 +593,19 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     if "editing" in generation:
         generation_fields.add("editing")
     _exact_fields(generation, generation_fields, "reviewed generation")
-    if (not long_form and not one_release_waiver
+    if (not long_form and not one_release_waiver and not reviewed_edge
             and (generation["edition"] != "notebook"
                  or generation["provider"] != "gemini-notebook-web")):
         raise SchemaError("reviewed audio requires the gemini-notebook-web notebook provider")
+    if reviewed_edge:
+        if generation["provider"] != "edge":
+            raise SchemaError("reviewed-edge must identify the actual edge provider")
+        _exact_fields(generation["voice"], {"name", "rate", "pitch"}, "Edge voice")
+        for key in generation["voice"]:
+            _text(generation["voice"][key], f"voice.{key}", limit=120)
+        from .usefulness import spoken_quality_findings
+        if spoken_quality_findings(manifest.narration):
+            raise SchemaError("reviewed Edge speech contains release fragments or filler")
     if one_release_waiver:
         # Import lazily to keep the exceptional fixed contract out of general
         # schema initialization and to avoid making it a reusable provider mode.
