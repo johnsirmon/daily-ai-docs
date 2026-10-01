@@ -32,6 +32,11 @@ _EVERGREEN_DOCUMENTATION_PREFIXES = {
     "docs.github.com": ("/en/copilot",),
 }
 _EVERGREEN_DOCUMENTATION_EXACT_PATHS = {
+    "modelcontextprotocol.io": frozenset({
+        "/docs/2026-07-28/getting-started/intro",
+        "/docs/2026-07-28/learn/architecture",
+    }),
+    "learn.chatgpt.com": frozenset({"/docs/codex/cli"}),
     "docs.typesafe.ai": frozenset({
         "/introduction", "/introduction.md",
         "/introduction/coding-agents", "/introduction/coding-agents.md",
@@ -708,8 +713,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         if event.source_type == "research_paper":
             allowed |= paper_fields
         if event.source_type == "evergreen_documentation":
-            if not long_form:
-                raise SchemaError("evergreen documentation is supporting evidence for ad-hoc requests only")
+            if not (long_form or reviewed_edge):
+                raise SchemaError("evergreen documentation requires ad-hoc or reviewed Edge support")
             allowed |= {"evergreen_snapshot"}
         if set(event.metadata) - allowed:
             raise SchemaError("unsupported reviewed source metadata; retain only public provenance")
@@ -725,6 +730,9 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
                 or (not long_form and mapped_events.intersection(story.event_ids))):
             raise SchemaError("reviewed stories must map each source exactly once")
         mapped_events.update(story.event_ids)
+        if reviewed_edge and any(events[eid].source_type == "evergreen_documentation" for eid in story.event_ids):
+            if not any(events[eid].source_type != "evergreen_documentation" for eid in story.event_ids):
+                raise SchemaError("reviewed daily background requires dated primary evidence in the same story")
         papers = [events[event_id] for event_id in story.event_ids
                   if events[event_id].source_type == "research_paper"]
         if bool(papers) != (story.kind == "research"):
@@ -845,7 +853,8 @@ class EpisodeManifest:
             raise SchemaError("an episode may contain at most seven stories")
         for event in self.source_events:
             event.validate()
-            if event.source_type == "evergreen_documentation" and self.schema_version != 4:
+            if (event.source_type == "evergreen_documentation" and self.schema_version != 4
+                    and not (self.schema_version == 3 and self.generation.get("edition") == "reviewed-edge")):
                 raise SchemaError("evergreen documentation is supporting evidence for ad-hoc requests only")
         for story in self.stories:
             story.validate()

@@ -204,3 +204,12 @@ generation, Notebook imports, special requests and fixed waivers are unchanged.
 Approval metadata is an operator-reviewed record, not a cryptographic signature or
 publication grant. The revision-4 recording remains private and on listening hold;
 its original duration-failure receipt remains preserved as historical evidence.
+
+
+Reviewed Edge dailies may retain snapshot-reviewed undated official documentation
+as background in a story that also cites a dated primary event. Background-only
+stories remain rejected. Original publication dates remain empty; capture/review
+timestamps describe provenance, not news recency. The existing snapshot hash,
+bounded excerpts and exact official-page allowlist apply. No source collector,
+daily ranking eligibility or schema-2 evidence rule changes. Feed descriptions
+identify this route as Edge narration rather than mislabeling it Notebook.

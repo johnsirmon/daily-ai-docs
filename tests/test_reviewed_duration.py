@@ -159,3 +159,28 @@ def test_short_audio_still_requires_successful_full_decode(monkeypatch, tmp_path
     with pytest.raises(AudioValidationError, match="full decode"):
         analyze_audio(audio, min_duration_secs=minimum, max_duration_secs=maximum,
                       expected_word_count=len(data["narration"].split()))
+
+
+def test_reviewed_edge_background_keeps_original_date_unknown():
+    from tests.test_adhoc import evergreen_event
+    data = short_draft(); event = evergreen_event()
+    data["source_events"].append(event)
+    data["stories"][0]["event_ids"].append(event["event_id"])
+    data["stories"][0]["source_urls"].append(event["url"])
+    data["generation"]["review"]["claims"].append({"text": CLAIM, "event_id": event["event_id"], "quote": event["evidence"]})
+    # Fixture claim text must be present in the actual transcript; this test
+    # exercises provenance validation, not semantic support by a mocked reviewer.
+    assert EpisodeManifest.from_dict(data).source_events[-1].published_at == ""
+    data["source_events"] = [event]
+    data["stories"][0]["event_ids"] = [event["event_id"]]
+    data["stories"][0]["source_urls"] = [event["url"]]
+    data["generation"]["review"]["claims"] = data["generation"]["review"]["claims"][-1:]
+    with pytest.raises(SchemaError, match="dated primary"):
+        EpisodeManifest.from_dict(data)
+
+
+def test_edge_feed_description_does_not_claim_notebook_production():
+    from pipeline.podcast_metadata import manifest_presentation
+    text = manifest_presentation(EpisodeManifest.from_dict(short_draft()), metadata_path=None)["description"]
+    assert "Reviewed Edge narration" in text
+    assert "Notebook edition" not in text
