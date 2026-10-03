@@ -53,7 +53,7 @@ def listener_show_notes(manifest: EpisodeManifest) -> str:
 def _manifest_copy(manifest: EpisodeManifest) -> dict[str, str]:
     """Use extractive previews; all qualifications remain in the complete notes."""
     manifest.validate(require_audio=False)
-    disclosure = episode_metadata_disclosure(manifest.schema_version)
+    disclosure = episode_metadata_disclosure(manifest.schema_version, manifest.generation)
     notes = listener_show_notes(manifest)
     if not manifest.stories:
         return {

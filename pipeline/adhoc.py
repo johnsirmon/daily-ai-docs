@@ -105,7 +105,7 @@ def write_brief(request: PodcastRequest, packet: dict, directory: Path) -> Path:
     return target
 
 
-def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
+def prepare(request_path: Path, packet_path: Path, narration_path: Path,
             review_path: Path, audio_path: Path, output: Path) -> dict:
     from .audio import file_sha256
     from .audio_quality import repetition_findings
@@ -115,12 +115,32 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
     request = read_request(request_path)
     packet = json.loads(packet_path.read_text(encoding="utf-8"))
     review = json.loads(review_path.read_text(encoding="utf-8"))
-    narration = transcript_path.read_text(encoding="utf-8")
+    narration = narration_path.read_text(encoding="utf-8")
     if repetition_findings(narration):
         raise ValueError("adjacent repeated speech requires editorial correction")
-    review_fields = {"transcript", "review", "voice"}
-    if set(review) not in (review_fields, review_fields | {"editing"}):
-        raise ValueError("review requires transcript, review, and voice, with optional editing provenance")
+    provenance_fields = {"transcript", "source_script"} & set(review)
+    review_fields = {"review", "voice"} | provenance_fields
+    if (len(provenance_fields) != 1
+            or set(review) not in (review_fields, review_fields | {"editing"})):
+        raise ValueError(
+            "review requires exactly one of transcript or source_script, plus review and voice, "
+            "with optional editing provenance"
+        )
+    provenance_field = provenance_fields.pop()
+    if provenance_field == "source_script":
+        if review["source_script"] != {"provider": "edge"}:
+            raise ValueError("source_script review input must identify only the edge provider")
+        provenance = {
+            "source_script": {
+                "provider": "edge", "sha256": hashlib.sha256(narration.encode("utf-8")).hexdigest(),
+            },
+        }
+    else:
+        provenance = {
+            "transcript": {
+                **review["transcript"], "sha256": hashlib.sha256(narration.encode("utf-8")).hexdigest(),
+            },
+        }
     draft = {
         "schema_version": 4, "episode_id": request.episode_id,
         "published_at": datetime.now(timezone.utc).isoformat(), "status": "draft",
@@ -131,9 +151,7 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
             "edition": "adhoc", "provider": request.provider,
             "approved_at": datetime.now(timezone.utc).isoformat(),
             "source_audio_sha256": file_sha256(audio_path),
-            "transcript": {
-                **review["transcript"], "sha256": hashlib.sha256(narration.encode("utf-8")).hexdigest(),
-            },
+            **provenance,
             "review": review["review"], "voice": review["voice"], "quality": {},
             "request": request.to_dict(), "request_sha256": request.revision,
         },
@@ -155,7 +173,7 @@ def prepare(request_path: Path, packet_path: Path, transcript_path: Path,
         for key in ("source_events", "stories", "noise_notes", "narration", "show_notes", "source_health"):
             if saved[key] != draft[key]:
                 raise ValueError("prepared bundle differs from requested review; create a new revision")
-        for key in ("request_sha256", "source_audio_sha256", "transcript", "review", "voice"):
+        for key in ("request_sha256", "source_audio_sha256", provenance_field, "review", "voice"):
             if saved["generation"][key] != draft["generation"][key]:
                 raise ValueError("prepared bundle provenance changed")
         if (("editing" in saved["generation"]) != ("editing" in draft["generation"])
@@ -263,7 +281,10 @@ def main() -> None:
         stage.add_argument("--request", type=Path, required=True)
         stage.add_argument("--packet", type=Path, required=True)
         if name == "prepare":
-            for option in ("transcript", "review", "audio", "output"):
+            narration = stage.add_mutually_exclusive_group(required=True)
+            narration.add_argument("--transcript", type=Path)
+            narration.add_argument("--script", type=Path)
+            for option in ("review", "audio", "output"):
                 stage.add_argument(f"--{option}", type=Path, required=True)
     release = sub.add_parser("publish")
     release.add_argument("--directory", type=Path, required=True)
@@ -302,7 +323,9 @@ def main() -> None:
         request = read_request(args.request)
         print(write_brief(request, json.loads(args.packet.read_text(encoding="utf-8")), args.request.parent))
     elif args.command == "prepare":
-        print(json.dumps(prepare(args.request, args.packet, args.transcript, args.review, args.audio, args.output)))
+        print(json.dumps(prepare(
+            args.request, args.packet, args.transcript or args.script, args.review, args.audio, args.output,
+        )))
     elif args.command == "publish":
         publish(args.directory)
     elif args.command == "verify":
