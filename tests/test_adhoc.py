@@ -179,11 +179,21 @@ def prepare_inputs(tmp_path, *, corrected=False):
 
 
 def test_edge_source_script_provenance_is_explicit_and_round_trips():
+    from pipeline.podcast_metadata import manifest_presentation
+    from pipeline.render import render_manifest_readme
+
     data = edge_source_script_draft()
     manifest = EpisodeManifest.from_dict(data)
     assert "transcript" not in manifest.generation
     assert manifest.generation["source_script"] == data["generation"]["source_script"]
     assert EpisodeManifest.from_dict(manifest.to_dict()).to_dict() == manifest.to_dict()
+    rendered = render_manifest_readme(manifest)
+    assert "exact synthesis-input script/source reviewed; no ASR or human listening claimed" in rendered
+    assert "transcript/source reviewed" not in rendered
+    description = manifest_presentation(manifest, metadata_path=None)["description"]
+    assert "reviewed against its exact synthesis-input script and cited sources" in description
+    assert "no ASR or listening is claimed" in description
+    assert "reviewed against its transcript" not in description
 
 
 @pytest.mark.parametrize("change,match", [

@@ -315,11 +315,16 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
     ]
     if manifest.schema_version == 4:
         request = manifest.generation["request"]
+        review_provenance = (
+            "exact synthesis-input script/source reviewed; no ASR or human listening claimed"
+            if "source_script" in manifest.generation
+            else "transcript/source reviewed"
+        )
         lines[0] = f"# Daily AI Developer Brief — Special: {request['topic']}"
         lines += [
             f"Long-form special for {request['audience']}.",
             f"Evidence window: {request['lookback_days']} days ending {request['cutoff']}.",
-            f"Audio provider: {manifest.generation['provider']}; transcript/source reviewed, not Gemini API verification.",
+            f"Audio provider: {manifest.generation['provider']}; {review_provenance}, not Gemini API verification.",
             "",
         ]
     if not manifest.stories:

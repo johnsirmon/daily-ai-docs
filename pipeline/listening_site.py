@@ -444,7 +444,7 @@ def _episode_page(episode: SiteEpisode) -> str:
             gaps_section,
             '<section><h2>Accepted show notes</h2>',
             f'<p class="preserve-lines">{_escape(manifest.show_notes)}</p></section>',
-            f'<p class="disclosure">{_escape(episode_metadata_disclosure(manifest.schema_version))}</p>',
+            f'<p class="disclosure">{_escape(episode_metadata_disclosure(manifest.schema_version, manifest.generation))}</p>',
         ])
     else:
         archive_link = (

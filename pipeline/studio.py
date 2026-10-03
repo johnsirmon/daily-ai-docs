@@ -122,7 +122,7 @@ def _page(manifest: EpisodeManifest, title: str) -> str:
 <p class="small">An editorial test sequence, not a diagram of product internals or measured results.</p></section>
 <section id="transcript"><h2>Full transcript</h2><p class="transcript">{esc(manifest.narration)}</p></section>
 <section><h2>Source notes</h2><p class="transcript">{esc(manifest.show_notes)}</p></section></main>
-<footer><p>{esc(episode_metadata_disclosure(manifest.schema_version))}</p><p>Local ASR and technical checks do not replace listening review. This candidate has not been delivered to subscribers.</p></footer></html>"""
+<footer><p>{esc(episode_metadata_disclosure(manifest.schema_version, manifest.generation))}</p><p>Provenance and technical checks do not by themselves prove listening review. This candidate has not been delivered to subscribers.</p></footer></html>"""
 
 
 def build(draft: Path, audio: Path, feed: Path, artwork: Path, output: Path, *, title: str) -> dict:
@@ -182,7 +182,9 @@ def build(draft: Path, audio: Path, feed: Path, artwork: Path, output: Path, *, 
             from .podcast import render_feed
             import xml.etree.ElementTree as ET
             new_episode = {"guid": manifest.episode_id, "title": title,
-                             "description": manifest.show_notes + "\n\n" + episode_metadata_disclosure(manifest.schema_version),
+                             "description": manifest.show_notes + "\n\n" + episode_metadata_disclosure(
+                                 manifest.schema_version, manifest.generation,
+                             ),
                              "pub_date": manifest.published_at, "mp3_url": manifest.audio["url"],
                              "file_size_bytes": manifest.audio["size_bytes"],
                              "duration_secs": manifest.audio["duration_secs"]}
