@@ -1,0 +1,224 @@
+{
+  "schema_version": 4,
+  "episode_id": "adhoc-2026-09-29-2dc92469a86324f409adf822",
+  "published_at": "2026-10-03T14:41:06.775170+00:00",
+  "status": "candidate",
+  "source_health": {
+    "openai:gpt-6.1-sol": "ok:primary-reviewed",
+    "openai:agents-api": "ok:primary-reviewed",
+    "google:mcp-gateway": "ok:primary-reviewed",
+    "github:copilot-sol": "ok:primary-reviewed"
+  },
+  "source_events": [
+    {
+      "event_id": "primary:openai:gpt-6-1-sol:2026-09-29",
+      "source_type": "announcement",
+      "title": "Introducing GPT-6.1 Sol",
+      "url": "https://openai.com/index/introducing-gpt-6-1-sol/",
+      "product": "OpenAI API",
+      "topic": "Model cost and coding",
+      "published_at": "2026-09-29T10:00:00Z",
+      "fetched_at": "2026-09-29T20:05:00Z",
+      "evidence": "OpenAI says GPT-6.1 Sol is an upgrade to GPT-6 Sol aimed at agentic coding, computer use, and professional work. The standard API price is $2 per million input tokens, $0.10 per million cached input tokens, and $10 per million output tokens. OpenAI reports that its internal evaluations approach GPT-6 Astra on several tasks at lower cost, while warning that research-environment evaluations may differ from production. It is available through the OpenAI API as gpt-6.1-sol and to Plus, Pro, Business, Enterprise, and Edu users in ChatGPT Work and Codex, but not yet in Chat.",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts"
+      }
+    },
+    {
+      "event_id": "primary:github:copilot-gpt-6-1-sol:2026-09-29",
+      "source_type": "announcement",
+      "title": "GPT-6.1 Sol in GitHub Copilot",
+      "url": "https://github.blog/changelog/2026-09-29-gpt-6-1-sol-in-github-copilot/",
+      "product": "GitHub Copilot",
+      "topic": "Model access",
+      "published_at": "2026-09-29T10:00:00Z",
+      "fetched_at": "2026-09-29T20:05:00Z",
+      "evidence": "GitHub says GPT-6.1 Sol is generally available and rolling out in GitHub Copilot for agentic coding and terminal workflows. It is available to Copilot Pro+, Max, Business, and Enterprise users in Visual Studio Code, Visual Studio, Copilot CLI, GitHub Copilot coding agent, the Copilot app, github.com, GitHub Mobile, JetBrains IDEs, Xcode, and Eclipse. Rollout is gradual. GitHub says the model is billed at provider list pricing under usage-based billing, and Business or Enterprise administrators can manage access through model policy settings.",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts"
+      }
+    },
+    {
+      "event_id": "primary:openai:agents-api:2026-09-10",
+      "source_type": "announcement",
+      "title": "Introducing the Agents API",
+      "url": "https://openai.com/index/introducing-the-agents-api/",
+      "product": "OpenAI Agents API",
+      "topic": "Managed agents",
+      "published_at": "2026-09-10T10:00:00Z",
+      "fetched_at": "2026-09-29T20:05:00Z",
+      "evidence": "OpenAI introduced the Agents API in public beta for building and running cloud agents with the managed Codex harness. Developers specify a task, model, tools, and environment, while OpenAI hosts and maintains the harness. Environments can be OpenAI-managed, self-hosted, or supplied by named sandbox partners. The API supports automatic context compaction, tool search, programmatic tool calling, MCP, custom functions, built-in tools, and multi-agent delegation. OpenAI says there is no additional Agents API fee; developers pay for tokens and tools. Current OpenAI documentation says model usage, tools, and OpenAI-hosted sandbox containers are billed at their standard rates. It also says the Agents API retains session state, supports data residency only in the United States, and does not support Zero Data Retention, even with a self-hosted sandbox. The company says the public beta will change based on feedback before general availability.",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts",
+        "corroboration_urls": [
+          "https://developers.openai.com/api/docs/guides/agents-api/overview"
+        ]
+      }
+    },
+    {
+      "event_id": "primary:google:api-gateway-mcp:2026-09-24",
+      "source_type": "announcement",
+      "title": "Turn your REST APIs into MCP tools with Google Cloud API Gateway",
+      "url": "https://developers.googleblog.com/en/turn-your-rest-apis-into-mcp-tools-with-google-cloud-api-gateway/",
+      "product": "Google Cloud API Gateway",
+      "topic": "MCP infrastructure",
+      "published_at": "2026-09-24T10:00:00Z",
+      "fetched_at": "2026-09-29T20:05:00Z",
+      "evidence": "Google says Cloud API Gateway can act as a remote MCP server in Public Preview. Developers can annotate an existing OpenAPI 3.x specification so selected REST operations become agent tools while retaining existing authentication, quotas, and logging. OpenAPI 2.0 is not supported. Tool discovery is unauthenticated by default; production deployments can require a JWT, while API keys cannot secure tools/list. Current limits include no MCP resources or prompts, no response streaming, no exposure of operations with empty bodies, possible limitations for deeply nested schemas, up to 1,000 tools per gateway, and no model routing in the same API configuration.",
+      "authority": "primary",
+      "channel": "prerelease",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts"
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "model-economics-not-benchmark-chasing",
+      "event_ids": [
+        "primary:openai:gpt-6-1-sol:2026-09-29",
+        "primary:github:copilot-gpt-6-1-sol:2026-09-29"
+      ],
+      "headline": "A cheaper coding model changes the test matrix, not the verdict",
+      "what_changed": "GPT-6.1 Sol launched in the API, Codex, and a gradual GitHub Copilot rollout with a materially different token-price position from Astra.",
+      "why_it_matters": "Teams can test a stronger middle tier for repetitive agentic coding, but vendor benchmarks do not establish performance on a specific repository or total workflow cost.",
+      "action": "skip",
+      "rationale": "Skip launch-day benchmark chasing; run a bounded repository-specific comparison that records quality, retries, latency, cached-input use, and total spend.",
+      "source_urls": [
+        "https://openai.com/index/introducing-gpt-6-1-sol/",
+        "https://github.blog/changelog/2026-09-29-gpt-6-1-sol-in-github-copilot/"
+      ],
+      "scores": {
+        "editorial_priority": 98
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "managed-agent-harness-beta",
+      "event_ids": [
+        "primary:openai:agents-api:2026-09-10"
+      ],
+      "headline": "Managed agent infrastructure is now a buy-versus-build decision",
+      "what_changed": "The public-beta Agents API packages the Codex harness, long-running context management, tools, sandbox choices, and subagent orchestration behind an API.",
+      "why_it_matters": "Teams with bespoke orchestration can now compare it with a managed path, but beta status, token and tool costs, environment boundaries, and portability remain decision factors.",
+      "action": "watch",
+      "rationale": "Pilot one bounded noncritical workflow and measure failure recovery, observability, permissions, and cost before considering migration.",
+      "source_urls": [
+        "https://openai.com/index/introducing-the-agents-api/",
+        "https://developers.openai.com/api/docs/guides/agents-api/overview"
+      ],
+      "scores": {
+        "editorial_priority": 92
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "mcp-from-existing-gateway",
+      "event_ids": [
+        "primary:google:api-gateway-mcp:2026-09-24"
+      ],
+      "headline": "An existing REST gateway can become the MCP server",
+      "what_changed": "Google Cloud API Gateway can expose annotated OpenAPI 3.x operations as MCP tools in Public Preview while retaining gateway controls.",
+      "why_it_matters": "Teams already on the gateway may avoid a separate translation service, but public tool discovery and preview limitations require deliberate configuration.",
+      "action": "act",
+      "rationale": "Pilot one read-only internal operation, require JWT-protected discovery, and verify schema translation before exposing broader capabilities.",
+      "source_urls": [
+        "https://developers.googleblog.com/en/turn-your-rest-apis-into-mcp-tools-with-google-cloud-api-gateway/"
+      ],
+      "scores": {
+        "editorial_priority": 94
+      },
+      "kind": "product",
+      "editorial": {}
+    }
+  ],
+  "noise_notes": [
+    "Routine repository release fragments and minor maintenance changes were excluded.",
+    "Vendor benchmark results are treated as vendor-reported evidence, not independent measurement."
+  ],
+  "narration": "The important shift today is not that another model topped another chart. It is that AI development teams now have three practical ways to remove expensive custom plumbing: a cheaper coding model, a managed agent harness, and a gateway that can expose existing REST operations as agent tools. Each can save engineering time, but only if you test the boundary that matters in your own workflow.\n\nProduction note: This episode uses AI-generated narration.\n\nStart with model economics. OpenAI released GPT six point one Sol today. It is available through the OpenAI API, through Codex for eligible plans, and is beginning a gradual rollout in GitHub Copilot. The access details matter. GitHub says its rollout covers Pro Plus, Max, Business, and Enterprise plans, and organization administrators may need to allow the model through policy settings. It is not a universal switch that every developer will see immediately.\n\nThe API price is two dollars per million input tokens, ten cents per million cached input tokens, and ten dollars per million output tokens. That makes repeated context potentially important for coding agents that send the same repository instructions and tool definitions on many turns. OpenAI reports that the model approaches its more expensive Astra tier on several internal evaluations. Treat that as a reason to test, not as proof that it will win on your codebase. OpenAI explicitly notes that research-environment results can differ from production.\n\nHere is the useful experiment. Choose a small set of real tasks: one bug with a regression test, one medium refactor, and one tool-heavy investigation. Run the same harness, permissions, and acceptance checks with your current model and with Sol. Record accepted-result rate, retries, elapsed time, cache use, and total token cost. If Sol reaches the same acceptance bar with fewer expensive calls, move the repetitive work first. Keep the strongest model for the tasks where failed attempts dominate cost.\n\nThe thing not worth chasing is the launch-day benchmark leaderboard. A few percentage points on a vendor evaluation do not tell you whether the model follows your repository rules, uses your tools safely, or produces a patch your tests accept. The decision is about cost per accepted result, not cost per token and not a headline score.\n\nThe second development is a new buy-versus-build choice for agent infrastructure. OpenAI introduced the Agents API in public beta earlier this month. Developers specify the task, model, tools, and environment, while OpenAI hosts and maintains the harness. The managed layer includes context compaction for long runs, tool search, programmatic tool calling, support for the Model Context Protocol, and multi-agent delegation. Compute can run in an OpenAI-managed sandbox, on your own infrastructure, or through a supported sandbox partner.\n\nThat changes the question for teams maintaining a homegrown orchestration loop. You no longer have to compare your system only with a simple model call. You can compare it with a managed version of the harness behind Codex. OpenAI says there is no separate Agents API fee, but model usage, tools, and OpenAI-hosted sandbox containers are billed at their standard rates. That does not mean the workflow is free, and the product is still a public beta.\n\nData handling is also part of the architecture decision. Current OpenAI documentation says the Agents API retains session state, supports data residency only in the United States, and does not support Zero Data Retention, even when execution uses a self-hosted sandbox. A self-hosted environment changes where commands run; it does not remove the managed API's retention boundary.\n\nDo not migrate a production agent because the feature list is long. Pilot one noncritical job with a clear completion check. Measure how the service exposes tool failures, how you resume interrupted work, which data crosses the sandbox boundary, how permissions are constrained, and whether the generated artifacts are easy to audit. If your existing harness already gives you stronger portability, observability, or isolation, watching the beta may be more valuable than moving now.\n\nThe third development is especially practical for teams that already run services behind Google Cloud API Gateway. In Public Preview, the gateway can act as a remote Model Context Protocol server. You annotate an OpenAPI three specification, choose the operations to expose, and the gateway translates agent tool calls into the REST requests your service already understands. Existing authentication, quota, and logging policies still apply to those calls.\n\nThe benefit is architectural, not magical. You may be able to avoid building and operating a separate MCP translation service. But there is one configuration detail to check before any pilot: tool discovery is unauthenticated by default. Google says production deployments can require a JSON Web Token for discovery, while an API key cannot secure that listing operation. Tool execution still follows the underlying operation's authentication.\n\nStart with one read-only internal endpoint. Give the tool a description that explains when to use it, require authenticated discovery, and inspect the generated schema from a real client. The preview does not support OpenAPI two, response streaming, MCP resources or prompts, or operations with empty bodies. Deeply nested schemas may not translate completely, and model routing cannot share the same API configuration. Those limits make a narrow pilot more useful than a broad conversion.\n\nYour action list is short. First, benchmark the new Sol model on accepted results and full workflow cost, not vendor scores. Second, compare one bounded job against the managed Agents API before touching a production harness. Third, if your REST APIs already sit behind Google Cloud API Gateway, expose one read-only operation and lock down discovery. Skip the leaderboard chase. The common theme is to test the operational boundary, not the announcement.\n",
+  "show_notes": "Afternoon briefing for working AI developers: model economics, managed agent infrastructure, and turning existing REST APIs into MCP tools.\n\nPrimary sources:\n- OpenAI: Introducing GPT-6.1 Sol — https://openai.com/index/introducing-gpt-6-1-sol/\n- GitHub: GPT-6.1 Sol in GitHub Copilot — https://github.blog/changelog/2026-09-29-gpt-6-1-sol-in-github-copilot/\n- OpenAI: Introducing the Agents API — https://openai.com/index/introducing-the-agents-api/\n- Google Developers Blog: Turn your REST APIs into MCP tools with Google Cloud API Gateway — https://developers.googleblog.com/en/turn-your-rest-apis-into-mcp-tools-with-google-cloud-api-gateway/\n\nVendor benchmarks are identified as vendor-reported. Public previews and access limitations are retained.",
+  "generation": {
+    "edition": "adhoc",
+    "provider": "edge",
+    "approved_at": "2026-10-03T14:41:06.775183+00:00",
+    "source_audio_sha256": "cc57c9ba82bbd8f0d2abd5cb303e8df0b50f7af5633ef1aede999b8e82247211",
+    "source_script": {
+      "provider": "edge",
+      "sha256": "7880738c29421f51a7cf878cc64c5d516f839ab0bdcf7cfc5eca74c4094ebc3f"
+    },
+    "review": {
+      "method": "source_script_source_comparison",
+      "reviewed_at": "2026-10-03T14:40:53Z",
+      "reviewer": "assistant",
+      "claims": [
+        {
+          "text": "OpenAI explicitly notes that research-environment results can differ from production.",
+          "event_id": "primary:openai:gpt-6-1-sol:2026-09-29",
+          "quote": "OpenAI reports that its internal evaluations approach GPT-6 Astra on several tasks at lower cost, while warning that research-environment evaluations may differ from production."
+        },
+        {
+          "text": "GitHub says its rollout covers Pro Plus, Max, Business, and Enterprise plans, and organization administrators may need to allow the model through policy settings.",
+          "event_id": "primary:github:copilot-gpt-6-1-sol:2026-09-29",
+          "quote": "It is available to Copilot Pro+, Max, Business, and Enterprise users in Visual Studio Code, Visual Studio, Copilot CLI, GitHub Copilot coding agent, the Copilot app, github.com, GitHub Mobile, JetBrains IDEs, Xcode, and Eclipse."
+        },
+        {
+          "text": "Current OpenAI documentation says the Agents API retains session state, supports data residency only in the United States, and does not support Zero Data Retention, even when execution uses a self-hosted sandbox.",
+          "event_id": "primary:openai:agents-api:2026-09-10",
+          "quote": "It also says the Agents API retains session state, supports data residency only in the United States, and does not support Zero Data Retention, even with a self-hosted sandbox."
+        },
+        {
+          "text": "Google says production deployments can require a JSON Web Token for discovery, while an API key cannot secure that listing operation.",
+          "event_id": "primary:google:api-gateway-mcp:2026-09-24",
+          "quote": "Tool discovery is unauthenticated by default; production deployments can require a JWT, while API keys cannot secure tools/list."
+        }
+      ],
+      "notes": [
+        "Forward Observer approved the exact source script against the exact primary-source packet; no ASR or human listening occurred or is claimed.",
+        "The exact deterministic Edge synthesis input is preserved byte-for-byte and hash-bound to the prepared manifest.",
+        "Automated media acceptance remains separate: full decode, duration, loudness, repetition, and final-byte identity must pass before publication."
+      ]
+    },
+    "voice": {
+      "name": "en-US-AriaNeural",
+      "rate": "-4%",
+      "pitch": "-2Hz"
+    },
+    "quality": {
+      "method": "ffmpeg_loudnorm_two_pass",
+      "ffmpeg": "ffmpeg version n9.0.1-11-ge47273f4d9-20260831 Copyright (c) 2000-2026 the FFmpeg developers",
+      "integrated_lufs": -16.65,
+      "true_peak_dbtp": -4.36,
+      "audio_sha256": "e764b29bcfaa549ccbfdc04fcccb59ff1da200dd1d441e40e9eb4b465a6a57e0"
+    },
+    "request": {
+      "topic": "AI developer afternoon briefing: model economics, managed agents, and MCP gateways",
+      "audience": "Working AI developers choosing what to test, adopt, or skip this week",
+      "cutoff": "2026-09-29T20:06:12.670648+00:00",
+      "lookback_days": 20,
+      "provider": "edge",
+      "publish_now": true,
+      "actor": "johnsirmon",
+      "issue": null,
+      "schema_version": 1
+    },
+    "request_sha256": "2dc92469a86324f409adf822eeb3b062f94bbc1703730af5cf5757c5893e47f5"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/adhoc-2026-09-29-2dc92469a86324f409adf822/daily-ai-brief.mp3",
+    "size_bytes": 6809016,
+    "duration_secs": 425.496,
+    "sha256": "e764b29bcfaa549ccbfdc04fcccb59ff1da200dd1d441e40e9eb4b465a6a57e0",
+    "codec": "mp3",
+    "sample_rate": 44100,
+    "channels": 2
+  }
+}

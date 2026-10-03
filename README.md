@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — 2026-10-01
+# Daily AI Developer Brief — Special: AI developer afternoon briefing: model economics, managed agents, and MCP gateways
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
@@ -81,29 +81,46 @@ The pilot uses the signed-in account's existing allowance. It does not authorize
 
 ## Today's signal
 
-### Control before speed: connected tools and model choices
+Long-form special for Working AI developers choosing what to test, adopt, or skip this week.
+Evidence window: 20 days ending 2026-09-29T20:06:12.670648+00:00.
+Audio provider: edge; exact synthesis-input script/source reviewed; no ASR or human listening claimed, not Gemini API verification.
 
-**What to know:** Copilot CLI adds MCP discovery recovery, origin-scoped GitHub authentication and session-scoped read-only directory approvals.
+### A cheaper coding model changes the test matrix, not the verdict
 
-**What changes for developers:** Connection recovery and permission scope give MCP integrations concrete behaviors to inspect before changing a working session.
+**What to know:** GPT-6.1 Sol launched in the API, Codex, and a gradual GitHub Copilot rollout with a materially different token-price position from Astra.
 
-**Recommendation:** WATCH — In a disposable workspace, test read-only discovery recovery and inspect the approved origin and directory scope separately.
+**What changes for developers:** Teams can test a stronger middle tier for repetitive agentic coding, but vendor benchmarks do not establish performance on a specific repository or total workflow cost.
 
-Sources: [1](https://github.com/github/copilot-cli/releases/tag/v1.0.90), [2](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01, [3](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
+**Recommendation:** SKIP — Skip launch-day benchmark chasing; run a bounded repository-specific comparison that records quality, retries, latency, cached-input use, and total spend.
 
-### Treat a catalog default as a testable change
+Sources: [1](https://openai.com/index/introducing-gpt-6-1-sol/), [2](https://github.blog/changelog/2026-09-29-gpt-6-1-sol-in-github-copilot/)
 
-**What to know:** Codex adds GPT-6.1 Sol as the default in its bundled and named Bedrock catalogs.
+### Managed agent infrastructure is now a buy-versus-build decision
 
-**What changes for developers:** A catalog change is not a benchmark or evidence of improved results on a particular repository.
+**What to know:** The public-beta Agents API packages the Codex harness, long-running context management, tools, sandbox choices, and subagent orchestration behind an API.
 
-**Recommendation:** WATCH — Check the selected model and use a representative acceptance task before replacing a working default; measure any cost claim.
+**What changes for developers:** Teams with bespoke orchestration can now compare it with a managed path, but beta status, token and tool costs, environment boundaries, and portability remain decision factors.
 
-Sources: [1](https://github.com/openai/codex/releases/tag/rust-v0.159.1), [2](https://learn.chatgpt.com/docs/codex/cli) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-01
+**Recommendation:** WATCH — Pilot one bounded noncritical workflow and measure failure recovery, observability, permissions, and cost before considering migration.
+
+Sources: [1](https://openai.com/index/introducing-the-agents-api/), [2](https://developers.openai.com/api/docs/guides/agents-api/overview)
+
+### An existing REST gateway can become the MCP server
+
+**What to know:** Google Cloud API Gateway can expose annotated OpenAPI 3.x operations as MCP tools in Public Preview while retaining gateway controls.
+
+**What changes for developers:** Teams already on the gateway may avoid a separate translation service, but public tool discovery and preview limitations require deliberate configuration.
+
+**Recommendation:** ACT — Pilot one read-only internal operation, require JWT-protected discovery, and verify schema translation before exposing broader capabilities.
+
+Sources: [1](https://developers.googleblog.com/en/turn-your-rest-apis-into-mcp-tools-with-google-cloud-api-gateway/)
+
+## High noise / low signal
+
+- Routine repository release fragments and minor maintenance changes were excluded.
+- Vendor benchmark results are treated as vendor-reported evidence, not independent measurement.
 
 ## Editorial contract
-
-- This edition uses reviewed Edge narration, a local-ASR transcript and an assistant transcript/source comparison; it is not Notebook audio or independently verified Gemini API generation.
 
 - Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.
 - One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.
@@ -120,9 +137,10 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `reviewed:background`: ok:3
-- `reviewed:codex`: ok:1
-- `reviewed:copilot`: ok:1
+- `github:copilot-sol`: ok:primary-reviewed
+- `google:mcp-gateway`: ok:primary-reviewed
+- `openai:agents-api`: ok:primary-reviewed
+- `openai:gpt-6.1-sol`: ok:primary-reviewed
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 
