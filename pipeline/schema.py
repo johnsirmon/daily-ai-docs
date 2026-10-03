@@ -566,10 +566,11 @@ def _reviewed_public_values(value: Any) -> None:
 
 
 def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
-    """Validate explicit human-authorized, locally transcribed audio provenance.
+    """Validate reviewed audio and transcript or synthesis-input provenance.
 
-    This records a transcript/source comparison, not Gemini API verification.
-    Semantic entailment and any ASR limitations remain the reviewer's responsibility.
+    Deterministic Edge audio may bind the exact source script instead of claiming
+    that the same text came from ASR. Semantic entailment remains the reviewer's
+    responsibility; neither provenance mode is Gemini API verification.
     """
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", manifest.episode_id):
         raise SchemaError("reviewed audio requires a safe episode_id")
@@ -584,8 +585,12 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
     )
     if generation.get("preview_only") is True:
         raise SchemaError("preview-only audio cannot be published")
+    source_script_mode = (
+        long_form and generation.get("provider") == "edge" and "source_script" in generation
+    )
     generation_fields = {
-        "edition", "provider", "approved_at", "source_audio_sha256", "transcript", "review",
+        "edition", "provider", "approved_at", "source_audio_sha256", "review",
+        "source_script" if source_script_mode else "transcript",
     }
     if long_form:
         generation_fields |= {"request", "request_sha256", "quality", "voice"}
@@ -675,24 +680,37 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
             raise SchemaError("editing.correction_text must be the exact narration prefix")
         if not manifest.narration[len(correction):].strip():
             raise SchemaError("edited narration must retain the conversation after the correction")
-    transcript = generation["transcript"]
-    _exact_fields(transcript, {"engine", "model", "sha256"}, "transcript")
-    if transcript["engine"] not in ("faster-whisper", "whisper", "openai-whisper", "whisper.cpp"):
-        raise SchemaError("transcript.engine must identify a supported local ASR engine")
-    _text(transcript["model"], "transcript.model", limit=120)
-    _sha256(transcript["sha256"], "transcript.sha256")
-    if transcript["sha256"] != hashlib.sha256(manifest.narration.encode("utf-8")).hexdigest():
-        raise SchemaError("transcript.sha256 must hash the exact UTF-8 narration")
+    narration_sha256 = hashlib.sha256(manifest.narration.encode("utf-8")).hexdigest()
+    if source_script_mode:
+        source_script = generation["source_script"]
+        _exact_fields(source_script, {"provider", "sha256"}, "source_script")
+        if source_script["provider"] != "edge":
+            raise SchemaError("source_script.provider must identify the deterministic edge synthesis provider")
+        _sha256(source_script["sha256"], "source_script.sha256")
+        if source_script["sha256"] != narration_sha256:
+            raise SchemaError("source_script.sha256 must hash the exact UTF-8 synthesis input")
+    else:
+        transcript = generation["transcript"]
+        _exact_fields(transcript, {"engine", "model", "sha256"}, "transcript")
+        if transcript["engine"] not in ("faster-whisper", "whisper", "openai-whisper", "whisper.cpp"):
+            raise SchemaError("transcript.engine must identify a supported local ASR engine")
+        _text(transcript["model"], "transcript.model", limit=120)
+        _sha256(transcript["sha256"], "transcript.sha256")
+        if transcript["sha256"] != narration_sha256:
+            raise SchemaError("transcript.sha256 must hash the exact UTF-8 narration")
     character_limit = MAX_LONG_FORM_NARRATION_CHARS if long_form else 16000
     if len(manifest.narration) > character_limit:
         raise SchemaError(f"narration exceeds {character_limit} characters")
     review = generation["review"]
     _exact_fields(review, {"method", "reviewed_at", "reviewer", "claims", "notes"}, "review")
-    if review["method"] != "transcript_source_comparison" or review["reviewer"] != "assistant":
-        raise SchemaError("review must identify the assistant transcript_source_comparison")
+    expected_review_method = (
+        "source_script_source_comparison" if source_script_mode else "transcript_source_comparison"
+    )
+    if review["method"] != expected_review_method or review["reviewer"] != "assistant":
+        raise SchemaError(f"review must identify the assistant {expected_review_method}")
     _timestamp(review["reviewed_at"], "review.reviewed_at")
     if not isinstance(review["notes"], list) or not 1 <= len(review["notes"]) <= 20:
-        raise SchemaError("review.notes must be a bounded non-empty list of review and ASR limitations")
+        raise SchemaError("review.notes must be a bounded non-empty list of review and provenance limitations")
     for note in review["notes"]:
         _text(note, "review.note", limit=1600)
     if not isinstance(review["claims"], list) or not 1 <= len(review["claims"]) <= (300 if long_form else 100):
@@ -782,7 +800,8 @@ def validate_reviewed_audio(manifest: "EpisodeManifest") -> None:
         if event_id not in events or event_id not in mapped_events:
             raise SchemaError("claim references an unknown or unmapped source event")
         if claim["text"] not in manifest.narration:
-            raise SchemaError("claim.text must occur verbatim in the ASR narration")
+            provenance = "source-script narration" if source_script_mode else "ASR narration"
+            raise SchemaError(f"claim.text must occur verbatim in the {provenance}")
         if claim["quote"] not in events[event_id].evidence:
             raise SchemaError("claim.quote must occur verbatim in the referenced event evidence")
         if long_form:

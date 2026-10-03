@@ -56,6 +56,22 @@ def long_draft(*, ready=False, **changes):
     return item
 
 
+def edge_source_script_draft(*, ready=False):
+    item = long_draft(ready=ready, provider="edge")
+    item["generation"]["voice"] = {
+        "name": "en-US-AriaNeural", "rate": "-4%", "pitch": "-2Hz",
+    }
+    item["generation"]["source_script"] = {
+        "provider": "edge", "sha256": hashlib.sha256(item["narration"].encode()).hexdigest(),
+    }
+    del item["generation"]["transcript"]
+    item["generation"]["review"]["method"] = "source_script_source_comparison"
+    item["generation"]["review"]["notes"] = [
+        "Exact deterministic synthesis input reviewed against public primary sources; no ASR or listening claimed.",
+    ]
+    return item
+
+
 EVERGREEN_CLAIM = "Repository instructions customize agent behavior."
 EVERGREEN_CONTENT = EVERGREEN_CLAIM + "\nCopilot agents can use repository instructions in a repository.\n"
 EXACT_EVERGREEN_PAGE_URLS = (
@@ -160,6 +176,76 @@ def prepare_inputs(tmp_path, *, corrected=False):
     review = tmp_path / "review.json"
     review.write_text(json.dumps(review_data), encoding="utf-8")
     return request_path, packet, transcript, review, source, tmp_path / "prepared"
+
+
+def test_edge_source_script_provenance_is_explicit_and_round_trips():
+    data = edge_source_script_draft()
+    manifest = EpisodeManifest.from_dict(data)
+    assert "transcript" not in manifest.generation
+    assert manifest.generation["source_script"] == data["generation"]["source_script"]
+    assert EpisodeManifest.from_dict(manifest.to_dict()).to_dict() == manifest.to_dict()
+
+
+@pytest.mark.parametrize("change,match", [
+    ("not_edge", "reviewed generation"),
+    ("wrong_provider", "deterministic edge"),
+    ("wrong_hash", "exact UTF-8 synthesis input"),
+    ("wrong_review", "source_script_source_comparison"),
+    ("both_provenance_modes", "reviewed generation"),
+])
+def test_source_script_provenance_fails_closed_outside_exact_edge_contract(change, match):
+    data = edge_source_script_draft()
+    if change == "not_edge":
+        data["generation"]["provider"] = "gemini-notebook-web"
+        data["generation"]["request"]["provider"] = "gemini-notebook-web"
+    elif change == "wrong_provider":
+        data["generation"]["source_script"]["provider"] = "openai"
+    elif change == "wrong_hash":
+        data["generation"]["source_script"]["sha256"] = "0" * 64
+    elif change == "wrong_review":
+        data["generation"]["review"]["method"] = "transcript_source_comparison"
+    else:
+        data["generation"]["transcript"] = {
+            "engine": "faster-whisper", "model": "small.en", "sha256": "0" * 64,
+        }
+    with pytest.raises(SchemaError, match=match):
+        EpisodeManifest.from_dict(data)
+
+
+def test_prepare_records_edge_source_script_without_asr_claim(monkeypatch, tmp_path):
+    req = request(provider="edge", publish_now=True)
+    request_path = save_request(req, tmp_path)
+    data = draft()
+    packet = tmp_path / "packet.json"
+    packet.write_text(json.dumps({key: data[key] for key in (
+        "source_events", "source_health", "stories", "show_notes",
+    )}), encoding="utf-8")
+    data["narration"] = CLAIM
+    script = tmp_path / "script.txt"
+    script.write_text(data["narration"], encoding="utf-8")
+    review_data = {
+        "source_script": {"provider": "edge"},
+        "review": deepcopy(data["generation"]["review"]),
+        "voice": {"name": "en-US-AriaNeural", "rate": "-4%", "pitch": "-2Hz"},
+    }
+    review_data["review"]["method"] = "source_script_source_comparison"
+    review_data["review"]["notes"] = ["Source script reviewed; no ASR or listening claimed."]
+    review = tmp_path / "review.json"
+    review.write_text(json.dumps(review_data), encoding="utf-8")
+    audio = tmp_path / "original.mp3"
+    audio.write_bytes(b"deterministic edge audio")
+    importer = Mock(return_value={"episode_id": req.episode_id})
+    monkeypatch.setattr("pipeline.reviewed_audio.prepare_reviewed_audio", importer)
+
+    assert prepare(request_path, packet, script, review, audio, tmp_path / "prepared") == {
+        "episode_id": req.episode_id,
+    }
+    draft_path = importer.call_args.args[0]
+    prepared_draft = json.loads(draft_path.read_text(encoding="utf-8"))
+    assert "transcript" not in prepared_draft["generation"]
+    assert prepared_draft["generation"]["source_script"] == {
+        "provider": "edge", "sha256": hashlib.sha256(data["narration"].encode()).hexdigest(),
+    }
 
 
 @pytest.mark.parametrize("days", [0, 366, True, 1.5, "60"])

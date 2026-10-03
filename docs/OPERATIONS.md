@@ -575,8 +575,11 @@ uv run --python 3.11 --with-requirements requirements.lock python -m pipeline.ad
 Replace the placeholder request directory with the returned path; do not paste placeholder commands unchanged.
 The `adhoc-podcast` skill prepares the evidence packet and review files with the operator. The packet contains
 `source_events`, `stories`, `source_health`, `show_notes`, and optional `noise_notes` using existing schema fields.
-Review JSON contains `transcript` (`engine`, `model`), `review` (method, reviewer, timestamp, exact spoken claims,
-matching source quotes, and limitations), and `voice` (`{}` for Notebook), plus optional `editing`.
+Review JSON contains `review` (method, reviewer, timestamp, exact spoken claims, matching source quotes, and
+limitations), `voice` (`{}` for Notebook), and exactly one provenance object: `transcript` (`engine`, `model`) for
+an actual ASR transcript, or `source_script` (`provider: "edge"`) for the exact deterministic Edge synthesis input.
+Use `--script` instead of `--transcript` for the latter. The prepared manifest hashes the exact text and records
+`source_script_source_comparison`; it does not claim ASR or human listening. Optional `editing` remains supported.
 For an approved audible correction, use the existing editing contract: `method: "prefixed_editorial_correction"`,
 `original_audio_sha256`, `correction_text`, `correction_audio_sha256`, and `correction_provider: "edge"`.
 See the [review example](../.agents/skills/audio-production-review/SKILL.md#minimal-review-example).
@@ -720,7 +723,9 @@ For an explicit Edge request, `pipeline.adhoc synthesize --request PATH --script
 creates unpublished audio and a matching `.voice.json` sidecar for the review packet. It never finalizes or publishes.
 Its script uses the same schema-4 limits of 10,000 words and 60,000 characters.
 The Notebook provider rejects this command and continues to use the browser technique. Review the actual recording
-and ASR transcript before `prepare`, even when its source script was already reviewed.
+and ASR transcript before `prepare` unless the owner has explicitly authorized deterministic source-script provenance.
+That narrow Edge path uses the exact synthesis input with `--script`, retains source/claim review and automated media
+checks, and records that no ASR or listening occurred. It is not available to Notebook or other recording providers.
 
 ## Local commands
 
