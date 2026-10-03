@@ -84,10 +84,14 @@
     "reviewed:codex:rust-v0.159.1",
     "docs:copilot-cli",
     "docs:mcp",
-    "docs:codex-cli"
+    "docs:codex-cli",
+    "primary:openai:gpt-6-1-sol:2026-09-29",
+    "primary:github:copilot-gpt-6-1-sol:2026-09-29",
+    "primary:openai:agents-api:2026-09-10",
+    "primary:google:api-gateway-mcp:2026-09-24"
   ],
-  "last_publication": "2026-10-01T15:49:04.149481Z",
-  "last_episode_id": "daily-2026-10-01-control-bafeff25",
+  "last_publication": "2026-10-03T14:41:06.775170+00:00",
+  "last_episode_id": "adhoc-2026-09-29-2dc92469a86324f409adf822",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 127099,

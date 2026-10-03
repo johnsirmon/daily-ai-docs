@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "request": {
+    "topic": "AI developer afternoon briefing: model economics, managed agents, and MCP gateways",
+    "audience": "Working AI developers choosing what to test, adopt, or skip this week",
+    "cutoff": "2026-09-29T20:06:12.670648+00:00",
+    "lookback_days": 20,
+    "provider": "edge",
+    "publish_now": true,
+    "actor": "johnsirmon",
+    "issue": null,
+    "schema_version": 1
+  },
+  "request_sha256": "2dc92469a86324f409adf822eeb3b062f94bbc1703730af5cf5757c5893e47f5",
+  "status": "published",
+  "episode_id": "adhoc-2026-09-29-2dc92469a86324f409adf822",
+  "confirmed_at": "2026-10-03T15:22:03.414514Z",
+  "audio_sha256": "e764b29bcfaa549ccbfdc04fcccb59ff1da200dd1d441e40e9eb4b465a6a57e0"
+}
