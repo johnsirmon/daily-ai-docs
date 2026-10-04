@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "status": "failed",
-  "evaluated_at": "2026-10-03T14:47:21.085836Z",
+  "evaluated_at": "2026-10-04T15:26:02.473833Z",
   "reason": "workflow_failure",
   "source_health": {},
   "minimum_source_health": 0.6,
-  "last_episode_id": "daily-2026-10-01-control-bafeff25"
+  "last_episode_id": "adhoc-2026-09-29-2dc92469a86324f409adf822"
 }
