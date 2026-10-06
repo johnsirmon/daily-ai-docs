@@ -36,7 +36,20 @@ _EVERGREEN_DOCUMENTATION_EXACT_PATHS = {
         "/docs/2026-07-28/getting-started/intro",
         "/docs/2026-07-28/learn/architecture",
     }),
-    "learn.chatgpt.com": frozenset({"/docs/codex/cli"}),
+    "learn.chatgpt.com": frozenset({"/docs/codex/cli", "/docs/pets"}),
+    # Requested pet-special background: exact public owner documentation only.
+    # Keep original dates unknown; snapshot review does not make these new releases.
+    "github.com": frozenset({
+        "/tonybaloney/vscode-pets", "/tonybaloney/vscode-pets/blob/main/package.json",
+        "/Adrianotiger/desktopPet", "/okevino47/stormies",
+    }),
+    "store.steampowered.com": frozenset({"/app/3301060/Desktop_Mate"}),
+    "samperson.itch.io": frozenset({"/desktop-goose"}),
+    "finchcare.com": frozenset({"/about-finch"}),
+    "support.google.com": frozenset({
+        "/googletv/answer/10050570", "/googletv/answer/10070821",
+        "/chromecast/answer/3228332",
+    }),
     "docs.typesafe.ai": frozenset({
         "/introduction", "/introduction.md",
         "/introduction/coding-agents", "/introduction/coding-agents.md",
