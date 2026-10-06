@@ -75,6 +75,17 @@ def edge_source_script_draft(*, ready=False):
 EVERGREEN_CLAIM = "Repository instructions customize agent behavior."
 EVERGREEN_CONTENT = EVERGREEN_CLAIM + "\nCopilot agents can use repository instructions in a repository.\n"
 EXACT_EVERGREEN_PAGE_URLS = (
+    "https://learn.chatgpt.com/docs/pets",
+    "https://github.com/tonybaloney/vscode-pets",
+    "https://github.com/tonybaloney/vscode-pets/blob/main/package.json",
+    "https://github.com/Adrianotiger/desktopPet",
+    "https://github.com/okevino47/stormies",
+    "https://store.steampowered.com/app/3301060/Desktop_Mate/",
+    "https://samperson.itch.io/desktop-goose",
+    "https://finchcare.com/about-finch",
+    "https://support.google.com/googletv/answer/10050570",
+    "https://support.google.com/googletv/answer/10070821",
+    "https://support.google.com/chromecast/answer/3228332",
     "https://docs.typesafe.ai/introduction",
     "https://docs.typesafe.ai/introduction.md",
     "https://docs.typesafe.ai/introduction/coding-agents",
@@ -94,6 +105,23 @@ EXACT_EVERGREEN_PAGE_URLS = (
     "https://typesafe.ai/privacy-policy",
     "https://typesafe.ai/legal/privacy-policy",
 )
+
+
+@pytest.mark.parametrize("url", [
+    "https://learn.chatgpt.com/docs/pets/unreviewed",
+    "https://github.com/tonybaloney/vscode-pets/issues/1",
+    "https://github.com/Adrianotiger/desktopPet/pull/1",
+    "https://github.com/okevino47/stormies/wiki",
+    "https://github.com/another-owner/vscode-pets",
+    "https://store.steampowered.com/app/3301060/Other_Product",
+    "https://samperson.itch.io/another-game",
+    "https://finchcare.com/about-finch/subscription",
+    "https://support.google.com/googletv/answer/10070821/unreviewed",
+    "https://support.google.com/chromecast/answer/3228332;draft",
+])
+def test_pet_background_admission_does_not_allow_adjacent_resources(url):
+    with pytest.raises(SchemaError, match="approved official documentation path"):
+        SourceEvent.from_dict(evergreen_event(url=url))
 
 
 def evergreen_event(**changes):
