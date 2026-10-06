@@ -428,6 +428,7 @@ def select_editorial_events(
     max_products: int = 3,
     max_events_per_product: int = 1,
     max_research: int = 1,
+    quiet_news_research: bool = False,
     now: datetime | None = None,
 ) -> Tuple[List[SourceEvent], List[str]]:
     """Apply editorial eligibility before ranking, without marking rejects published."""
@@ -506,8 +507,8 @@ def select_editorial_events(
     for group in ranked_groups[max_products:]:
         reject(f"Limited {group[0].product}: candidate fell outside the daily product cap.")
     selected = [event for group in ranked_groups[:max_products] for event in group]
-    # Research is a distinct optional segment, not an automatic no-news edition.
-    if selected and max_research:
+    # Full-text research can supply a quiet edition only with explicit policy opt-in.
+    if (selected or quiet_news_research) and max_research:
         papers.sort(key=lambda event: (score_event(event, seen)["relevance"] + relevance_bonus(event, profile), event.published_at), reverse=True)
         if len(papers) > max_research:
             reject("Limited research: additional eligible papers exceeded the daily research cap.")

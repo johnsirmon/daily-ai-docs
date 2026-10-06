@@ -491,8 +491,14 @@ def editorial_narration(stories: List[Story], generation: Dict[str, Any]) -> str
     if not isinstance(generation, dict):
         raise SchemaError("generation must be an object")
     if (generation.get("provider") != "gemini" or generation.get("verified") is not True
-            or generation.get("editorial_version") != 1 or generation.get("calls") != 2):
+            or generation.get("editorial_version") not in {1, 2}):
         raise SchemaError("editorial narration requires independently verified Gemini generation")
+    if generation["editorial_version"] == 1:
+        if generation.get("calls") != 2:
+            raise SchemaError("independently verified editorial version 1 requires two calls")
+    elif (type(generation.get("calls")) is not int or not 2 <= generation["calls"] <= 6
+          or generation.get("request_attempts") != generation["calls"]):
+        raise SchemaError("editorial version 2 requires bounded actual request attempts")
     model = _text(generation.get("model"), "generation.model", limit=120)
     if not model.startswith("gemini-"):
         raise SchemaError("editorial model must be a Gemini model")

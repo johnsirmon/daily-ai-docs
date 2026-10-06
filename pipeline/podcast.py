@@ -277,5 +277,8 @@ def prepend_episode(episode: Dict, path: str = "podcast.xml", channel_link: str 
             if current.get("mp3_url") != episode.get("mp3_url"):
                 raise ValueError("refusing to change the enclosure behind an existing GUID")
             return Path(path)
-    maximum = int(os.environ.get("PODCAST_MAX_EPISODES", "60"))
+    # Retain history by default; an operator can explicitly request a bounded feed.
+    maximum = int(os.environ.get("PODCAST_MAX_EPISODES", str(len(existing) + 1)))
+    if maximum < 1:
+        raise ValueError("PODCAST_MAX_EPISODES must be positive")
     return write_feed([episode] + existing[: max(0, maximum - 1)], path=path, channel_link=channel_link)

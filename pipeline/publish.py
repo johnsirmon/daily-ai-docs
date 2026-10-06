@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
+from urllib.parse import urlsplit
 
 import requests
 from PIL import Image
@@ -116,6 +117,11 @@ def validate_feed_file(path: str | Path, *, artwork_root: Path | None = None) ->
         if not guid or guid in guids or enclosure is None:
             raise PublicationError("feed has missing/duplicate GUID or enclosure")
         url = enclosure.get("url", "")
+        parsed_url = urlsplit(url)
+        if (parsed_url.scheme != "https" or not parsed_url.hostname
+                or parsed_url.username is not None or parsed_url.password is not None
+                or enclosure.get("type") != "audio/mpeg"):
+            raise PublicationError("enclosure must be a public HTTPS MP3")
         if not url or url in urls or int(enclosure.get("length") or 0) <= 0:
             raise PublicationError("feed has missing/duplicate/zero-length enclosure")
         pub_date = item.findtext("pubDate") or ""

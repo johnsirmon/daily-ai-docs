@@ -1,0 +1,10 @@
+{
+  "review_date": "2026-10-06",
+  "commercial_release_status": "blocked_pending_rights_review",
+  "assets": [
+    {"kind": "voice", "provider": "Edge TTS", "configured_default": "en-US-AriaNeural", "status": "unresolved", "reason": "Wrapper software license does not establish commercial voice-service rights", "terms_url": "https://www.microsoft.com/servicesagreement"},
+    {"kind": "artwork", "path": "assets/podcast-cover-v4.jpg and assets/episodes", "status": "requires_creation_provenance_and_provider_terms_review"},
+    {"kind": "music", "status": "none_added_by_this_repair"},
+    {"kind": "research_visuals", "status": "create_original_visuals_or_clear_each_reused_figure"}
+  ]
+}

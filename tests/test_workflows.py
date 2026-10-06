@@ -148,7 +148,8 @@ def test_independent_monitor_remains_age_sensitive():
     monitor = next(step["run"] for step in steps("feed-health.yml") if step.get("name") == "Verify public feed freshness")
     assert "--max-age-hours 25" in monitor
     assert "--candidate" not in monitor
-    assert "--allow-editorial-skips" in monitor
+    assert "--allow-editorial-skips" not in monitor
+    assert "--require-daily-delivery" in monitor
 
 
 @pytest.mark.parametrize(("name", "cron", "documented_time"), [

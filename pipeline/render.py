@@ -230,9 +230,11 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "4. Narration or reviewed browser audio is validated before an immutable release is created.",
         "5. Publication is confirmed only after the feed serves the exact expected episode and media bytes.",
         "",
-        "A healthy thin-news day can intentionally skip publication. Failures before candidate publication leave "
-        "the existing subscriber feed untouched. A delivery failure after deployment can leave an unconfirmed "
-        "candidate visible; it must be recovered without replacing its audio or advancing novelty state.",
+        "On a healthy quiet-news day, the grounded pipeline reviews a relevant, uncovered paper first published "
+        "within 30 days. Full-text evidence and independent verification remain required. If neither news nor "
+        "research clears the gates, record a skip and report the daily delivery gap. Failures before candidate "
+        "publication leave the subscriber feed untouched. A delivery failure can leave an unconfirmed candidate visible; "
+        "recover it without replacing audio or advancing novelty state.",
         "",
         "```mermaid",
         "flowchart TD",
@@ -270,7 +272,7 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
         "| Redeploys the existing feed and artwork; does not generate audio. |",
         "| [Feed health](.github/workflows/feed-health.yml) | Daily **12:47 UTC** "
         "(08:47 EDT / 07:47 EST), or manual | Checks delivery and a 25-hour freshness budget; "
-        "accepts verified intentional skips and reports failures in an issue. |",
+        "reports missed daily delivery and failures in an issue. |",
         "| [YouTube discovery](.github/workflows/youtube-trends.yml) | Sunday **11:23 UTC** "
         "(07:23 EDT / 06:23 EST), or manual | Updates an input digest, not a standalone podcast episode. |",
         "",
@@ -395,8 +397,8 @@ def render_manifest_readme(manifest, feed_url: str | None = None) -> str:
             "",
         ] if manifest.schema_version in {3, 4} and "editing" in manifest.generation else []),
         "- Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.",
-        "- One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.",
-        "- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.",
+        "- One to three useful stories, at most one per canonical product and one research item; quiet-news days use a verified paper review when suitable evidence is available.",
+        "- Grounded editorial mode produces 5-8-minute briefs, including verified paper-only research reviews on quiet-news days.",
         "- Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.",
         "- Product-change claims require public primary evidence.",
         (

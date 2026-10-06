@@ -35,6 +35,7 @@ def re_safe_id(value: str) -> bool:
 
 def skip_candidate(
     path: Path = RUN_PATH, *, max_age_hours: float = 25, now: datetime | None = None,
+    require_daily_delivery: bool = False,
 ) -> EpisodeManifest | None:
     if not math.isfinite(max_age_hours) or max_age_hours <= 0:
         raise PublicationError("editorial freshness budget must be positive and finite")
@@ -62,6 +63,15 @@ def skip_candidate(
         state_path = Path("data/state.json")
         state = json.loads(state_path.read_text(encoding="utf-8")) if state_path.exists() else {}
         mixed = state.get("schema_version") == 2
+        if require_daily_delivery:
+            daily_stamp = datetime.fromisoformat(str(state.get(
+                "last_daily_publication" if mixed else "last_publication", "",
+            )).replace("Z", "+00:00"))
+            if daily_stamp.tzinfo is None:
+                raise ValueError("daily publication lacks timezone")
+            daily_age = ((now or datetime.now(timezone.utc)) - daily_stamp).total_seconds() / 3600
+            if not 0 <= daily_age <= max_age_hours:
+                raise ValueError("daily delivery is stale or future-dated; a skip or special cannot replace it")
         if status == "published" and not mixed:
             return None
         if mixed:

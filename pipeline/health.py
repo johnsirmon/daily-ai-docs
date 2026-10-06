@@ -27,6 +27,8 @@ def main() -> None:
     parser.add_argument("--max-age-hours", type=float, default=36)
     parser.add_argument("--allow-editorial-skips", action="store_true",
                         help="Verify fresh intentional skips against the last confirmed episode")
+    parser.add_argument("--require-daily-delivery", action="store_true",
+                        help="Require fresh daily publication and evaluation, even if a special is newer")
     parser.add_argument("--retries", type=int, default=1)
     parser.add_argument("--delay-seconds", type=float, default=15)
     args = parser.parse_args()
@@ -34,8 +36,9 @@ def main() -> None:
         EpisodeManifest.from_dict(json.loads(args.candidate.read_text(encoding="utf-8")))
         if args.candidate else None
     )
-    if args.allow_editorial_skips and candidate is None:
-        candidate = skip_candidate(max_age_hours=args.max_age_hours)
+    if (args.allow_editorial_skips or args.require_daily_delivery) and candidate is None:
+        candidate = skip_candidate(max_age_hours=args.max_age_hours,
+                                   require_daily_delivery=args.require_daily_delivery)
     last_error = None
     for attempt in range(max(1, args.retries)):
         try:

@@ -36,6 +36,8 @@ daily:
     # Production is fail-closed via AI_EDITORIAL=required. No deterministic
     # narration is published when grounded drafting or verification fails.
     enabled: true
+    quiet_news_research: true
+    service_retries: 2
     max_products: 3
     max_events_per_product: 1
     max_research: 1

@@ -144,7 +144,7 @@ publication and retain the last good feed.
 
 Both Gemini requests explicitly use the documented `reasoning_effort=low` setting rather than inheriting the model's
 default thinking level. Draft and verification output remain capped at 4,000 and 2,500 tokens respectively, with no
-automatic retries. Incomplete responses still fail; diagnostics record only allowlisted finish reasons and numeric
+SDK retries. Production service_retries allows up to two additional attempts only after HTTP 503, recording actual request counts; see [daily repair and launch](DAILY_REPAIR_AND_LAUNCH.md). Incomplete responses still fail; diagnostics record only allowlisted finish reasons and numeric
 HTTP statuses, never raw provider responses or credentials.
 Quantitative validation requires each claim's numbers to be supported by its own quoted evidence, not merely by a
 release title or a different claim. Rejections expose only bounded numeric tokens for diagnosis, not rejected drafts.
@@ -184,10 +184,12 @@ Pages, or advance published-event history. Deterministic selection requires subs
 same-product stories, and records rejected churn as high-noise/low-signal notes. A grounded script rejected for
 insufficient material can also skip after editorial evaluation but before TTS.
 
-The independent monitor runs `pipeline.health --max-age-hours 25 --allow-editorial-skips`. A fresh healthy skip
-receipt must reference the exact last confirmed episode and its delivery receipt. Monitoring still checks that
-subscriber-facing GUID, enclosure, media checksum, and artwork. A stale, failed, malformed, or mismatched run receipt
-does not bypass feed checks. The publisher records downstream workflow failures with `pipeline.daily fail-run`;
+The independent monitor runs `pipeline.health --max-age-hours 25 --require-daily-delivery`. It requires both a fresh
+daily publication and a valid daily evaluation receipt; a healthy skip or newer special cannot hide a daily gap.
+Monitoring still checks the subscriber-facing GUID, enclosure, media checksum, and artwork against the confirmed
+feed head. A stale, failed, malformed, or mismatched run receipt does not bypass feed checks. The legacy
+`--allow-editorial-skips` mode remains available for explicit recovery diagnostics, not the daily monitor.
+The publisher records downstream workflow failures with `pipeline.daily fail-run`;
 pending immutable candidates remain recoverable.
 
 ### Unpublished listening preview

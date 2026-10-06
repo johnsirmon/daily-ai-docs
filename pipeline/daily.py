@@ -305,6 +305,9 @@ def _prepare(
     now: datetime | None = None,
 ) -> Dict[str, Any]:
     now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        raise ValueError("daily preparation requires a timezone-aware clock")
+    now = now.astimezone(timezone.utc)
     config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
     use_editorial = editorial_enabled(config) and not dry_run
     state = load_state()
@@ -327,7 +330,9 @@ def _prepare(
     last_publication = str(state.get(
         "last_daily_publication", state.get("last_publication"),
     ) or "")
-    if not dry_run and not force and last_publication[:10] == now.astimezone(timezone.utc).date().isoformat():
+    last_daily_date = (datetime.fromisoformat(last_publication.replace("Z", "+00:00"))
+                       .astimezone(timezone.utc).date().isoformat()) if last_publication else ""
+    if not dry_run and not force and last_daily_date == now.date().isoformat():
         raise RuntimeError(f"a daily episode was already published on {last_publication[:10]}")
     history, paper_ids, published_events = ([], set(), [])
     if use_editorial:
@@ -350,6 +355,7 @@ def _prepare(
             max_products=int(editorial.get("max_products", 3)),
             max_events_per_product=int(editorial.get("max_events_per_product", 1)),
             max_research=int(editorial.get("max_research", 1)), now=now,
+            quiet_news_research=editorial.get("quiet_news_research", False) is True,
         )
         if not selected:
             return _skip(now=now, reason="insufficient_new_information", health=health,
@@ -359,7 +365,8 @@ def _prepare(
                 **editorial, "target_min_words": minimum_words, "target_max_words": maximum_words,
             },
         )
-        if not stories or all(story.kind == "research" for story in stories):
+        if not stories or (all(story.kind == "research" for story in stories)
+                           and editorial.get("quiet_news_research", False) is not True):
             return _skip(now=now, reason="insufficient_substantive_material", health=health,
                          minimum_health=float(daily.get("minimum_source_health", 0.6)), notes=noise_notes)
         used_ids = {event_id for story in stories for event_id in story.event_ids}
@@ -397,11 +404,7 @@ def _prepare(
     if use_editorial:
         identity_material = "editorial-v2\n" + identity_material
     suffix = hashlib.sha256(identity_material.encode("utf-8")).hexdigest()[:8]
-    episode_date = (
-        max(event.published_at for event in selected)[:10]
-        if selected and not use_editorial
-        else now.astimezone(timezone.utc).date().isoformat()
-    )
+    episode_date = now.astimezone(timezone.utc).date().isoformat()
     episode_id = f"daily-{episode_date}-{suffix}"
     repository = os.environ.get("GITHUB_REPOSITORY", "johnsirmon/daily-ai-docs")
     audio_url = f"https://github.com/{repository}/releases/download/{episode_id}/daily-ai-brief.mp3"
@@ -418,7 +421,9 @@ def _prepare(
         show_notes=_show_notes(stories, noise_notes, health),
         generation={
             **generation,
-            "edition": "quiet" if not stories else ("alert" if len(stories) < 3 else "normal"),
+            "edition": ("research-review" if use_editorial and stories
+                        and all(story.kind == "research" for story in stories)
+                        else "quiet" if not stories else ("alert" if len(stories) < 3 else "normal")),
         },
         audio={"url": audio_url},
     )
