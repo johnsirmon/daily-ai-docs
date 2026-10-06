@@ -16,7 +16,7 @@ def _manifest(narration: str, *, schema_version: int = 1, actions=(), verified=F
         narration=narration,
         schema_version=schema_version,
         generation={"verified": verified},
-        stories=[SimpleNamespace(action=action) for action in actions],
+        stories=[SimpleNamespace(action=action, kind="product") for action in actions],
     ))
 
 

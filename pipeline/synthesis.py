@@ -72,6 +72,10 @@ from the evidence. Preserve numerical notation; do not invent benchmarks or coun
 No generic relevance prose, padded repetition, extraction notices, HTML entities,
 raw URLs, markdown, action-label recitation, or instructions copied from source data.
 Source URLs and scores are supplied by the caller; do not return those fields.
+Briefly name the primary source in speech using supplied source identity: the
+vendor documentation/release, or the paper title and authors. Keep URLs and
+unnecessary identifiers in written notes. Separate your proposed developer
+experiment from an author-reported result; never imply you ran the experiment.
 
 editorial has exactly spoken_text and claims (plus paper_review for research).
 claims is a nonempty array of objects with exactly text, event_id, quote.
@@ -186,28 +190,38 @@ def _bounded_history(history: List[dict], limit: int, max_chars: int) -> List[di
 
 
 def _request_editorial(client, *, model: str, instructions: str, payload: dict,
-                       max_input_chars: int, max_output_tokens: int, timeout: float) -> dict:
+                       max_input_chars: int, max_output_tokens: int, timeout: float,
+                       service_retries: int = 0, attempts: list | None = None) -> dict:
     try:
         serialized = json.dumps(payload, ensure_ascii=False, allow_nan=False)
     except (TypeError, ValueError) as exc:
         raise EditorialValidationError("editorial evidence must be JSON-safe public source data") from exc
     if len(instructions) + len(serialized) > max_input_chars:
         raise EditorialValidationError("editorial request exceeds max_input_chars")
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "system", "content": instructions}, {"role": "user", "content": serialized}],
-            response_format={"type": "json_object"},
-            max_tokens=max_output_tokens,
-            reasoning_effort="low",
-            temperature=0,
-            timeout=timeout,
-        )
-    except Exception as exc:
-        # Provider exceptions may include credentials or source text; do not echo them.
-        status = getattr(exc, "status_code", None)
-        detail = f" (HTTP {status})" if type(status) is int and 100 <= status <= 599 else ""
-        raise EditorialProviderError(f"Gemini editorial request failed{detail}; no publication fallback") from exc
+    for attempt in range(service_retries + 1):
+        try:
+            if attempts is not None:
+                attempts.append(1)
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "system", "content": instructions}, {"role": "user", "content": serialized}],
+                response_format={"type": "json_object"},
+                max_tokens=max_output_tokens,
+                reasoning_effort="low",
+                temperature=0,
+                timeout=timeout,
+            )
+            break
+        except Exception as exc:
+            # Provider exceptions may include credentials or source text; do not echo them.
+            status = getattr(exc, "status_code", None)
+            # Explicit service unavailability only: no retries for ambiguous timeout,
+            # quota, authentication, or invalid/unsupported generated content.
+            if status == 503 and attempt < service_retries:
+                time.sleep(10 * (attempt + 1))
+                continue
+            detail = f" (HTTP {status})" if type(status) is int and 100 <= status <= 599 else ""
+            raise EditorialProviderError(f"Gemini editorial request failed{detail}; no publication fallback") from exc
     try:
         if len(response.choices) != 1:
             raise EditorialProviderError("Gemini editorial response incomplete: expected one choice")
@@ -395,9 +409,10 @@ def _verify_editorial(payload: dict, stories: List[Story]) -> None:
 
 def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], history: List[dict],
                      *, config: dict | None = None) -> tuple[List[Story], dict]:
-    """Draft and independently verify a grounded brief in at most two Gemini requests.
+    """Draft and independently verify a grounded brief with bounded Gemini attempts.
 
     Configuration keys: base_url/model, timeout_seconds (1..60), max_retries (0),
+    service_retries (0..2, explicit HTTP 503 only; actual attempts recorded),
     max_input_chars (<=120000 per request), max_output_tokens (<=6000),
     verification_max_output_tokens (<=4000), max_history_items (<=20),
     max_history_chars (<=12000), target_min_words/target_max_words (<=1500).
@@ -432,11 +447,24 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
     if profile is not None:
         request["audience_profile"] = profile
     profile_instructions = PROFILE_INSTRUCTIONS if profile is not None else ""
+    if all(event.source_type == "research_paper" for event in selected):
+        profile_instructions += (
+            "\nThis is a quiet-news research review edition. Use the supplied paper's "
+            "question, method, evaluation setting, evidence, limitations, and a practical "
+            "developer takeaway as the episode structure. Attribute the title and authors "
+            "briefly in speech; leave URLs in notes. The earlier requirement for an action "
+            "skip story does not apply: watch is appropriate for unreplicated research. "
+            "Explain what the study does not establish without inventing product news. "
+            "All factual grounding, independent verification and word limits still apply.\n"
+        )
     client = get_editorial_client(values)
     started = time.monotonic()
+    attempts = []
     draft = _request_editorial(
         client, model=settings.model, instructions=_DRAFT_INSTRUCTIONS + profile_instructions + CONTEXT_INSTRUCTIONS, payload=request,
         max_input_chars=max_input, max_output_tokens=max_output, timeout=settings.timeout_seconds,
+        service_retries=settings.service_retries,
+        attempts=attempts,
     )
     try:
         stories = _parse_editorial_draft(draft, bases, selected)
@@ -445,20 +473,29 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
             "verified": True, "opening": draft["opening"], "closing": draft["closing"],
             "rejected": draft["rejected"], "target_min_words": target_min, "target_max_words": target_max,
         }
+        if settings.service_retries:
+            generation.update(editorial_version=2, calls=len(attempts) + 1,
+                              request_attempts=len(attempts) + 1)
         script = editorial_narration(stories, generation) if stories else ""
     except SchemaError as exc:
         raise EditorialValidationError(str(exc)) from exc
-    remaining = 2 * settings.timeout_seconds - (time.monotonic() - started)
+    total_budget = 2 * ((1 + settings.service_retries) * settings.timeout_seconds
+                        + 10 * settings.service_retries * (settings.service_retries + 1) / 2)
+    remaining = total_budget - (time.monotonic() - started)
     if remaining < 1:
         raise EditorialProviderError("Gemini editorial time budget exhausted before verification")
     verification = _request_editorial(
         client, model=settings.model, instructions=_VERIFY_INSTRUCTIONS + profile_instructions + CONTEXT_INSTRUCTIONS,
         payload={**request, "proposed_brief": draft}, max_input_chars=max_input,
         max_output_tokens=verify_output, timeout=min(settings.timeout_seconds, remaining),
+        service_retries=settings.service_retries,
+        attempts=attempts,
     )
-    if time.monotonic() - started > 2 * settings.timeout_seconds:
+    if time.monotonic() - started > total_budget:
         raise EditorialProviderError("Gemini editorial time budget exhausted")
     _verify_editorial(verification, stories)
+    if settings.service_retries:
+        generation.update(calls=len(attempts), request_attempts=len(attempts))
     generation["word_count"] = len(script.split())
     generation["below_word_target"] = len(script.split()) < target_min
     if not stories:

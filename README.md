@@ -25,7 +25,7 @@ See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment statu
 4. Narration or reviewed browser audio is validated before an immutable release is created.
 5. Publication is confirmed only after the feed serves the exact expected episode and media bytes.
 
-A healthy thin-news day can intentionally skip publication. Failures before candidate publication leave the existing subscriber feed untouched. A delivery failure after deployment can leave an unconfirmed candidate visible; it must be recovered without replacing its audio or advancing novelty state.
+On a healthy quiet-news day, the grounded pipeline reviews one relevant, previously uncovered paper first published within 30 days. Full-text evidence, method, limitations, original practical analysis, independent verification, and the normal audio gates remain required. If neither news nor research clears those gates, record a skip; monitoring still reports the missed daily delivery. Failures before candidate publication leave the existing subscriber feed untouched. A delivery failure after deployment requires recovery of the exact immutable candidate.
 
 ```mermaid
 flowchart TD
@@ -56,7 +56,7 @@ Approved manual imports join the same serialized publisher; issue intake and unp
 | [Daily publisher](.github/workflows/update-radar.yml) | Daily **10:17 UTC** (06:17 EDT / 05:17 EST), or manual | Evaluates new evidence; publishes only when gates pass. |
 | [Reviewed imports and specials](docs/OPERATIONS.md#publishing-approved-notebook-audio) | Manual, after review and authorization | Uses the daily publisher with a `reviewed_episode` release tag. |
 | [Pages recovery](.github/workflows/pages.yml) | Relevant pushes to `main`, or manual | Redeploys the existing feed and artwork; does not generate audio. |
-| [Feed health](.github/workflows/feed-health.yml) | Daily **12:47 UTC** (08:47 EDT / 07:47 EST), or manual | Checks delivery and a 25-hour freshness budget; accepts verified intentional skips and reports failures in an issue. |
+| [Feed health](.github/workflows/feed-health.yml) | Daily **12:47 UTC** (08:47 EDT / 07:47 EST), or manual | Checks delivery and a 25-hour freshness budget; reports missed daily delivery and failures in an issue. |
 | [YouTube discovery](.github/workflows/youtube-trends.yml) | Sunday **11:23 UTC** (07:23 EDT / 06:23 EST), or manual | Updates an input digest, not a standalone podcast episode. |
 
 These are GitHub Actions schedule targets, not guaranteed release times. Publication requires preparation, release upload, Pages deployment, and subscriber-facing verification. Apple Podcasts refreshes and downloads independently; there is no scheduled push directly to Apple or CarPlay.
@@ -123,8 +123,8 @@ Sources: [1](https://developers.googleblog.com/en/turn-your-rest-apis-into-mcp-t
 ## Editorial contract
 
 - Scheduled daily at **10:17 UTC**; GitHub Actions timing is best-effort.
-- One to three useful stories, at most one per canonical product and one research item; thin-news runs skip instead of padding.
-- Opt-in grounded editorial mode groups meaningful changes into 5–8-minute briefs without changing the feed on thin-news days.
+- One to three useful stories, at most one per canonical product and one research item; quiet-news days use a verified paper review when suitable evidence is available.
+- Grounded editorial mode produces 5-8-minute briefs, including verified paper-only research reviews on quiet-news days.
 - Grounded mode can include one reviewed recent-paper takeaway, with its method, limitations, and practical experiment; it does not repeat papers as filler.
 - Product-change claims require public primary evidence.
 - This edition preserves a conversational format; `ACT`, `WATCH`, or `SKIP` recommendations appear in the written story notes, not as required spoken endings.

@@ -62,7 +62,8 @@ def publication_usefulness_findings(manifest: EpisodeManifest) -> list[str]:
     else:
         if manifest.generation.get("verified") is not True:
             findings.append("grounded editorial script lacks independent model verification")
-        if not any(story.action == "skip" for story in manifest.stories):
+        research_review = bool(manifest.stories) and all(story.kind == "research" for story in manifest.stories)
+        if not research_review and not any(story.action == "skip" for story in manifest.stories):
             findings.append("briefing does not identify anything that is not worth chasing")
     return list(dict.fromkeys(findings))
 

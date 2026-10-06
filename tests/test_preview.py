@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 import requests
+import yaml
 
 from pipeline import daily, preview
 from pipeline.models_client import EditorialProviderError
@@ -29,7 +30,7 @@ def setup(tmp_path, monkeypatch):
     }))
     (history / "podcast.xml").write_text("unchanged feed")
     config = tmp_path / "topics.yaml"
-    config.write_text("daily: {}")
+    config.write_text("daily:\n  editorial:\n    service_retries: 2\n")
     monkeypatch.setattr(preview, "verify_model_access", lambda config=None: {
         "model": "gemini-3.8-flash", "metadata_access_verified": True,
     })
@@ -58,7 +59,8 @@ def test_ready_preview_is_isolated_and_cannot_be_finalized(setup, monkeypatch):
     original_state = (setup["history_root"] / "data/state.json").read_bytes()
 
     def prepare(config_path, *, force):
-        assert config_path == setup["config_path"]
+        assert config_path != setup["config_path"]
+        assert yaml.safe_load(config_path.read_text())["daily"]["editorial"]["service_retries"] == 0
         assert force is True
         assert Path.cwd() != original_cwd
         assert daily.load_state()["seen_event_ids"] == ["already-published"]

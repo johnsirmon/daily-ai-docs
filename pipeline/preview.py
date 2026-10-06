@@ -101,14 +101,19 @@ def run_preview(
         if not (history_root / "data/state.json").is_file() or not (history_root / "data/episodes").is_dir():
             raise PreviewError("preview requires confirmed publication history, not an empty novelty state")
         config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        # Preview authorization is capped at two requests, independently of the
+        # production outage policy. Never expand that quota by inheritance.
+        config.setdefault("daily", {}).setdefault("editorial", {})["service_retries"] = 0
         report.update(verify_model_access(config.get("daily", {}).get("editorial", {})))
         with tempfile.TemporaryDirectory(prefix="daily-editorial-preview-") as directory:
             root = Path(directory)
+            preview_config = root / "preview-topics.yaml"
+            preview_config.write_text(yaml.safe_dump(config), encoding="utf-8")
             shutil.copytree(history_root / "data", root / "data")
             with chdir(root):
                 report["history_last_episode_id"] = daily.load_state().get("last_episode_id")
                 try:
-                    publication = daily.prepare(config_path, force=True)
+                    publication = daily.prepare(preview_config, force=True)
                 finally:
                     manifest = _export_script(root, output_dir)
                 if publication["outcome"] == "skipped":

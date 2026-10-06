@@ -1,0 +1,2 @@
+# Evidence fixtures carry hashes of exact source bytes on every platform.
+tests/fixtures/observer_*_source_exact_test_only.txt -text

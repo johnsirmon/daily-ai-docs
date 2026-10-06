@@ -37,6 +37,7 @@ class EditorialModelConfig:
     base_url: str
     model: str
     timeout_seconds: float
+    service_retries: int = 0
 
 
 def editorial_model_config(config: dict | None = None) -> EditorialModelConfig:
@@ -69,7 +70,10 @@ def editorial_model_config(config: dict | None = None) -> EditorialModelConfig:
     retries = values.get("max_retries", os.environ.get("AI_MAX_RETRIES", "0"))
     if str(retries) != "0":
         raise EditorialConfigurationError("grounded editorial does not permit automatic retries")
-    return EditorialModelConfig(GEMINI_BASE_URL, model, timeout)
+    service_retries = values.get("service_retries", 0)
+    if type(service_retries) is not int or not 0 <= service_retries <= 2:
+        raise EditorialConfigurationError("service_retries must be an integer between 0 and 2")
+    return EditorialModelConfig(GEMINI_BASE_URL, model, timeout, service_retries)
 
 
 def get_editorial_client(config: dict | None = None):

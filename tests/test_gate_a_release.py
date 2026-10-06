@@ -233,10 +233,10 @@ def test_board_comment_substitution_requires_exact_waiver_record(monkeypatch, tm
     manifest_path = tmp_path / "episode-manifest.json"
     manifest_path.write_text(
         json.dumps(manifest.to_dict(), indent=2, ensure_ascii=False, allow_nan=False) + "\n",
-        encoding="utf-8",
+        encoding="utf-8", newline="\n",
     )
     (tmp_path / "daily-ai-brief.mp3").write_bytes(audio)
-    (tmp_path / "narration.txt").write_text(manifest.narration + "\n", encoding="utf-8")
+    (tmp_path / "narration.txt").write_text(manifest.narration + "\n", encoding="utf-8", newline="\n")
     bundle = load_review_bundle(tmp_path)
 
     with pytest.raises(ValueError, match="substitution record"):
