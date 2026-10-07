@@ -1,4 +1,4 @@
-# Daily AI Developer Brief — Special: AI developer afternoon briefing: model economics, managed agents, and MCP gateways
+# Daily AI Developer Brief — Special: Desktop pets: useful companions or distracting overhead?
 
 <p align="center">
   <img src="assets/ai-update-wave.png" width="560" alt="An exhausted developer outrunning a tidal wave of AI tools and updates">
@@ -25,7 +25,7 @@ See [operations and setup](docs/OPERATIONS.md#github-setup) for deployment statu
 4. Narration or reviewed browser audio is validated before an immutable release is created.
 5. Publication is confirmed only after the feed serves the exact expected episode and media bytes.
 
-On a healthy quiet-news day, the grounded pipeline reviews one relevant, previously uncovered paper first published within 30 days. Full-text evidence, method, limitations, original practical analysis, independent verification, and the normal audio gates remain required. If neither news nor research clears those gates, record a skip; monitoring still reports the missed daily delivery. Failures before candidate publication leave the existing subscriber feed untouched. A delivery failure after deployment requires recovery of the exact immutable candidate.
+On a healthy quiet-news day, the grounded pipeline reviews a relevant, uncovered paper first published within 30 days. Full-text evidence and independent verification remain required. If neither news nor research clears the gates, record a skip and report the daily delivery gap. Failures before candidate publication leave the subscriber feed untouched. A delivery failure can leave an unconfirmed candidate visible; recover it without replacing audio or advancing novelty state.
 
 ```mermaid
 flowchart TD
@@ -81,44 +81,73 @@ The pilot uses the signed-in account's existing allowance. It does not authorize
 
 ## Today's signal
 
-Long-form special for Working AI developers choosing what to test, adopt, or skip this week.
-Evidence window: 20 days ending 2026-09-29T20:06:12.670648+00:00.
+Long-form special for Developers using Copilot, Codex, and agents; Google TV owners.
+Evidence window: 60 days ending 2026-10-06T21:49:19.109336+00:00.
 Audio provider: edge; exact synthesis-input script/source reviewed; no ASR or human listening claimed, not Gemini API verification.
 
-### A cheaper coding model changes the test matrix, not the verdict
+### VS Code Pets: an editor companion
 
-**What to know:** GPT-6.1 Sol launched in the API, Codex, and a gradual GitHub Copilot rollout with a materially different token-price position from Astra.
+**What to know:** The recent inspected commit fixes roll-call fallthrough; the existing extension provides animated pets and a webview.
 
-**What changes for developers:** Teams can test a stronger middle tier for repetitive agentic coding, but vendor benchmarks do not establish performance on a specific repository or total workflow cost.
+**What changes for developers:** Separate entertainment from measurable developer utility.
 
-**Recommendation:** SKIP — Skip launch-day benchmark chasing; run a bounded repository-specific comparison that records quality, retries, latency, cached-input use, and total spend.
+**Recommendation:** WATCH — Begin with a contained view and inspect overhead on your machine.
 
-Sources: [1](https://openai.com/index/introducing-gpt-6-1-sol/), [2](https://github.blog/changelog/2026-09-29-gpt-6-1-sol-in-github-copilot/)
+Sources: [1](https://github.com/tonybaloney/vscode-pets/commit/7762b3e49466d688764021f587abde5313cc6cfc), [2](https://github.com/tonybaloney/vscode-pets) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06, [3](https://github.com/tonybaloney/vscode-pets/blob/main/package.json) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06
 
-### Managed agent infrastructure is now a buy-versus-build decision
+### OpenAI pets: an activity cue
 
-**What to know:** The public-beta Agents API packages the Codex harness, long-running context management, tools, sandbox choices, and subagent orchestration behind an API.
+**What to know:** The documented pet controls expose task activity without changing model reasoning.
 
-**What changes for developers:** Teams with bespoke orchestration can now compare it with a managed path, but beta status, token and tool costs, environment boundaries, and portability remain decision factors.
+**What changes for developers:** A visible cue may help you notice an agent asking for input.
 
-**Recommendation:** WATCH — Pilot one bounded noncritical workflow and measure failure recovery, observability, permissions, and cost before considering migration.
+**Recommendation:** WATCH — Check the conversation and diff; compare the pet with Mini controls.
 
-Sources: [1](https://openai.com/index/introducing-the-agents-api/), [2](https://developers.openai.com/api/docs/guides/agents-api/overview)
+Sources: [1](https://learn.chatgpt.com/docs/pets) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06
 
-### An existing REST gateway can become the MCP server
+### Other desktop companions
 
-**What to know:** Google Cloud API Gateway can expose annotated OpenAPI 3.x operations as MCP tools in Public Preview while retaining gateway controls.
+**What to know:** Existing companion projects range from window mascots to deliberate cursor interference.
 
-**What changes for developers:** Teams already on the gateway may avoid a separate translation service, but public tool discovery and preview limitations require deliberate configuration.
+**What changes for developers:** Their costs and intended uses differ.
 
-**Recommendation:** ACT — Pilot one read-only internal operation, require JWT-protected discovery, and verify schema translation before exposing broader capabilities.
+**Recommendation:** WATCH — Choose a quiet companion for work and assess rendering and optional content costs.
 
-Sources: [1](https://developers.googleblog.com/en/turn-your-rest-apis-into-mcp-tools-with-google-cloud-api-gateway/)
+Sources: [1](https://store.steampowered.com/app/3301060/Desktop_Mate) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06, [2](https://samperson.itch.io/desktop-goose) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06, [3](https://github.com/Adrianotiger/desktopPet) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06
+
+### A JetBrains community activity visualization
+
+**What to know:** Stormies documents an embedded webview observing Claude Code sessions.
+
+**What changes for developers:** This is a community source-build project, not a built-in JetBrains pet.
+
+**Recommendation:** WATCH — Review the installation and session-file access before trying it.
+
+Sources: [1](https://github.com/okevino47/stormies) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06
+
+### Mobile habit companion
+
+**What to know:** Finch documents a virtual bird linked to personal goals on iOS and Android.
+
+**What changes for developers:** A habit reward has a different job from a coding status display.
+
+**Recommendation:** WATCH — Use a small voluntary routine and distinguish product claims from clinical evidence.
+
+Sources: [1](https://finchcare.com/about-finch) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06
+
+### Google TV: display options and compatibility limits
+
+**What to know:** Google documents TV app installation, photo screensavers, and casting a computer screen.
+
+**What changes for developers:** Displaying a pet does not install a desktop companion on the television.
+
+**Recommendation:** WATCH — Start with an album or casting; verify any native app on the actual TV.
+
+Sources: [1](https://support.google.com/googletv/answer/10050570) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06, [2](https://support.google.com/googletv/answer/10070821) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06, [3](https://support.google.com/chromecast/answer/3228332) — Evergreen documentation; original publication date unavailable; snapshot reviewed 2026-10-06
 
 ## High noise / low signal
 
-- Routine repository release fragments and minor maintenance changes were excluded.
-- Vendor benchmark results are treated as vendor-reported evidence, not independent measurement.
+- Current maintenance is separated from established pet features; no forced recency claims.
 
 ## Editorial contract
 
@@ -137,10 +166,7 @@ The active `daily.sources` configuration in [`topics/topics.yaml`](topics/topics
 
 ## Source health
 
-- `github:copilot-sol`: ok:primary-reviewed
-- `google:mcp-gateway`: ok:primary-reviewed
-- `openai:agents-api`: ok:primary-reviewed
-- `openai:gpt-6.1-sol`: ok:primary-reviewed
+- `reviewed_primary`: ok:12
 
 Each edition manifest distinguishes healthy no-news results from source outages.
 

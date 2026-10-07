@@ -1,0 +1,644 @@
+{
+  "schema_version": 4,
+  "episode_id": "adhoc-2026-10-06-c17b23bc738114f59cceba4b",
+  "published_at": "2026-10-06T23:57:16.531472+00:00",
+  "status": "candidate",
+  "source_health": {
+    "reviewed_primary": "ok:12"
+  },
+  "source_events": [
+    {
+      "event_id": "vscode-maintenance",
+      "source_type": "announcement",
+      "title": "VS Code Pets roll-call maintenance",
+      "url": "https://github.com/tonybaloney/vscode-pets/commit/7762b3e49466d688764021f587abde5313cc6cfc",
+      "product": "VS Code Pets",
+      "topic": "Developer companions",
+      "published_at": "2026-10-03T21:31:07Z",
+      "fetched_at": "2026-10-06T21:51:56.016957+00:00",
+      "evidence": "Fix roll-call fallthrough and add regression test (#958)\n[Separate reviewed patch excerpt]\nbreak;",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "evidence_status": "reviewed_excerpts"
+      }
+    },
+    {
+      "event_id": "vscode",
+      "source_type": "evergreen_documentation",
+      "title": "VS Code Pets",
+      "url": "https://github.com/tonybaloney/vscode-pets",
+      "product": "VS Code Pets",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "Start pet coding session\n[Separate reviewed excerpt]\nAdd lots of pets\n[Separate reviewed excerpt]\nChange the background\n[Separate reviewed excerpt]\nThrow a ball and play with the pets",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "b1be364d4554cd02955150807ea66b6259d85f64101e01808cf974c7660d85ec",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "38ec2928f7442634b251608aaa7f7889dfb5470bd39ae73b6b10d2c7722b9b37",
+          "content": "Start pet coding session\n[Separate reviewed excerpt]\nAdd lots of pets\n[Separate reviewed excerpt]\nChange the background\n[Separate reviewed excerpt]\nThrow a ball and play with the pets",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "vscode-code",
+      "source_type": "evergreen_documentation",
+      "title": "VS Code Pets extension manifest",
+      "url": "https://github.com/tonybaloney/vscode-pets/blob/main/package.json",
+      "product": "VS Code Pets extension manifest",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T21:51:56.016957+00:00",
+      "evidence": "\"type\": \"webview\"\n[Separate reviewed excerpt]\n\"vscode-pets.petSize\"\n[Separate reviewed excerpt]\n\"vscode-pets.position\"\n[Separate reviewed excerpt]\n\"vscode-pets.disableEffects\"",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "a5de8f5dd84dea74c0b6014c0be7a566db8f1fb75fd2d2f232a4a7adb5a75f79",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T21:51:56.016957+00:00",
+          "content_sha256": "1569b16448f3aa68110cb8b157fb678ee6eb3c743306ea1c264c474c7541a433",
+          "content": "\"type\": \"webview\"\n[Separate reviewed excerpt]\n\"vscode-pets.petSize\"\n[Separate reviewed excerpt]\n\"vscode-pets.position\"\n[Separate reviewed excerpt]\n\"vscode-pets.disableEffects\"",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T21:51:56.016957+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "openai",
+      "source_type": "evergreen_documentation",
+      "title": "OpenAI Pets",
+      "url": "https://learn.chatgpt.com/docs/pets",
+      "product": "OpenAI Pets",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "macOS and Windows\n[Separate reviewed excerpt]\nnot how ChatGPT completes tasks\n[Separate reviewed excerpt]\nRunning\n[Separate reviewed excerpt]\nNeeds input\n[Separate reviewed excerpt]\nReady\n[Separate reviewed excerpt]\nBlocked\n[Separate reviewed excerpt]\nMini\n[Separate reviewed excerpt]\nreduced motion\n[Separate reviewed excerpt]\nfloating pet\n[Separate reviewed excerpt]\nactivity tray\n[Separate reviewed excerpt]\nweb pet\n[Separate reviewed excerpt]\nterminal pet",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "ac845ee69ba479bd789ada3a020bcd79080a98d76d64e6c74feecbb0395c089a",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "ddf9530754538442775fcac150d4d1c094e87d9b455280919d32c82cbc785efa",
+          "content": "macOS and Windows\n[Separate reviewed excerpt]\nnot how ChatGPT completes tasks\n[Separate reviewed excerpt]\nRunning\n[Separate reviewed excerpt]\nNeeds input\n[Separate reviewed excerpt]\nReady\n[Separate reviewed excerpt]\nBlocked\n[Separate reviewed excerpt]\nMini\n[Separate reviewed excerpt]\nreduced motion\n[Separate reviewed excerpt]\nfloating pet\n[Separate reviewed excerpt]\nactivity tray\n[Separate reviewed excerpt]\nweb pet\n[Separate reviewed excerpt]\nterminal pet",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "mate",
+      "source_type": "evergreen_documentation",
+      "title": "Desktop Mate",
+      "url": "https://store.steampowered.com/app/3301060/Desktop_Mate",
+      "product": "Desktop Mate",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "sit on top of your windows\n[Separate reviewed excerpt]\nalarm feature\n[Separate reviewed excerpt]\nFree\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nGraphics\n[Separate reviewed excerpt]\nDLC\n[Separate reviewed excerpt]\nmouse cursor",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "de815be51f7d0535005f2df69a9c694fea3072990fb248aad5644f14da18c912",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "9c6a4de2fdc079d7cadb0d88f310e7ff58464e923a40bbd6da121bb5a3fbe9dd",
+          "content": "sit on top of your windows\n[Separate reviewed excerpt]\nalarm feature\n[Separate reviewed excerpt]\nFree\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nGraphics\n[Separate reviewed excerpt]\nDLC\n[Separate reviewed excerpt]\nmouse cursor",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "goose",
+      "source_type": "evergreen_documentation",
+      "title": "Desktop Goose",
+      "url": "https://samperson.itch.io/desktop-goose",
+      "product": "Desktop Goose",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "A downloadable goose-sperience for Windows and macOS\n[Separate reviewed excerpt]\nHe'll nab your mouse\n[Separate reviewed excerpt]\nleave you a message\n[Separate reviewed excerpt]\ndeliver you memes",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "608f435bdcdeb40cbdc9f1501cec9093fa017232ec98c117fe128f2bb127dae9",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "05dd408aed0983bf102b2e4794803c6566dca1c2b1f84e6c7da31043053567ed",
+          "content": "A downloadable goose-sperience for Windows and macOS\n[Separate reviewed excerpt]\nHe'll nab your mouse\n[Separate reviewed excerpt]\nleave you a message\n[Separate reviewed excerpt]\ndeliver you memes",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "esheep",
+      "source_type": "evergreen_documentation",
+      "title": "Desktop Pet eSheep",
+      "url": "https://github.com/Adrianotiger/desktopPet",
+      "product": "Desktop Pet eSheep",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "detect windows on your desktop\n[Separate reviewed excerpt]\nAndroid\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nbuild it on your system\n[Separate reviewed excerpt]\nmultiple monitors\n[Separate reviewed excerpt]\nmacOS-Version",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "2c0ceb78aa7e75f77f7fca040ba49daaed982b04df71cc932093c6c3810e11a2",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "0172ff0a1d53c2504f1927b531edf91e51f107c5f1f239b6a60dca0f8bc9dbbe",
+          "content": "detect windows on your desktop\n[Separate reviewed excerpt]\nAndroid\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nbuild it on your system\n[Separate reviewed excerpt]\nmultiple monitors\n[Separate reviewed excerpt]\nmacOS-Version",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "stormies",
+      "source_type": "evergreen_documentation",
+      "title": "Stormies for JetBrains IDEs",
+      "url": "https://github.com/okevino47/stormies",
+      "product": "Stormies for JetBrains IDEs",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "IntelliJ-based IDE\n[Separate reviewed excerpt]\nJCEF\n[Separate reviewed excerpt]\nClaude Code\n[Separate reviewed excerpt]\nobserves its session files\n[Separate reviewed excerpt]\nFrom Source\n[Separate reviewed excerpt]\nPixel Agents\n[Separate reviewed excerpt]\nanimated pixel art characters\n[Separate reviewed excerpt]\nvirtual office",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "659eefab5e19b5bd6707523c7873f9e9b15dd704ae12303a1673e472c90d9047",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "13ffb04e2fe78f77f1ae4787d84e12b2e3d0c265f8f094b385b27e52f2eb66a5",
+          "content": "IntelliJ-based IDE\n[Separate reviewed excerpt]\nJCEF\n[Separate reviewed excerpt]\nClaude Code\n[Separate reviewed excerpt]\nobserves its session files\n[Separate reviewed excerpt]\nFrom Source\n[Separate reviewed excerpt]\nPixel Agents\n[Separate reviewed excerpt]\nanimated pixel art characters\n[Separate reviewed excerpt]\nvirtual office",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "finch",
+      "source_type": "evergreen_documentation",
+      "title": "Finch",
+      "url": "https://finchcare.com/about-finch",
+      "product": "Finch",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "For iOS & Android\n[Separate reviewed excerpt]\nCore self-care is free\n[Separate reviewed excerpt]\nOptional Finch Plus\n[Separate reviewed excerpt]\nEarn energy to send your birb on an adventure\n[Separate reviewed excerpt]\nreflections",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "21edd6365bfa7adf22fdd325ff230c64af7cc0f193d34fdde2f485dfd14b3c01",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "96f86743b87870c966465609ecb59304bcc266ea9767cacb25213ab00fd515de",
+          "content": "For iOS & Android\n[Separate reviewed excerpt]\nCore self-care is free\n[Separate reviewed excerpt]\nOptional Finch Plus\n[Separate reviewed excerpt]\nEarn energy to send your birb on an adventure\n[Separate reviewed excerpt]\nreflections",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "tv-apps",
+      "source_type": "evergreen_documentation",
+      "title": "Install apps on Google TV",
+      "url": "https://support.google.com/googletv/answer/10050570",
+      "product": "Install apps on Google TV",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T21:51:56.016957+00:00",
+      "evidence": "If the app is available\n[Separate reviewed excerpt]\nSelect Install",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "ab37173b6845870c7f65fe04524345be2fae0d197523b3d955821b5a6ed970ef",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T21:51:56.016957+00:00",
+          "content_sha256": "6a1d07c19a8b528ca05308abcd5796e9addeeeb3887682ec2f204bb91fef91a0",
+          "content": "If the app is available\n[Separate reviewed excerpt]\nSelect Install",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T21:51:56.016957+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "tv-ambient",
+      "source_type": "evergreen_documentation",
+      "title": "Google TV screensaver",
+      "url": "https://support.google.com/googletv/answer/10070821",
+      "product": "Google TV screensaver",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T21:51:56.016957+00:00",
+      "evidence": "Google Photos: Choose photos or albums saved in your Google Photos account.",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "093302bc3c7276aa51cd72863de9d49e98dae89512da357f52fca5578e00514d",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T21:51:56.016957+00:00",
+          "content_sha256": "971d58f3af0b2c3a3434d679d608f883bad764b7b3aa5d23ee0e85f8b4e35266",
+          "content": "Google Photos: Choose photos or albums saved in your Google Photos account.",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T21:51:56.016957+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    },
+    {
+      "event_id": "tv-cast",
+      "source_type": "evergreen_documentation",
+      "title": "Cast from Chrome to your TV",
+      "url": "https://support.google.com/chromecast/answer/3228332",
+      "product": "Cast from Chrome to your TV",
+      "topic": "Developer companions",
+      "published_at": "",
+      "fetched_at": "2026-10-06T23:56:35.844021+00:00",
+      "evidence": "entire computer screen\n[Separate reviewed excerpt]\nCast a tab\n[Separate reviewed excerpt]\nChromecast with Google TV\n[Separate reviewed excerpt]\nGoogle TV Streamer\n[Separate reviewed excerpt]\nsame Wi-Fi network",
+      "authority": "primary",
+      "channel": "stable",
+      "metadata": {
+        "source_document_sha256": "3a934fdb1938de73e1290a016172864c9ac84e61f1c8f39431bcfaba70a314ad",
+        "evidence_status": "reviewed_excerpts",
+        "evergreen_snapshot": {
+          "captured_at": "2026-10-06T23:56:35.844021+00:00",
+          "content_sha256": "117657e4bc88d73ec60e11457b46a1e1c34f47b0d45d81e56e53c0e31f266898",
+          "content": "entire computer screen\n[Separate reviewed excerpt]\nCast a tab\n[Separate reviewed excerpt]\nChromecast with Google TV\n[Separate reviewed excerpt]\nGoogle TV Streamer\n[Separate reviewed excerpt]\nsame Wi-Fi network",
+          "reviewer": "assistant",
+          "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+          "review_note": "Original publication date is unavailable for these feature descriptions because the page does not establish when these particular features first shipped. This is a bounded reviewed excerpt capture of existing documentation, not a new release or a recency claim."
+        }
+      }
+    }
+  ],
+  "stories": [
+    {
+      "story_id": "editor",
+      "event_ids": [
+        "vscode-maintenance",
+        "vscode",
+        "vscode-code"
+      ],
+      "headline": "VS Code Pets: an editor companion",
+      "what_changed": "The recent inspected commit fixes roll-call fallthrough; the existing extension provides animated pets and a webview.",
+      "why_it_matters": "Separate entertainment from measurable developer utility.",
+      "action": "watch",
+      "rationale": "Begin with a contained view and inspect overhead on your machine.",
+      "source_urls": [
+        "https://github.com/tonybaloney/vscode-pets/commit/7762b3e49466d688764021f587abde5313cc6cfc",
+        "https://github.com/tonybaloney/vscode-pets",
+        "https://github.com/tonybaloney/vscode-pets/blob/main/package.json"
+      ],
+      "scores": {
+        "total": 85
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "openai",
+      "event_ids": [
+        "openai"
+      ],
+      "headline": "OpenAI pets: an activity cue",
+      "what_changed": "The documented pet controls expose task activity without changing model reasoning.",
+      "why_it_matters": "A visible cue may help you notice an agent asking for input.",
+      "action": "watch",
+      "rationale": "Check the conversation and diff; compare the pet with Mini controls.",
+      "source_urls": [
+        "https://learn.chatgpt.com/docs/pets"
+      ],
+      "scores": {
+        "total": 85
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "desktop",
+      "event_ids": [
+        "mate",
+        "goose",
+        "esheep"
+      ],
+      "headline": "Other desktop companions",
+      "what_changed": "Existing companion projects range from window mascots to deliberate cursor interference.",
+      "why_it_matters": "Their costs and intended uses differ.",
+      "action": "watch",
+      "rationale": "Choose a quiet companion for work and assess rendering and optional content costs.",
+      "source_urls": [
+        "https://store.steampowered.com/app/3301060/Desktop_Mate",
+        "https://samperson.itch.io/desktop-goose",
+        "https://github.com/Adrianotiger/desktopPet"
+      ],
+      "scores": {
+        "total": 85
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "jetbrains",
+      "event_ids": [
+        "stormies"
+      ],
+      "headline": "A JetBrains community activity visualization",
+      "what_changed": "Stormies documents an embedded webview observing Claude Code sessions.",
+      "why_it_matters": "This is a community source-build project, not a built-in JetBrains pet.",
+      "action": "watch",
+      "rationale": "Review the installation and session-file access before trying it.",
+      "source_urls": [
+        "https://github.com/okevino47/stormies"
+      ],
+      "scores": {
+        "total": 85
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "mobile",
+      "event_ids": [
+        "finch"
+      ],
+      "headline": "Mobile habit companion",
+      "what_changed": "Finch documents a virtual bird linked to personal goals on iOS and Android.",
+      "why_it_matters": "A habit reward has a different job from a coding status display.",
+      "action": "watch",
+      "rationale": "Use a small voluntary routine and distinguish product claims from clinical evidence.",
+      "source_urls": [
+        "https://finchcare.com/about-finch"
+      ],
+      "scores": {
+        "total": 85
+      },
+      "kind": "product",
+      "editorial": {}
+    },
+    {
+      "story_id": "tv",
+      "event_ids": [
+        "tv-apps",
+        "tv-ambient",
+        "tv-cast"
+      ],
+      "headline": "Google TV: display options and compatibility limits",
+      "what_changed": "Google documents TV app installation, photo screensavers, and casting a computer screen.",
+      "why_it_matters": "Displaying a pet does not install a desktop companion on the television.",
+      "action": "watch",
+      "rationale": "Start with an album or casting; verify any native app on the actual TV.",
+      "source_urls": [
+        "https://support.google.com/googletv/answer/10050570",
+        "https://support.google.com/googletv/answer/10070821",
+        "https://support.google.com/chromecast/answer/3228332"
+      ],
+      "scores": {
+        "total": 85
+      },
+      "kind": "product",
+      "editorial": {}
+    }
+  ],
+  "noise_notes": [
+    "Current maintenance is separated from established pet features; no forced recency claims."
+  ],
+  "narration": "Production note: This episode uses AI-generated narration.\n\nImagine a tiny cat wandering across your code editor while an agent works on a change. Is that cat helping you notice when the agent needs a decision, or is it simply giving you another thing to watch? Those are different jobs, and they deserve different answers. Today we are looking at VS Code Pets, OpenAI's pets, other desktop and mobile companions, and a practical question from John: can any of this work on Google TV?\n\nMy assessment is that a pet can be worth keeping for enjoyment, or for a useful signal about work in progress. It needs no grand productivity justification. But a cute animation alone is not evidence of faster coding, better reasoning, or more reliable agents. The most useful comparison is what the companion does, what it costs your attention and computer, and how easily you can turn it off.\n\nStart with Anthony Shaw's VS Code Pets project. Its README describes an extension that puts small animated companions inside the editor. You can start a pet coding session, add multiple pets, change a background, and throw a ball. The available characters include animals and familiar computing mascots. That makes it a playful editor feature, rather than an assistant that evaluates a pull request or supervises a model.\n\nThere is real maintenance activity behind the project. A commit published on October third fixes roll-call fallthrough. In the inspected patch, a missing break is added before the delete-pet case. I am identifying that as a maintenance change, not claiming that all the pet features launched this week. The established features are documented background for this special.\n\nFor a developer, the interesting benefit is personal. A pet might make an otherwise sterile workspace feel welcoming. You could use playing with it as a deliberate break after completing a difficult task. Those are reasonable uses, but they are suggestions, not measured outcomes from the project. If the animation constantly pulls your eyes away from a diff, its entertainment value may come with an attention cost.\n\nThe extension manifest declares a webview and settings for pet size, panel position, and effects. That is a reason to expect some rendering and memory overhead, rather than to call it free computation. I have not benchmarked this extension on John's computer, so I will not attach invented CPU or RAM figures. A sensible starting point is a small pet, a contained panel, and an easy way to hide it during focused work. Test how it behaves on your own machine before accumulating a crowd of animated characters.\n\nOpenAI's pets have a different practical role. The official documentation describes optional companions in the ChatGPT desktop app on macOS and Windows. A floating pet gives access to chat controls and an activity tray. You can choose a companion, or use Mini to keep the controls without the character. Choosing a pet changes appearance, not how ChatGPT completes tasks.\n\nThe documented activity states are running, needs input, ready, and blocked. That can turn a pet into a glanceable indicator for a long-running task. The documented controls prioritize chats that need input, then blocked chats, ready chats, and running chats. Pets also respect the operating system's reduced motion setting. The broader documentation describes supported web pets and terminal pets too, with interface and terminal requirements; those do not make the desktop overlay available everywhere.\n\nHere is my suggested use for someone working with Codex. Put the indicator somewhere visible but away from the center of the document. When it shows that input is needed, open the actual conversation and inspect the request. When it shows ready, inspect the diff and the checks. The character gives you a cue to look at the evidence. Its expression should never become the evidence.\n\nA running indicator cannot tell you whether a tool is making useful progress. A ready indicator cannot tell you whether a change is correct. A friendly animal cannot tell you whether an approval is safe. Those are general interface limitations, not accusations about a particular implementation. A status display compresses a complex process into a small signal. Good use means understanding what has been compressed and consulting the underlying task when the decision matters.\n\nThe comparison I would make is the pet against the same controls without the pet. If Mini is just as easy to notice and less distracting, choose Mini. If the companion helps you remember to check a task without repeatedly opening the app, that may be useful to you. You do not need to prove that everyone benefits. You need to know whether your own workflow improves.\n\nOther platforms give us several distinct options. Desktop Mate is a Steam desktop companion whose characters sit on windows, react to the cursor, and provide an alarm feature. The base product is listed as free, while character content can be paid. Its published requirements include Windows and graphics hardware. Those requirements describe a supported machine; they are not measurements of how much memory or CPU the application consumes while idle. Think of this as a desktop entertainment choice with possible spending and rendering costs.\n\nDesktop Goose, offered by its creator for Windows and macOS, is deliberately mischievous. Its page describes grabbing your cursor, leaving messages, and bringing memes onto the screen. That is an entertaining contrast to a quiet status indicator. My recommendation is to reserve that sort of companion for play or a break. A feature designed to interfere with the pointer is an obvious poor fit for carefully selecting code, entering data, or presenting a screen to colleagues.\n\nThe open-source eSheep project offers another desktop mascot. Its documentation describes a pet that detects windows and moves around the desktop, including multiple monitors. The project documents a Windows executable, an Android port, and a macOS source-build route. Those are separate delivery routes with different requirements, rather than a promise that every version works on every device. In particular, an Android entry does not establish Android TV or Google TV compatibility.\n\nFor JetBrains users, I found a community project called Stormies, inspired by Pixel Agents. It displays animated characters representing Claude Code activity in a virtual office. The repository says it targets IntelliJ-based IDEs, uses an embedded Chromium webview, and observes Claude Code session files. Its source installation instructions make this a community plugin to assess, not a built-in JetBrains feature. It is also a visualization of agent activity rather than an animal that improves an agent's reasoning.\n\nThat design offers an interesting experiment: do spatial cues make several concurrent tasks easier to distinguish than a list of titles? I have not run that experiment. The project makes performance claims, but I did not independently measure them and am not treating them as proof that the plugin adds no overhead. Observing session files also deserves a practical permissions review before you add it to a work environment. Decide what data the plugin reads and whether your workplace permits it.\n\nOn phones, Finch represents a different category. Its official page describes an iOS and Android self-care app built around a virtual bird. Completing goals gives the bird energy for an adventure. Core features are free, with an optional Finch Plus subscription. The app includes goals, reflections, and other activities. It is a habit companion, not an editor extension or an agent progress monitor.\n\nThe plausible value is that a playful reward makes a small routine more appealing. That is an interpretation of the design, not evidence that the app treats a condition or improves developer productivity. If it helps you take a planned break, that may be enough. If maintaining the virtual routine starts feeling like another obligation, simplify it or stop. An optional companion should fit the person using it.\n\nThis tour is a set of verified examples, not an exhaustive list of every pet application. More importantly, the presence of a pet does not tell you whether a product uses AI. Some mascots are animation and interaction features; others reflect an AI task that is happening elsewhere. Keep those layers separate when evaluating costs. A paid character, a model request, and a subscription are different kinds of spending.\n\nNow for Google TV. I found no documented native Google TV version of VS Code Pets or OpenAI's floating desktop pet. The supported environments described for those features are not a promise of a television app. Google's own installation instructions say to search for an app on the TV and install it if it is available. Availability on an Android phone does not establish availability for your television, its operating system version, or its remote-control interface.\n\nThere are useful display options. Google's Ambient mode can use a Google Photos album as a screensaver. You could make an album of your own pet drawings or pet photographs and show it there. That gives you pet imagery on the television. It does not give you an interactive desktop companion or connect the screensaver to Codex task status.\n\nGoogle also documents casting a Chrome tab or a computer screen to a compatible receiver, including Chromecast with Google TV and Google TV Streamer. The computer and receiver need the appropriate connection and setup. My inference is that casting a screen with the pet visible can show that companion on the television. The pet would still run on the computer. I have not tested that setup on John's specific TV, and casting does not install the extension or overlay on the television.\n\nIf your goal is simply to see a companion from the couch, start with an album or a cast screen. If your goal is to control agents from the television, that is a larger interface requirement, and a pet alone does not supply it. I would not recommend installing random phone packages on the TV just because their icons look promising. Check for a documented television version and an interface you can actually operate with the remote.\n\nFinally, here is a practical evaluation you can do without buying anything. Choose a normal task, such as reviewing a change while an agent prepares another one. On one comparable session, use the pet. On another, hide it or use plain controls. Keep the task and other settings as similar as practical. Notice whether you discover requests for input sooner, whether you repeatedly glance away from your work, and whether the machine feels different.\n\nFor technical overhead, inspect the application's process or the editor's process explorer with the companion visible, then hidden. Look at CPU, memory, and responsiveness under comparable conditions. Repeat a few times because background indexing, network requests, and unrelated applications can swamp the difference. This is a suggested personal check, not a controlled study, and it will not establish an effect for other people.\n\nFor attention overhead, the useful question is whether the companion replaces repeated checking or adds more checking. For monetary overhead, identify whether you are using a free feature, optional paid content, or an action that invokes a model. For operational overhead, ask whether you now have another plugin to update and another set of permissions to understand.\n\nMy recommendation for John is to try a contained VS Code pet if it makes coding more pleasant, and use OpenAI's activity controls when a visible cue helps with long-running tasks. Start small, keep animation optional, and check the actual conversation before making decisions. On Google TV, use pet imagery or casting first, with the clear expectation that those are display arrangements. Keep the companion if it brings enjoyment or useful awareness at an acceptable cost. If it becomes a distraction, turning it off is a successful evaluation too.\n",
+  "show_notes": "Desktop pets: useful companions or distracting overhead?\n\nResearch checked against owner documentation on October 6, 2026. Existing feature pages are evergreen supporting evidence with unknown original publication dates. The dated current anchor is the October 3 VS Code Pets maintenance commit, not a claim that all these products are newly released.\n\nScope: VS Code Pets; OpenAI desktop, web and terminal companions; Steam Desktop Mate; Desktop Goose; eSheep; community Stormies for JetBrains; Finch on iOS/Android; Google TV casting and screensaver options. No native Google TV support was established for VS Code Pets or OpenAI's desktop overlay. Casting is a display inference and has not been tested on John's TV.\n\nBenefits and overhead are practical analysis, not measured productivity or health effects. No CPU/RAM benchmark, independent performance reproduction, medical benefit, or exhaustive platform survey is claimed. Suggested comparisons are personal trials, not controlled studies. No pet software was installed, no purchases were made, and no account plans were changed.\n\nSources:\nhttps://github.com/tonybaloney/vscode-pets/commit/7762b3e49466d688764021f587abde5313cc6cfc\nhttps://github.com/tonybaloney/vscode-pets\nhttps://github.com/tonybaloney/vscode-pets/blob/main/package.json\nhttps://learn.chatgpt.com/docs/pets\nhttps://store.steampowered.com/app/3301060/Desktop_Mate\nhttps://samperson.itch.io/desktop-goose\nhttps://github.com/Adrianotiger/desktopPet\nhttps://github.com/okevino47/stormies\nhttps://finchcare.com/about-finch\nhttps://support.google.com/googletv/answer/10050570\nhttps://support.google.com/googletv/answer/10070821\nhttps://support.google.com/chromecast/answer/3228332",
+  "generation": {
+    "edition": "adhoc",
+    "provider": "edge",
+    "approved_at": "2026-10-06T23:57:16.531472+00:00",
+    "source_audio_sha256": "f3a9afc056c7d90041658faa0a6bbce4f53a6fc5e995cbba840f97507dd70f17",
+    "source_script": {
+      "provider": "edge",
+      "sha256": "db09eb3fe58175f8ea2386c6609f59a0beaf263e075b428d96ff9aa5912ace6e"
+    },
+    "review": {
+      "method": "source_script_source_comparison",
+      "reviewed_at": "2026-10-06T23:56:35.844021+00:00",
+      "reviewer": "assistant",
+      "claims": [
+        {
+          "text": "A commit published on October third fixes roll-call fallthrough.",
+          "event_id": "vscode-maintenance",
+          "quote": "Fix roll-call fallthrough"
+        },
+        {
+          "text": "In the inspected patch, a missing break is added before the delete-pet case.",
+          "event_id": "vscode-maintenance",
+          "quote": "break;"
+        },
+        {
+          "text": "You can start a pet coding session, add multiple pets, change a background, and throw a ball.",
+          "event_id": "vscode",
+          "quote": "Start pet coding session\n[Separate reviewed excerpt]\nAdd lots of pets\n[Separate reviewed excerpt]\nChange the background\n[Separate reviewed excerpt]\nThrow a ball and play with the pets"
+        },
+        {
+          "text": "The extension manifest declares a webview and settings for pet size, panel position, and effects.",
+          "event_id": "vscode-code",
+          "quote": "\"type\": \"webview\"\n[Separate reviewed excerpt]\n\"vscode-pets.petSize\"\n[Separate reviewed excerpt]\n\"vscode-pets.position\"\n[Separate reviewed excerpt]\n\"vscode-pets.disableEffects\""
+        },
+        {
+          "text": "The official documentation describes optional companions in the ChatGPT desktop app on macOS and Windows.",
+          "event_id": "openai",
+          "quote": "macOS and Windows"
+        },
+        {
+          "text": "A floating pet gives access to chat controls and an activity tray.",
+          "event_id": "openai",
+          "quote": "floating pet"
+        },
+        {
+          "text": "You can choose a companion, or use Mini to keep the controls without the character.",
+          "event_id": "openai",
+          "quote": "Mini"
+        },
+        {
+          "text": "Choosing a pet changes appearance, not how ChatGPT completes tasks.",
+          "event_id": "openai",
+          "quote": "not how ChatGPT completes tasks"
+        },
+        {
+          "text": "The documented activity states are running, needs input, ready, and blocked.",
+          "event_id": "openai",
+          "quote": "macOS and Windows\n[Separate reviewed excerpt]\nnot how ChatGPT completes tasks\n[Separate reviewed excerpt]\nRunning\n[Separate reviewed excerpt]\nNeeds input\n[Separate reviewed excerpt]\nReady\n[Separate reviewed excerpt]\nBlocked\n[Separate reviewed excerpt]\nMini\n[Separate reviewed excerpt]\nreduced motion\n[Separate reviewed excerpt]\nfloating pet\n[Separate reviewed excerpt]\nactivity tray\n[Separate reviewed excerpt]\nweb pet\n[Separate reviewed excerpt]\nterminal pet"
+        },
+        {
+          "text": "The documented controls prioritize chats that need input, then blocked chats, ready chats, and running chats.",
+          "event_id": "openai",
+          "quote": "macOS and Windows\n[Separate reviewed excerpt]\nnot how ChatGPT completes tasks\n[Separate reviewed excerpt]\nRunning\n[Separate reviewed excerpt]\nNeeds input\n[Separate reviewed excerpt]\nReady\n[Separate reviewed excerpt]\nBlocked\n[Separate reviewed excerpt]\nMini\n[Separate reviewed excerpt]\nreduced motion\n[Separate reviewed excerpt]\nfloating pet\n[Separate reviewed excerpt]\nactivity tray\n[Separate reviewed excerpt]\nweb pet\n[Separate reviewed excerpt]\nterminal pet"
+        },
+        {
+          "text": "Pets also respect the operating system's reduced motion setting.",
+          "event_id": "openai",
+          "quote": "reduced motion"
+        },
+        {
+          "text": "The broader documentation describes supported web pets and terminal pets too, with interface and terminal requirements; those do not make the desktop overlay available everywhere.",
+          "event_id": "openai",
+          "quote": "macOS and Windows\n[Separate reviewed excerpt]\nnot how ChatGPT completes tasks\n[Separate reviewed excerpt]\nRunning\n[Separate reviewed excerpt]\nNeeds input\n[Separate reviewed excerpt]\nReady\n[Separate reviewed excerpt]\nBlocked\n[Separate reviewed excerpt]\nMini\n[Separate reviewed excerpt]\nreduced motion\n[Separate reviewed excerpt]\nfloating pet\n[Separate reviewed excerpt]\nactivity tray\n[Separate reviewed excerpt]\nweb pet\n[Separate reviewed excerpt]\nterminal pet"
+        },
+        {
+          "text": "Desktop Mate is a Steam desktop companion whose characters sit on windows, react to the cursor, and provide an alarm feature.",
+          "event_id": "mate",
+          "quote": "sit on top of your windows\n[Separate reviewed excerpt]\nalarm feature\n[Separate reviewed excerpt]\nFree\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nGraphics\n[Separate reviewed excerpt]\nDLC\n[Separate reviewed excerpt]\nmouse cursor"
+        },
+        {
+          "text": "The base product is listed as free, while character content can be paid.",
+          "event_id": "mate",
+          "quote": "sit on top of your windows\n[Separate reviewed excerpt]\nalarm feature\n[Separate reviewed excerpt]\nFree\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nGraphics\n[Separate reviewed excerpt]\nDLC\n[Separate reviewed excerpt]\nmouse cursor"
+        },
+        {
+          "text": "Its published requirements include Windows and graphics hardware.",
+          "event_id": "mate",
+          "quote": "sit on top of your windows\n[Separate reviewed excerpt]\nalarm feature\n[Separate reviewed excerpt]\nFree\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nGraphics\n[Separate reviewed excerpt]\nDLC\n[Separate reviewed excerpt]\nmouse cursor"
+        },
+        {
+          "text": "Desktop Goose, offered by its creator for Windows and macOS, is deliberately mischievous.",
+          "event_id": "goose",
+          "quote": "A downloadable goose-sperience for Windows and macOS"
+        },
+        {
+          "text": "Its page describes grabbing your cursor, leaving messages, and bringing memes onto the screen.",
+          "event_id": "goose",
+          "quote": "A downloadable goose-sperience for Windows and macOS\n[Separate reviewed excerpt]\nHe'll nab your mouse\n[Separate reviewed excerpt]\nleave you a message\n[Separate reviewed excerpt]\ndeliver you memes"
+        },
+        {
+          "text": "Its documentation describes a pet that detects windows and moves around the desktop, including multiple monitors.",
+          "event_id": "esheep",
+          "quote": "detect windows on your desktop\n[Separate reviewed excerpt]\nAndroid\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nbuild it on your system\n[Separate reviewed excerpt]\nmultiple monitors\n[Separate reviewed excerpt]\nmacOS-Version"
+        },
+        {
+          "text": "The project documents a Windows executable, an Android port, and a macOS source-build route.",
+          "event_id": "esheep",
+          "quote": "detect windows on your desktop\n[Separate reviewed excerpt]\nAndroid\n[Separate reviewed excerpt]\nWindows\n[Separate reviewed excerpt]\nbuild it on your system\n[Separate reviewed excerpt]\nmultiple monitors\n[Separate reviewed excerpt]\nmacOS-Version"
+        },
+        {
+          "text": "For JetBrains users, I found a community project called Stormies, inspired by Pixel Agents.",
+          "event_id": "stormies",
+          "quote": "Pixel Agents"
+        },
+        {
+          "text": "It displays animated characters representing Claude Code activity in a virtual office.",
+          "event_id": "stormies",
+          "quote": "IntelliJ-based IDE\n[Separate reviewed excerpt]\nJCEF\n[Separate reviewed excerpt]\nClaude Code\n[Separate reviewed excerpt]\nobserves its session files\n[Separate reviewed excerpt]\nFrom Source\n[Separate reviewed excerpt]\nPixel Agents\n[Separate reviewed excerpt]\nanimated pixel art characters\n[Separate reviewed excerpt]\nvirtual office"
+        },
+        {
+          "text": "The repository says it targets IntelliJ-based IDEs, uses an embedded Chromium webview, and observes Claude Code session files.",
+          "event_id": "stormies",
+          "quote": "IntelliJ-based IDE\n[Separate reviewed excerpt]\nJCEF\n[Separate reviewed excerpt]\nClaude Code\n[Separate reviewed excerpt]\nobserves its session files\n[Separate reviewed excerpt]\nFrom Source\n[Separate reviewed excerpt]\nPixel Agents\n[Separate reviewed excerpt]\nanimated pixel art characters\n[Separate reviewed excerpt]\nvirtual office"
+        },
+        {
+          "text": "Its source installation instructions make this a community plugin to assess, not a built-in JetBrains feature.",
+          "event_id": "stormies",
+          "quote": "From Source"
+        },
+        {
+          "text": "Its official page describes an iOS and Android self-care app built around a virtual bird.",
+          "event_id": "finch",
+          "quote": "For iOS & Android"
+        },
+        {
+          "text": "Completing goals gives the bird energy for an adventure.",
+          "event_id": "finch",
+          "quote": "Earn energy to send your birb on an adventure"
+        },
+        {
+          "text": "Core features are free, with an optional Finch Plus subscription.",
+          "event_id": "finch",
+          "quote": "For iOS & Android\n[Separate reviewed excerpt]\nCore self-care is free\n[Separate reviewed excerpt]\nOptional Finch Plus\n[Separate reviewed excerpt]\nEarn energy to send your birb on an adventure\n[Separate reviewed excerpt]\nreflections"
+        },
+        {
+          "text": "The app includes goals, reflections, and other activities.",
+          "event_id": "finch",
+          "quote": "For iOS & Android\n[Separate reviewed excerpt]\nCore self-care is free\n[Separate reviewed excerpt]\nOptional Finch Plus\n[Separate reviewed excerpt]\nEarn energy to send your birb on an adventure\n[Separate reviewed excerpt]\nreflections"
+        },
+        {
+          "text": "Google's own installation instructions say to search for an app on the TV and install it if it is available.",
+          "event_id": "tv-apps",
+          "quote": "If the app is available\n[Separate reviewed excerpt]\nSelect Install"
+        },
+        {
+          "text": "Google's Ambient mode can use a Google Photos album as a screensaver.",
+          "event_id": "tv-ambient",
+          "quote": "Google Photos: Choose photos or albums saved in your Google Photos account."
+        },
+        {
+          "text": "Google also documents casting a Chrome tab or a computer screen to a compatible receiver, including Chromecast with Google TV and Google TV Streamer.",
+          "event_id": "tv-cast",
+          "quote": "entire computer screen\n[Separate reviewed excerpt]\nCast a tab\n[Separate reviewed excerpt]\nChromecast with Google TV\n[Separate reviewed excerpt]\nGoogle TV Streamer\n[Separate reviewed excerpt]\nsame Wi-Fi network"
+        }
+      ],
+      "notes": [
+        "The exact 1,936-word deterministic Edge synthesis input was checked against public primary pages and the inspected VS Code Pets commit patch. No ASR or human listening is claimed.",
+        "Scope, eligibility, ordering of OpenAI activity states, and distinctions between native TV support and casting were checked in the full primary pages; bounded excerpts and document hashes are retained.",
+        "Existing documentation is evergreen supporting evidence with unknown original feature-publication dates; the October 3 maintenance commit is the dated anchor, not a claim that all features are new.",
+        "The narration labels personal recommendations and resource-overhead reasoning as analysis. No CPU/RAM benchmark, independent performance reproduction, clinical benefit, or coding-productivity improvement is claimed.",
+        "Google TV casting of a visible pet is an explicitly labeled inference, not a tested setup on John's television. No native TV version of VS Code Pets or OpenAI's desktop overlay was established.",
+        "Community Stormies is a source-build plugin observing Claude Code sessions, not a built-in JetBrains feature. Its performance claims are not treated as independently established.",
+        "Voice provenance comes from the actual synthesis sidecar. Original audio is preserved; the importer owns mastering, full decode, media analysis, and final hashes."
+      ]
+    },
+    "voice": {
+      "name": "en-US-AriaNeural",
+      "rate": "+0%",
+      "pitch": "+0Hz"
+    },
+    "quality": {
+      "method": "ffmpeg_loudnorm_two_pass",
+      "ffmpeg": "ffmpeg version 9.0.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+      "integrated_lufs": -16.71,
+      "true_peak_dbtp": -4.68,
+      "audio_sha256": "d148a13ea1bededdb716dbbfdc5156729bed8d11375ee34deb67e80d8d64ce92"
+    },
+    "request": {
+      "topic": "Desktop pets: useful companions or distracting overhead?",
+      "audience": "Developers using Copilot, Codex, and agents; Google TV owners",
+      "cutoff": "2026-10-06T21:49:19.109336+00:00",
+      "lookback_days": 60,
+      "provider": "edge",
+      "publish_now": true,
+      "actor": "johnsirmon",
+      "issue": null,
+      "schema_version": 1
+    },
+    "request_sha256": "c17b23bc738114f59cceba4b22ef4a16ef1853aca9b3a3d19d88a533ceab910f"
+  },
+  "audio": {
+    "url": "https://github.com/johnsirmon/daily-ai-docs/releases/download/adhoc-2026-10-06-c17b23bc738114f59cceba4b/daily-ai-brief.mp3",
+    "size_bytes": 12667132,
+    "duration_secs": 791.616,
+    "sha256": "d148a13ea1bededdb716dbbfdc5156729bed8d11375ee34deb67e80d8d64ce92",
+    "codec": "mp3",
+    "sample_rate": 44100,
+    "channels": 2
+  }
+}
