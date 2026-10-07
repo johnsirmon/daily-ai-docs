@@ -88,10 +88,22 @@
     "primary:openai:gpt-6-1-sol:2026-09-29",
     "primary:github:copilot-gpt-6-1-sol:2026-09-29",
     "primary:openai:agents-api:2026-09-10",
-    "primary:google:api-gateway-mcp:2026-09-24"
+    "primary:google:api-gateway-mcp:2026-09-24",
+    "vscode-maintenance",
+    "vscode",
+    "vscode-code",
+    "openai",
+    "mate",
+    "goose",
+    "esheep",
+    "stormies",
+    "finch",
+    "tv-apps",
+    "tv-ambient",
+    "tv-cast"
   ],
-  "last_publication": "2026-10-03T14:41:06.775170+00:00",
-  "last_episode_id": "adhoc-2026-09-29-2dc92469a86324f409adf822",
+  "last_publication": "2026-10-06T23:57:16.531472+00:00",
+  "last_episode_id": "adhoc-2026-10-06-c17b23bc738114f59cceba4b",
   "repo_snapshots": {
     "openai/codex": {
       "stars": 127099,

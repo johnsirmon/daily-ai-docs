@@ -2,7 +2,7 @@
   "schema_version": 4,
   "episode_id": "adhoc-2026-10-06-c17b23bc738114f59cceba4b",
   "published_at": "2026-10-06T23:57:16.531472+00:00",
-  "status": "candidate",
+  "status": "published",
   "source_health": {
     "reviewed_primary": "ok:12"
   },
