@@ -624,7 +624,7 @@ def test_input_budget_is_enforced_before_a_request():
     client.chat.completions.create.assert_not_called()
 
 
-@pytest.mark.parametrize("times,expected_calls", [([0, 91], 1), ([0, 1, 91], 2)])
+@pytest.mark.parametrize("times,expected_calls", [([0, 91], 0), ([0, 0, 91], 1), ([0, 0, 1, 1, 91], 2)])
 def test_total_time_budget_cannot_be_extended_by_verification(times, expected_calls):
     proposal = draft()
     client = MagicMock()

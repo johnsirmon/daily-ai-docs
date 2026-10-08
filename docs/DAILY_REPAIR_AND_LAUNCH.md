@@ -16,14 +16,14 @@ GitHub's 10:17 UTC cron target is best effort. No repair has been deployed.
   uncovered full-text paper without a product story; preparation accepts a verified
   research-only edition. A review includes question, method, bounded author-reported
   result, limitations, and a developer experiment. It must not imply reproduction.
-- `service_retries: 2` retries only explicit HTTP 503 on the same Gemini model and
+- `service_retries: 2` retries explicit HTTP 503 and typed SDK timeout errors on the same Gemini model and
   endpoint, after 10 and 20 seconds. SDK retries remain disabled. No retries for
-  quota/429, credentials, ambiguous timeouts, incomplete output, or factual rejection.
+  quota/429, credentials, other connection errors, incomplete output, or factual rejection.
   Default outside production config remains zero. No live requests were made for testing.
 - Schema 2 editorial generation version 1 retains exactly two calls. Version 2
   records actual attempted calls (2–6), with matching `request_attempts`, including
   failed requests; draft and independent verification remain separate stages.
-  Worst-case configured editorial budget is 330 seconds at the 45-second timeout.
+  Worst-case configured editorial budget is 420 seconds at the production 60-second timeout.
   Two successful outputs are required; there is no provider or deterministic fallback.
 - New daily IDs use the UTC publication date, independently of source dates.
   Existing immutable IDs, bytes, dates and checksums are preserved. Duplicate-day

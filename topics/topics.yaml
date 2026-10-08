@@ -38,6 +38,7 @@ daily:
     enabled: true
     quiet_news_research: true
     service_retries: 2
+    timeout_seconds: 60
     max_products: 3
     max_events_per_product: 1
     max_research: 1
