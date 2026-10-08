@@ -191,7 +191,10 @@ def _bounded_history(history: List[dict], limit: int, max_chars: int) -> List[di
 
 def _request_editorial(client, *, model: str, instructions: str, payload: dict,
                        max_input_chars: int, max_output_tokens: int, timeout: float,
-                       service_retries: int = 0, attempts: list | None = None) -> dict:
+                       service_retries: int = 0, attempts: list | None = None,
+                       deadline: float | None = None) -> dict:
+    from openai import APITimeoutError
+
     try:
         serialized = json.dumps(payload, ensure_ascii=False, allow_nan=False)
     except (TypeError, ValueError) as exc:
@@ -199,6 +202,12 @@ def _request_editorial(client, *, model: str, instructions: str, payload: dict,
     if len(instructions) + len(serialized) > max_input_chars:
         raise EditorialValidationError("editorial request exceeds max_input_chars")
     for attempt in range(service_retries + 1):
+        request_timeout = timeout
+        if deadline is not None:
+            remaining = deadline - time.monotonic()
+            if remaining < 1:
+                raise EditorialProviderError("Gemini editorial time budget exhausted")
+            request_timeout = min(timeout, remaining)
         try:
             if attempts is not None:
                 attempts.append(1)
@@ -209,18 +218,24 @@ def _request_editorial(client, *, model: str, instructions: str, payload: dict,
                 max_tokens=max_output_tokens,
                 reasoning_effort="low",
                 temperature=0,
-                timeout=timeout,
+                timeout=request_timeout,
             )
             break
         except Exception as exc:
             # Provider exceptions may include credentials or source text; do not echo them.
             status = getattr(exc, "status_code", None)
-            # Explicit service unavailability only: no retries for ambiguous timeout,
-            # quota, authentication, or invalid/unsupported generated content.
-            if status == 503 and attempt < service_retries:
-                time.sleep(10 * (attempt + 1))
+            timed_out = isinstance(exc, APITimeoutError)
+            # Share the existing attempt ceiling across service errors and typed
+            # SDK timeouts; never enable SDK retries or switch model/provider.
+            if (status == 503 or timed_out) and attempt < service_retries:
+                delay = 10 * (attempt + 1)
+                if deadline is not None and deadline - time.monotonic() < delay + 1:
+                    raise EditorialProviderError("Gemini editorial time budget exhausted") from exc
+                time.sleep(delay)
                 continue
-            detail = f" (HTTP {status})" if type(status) is int and 100 <= status <= 599 else ""
+            detail = " (timeout)" if timed_out else (
+                f" (HTTP {status})" if type(status) is int and 100 <= status <= 599 else ""
+            )
             raise EditorialProviderError(f"Gemini editorial request failed{detail}; no publication fallback") from exc
     try:
         if len(response.choices) != 1:
@@ -412,7 +427,7 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
     """Draft and independently verify a grounded brief with bounded Gemini attempts.
 
     Configuration keys: base_url/model, timeout_seconds (1..60), max_retries (0),
-    service_retries (0..2, explicit HTTP 503 only; actual attempts recorded),
+    service_retries (0..2, HTTP 503 or typed SDK timeout; actual attempts recorded),
     max_input_chars (<=120000 per request), max_output_tokens (<=6000),
     verification_max_output_tokens (<=4000), max_history_items (<=20),
     max_history_chars (<=12000), target_min_words/target_max_words (<=1500).
@@ -459,12 +474,16 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
         )
     client = get_editorial_client(values)
     started = time.monotonic()
+    total_budget = 2 * ((1 + settings.service_retries) * settings.timeout_seconds
+                        + 10 * settings.service_retries * (settings.service_retries + 1) / 2)
+    deadline = started + total_budget
     attempts = []
     draft = _request_editorial(
         client, model=settings.model, instructions=_DRAFT_INSTRUCTIONS + profile_instructions + CONTEXT_INSTRUCTIONS, payload=request,
         max_input_chars=max_input, max_output_tokens=max_output, timeout=settings.timeout_seconds,
         service_retries=settings.service_retries,
         attempts=attempts,
+        deadline=deadline,
     )
     try:
         stories = _parse_editorial_draft(draft, bases, selected)
@@ -479,8 +498,6 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
         script = editorial_narration(stories, generation) if stories else ""
     except SchemaError as exc:
         raise EditorialValidationError(str(exc)) from exc
-    total_budget = 2 * ((1 + settings.service_retries) * settings.timeout_seconds
-                        + 10 * settings.service_retries * (settings.service_retries + 1) / 2)
     remaining = total_budget - (time.monotonic() - started)
     if remaining < 1:
         raise EditorialProviderError("Gemini editorial time budget exhausted before verification")
@@ -490,6 +507,7 @@ def refine_editorial(events: Iterable[SourceEvent], fallback: List[Story], histo
         max_output_tokens=verify_output, timeout=min(settings.timeout_seconds, remaining),
         service_retries=settings.service_retries,
         attempts=attempts,
+        deadline=deadline,
     )
     if time.monotonic() - started > total_budget:
         raise EditorialProviderError("Gemini editorial time budget exhausted")
