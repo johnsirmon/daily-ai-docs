@@ -39,6 +39,8 @@ daily:
     quiet_news_research: true
     service_retries: 2
     timeout_seconds: 60
+    # Draft includes spoken text plus structured claims and exact quotations.
+    max_output_tokens: 6000
     max_products: 3
     max_events_per_product: 1
     max_research: 1

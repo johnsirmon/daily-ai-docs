@@ -6,10 +6,13 @@ from .editorial_profile import PROFILE_INSTRUCTIONS, validate_profile
 from .editorial_context import CONTEXT_INSTRUCTIONS
 
 import json
+import logging
 import os
 import re
 import time
 from typing import Iterable, List
+
+logger = logging.getLogger(__name__)
 
 from .models_client import (
     EditorialConfigurationError,
@@ -243,6 +246,19 @@ def _request_editorial(client, *, model: str, instructions: str, payload: dict,
         finish = response.choices[0].finish_reason
         if finish != "stop":
             safe_finish = finish if finish in {"length", "content_filter", "tool_calls", "function_call"} else "unknown"
+            # Only log bounded counters, never provider content or exception bodies.
+            usage = getattr(response, "usage", None)
+            details = getattr(usage, "completion_tokens_details", None)
+            counters = {}
+            for name, value in (
+                ("prompt_tokens", getattr(usage, "prompt_tokens", None)),
+                ("completion_tokens", getattr(usage, "completion_tokens", None)),
+                ("reasoning_tokens", getattr(details, "reasoning_tokens", None)),
+            ):
+                if type(value) is int and 0 <= value <= 1_000_000_000:
+                    counters[name] = value
+            logger.warning("Gemini editorial incomplete: finish_reason=%s max_output_tokens=%s usage=%s",
+                           safe_finish, max_output_tokens, counters)
             raise EditorialProviderError(f"Gemini editorial response incomplete (finish_reason={safe_finish})")
         message = response.choices[0].message
         if getattr(message, "refusal", None) or getattr(message, "tool_calls", None):
