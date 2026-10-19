@@ -1,29 +1,9 @@
 {
   "schema_version": 1,
-  "status": "skipped",
-  "evaluated_at": "2026-10-18T14:04:55.743962Z",
-  "reason": "insufficient_new_information",
-  "source_health": {
-    "github:github/copilot-cli": "ok:0",
-    "github:openai/codex": "ok:1",
-    "github:anthropics/claude-code": "ok:0",
-    "github:google-gemini/gemini-cli": "ok:1",
-    "github:NousResearch/hermes-agent": "ok:0",
-    "github:microsoft/vscode": "ok:0",
-    "github:microsoft/vscode-copilot-release": "ok:0",
-    "github:modelcontextprotocol/specification": "ok:0",
-    "github:agentskills/agentskills": "ok:0",
-    "feed:https://openai.com/news/rss.xml": "ok:0",
-    "feed:https://developers.googleblog.com/feeds/posts/default": "degraded:0",
-    "feed:https://github.blog/changelog/feed/": "ok:0",
-    "youtube:weekly-digest": "error:ValueError",
-    "research:arxiv:2610.22341": "rejected:full_text_too_large",
-    "research:arxiv:2610.22324": "rejected:full_text_too_large",
-    "research:arxiv:2610.22289": "rejected:full_text_too_large",
-    "research:arxiv:2610.22124": "not_fetched:candidate_limit",
-    "research:arxiv:2610.22039": "not_fetched:candidate_limit",
-    "research:arxiv": "degraded:0"
-  },
+  "status": "failed",
+  "evaluated_at": "2026-10-19T17:02:42.969778Z",
+  "reason": "workflow_failure",
+  "source_health": {},
   "minimum_source_health": 0.6,
   "last_episode_id": "adhoc-2026-10-06-c17b23bc738114f59cceba4b"
 }
