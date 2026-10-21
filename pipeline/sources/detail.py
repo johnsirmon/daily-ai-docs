@@ -109,8 +109,12 @@ def fetch_public(
     max_redirects: int = 2,
     session=None,
     shared_budget: RequestBudget | None = None,
-) -> tuple[str, str, str]:
-    """Return UTF-8 source, final URL and media type; never forward credentials.
+    decode: bool = True,
+) -> tuple[str | bytes, str, str]:
+    """Return bounded source, final URL and media type; never forward credentials.
+
+    Source is UTF-8 text by default. ``decode=False`` preserves bounded XML bytes
+    so the parser can honor a declared document encoding.
 
     Real sessions are intentionally not reused: GitHub sessions may hold tokens,
     cookies, netrc auth, or proxy credentials. The stdlib transport pins validated
@@ -185,8 +189,11 @@ def fetch_public(
                 if size > max_bytes:
                     raise DetailError("response_too_large")
                 chunks.append(chunk)
+            payload = b"".join(chunks)
+            if not decode:
+                return payload, current, content_type
             try:
-                return b"".join(chunks).decode("utf-8-sig"), current, content_type
+                return payload.decode("utf-8-sig"), current, content_type
             except UnicodeDecodeError as exc:
                 raise DetailError("invalid_utf8") from exc
         except (requests.RequestException, OSError, http.client.HTTPException) as exc:
@@ -233,6 +240,8 @@ class DetailEnricher:
                 target, hosts=self.hosts, budget=self.budget, max_bytes=self.max_bytes,
                 session=self.session, shared_budget=self.shared_budget,
             )
+            if not isinstance(body, str):
+                raise DetailError("invalid_text_response")
             if content_type not in {"text/html", "application/xhtml+xml"}:
                 raise DetailError("not_article_html")
             detail = article_text(body)

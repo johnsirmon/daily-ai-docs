@@ -76,7 +76,7 @@ def collect_official_feeds(
             feed_hosts = allowed_hosts([host] if host else [])
             body, _, _ = fetch_public(
                 url, hosts=feed_hosts, budget=RequestBudget(3), max_bytes=2 * 1024 * 1024,
-                session=session,
+                session=session, decode=False,
             )
             root = ET.fromstring(body)
             root_name = root.tag.rsplit("}", 1)[-1].lower()

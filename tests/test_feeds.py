@@ -77,6 +77,31 @@ def test_feed_adapter_accepts_rss_content_type():
     assert health["feed:https://example.com/feed"] == "ok:1"
 
 
+def test_feed_adapter_preserves_xml_declared_encoding():
+    rss = """<?xml version='1.0' encoding='ISO-8859-1'?>
+      <rss><channel><item><title>Agent caf\u00e9 update</title>
+      <link>https://example.com/update</link><pubDate>Mon, 07 Sep 2026 11:00:00 GMT</pubDate>
+      <description>Supported workflow.</description></item></channel></rss>""".encode("iso-8859-1")
+
+    class EncodedResponse(Response):
+        def __init__(self, content):
+            super().__init__(content)
+            self.headers = {"Content-Type": "application/rss+xml; charset=ISO-8859-1"}
+
+    class EncodedSession(Session):
+        def get(self, *args, **kwargs):
+            return EncodedResponse(self.content)
+
+    events, health = collect_official_feeds(
+        [{"url": "https://example.com/feed"}], session=EncodedSession(rss),  # type: ignore[arg-type]
+        now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc),
+    )
+
+    assert len(events) == 1
+    assert events[0].title == "Agent caf\u00e9 update"
+    assert health["feed:https://example.com/feed"] == "ok:1"
+
+
 def test_feed_adapter_rejects_redirect_to_link_local_destination(monkeypatch):
     monkeypatch.setattr(
         "pipeline.sources.detail.socket.getaddrinfo",
