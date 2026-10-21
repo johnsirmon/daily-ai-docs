@@ -158,7 +158,10 @@ def fetch_public(
             if headers.get("content-encoding", "identity").lower() != "identity":
                 raise DetailError("unsupported_content_encoding")
             content_type = headers.get("content-type", "").split(";", 1)[0].strip().lower()
-            if content_type not in {"text/html", "application/xhtml+xml", "application/atom+xml", "application/xml", "text/xml"}:
+            if content_type not in {
+                "text/html", "application/xhtml+xml", "application/atom+xml", "application/rss+xml",
+                "application/xml", "text/xml",
+            }:
                 raise DetailError("unsupported_content_type")
             length = headers.get("content-length")
             if length is not None:
