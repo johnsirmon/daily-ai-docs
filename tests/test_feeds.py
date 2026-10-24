@@ -8,9 +8,17 @@ from pipeline.sources.feeds import collect_official_feeds
 class Response:
     def __init__(self, content):
         self.content = content
+        self.status_code = 200
+        self.headers = {"Content-Type": "application/atom+xml"}
 
     def raise_for_status(self):
         return None
+
+    def iter_content(self, chunk_size):
+        yield self.content
+
+    def close(self):
+        pass
 
 
 class Session:
@@ -44,6 +52,93 @@ def test_feed_adapter_accepts_recent_atom_entry():
     assert len(events) == 1
     assert events[0].url == "https://example.com/update"
     assert health["feed:https://example.com/feed"] == "ok:1"
+
+
+def test_feed_adapter_accepts_rss_content_type():
+    rss = b"""<rss><channel><item><title>Agent update</title>
+      <link>https://example.com/update</link><pubDate>Mon, 07 Sep 2026 11:00:00 GMT</pubDate>
+      <description>Supported workflow.</description></item></channel></rss>"""
+
+    class RssResponse(Response):
+        def __init__(self, content):
+            super().__init__(content)
+            self.headers = {"Content-Type": "application/rss+xml; charset=UTF-8"}
+
+    class RssSession(Session):
+        def get(self, *args, **kwargs):
+            return RssResponse(self.content)
+
+    events, health = collect_official_feeds(
+        [{"url": "https://example.com/feed"}], session=RssSession(rss),  # type: ignore[arg-type]
+        now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc),
+    )
+
+    assert len(events) == 1
+    assert health["feed:https://example.com/feed"] == "ok:1"
+
+
+def test_feed_adapter_preserves_xml_declared_encoding():
+    rss = """<?xml version='1.0' encoding='ISO-8859-1'?>
+      <rss><channel><item><title>Agent caf\u00e9 update</title>
+      <link>https://example.com/update</link><pubDate>Mon, 07 Sep 2026 11:00:00 GMT</pubDate>
+      <description>Supported workflow.</description></item></channel></rss>""".encode("iso-8859-1")
+
+    class EncodedResponse(Response):
+        def __init__(self, content):
+            super().__init__(content)
+            self.headers = {"Content-Type": "application/rss+xml; charset=ISO-8859-1"}
+
+    class EncodedSession(Session):
+        def get(self, *args, **kwargs):
+            return EncodedResponse(self.content)
+
+    events, health = collect_official_feeds(
+        [{"url": "https://example.com/feed"}], session=EncodedSession(rss),  # type: ignore[arg-type]
+        now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc),
+    )
+
+    assert len(events) == 1
+    assert events[0].title == "Agent caf\u00e9 update"
+    assert health["feed:https://example.com/feed"] == "ok:1"
+
+
+def test_feed_adapter_rejects_redirect_to_link_local_destination(monkeypatch):
+    monkeypatch.setattr(
+        "pipeline.sources.detail.socket.getaddrinfo",
+        lambda *a, **k: [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))],
+    )
+    atom = b"""<feed xmlns='http://www.w3.org/2005/Atom'>
+      <entry><title>Agent update</title><link href='https://example.com/update'/>
+      <published>2026-09-07T11:00:00Z</published><summary>Supported workflow.</summary></entry></feed>"""
+
+    class Redirect(Response):
+        status_code = 302
+        headers = {"Location": "http://169.254.169.254/latest/meta-data/"}
+
+        def __init__(self):
+            pass
+
+    class RedirectingSession(Session):
+        def __init__(self):
+            super().__init__(atom)
+            self.calls = []
+
+        def get(self, url, **kwargs):
+            self.calls.append(url)
+            if kwargs.get("allow_redirects") is False:
+                return Redirect()
+            self.calls.append(Redirect.headers["Location"])
+            return Response(self.content)
+
+    session = RedirectingSession()
+    events, health = collect_official_feeds(
+        [{"url": "https://example.com/feed"}], session=session,
+        now=datetime(2026, 9, 7, 12, tzinfo=timezone.utc),
+    )
+
+    assert events == []
+    assert health["feed:https://example.com/feed"] == "error:DetailError"
+    assert session.calls == ["https://example.com/feed"]
 
 
 def test_feed_routes_entries_to_specific_products_before_grouping():
