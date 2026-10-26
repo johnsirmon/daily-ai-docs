@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from packaging.requirements import Requirement
+from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 
@@ -24,7 +25,7 @@ def test_certifi_floor_and_lock_exclude_compromised_ca_bundle():
     direct = _requirements(ROOT / "requirements.txt")["certifi"]
     locked = _requirements(ROOT / "requirements.lock")["certifi"]
 
-    assert CERTIFI_FIXED in direct.specifier
+    assert direct.specifier == SpecifierSet(f">={CERTIFI_FIXED}")
     locked_specifier = next(iter(locked.specifier))
     assert locked_specifier.operator == "=="
     assert Version(locked_specifier.version) >= CERTIFI_FIXED
