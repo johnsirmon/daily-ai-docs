@@ -7,11 +7,12 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from typing import Dict, Iterable, List
+from urllib.parse import urlsplit
 
 import requests
 
 from ..schema import SourceEvent
-from .detail import DetailEnricher, RequestBudget
+from .detail import DetailEnricher, RequestBudget, allowed_hosts, fetch_public
 from .text import clean_source_text
 
 
@@ -71,9 +72,13 @@ def collect_official_feeds(
             enricher = DetailEnricher(
                 config.get("enrichment") or {}, session=session, shared_budget=detail_budget,
             )
-            response = session.get(url, timeout=20, headers={"User-Agent": "daily-ai-docs/1.0"})
-            response.raise_for_status()
-            root = ET.fromstring(response.content)
+            host = urlsplit(url).hostname
+            feed_hosts = allowed_hosts([host] if host else [])
+            body, _, _ = fetch_public(
+                url, hosts=feed_hosts, budget=RequestBudget(3), max_bytes=2 * 1024 * 1024,
+                session=session, decode=False,
+            )
+            root = ET.fromstring(body)
             root_name = root.tag.rsplit("}", 1)[-1].lower()
             if root_name not in {"rss", "feed"}:
                 raise ValueError("official feed response is not RSS or Atom")
