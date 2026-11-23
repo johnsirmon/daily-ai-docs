@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "failed",
-  "evaluated_at": "2026-11-22T17:56:45.250576Z",
+  "evaluated_at": "2026-11-23T22:07:31.627175Z",
   "reason": "workflow_failure",
   "source_health": {},
   "minimum_source_health": 0.6,
